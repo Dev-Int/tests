@@ -15,18 +15,9 @@ class TaxesTest extends TestCase
         $taxes = Taxes::fromFloat(0.055);
 
         // Assert
-        $this->assertEquals(
-            new Taxes(0.055),
-            $taxes
-        );
-        $this->assertEquals(
-            0.055,
-            $taxes->rate()
-        );
-        $this->assertEquals(
-            '5,50 %',
-            $taxes->name()
-        );
+        self::assertEquals(new Taxes(0.055), $taxes);
+        self::assertEquals(0.055, $taxes->rate());
+        self::assertEquals('5,50 %', $taxes->name());
     }
 
     final public function testInstantiateTaxesFromPercent(): void
@@ -35,17 +26,8 @@ class TaxesTest extends TestCase
         $taxes = Taxes::fromPercent('5,50 %');
 
         // Assert
-        $this->assertEquals(
-            new Taxes(0.055),
-            $taxes
-        );
-        $this->assertEquals(
-            0.055,
-            $taxes->rate()
-        );
-        $this->assertEquals(
-            '5,50 %',
-            $taxes->name()
-        );
+        self::assertEquals(new Taxes(0.055), $taxes);
+        self::assertEquals(0.055, $taxes->rate());
+        self::assertEquals('5,50 %', $taxes->name());
     }
 }

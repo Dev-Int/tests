@@ -6,23 +6,11 @@ namespace Domain\Model\Common\Entities;
 
 use NumberFormatter;
 
-class Taxes
+final class Taxes
 {
-    /**
-     * @var float
-     */
-    private $rate;
+    private float $rate;
+    private ?string $name;
 
-    /**
-     * @var false|string
-     */
-    private $name;
-
-    /**
-     * Taxes constructor.
-     *
-     * @param float $rate
-     */
     public function __construct(float $rate)
     {
         $fmtPercent = new NumberFormatter('fr_FR', NumberFormatter::PERCENT);
@@ -45,18 +33,18 @@ class Taxes
 
     public static function fromPercent(string $name): self
     {
-        preg_match('/^([0-9]*)(,([0-9]*?)) %$/', trim($name), $str);
-        $float = $str[1].'.'.$str[3];
+        preg_match('/^(\d*)(,(\d*?)) %$/u', trim($name), $str);
+        $float = $str[1] . '.' . $str[3];
 
         return new self((float) $float);
     }
 
-    final public function rate(): float
+    public function rate(): float
     {
         return $this->rate;
     }
 
-    final public function name(): string
+    public function name(): string
     {
         return $this->name;
     }

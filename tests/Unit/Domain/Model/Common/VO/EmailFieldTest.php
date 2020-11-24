@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Domain\Model\Common\VO;
 
-use Domain\Model\Common\InvalidEmail;
+use Domain\Model\Common\Exception\InvalidEmail;
 use Domain\Model\Common\VO\EmailField;
 use PHPUnit\Framework\TestCase;
 

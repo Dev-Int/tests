@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Domain\Model\Common\VO;
 
-use Domain\Model\Common\StringExceeds255Characters;
+use Domain\Model\Common\Exception\StringExceeds255Characters;
 use Domain\Model\Common\VO\NameField;
 use PHPUnit\Framework\TestCase;
 
@@ -28,6 +28,6 @@ class NameFieldTest extends TestCase
         $slug = $name->slugify();
 
         // Assert
-        $this->assertEquals('test-slugify', $slug);
+        self::assertEquals('test-slugify', $slug);
     }
 }

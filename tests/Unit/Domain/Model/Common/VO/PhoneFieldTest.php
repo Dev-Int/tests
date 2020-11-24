@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Domain\Model\Common\VO;
 
-use Domain\Model\Common\InvalidPhone;
+use Domain\Model\Common\Exception\InvalidPhone;
 use Domain\Model\Common\VO\PhoneField;
 use PHPUnit\Framework\TestCase;
 
@@ -16,7 +16,7 @@ class PhoneFieldTest extends TestCase
         $phone = PhoneField::fromString('+33179923223');
 
         // Assert
-        $this->assertEquals(
+        self::assertEquals(
             new PhoneField('+33179923223'),
             $phone
         );

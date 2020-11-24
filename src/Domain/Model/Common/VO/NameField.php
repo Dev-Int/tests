@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Domain\Model\Common\VO;
 
 use Cocur\Slugify\Slugify;
-use Domain\Model\Common\StringExceeds255Characters;
+use Domain\Model\Common\Exception\StringExceeds255Characters;
 
 final class NameField
 {
