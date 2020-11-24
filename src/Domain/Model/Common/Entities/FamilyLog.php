@@ -6,38 +6,17 @@ namespace Domain\Model\Common\Entities;
 
 use Domain\Model\Common\VO\NameField;
 
-class FamilyLog
+final class FamilyLog
 {
-    /**
-     * @var string
-     */
-    private $name;
-
-    /**
-     * @var string|null
-     */
-    private $parent = null;
-
+    private string $name;
+    private ?FamilyLog $parent = null;
     /**
      * @var FamilyLog[]|null
      */
-    private $children;
-    /**
-     * @var string
-     */
-    private $slug;
+    private ?array $children = null;
+    private string $slug;
+    private string $path;
 
-    /**
-     * @var string
-     */
-    private $path;
-
-    /**
-     * FamilyLog constructor.
-     *
-     * @param NameField      $name
-     * @param FamilyLog|null $parent
-     */
     public function __construct(NameField $name, ?FamilyLog $parent = null)
     {
         $this->name = $name->getValue();
@@ -46,40 +25,34 @@ class FamilyLog
         if (null !== $parent) {
             $this->parent = $parent;
             $this->parent->addChild($this);
-            $this->path = $parent->slug().':'.$name->slugify();
+            $this->path = $parent->slug() . ':' . $name->slugify();
             if (null !== $this->parent->parent) {
-                $this->path = $this->parent->parent->slug().':'.$this->parent->slug().':'.$name->slugify();
+                $this->path = $this->parent->parent->slug() . ':' . $this->parent->slug() . ':' . $name->slugify();
             }
         }
     }
 
-    /**
-     * @param NameField      $name
-     * @param FamilyLog|null $parent
-     *
-     * @return FamilyLog
-     */
     public static function create(NameField $name, ?FamilyLog $parent = null): self
     {
         return new self($name, $parent);
     }
 
-    final public function parent(): FamilyLog
+    public function parent(): FamilyLog
     {
         return $this->parent;
     }
 
-    final public function path(): string
+    public function path(): string
     {
         return $this->path;
     }
 
-    final public function slug(): string
+    public function slug(): string
     {
         return $this->slug;
     }
 
-    final public function parseTree(): array
+    public function parseTree(): array
     {
         $arrayChildren = [];
         foreach ($this->children as $child) {
@@ -93,11 +66,6 @@ class FamilyLog
         return [$this->name => $arrayChildren];
     }
 
-    /**
-     * @param FamilyLog $familyLog
-     *
-     * @return array|null
-     */
     private function hasChildren(FamilyLog $familyLog): ?array
     {
         if (null !== $familyLog->children) {

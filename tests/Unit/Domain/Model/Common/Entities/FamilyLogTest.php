@@ -23,7 +23,7 @@ class FamilyLogTest extends TestCase
         );
 
         // Assert
-        $this->assertEquals(
+        self::assertEquals(
             new FamilyLog(
                 NameField::fromString('Viande'),
                 FamilyLog::create(
@@ -35,7 +35,7 @@ class FamilyLogTest extends TestCase
             ),
             $familyLog
         );
-        $this->assertEquals('alimentaire:surgele:viande', $familyLog->path());
+        self::assertEquals('alimentaire:surgele:viande', $familyLog->path());
     }
 
     final public function testGetTreeFamilyLog(): void
@@ -61,7 +61,7 @@ class FamilyLogTest extends TestCase
         $tree = $alimentaire->parseTree();
 
         // Assert
-        $this->assertEquals(
+        self::assertEquals(
             [
                 'Alimentaire' => [
                     'Surgelé' => [
