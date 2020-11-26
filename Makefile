@@ -1,12 +1,20 @@
+# —— Inspired by ———————————————————————————————————————————————————————————————
+# https://www.strangebuzz.com/fr/snippets/le-makefile-parfait-pour-symfony
+# who was inspired by
+# http://fabien.potencier.org/symfony4-best-practices.html
+# https://speakerdeck.com/mykiwi/outils-pour-ameliorer-la-vie-des-developpeurs-symfony?slide=47
+# https://blog.theodo.fr/2018/05/why-you-need-a-makefile-on-your-project/
+
+
 # Setup ————————————————————————————————————————————————————————————————————————
 EXEC_PHP      = php
-REDIS         = redis-cli
 GIT           = git
 GIT_AUTHOR    = Dev-Int
 SYMFONY       = $(EXEC_PHP) bin/console
 SYMFONY_BIN   = symfony
 COMPOSER      = composer
 .DEFAULT_GOAL = help
+
 
 ## —— The Tests Symfony Makefile ———————————————————————————————————————————————
 help: ## Outputs this help screen
@@ -15,12 +23,14 @@ help: ## Outputs this help screen
 wait: ## Sleep 5 seconds
 	sleep 5
 
+
 ## —— Composer —————————————————————————————————————————————————————————————————
 install: composer.lock ## Install vendors according to the current composer.lock file
 	$(COMPOSER) install --no-progress --no-suggest --prefer-dist --optimize-autoloader
 
 update: composer.json ## Update vendors according to the composer.json file
 	$(COMPOSER) update
+
 
 ## —— Symfony ——————————————————————————————————————————————————————————————————
 sf: ## List all Symfony commands
@@ -41,6 +51,7 @@ assets: purge ## Install the assets with symlinks in the public folder
 purge: ## Purge cache and logs
 	rm -rf var/cache/* var/logs/*
 
+
 ## —— Symfony binary ———————————————————————————————————————————————————————————
 bin-install: ## Download and install the binary in the project (file is ignored)
 	curl -sS https://get.symfony.com/cli/installer | bash
@@ -54,6 +65,7 @@ serve: ## Serve the application with HTTPS support
 
 unserve: ## Stop the webserver
 	$(SYMFONY_BIN) server:stop
+
 
 ## —— Project ——————————————————————————————————————————————————————————————————
 reload: load-fixtures ## Reload fixtures
@@ -77,6 +89,7 @@ test-external: phpunit.xml ## Launch tests implying external resources (API, ser
 test-all: phpunit.xml ## Launch all tests
 	./vendor/bin/phpunit --stop-on-failure
 
+
 ## —— Coding standards ✨ ——————————————————————————————————————————————————————
 cs: codesniffer stan lint ## Launch check style and static analysis
 
@@ -96,15 +109,17 @@ init-psalm: ## Init a new psalm config file for a given level, it must be decrem
 cs-fix: ## Run php-cs-fixer and fix the code.
 	./vendor/bin/php-cs-fixer fix
 
+
 ## —— Deploy & Prod ————————————————————————————————————————————————————————————
-deploy: ## Full no-downtime deployment with EasyDeploy
-	$(SYMFONY) deploy -v
+#deploy: ## Full no-downtime deployment with EasyDeploy
+#	$(SYMFONY) deploy -v
+#
+#env-check: ## Check the main ENV variables of the project
+#	printenv | grep -i app_
+#
+#le-renew: ## Renew Let's Encrypt HTTPS certificates
+#	certbot --apache -d strangebuzz.com -d www.strangebuzz.com
 
-env-check: ## Check the main ENV variables of the project
-	printenv | grep -i app_
-
-le-renew: ## Renew Let's Encrypt HTTPS certificates
-	certbot --apache -d strangebuzz.com -d www.strangebuzz.com
 
 ## —— Yarn / JavaScript ————————————————————————————————————————————————————————
 dev: ## Rebuild assets for the dev env
@@ -120,6 +135,7 @@ build: ## Build assets for production
 lint: ## Lints Js files
 	npx eslint assets/js --fix
 
-## —— Stats 📜 —————————————————————————————————————————————————————————————————
+
+## —— Stats ————————————————————————————————————————————————————————————————————
 stats: ## Commits by the hour for the main author of this project
 	$(GIT) log --author="$(GIT_AUTHOR)" --date=iso | perl -nalE 'if (/^Date:\s+[\d-]{10}\s(\d{2})/) { say $$1+0 }' | sort | uniq -c|perl -MList::Util=max -nalE '$$h{$$F[1]} = $$F[0]; }{ $$m = max values %h; foreach (0..23) { $$h{$$_} = 0 if not exists $$h{$$_} } foreach (sort {$$a <=> $$b } keys %h) { say sprintf "%02d - %4d %s", $$_, $$h{$$_}, "*"x ($$h{$$_} / $$m * 50); }'
