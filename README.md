@@ -1,6 +1,9 @@
 Tests
 =====
 
+![Tests](https://github.com/Dev-Int/tests/workflows/Tests/badge.svg) 
+[![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/Dev-Int/tests/blob/master/LICENSE)
+
 This repository comes from ideas coming from [GLSR](https://github.com/Dev-Int/glsr), where, in 2020, I found myself 
  stuck on dependency updates, after several months of abandonment. At the same time, a friend of mine needed help with
  unit testing.
@@ -11,7 +14,7 @@ So I started with unit tests, then, along the way, I resumed the desire to devel
 To train and create skills, I want to develop according to the DDD vision, and the different testing approaches
  (ATDD, TDD, BDD ...)
  
-## Features
+### Features
 
 To start in the right direction, I start by preparing my [use cases](https://github.com/Dev-Int/tests/labels/use%20case),
  and adding the resulting tests after this list:
@@ -20,7 +23,7 @@ To start in the right direction, I start by preparing my [use cases](https://git
 
 -[ ] install [Behat](https://docs.behat.org/en/latest/quick_start.html)
 
-# Installation
+## Installation
 
 clone the repo at first
 ```
@@ -31,6 +34,6 @@ And then install dependencies
 composer install
 ```
 
-# Licence
+## Licence
 
-[MIT](LICENSE)
+[MIT](https://choosealicense.com/licenses/mit/)
