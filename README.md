@@ -19,9 +19,9 @@ To train and create skills, I want to develop according to the DDD vision, and t
 To start in the right direction, I start by preparing my [use cases](https://github.com/Dev-Int/tests/labels/use%20case),
  and adding the resulting tests after this list:
 
--[ ] rewrite Domain model to check and correct my previous choices
+- [ ] rewrite Domain model to check and correct my previous choices
 
--[ ] install [Behat](https://docs.behat.org/en/latest/quick_start.html)
+- [ ] install [Behat](https://docs.behat.org/en/latest/quick_start.html)
 
 ## Installation
 
