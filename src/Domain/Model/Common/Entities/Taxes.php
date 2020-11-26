@@ -2,6 +2,15 @@
 
 declare(strict_types=1);
 
+/*
+ * This file is part of the Tests package.
+ *
+ * (c) Dev-Int Création <info@developpement-interessant.com>.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Domain\Model\Common\Entities;
 
 use NumberFormatter;
@@ -18,8 +27,8 @@ final class Taxes
 
         $this->rate = $rate / 100;
 
-        $fraction = explode('.', (string) $rate);
-        if (strlen($fraction[1]) > 2) {
+        $fraction = \explode('.', (string) $rate);
+        if (\strlen($fraction[1]) > 2) {
             $this->rate = $rate;
         }
 
@@ -33,7 +42,7 @@ final class Taxes
 
     public static function fromPercent(string $name): self
     {
-        preg_match('/^(\d*)(,(\d*?)) %$/u', trim($name), $str);
+        \preg_match('/^(\d*)(,(\d*?)) %$/u', \trim($name), $str);
         $float = $str[1] . '.' . $str[3];
 
         return new self((float) $float);

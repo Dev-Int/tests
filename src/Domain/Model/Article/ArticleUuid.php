@@ -11,10 +11,10 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Domain\Model\Common\Exception;
+namespace Domain\Model\Article;
 
-final class StringExceeds255Characters extends \DomainException
+use Domain\Model\Common\AbstractUuid;
+
+final class ArticleUuid extends AbstractUuid
 {
-    /** @var string */
-    protected $message = 'Le titre est trop long. Vous ne devriez pas exéder 255 caractères';
 }
