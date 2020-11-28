@@ -1,0 +1,17 @@
+@startuml System
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+'!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/release/1-0/C4_Container.puml
+'!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/release/1-0/C4_Context.puml
+'!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/release/1-0/C4_Component.puml
+
+Person(admin_user, "Administrator")
+Person(user, "User")
+
+System(application, "G.L.S.R.", "Allows users and administrators to use application to manage their restaurant.")
+
+System_Ext(mailer, "Mailer")
+
+Rel(admin_user, application, "Uses", "HTTPS")
+Rel(user, application, "Uses", "HTTPS")
+Rel_R(application, mailer, "Send mail from api")
+@enduml
