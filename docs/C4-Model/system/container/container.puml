@@ -22,9 +22,9 @@ Rel(user, web_app, "Uses", "HTTPS")
 Rel(backend, api, "Makes API calls to", "JSON/HTTPS")
 Rel(web_app, api, "Makes API calls to", "JSON/HTTPS")
 
-Rel_R(api, rel_db, "Data store in", "JDBC")
+Rel_L(api, rel_db, "Data store in", "JDBC")
 
-Rel_L(api, mailer, "Send mail from api")
-Rel(api, api_supplier, "Send orders from api")
+Rel_R(api, mailer, "Send mail from api")
+Rel_R(api, api_supplier, "Send orders from api")
 
 @enduml
