@@ -1,6 +1,8 @@
 @startuml Entities
 ' #9e9e9e, #5e5e5e, #ddd, #ebebeb, #c4c4c4
 
+title G.L.S.R. entities
+
 package "Admin" #9e9e9e {
 	package "Settings" #c4c4c4 {
 		Price "many" *-- "many" Article
@@ -19,12 +21,58 @@ package "Admin" #9e9e9e {
 }
 
 package "Order" #ddd {
+	Class Order {
+		-uuid: string
+		-supplier: Supplier
+		-orderDate: date
+		-deliveryDate
+		-amount: float
+		-taxe: Taxe
+		-items: OderItem
+		-status: string
+	}
+	Class OrderItem {
+		-uuid: string
+		-order: Order
+		-article: Article
+		-quantity: float
+		-unit: Packaging
+		-price: Price
+		-taxe: Taxe
+	}
+
+	OrderItem "many" o-- "1" Order: own
+	OrderItem "1" -- "1" Article : contain
+	OrderItem "1" -- "1" Packaging
+	OrderItem "1" -- "1" Price
+	OrderItem "1" -- "1" Taxe
+
 }
 
 package "Inventory" #c4c4c4 {
-	InventoryItem "1" -- "1" Article
-	InventoryItem "many" o-- "1" Inventory
+Class Inventory {
+	-uuid: string
+	-date: date
+	-status: string
+	-amount: float
+	-items: array<InventoryItem>
+}
+
+Class InventoryItem {
+	-uuid: string
+	-inventory: Inventory
+	-article: Article
+	-quantity: float
+	-realStock: float
+	-unit: Packaging
+	-price: Price
+	-zoneStorage: ZoneStorage
+}
+
+	InventoryItem "1" -- "1" Article : contain
+	InventoryItem "many" o-- "1" Inventory: own
 	InventoryItem "1" -- "1" ZoneStorage
+	InventoryItem "1" -- "1" Packaging
 	InventoryItem "1" -- "1" Price
 }
 
@@ -100,22 +148,4 @@ Class Storage {
 	-quantity: float
 }
 
-Class Inventory {
-	-uuid: string
-	-date: date
-	-status: string
-	-amount: float
-	-items: array<InventoryItem>
-}
-
-Class InventoryItem {
-	-uuid: string
-	-inventory: Inventory
-	-article: Article
-	-quantity: float
-	-realStock: float
-	-unit: Unit
-	-price: Price
-	-zoneStorage: ZoneStorage
-}
 @enduml

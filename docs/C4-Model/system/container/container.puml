@@ -1,7 +1,7 @@
 @startuml Container
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 
-'LAYOUT_WITH_LEGEND()
+title Container diagram for System G.L.S.R.
 
 Person(admin, "Administrator")
 Person(user, "User")
@@ -14,6 +14,7 @@ System_Boundary(c1, "G.L.S.R.") {
 }
 
 System_Ext(mailer, "Mailer")
+System_Ext(api_supplier, "API Supplier")
 
 Rel(admin, backend, "Uses", "HTTPS")
 Rel(user, web_app, "Uses", "HTTPS")
@@ -24,4 +25,6 @@ Rel(web_app, api, "Makes API calls to", "JSON/HTTPS")
 Rel_R(api, rel_db, "Data store in", "JDBC")
 
 Rel_L(api, mailer, "Send mail from api")
+Rel(api, api_supplier, "Send orders from api")
+
 @enduml
