@@ -99,10 +99,15 @@ ta: phpunit.xml ## Launch functional and unit tests
 
 
 ## —— Coding standards ✨ ——————————————————————————————————————————————————————
-cs: codesniffer stan lint ## Launch check style and static analysis
+qa: codesniffer stan cs-fixer # lint ## Launch all static analysis tools
+	#$(SYMFONY) lint:yaml config
+	bin/deptrac analyse --config-file=deptrac.yaml
 
 codesniffer: ## Run php_codesniffer only
 	./vendor/squizlabs/php_codesniffer/bin/phpcs --standard=phpcs.xml -n -p src/
+
+cs-fixer: ## Run php-cs-fixer
+	bin/php-cs-fixer fix --diff --verbose
 
 stan: ## Run PHPStan only
 	./vendor/bin/phpstan analyse -c phpstan.neon --memory-limit 1G
@@ -113,9 +118,6 @@ psalm: ## Run psalm only
 init-psalm: ## Init a new psalm config file for a given level, it must be decremented to have stricter rules
 	rm ./psalm.xml
 	./vendor/bin/psalm --init src/ 3
-
-cs-fix: ## Run php-cs-fixer and fix the code.
-	./vendor/bin/php-cs-fixer fix
 
 
 ## —— Deploy & Prod ————————————————————————————————————————————————————————————
@@ -147,8 +149,8 @@ client-lint: ## Lints Js files
 ## —— Docker 🐳 ———————————————————————————————————————————————————————————————————
 init: dist_file build start ## Initialize the project
 
-dist_file: .php_cs.dist phpcs.xml.dist phpunit.xml.dist # copy the .dist files
-	cp ./.php_cs.dist ./.php_cs
+dist_file: .php-cs-fixer.php.dist phpcs.xml.dist phpunit.xml.dist # copy the .dist files
+	cp ./.php_cs.dist ./.php-cs-fixer
 	cp ./phpcs.xml.dist ./phpcs.xml
 	cp ./phpunit.xml.dist ./phpunit.xml
 build: compose.yaml ## build docker images

@@ -1,0 +1,111 @@
+<?php
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the Tests package.
+ *
+ * (c) Dev-Int Création <info@developpement-interessant.com>.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+$header = <<<'HEADER'
+This file is part of the Tests package.
+
+(c) Dev-Int Création <info@developpement-interessant.com>.
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+HEADER;
+
+$finder = (new PhpCsFixer\Finder())
+    ->exclude([
+        '.php-cs-fixer.php*',
+        'public',
+        'vendor',
+        'var',
+    ])
+    ->notPath([
+        'config/bundles.php',
+        'src/Infrastructure/Kernel.php',
+        'config/preload.php',
+    ])
+    ->notName('bootstrap.php')
+    ->in([
+        __DIR__ . '/config/',
+        __DIR__ . '/src/',
+        __DIR__ . '/tests/',
+    ])
+;
+
+return (new PhpCsFixer\Config())
+    ->setRules([
+        'header_comment' => [
+            'header' => $header,
+        ],
+        // Enabled rules
+        '@DoctrineAnnotation' => true,
+        '@Symfony' => true,
+        '@Symfony:risky' => true,
+        '@PhpCsFixer' => true,
+        '@PhpCsFixer:risky' => true,
+        '@PHP82Migration' => true,
+        'declare_strict_types' => true,
+        'blank_line_after_opening_tag' => true,
+        'increment_style' => false,
+        'no_trailing_whitespace_in_string' => false,
+        'php_unit_internal_class' => false,
+        'php_unit_test_annotation' => false,
+        'php_unit_test_class_requires_covers' => false,
+        'php_unit_strict' => false,
+        'simplified_null_return' => true,
+        'strict_param' => true,
+        'native_constant_invocation' => true,
+        'native_function_invocation' => true,
+        'phpdoc_types_order' => [
+            'sort_algorithm' => 'alpha',
+            'null_adjustment' => 'always_last',
+        ],
+        'php_unit_test_case_static_method_calls' => [
+            'call_type' => 'static',
+        ],
+        'concat_space' => [
+            'spacing' => 'one',
+        ],
+        'array_syntax' => [
+            'syntax' => 'short',
+        ],
+        'single_quote' => [
+            'strings_containing_single_quote_chars' => true,
+        ],
+        'single_line_empty_body' => false,
+        'void_return' => true,
+        'ordered_class_elements' => [
+            'order' => [
+                'use_trait',
+                'constant_public',
+                'constant_protected',
+                'constant_private',
+                'property_public',
+                'property_protected',
+                'property_private',
+                'method_public_static',
+                'construct',
+                'destruct',
+                'magic',
+                'phpunit',
+                'method_public',
+                'method_protected',
+                'method_private',
+            ],
+        ],
+        'yoda_style' => false,
+    ])
+    ->setRiskyAllowed(true)
+    ->setIndent('    ')
+    ->setLineEnding("\n")
+    ->setUsingCache(true)
+    ->setFinder($finder)
+;

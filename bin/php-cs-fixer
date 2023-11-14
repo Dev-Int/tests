@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+
+set -e
+
+CURRENT_PATH=$(cd `dirname "$0"` && pwd)
+INSTALL_PATH="${CURRENT_PATH}/.php-cs-fixer"
+BIN_PATH="${INSTALL_PATH}/vendor/bin/php-cs-fixer"
+
+if [ ! -f "${BIN_PATH}" ]; then
+  mkdir -p ${INSTALL_PATH}
+  composer require --working-dir="${INSTALL_PATH}" friendsofphp/php-cs-fixer
+fi
+
+exec ${BIN_PATH} "$@"
