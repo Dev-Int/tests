@@ -7,16 +7,22 @@
 
 
 # Setup ————————————————————————————————————————————————————————————————————————
+# Outside docker
 EXEC_PHP      = php
 GIT           = git
 GIT_AUTHOR    = Dev-Int
 SYMFONY       = $(EXEC_PHP) bin/console
 SYMFONY_BIN   = symfony
 COMPOSER      = composer
+
+# Inside docker
+DOCKER_COMP   = docker compose
+PHP_CONT      = $(DOCKER_COMP) exec php
+
 .DEFAULT_GOAL = help
+.PHONY        : help build up start down logs sh vendor composer
 
-
-## —— The Tests Symfony Makefile ———————————————————————————————————————————————
+## —— 🎵 🐳 The Symfony Docker Makefile 🐳 🎵 ——————————————————————————————————
 help: ## Outputs this help screen
 	@grep -E '(^[a-zA-Z0-9_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}{printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
 
@@ -25,22 +31,23 @@ wait: ## Sleep 5 seconds
 
 
 ## —— Composer —————————————————————————————————————————————————————————————————
-install: composer.lock ## Install vendors according to the current composer.lock file
-	$(COMPOSER) install --no-progress --no-suggest --prefer-dist --optimize-autoloader
+composer: ## Run composer, pass the parameter "c=" to run a given command, example: make composer c='req symfony/orm-pack'
+	@$(eval c ?=)
+	@$(COMPOSER) $(c)
 
-update: composer.json ## Update vendors according to the composer.json file
-	$(COMPOSER) update
+vendor: composer.lock ## Install vendors according to the current composer.lock file
+vendor: c=install --prefer-dist --no-dev --no-progress --no-scripts --no-interaction
+vendor: composer
 
 
-## —— Symfony ——————————————————————————————————————————————————————————————————
-sf: ## List all Symfony commands
-	$(SYMFONY)
 
-cc: ## Clear the cache. DID YOU CLEAR YOUR CACHE????
-	$(SYMFONY) c:c
+## —— Symfony 🎵 ———————————————————————————————————————————————————————————————
+sf: ## List all Symfony commands or pass the parameter "c=" to run a given command, example: make sf c=about
+	@$(eval c ?=)
+	@$(SYMFONY) $(c)
 
-warmup: ## Warmup the cache
-	$(SYMFONY) cache:warmup
+cc: c=c:c ## Clear the cache
+cc: sf
 
 fix-perms: ## Fix permissions of all var files
 	chmod -R 777 var/*
@@ -80,13 +87,14 @@ load-fixtures: ## Build the DB, control the schema validity, load fixtures and c
 
 
 ## —— Tests ————————————————————————————————————————————————————————————————————
-test: phpunit.xml ## Launch main functional and unit tests
-	./vendor/bin/phpunit --testsuite=main --stop-on-failure
+tu: phpunit.xml ## Launch unit tests
+	./vendor/bin/phpunit --testsuite=unit --stop-on-failure
 
-test-external: phpunit.xml ## Launch tests implying external resources (API, services...)
-	./vendor/bin/phpunit --testsuite=external --stop-on-failure
 
-test-all: phpunit.xml ## Launch all tests
+tf: phpunit.xml ## Launch functional tests implying external resources (API, services...)
+	./vendor/bin/phpunit --testsuite=functional --stop-on-failure
+
+ta: phpunit.xml ## Launch functional and unit tests
 	./vendor/bin/phpunit --stop-on-failure
 
 
@@ -122,18 +130,37 @@ cs-fix: ## Run php-cs-fixer and fix the code.
 
 
 ## —— Yarn / JavaScript ————————————————————————————————————————————————————————
-dev: ## Rebuild assets for the dev env
+client-dev: ## Rebuild assets for the dev env
 	yarn install
 	yarn run encore dev
 
-watch: ## Watch files and build assets when needed for the dev env
+client-watch: ## Watch files and build assets when needed for the dev env
 	yarn run encore dev --watch
 
-build: ## Build assets for production
+client-build: ## Build assets for production
 	yarn run encore production
 
-lint: ## Lints Js files
+client-lint: ## Lints Js files
 	npx eslint assets/js --fix
+
+
+## —— Docker 🐳 ———————————————————————————————————————————————————————————————————
+init: dist_file build start ## Initialize the project
+
+dist_file: .php_cs.dist phpcs.xml.dist phpunit.xml.dist # copy the .dist files
+	cp ./.php_cs.dist ./.php_cs
+	cp ./phpcs.xml.dist ./phpcs.xml
+	cp ./phpunit.xml.dist ./phpunit.xml
+build: compose.yaml ## build docker images
+	@$(DOCKER_COMP) build --pull --no-cache
+start: ## Start the containers
+	@$(DOCKER_COMP) up --detach
+down: ## Stop the docker hub
+	@$(DOCKER_COMP) down --remove-orphans
+logs: ## Show live logs
+	@$(DOCKER_COMP) logs --tail=0 --follow
+sh: ## Connect to the PHP FPM container
+	@$(PHP_CONT) sh
 
 
 ## —— Stats ————————————————————————————————————————————————————————————————————
