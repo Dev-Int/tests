@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+
+set -e
+
+CURRENT_PATH=$(cd `dirname "$0"` && pwd)
+INSTALL_PATH="${CURRENT_PATH}/.deptrac"
+BIN_PATH="${INSTALL_PATH}/vendor/bin/deptrac"
+
+if [ ! -f "${BIN_PATH}" ]; then
+  mkdir -p ${INSTALL_PATH}
+  composer require --working-dir="${INSTALL_PATH}" qossmic/deptrac-shim:1.0.2
+fi
+
+exec ${BIN_PATH} "$@"

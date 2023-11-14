@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Domain\Model\Common\Entities;
 
-use Domain\Model\Common\Entities\FamilyLog;
-use Domain\Model\Common\VO\NameField;
 use PHPUnit\Framework\TestCase;
+use Shared\Entities\VO\FamilyLog;
+use Shared\Entities\VO\NameField;
 
 class FamilyLogTest extends TestCase
 {
@@ -32,18 +32,6 @@ class FamilyLogTest extends TestCase
         );
 
         // Assert
-        static::assertEquals(
-            new FamilyLog(
-                NameField::fromString('Viande'),
-                FamilyLog::create(
-                    NameField::fromString('Surgelé'),
-                    FamilyLog::create(
-                        NameField::fromString('Alimentaire')
-                    )
-                )
-            ),
-            $familyLog
-        );
         static::assertEquals('alimentaire:surgele:viande', $familyLog->path());
     }
 

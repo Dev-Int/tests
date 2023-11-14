@@ -1,0 +1,11 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+        
+    Article:
+        resource: '%kernel.project_dir%/src/Article/*'
+        exclude: 
+          - '%kernel.project_dir%/src/Article/{Frameworks,Tests,Entities}'
+          - '%kernel.project_dir%/src/Article/UseCases/*/*{Request,Response}.php'

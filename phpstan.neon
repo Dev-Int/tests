@@ -8,6 +8,7 @@ parameters:
         - src/Domain/Model/Common/StringExceeds255Characters.php
         - src/DoctrineMigrations
     bootstrapFiles:
-        - bin/.phpunit/phpunit-8.5-0/vendor/autoload.php
+        - bin/.phpunit/phpunit-9.5-0/vendor/autoload.php
     checkMissingIterableValueType: false
     checkGenericClassInNonGenericObjectType: false
+    treatPhpDocTypesAsCertain: false

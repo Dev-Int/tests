@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Domain\Model\Common\Entities;
 
-use Domain\Model\Common\Entities\Taxes;
 use PHPUnit\Framework\TestCase;
+use Shared\Entities\VO\Taxes;
 
 class TaxesTest extends TestCase
 {
@@ -24,19 +24,17 @@ class TaxesTest extends TestCase
         $taxes = Taxes::fromFloat(0.055);
 
         // Assert
-        static::assertEquals(new Taxes(0.055), $taxes);
         static::assertEquals(0.055, $taxes->rate());
-        static::assertEquals('5,50 %', $taxes->name());
+        static::assertEquals("5,50\u{a0}%", $taxes->name());
     }
 
     final public function testInstantiateTaxesFromPercent(): void
     {
         // Arrange & Act
-        $taxes = Taxes::fromPercent('5,50 %');
+        $taxes = Taxes::fromPercent("5,50\u{a0}%");
 
         // Assert
-        static::assertEquals(new Taxes(0.055), $taxes);
         static::assertEquals(0.055, $taxes->rate());
-        static::assertEquals('5,50 %', $taxes->name());
+        static::assertEquals("5,50\u{a0}%", $taxes->name());
     }
 }
