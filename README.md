@@ -30,10 +30,42 @@ clone the repo at first
 git clone https://github.com/Dev-Int/tests.git
 ```
 And then install dependencies
+
+1. with docker
+```shell
+make init
 ```
+2. with php installed
+```shell
 composer install
+```
+
+## Use
+
+After init, you can start the project with this command:
+```shell
+make start
+```
+To know all you can do with the Makefile, just run:
+```shell
+make
 ```
 
 ## Licence
 
 [MIT](https://choosealicense.com/licenses/mit/)
+
+## All docs to use docker installation
+
+1. [Build options](docs/docker/build.md)
+2. [Using Symfony Docker with an existing project](docs/docker/existing-project.md)
+3. [Support for extra services](docs/docker/extra-services.md)
+4. [Deploying in production](docs/docker/production.md)
+5. [Debugging with Xdebug](docs/docker/xdebug.md)
+6. [TLS Certificates](docs/docker/tls.md)
+7. [Using a Makefile](docs/docker/makefile.md)
+8. [Troubleshooting](docs/docker/troubleshooting.md)
+
+## Docs for the project
+
+[The doc](docs/index.md)
