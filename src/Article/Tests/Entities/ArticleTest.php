@@ -25,9 +25,12 @@ use Shared\Entities\VO\NameField;
 use Shared\Entities\VO\PhoneField;
 use Shared\Entities\VO\Taxes;
 
-class ArticleTest extends TestCase
+/**
+ * @group unitTest
+ */
+final class ArticleTest extends TestCase
 {
-    final public function testInstantiateArticle(): void
+    public function testInstantiateArticle(): void
     {
         // Arrange && Act
         $article = Article::create(
@@ -47,16 +50,16 @@ class ArticleTest extends TestCase
         );
 
         // Assert
-        static::assertEquals('e5b6c68b-23d0-4e4e-ad5e-436c649da004', $article->uuid()->toString());
-        static::assertEquals('Jambon Trad 6kg', $article->name()->getValue());
-        static::assertEquals('Davigel', $article->supplier()->name()->getValue());
-        static::assertEquals(['colis', 1.0], $article->packaging()->parcel());
-        static::assertEquals(6.82, $article->price());
-        static::assertEquals("5,50\u{a0}%", $article->taxes()->name());
-        static::assertSame(8.800, $article->minStock());
+        self::assertEquals('e5b6c68b-23d0-4e4e-ad5e-436c649da004', $article->uuid()->toString());
+        self::assertEquals('Jambon Trad 6kg', $article->name()->getValue());
+        self::assertEquals('Davigel', $article->supplier()->name()->getValue());
+        self::assertEquals(['colis', 1.0], $article->packaging()->parcel());
+        self::assertEquals(6.82, $article->price());
+        self::assertEquals("5,50\u{a0}%", $article->taxes()->name());
+        self::assertSame(8.800, $article->minStock());
     }
 
-    final public function testRenameArticle(): void
+    public function testRenameArticle(): void
     {
         // Arrange
         $article = Article::create(
@@ -78,7 +81,7 @@ class ArticleTest extends TestCase
         $article->renameArticle(NameField::fromString('Jambon Tradition 6kg'));
 
         // Assert
-        static::assertEquals('Jambon Tradition 6kg', $article->name()->getValue());
+        self::assertEquals('Jambon Tradition 6kg', $article->name()->getValue());
     }
 
     private function getZoneStorage(): ZoneStorage

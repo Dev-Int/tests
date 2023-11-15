@@ -49,11 +49,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Article\\": "src/Article",
             "Shared\\": "src/Shared",
-            "Application\\": "src/Application/",
-            "Domain\\": "src/Domain/",
-            "Infrastructure\\": "src/Infrastructure/"
+            "Article\\": "src/Article"
         }
     },
     "autoload-dev": {
@@ -76,8 +73,8 @@
         "auto-scripts": [
         ],
         "tests": "php bin/phpunit",
-        "phpcs": "php ./vendor/bin/phpcs",
-        "phpstan": "php ./vendor/bin/phpstan analyse",
+        "phpcs": "php ./vendor/bin/phpcs --standard=phpcs.xml.dist -n -p src/",
+        "phpstan": "php ./vendor/bin/phpstan analyse -c phpstan.neon --memory-limit 1G",
         "post-install-cmd": [
             "@auto-scripts"
         ],

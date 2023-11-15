@@ -3,12 +3,12 @@ parameters:
     paths:
         - src
         - tests
-    excludes_analyse:
+    excludePaths:
         - tests/bootstrap.php
         - src/Domain/Model/Common/StringExceeds255Characters.php
         - src/DoctrineMigrations
     bootstrapFiles:
-        - bin/.phpunit/phpunit-9.5-0/vendor/autoload.php
+        - vendor/autoload.php
     checkMissingIterableValueType: false
     checkGenericClassInNonGenericObjectType: false
     treatPhpDocTypesAsCertain: false

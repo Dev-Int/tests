@@ -18,6 +18,7 @@ use Shared\Entities\Exception\ExceptionSerializableTrait;
 final class InvalidPackageException extends \DomainException implements \JsonSerializable
 {
     use ExceptionSerializableTrait;
+
     public const MESSAGE = 'The first element of Packaging cannot be null.';
 
     public function __construct(?\Throwable $previous = null)

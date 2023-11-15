@@ -16,6 +16,9 @@ namespace Article\Tests\Entities\VO;
 use Article\Entities\VO\Packaging;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @group unitTest
+ */
 final class PackagingTest extends TestCase
 {
     public function testDistributeTheSubdivision(): void

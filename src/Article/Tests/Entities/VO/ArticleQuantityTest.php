@@ -17,6 +17,9 @@ use Article\Entities\Exception\NegativeValueException;
 use Article\Entities\VO\ArticleQuantity;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @group unitTest
+ */
 final class ArticleQuantityTest extends TestCase
 {
     public function testInstantiateArticleQuantity(): void

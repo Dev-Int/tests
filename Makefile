@@ -20,7 +20,7 @@ DOCKER_COMP   = docker compose
 PHP_CONT      = $(DOCKER_COMP) exec php
 
 .DEFAULT_GOAL = help
-.PHONY        : help build up start down logs sh vendor composer
+.PHONY        : help build up up down logs sh vendor composer
 
 ## —— 🎵 🐳 The Symfony Docker Makefile 🐳 🎵 ——————————————————————————————————
 help: ## Outputs this help screen
@@ -88,23 +88,23 @@ load-fixtures: ## Build the DB, control the schema validity, load fixtures and c
 
 ## —— Tests ————————————————————————————————————————————————————————————————————
 tu: phpunit.xml ## Launch unit tests
-	./vendor/bin/phpunit --testsuite=unit --stop-on-failure
+	php bin/phpunit --group=unitTest --stop-on-failure
 
 
 tf: phpunit.xml ## Launch functional tests implying external resources (API, services...)
-	./vendor/bin/phpunit --testsuite=functional --stop-on-failure
+	php bin/phpunit --group=functionalTest --stop-on-failure
 
 ta: phpunit.xml ## Launch functional and unit tests
-	./vendor/bin/phpunit --stop-on-failure
+	php bin/phpunit --stop-on-failure
 
 
 ## —— Coding standards ✨ ——————————————————————————————————————————————————————
-qa: codesniffer stan cs-fixer # lint ## Launch all static analysis tools
+qa: phpcs stan cs-fixer # lint ## Launch all static analysis tools
 	#$(SYMFONY) lint:yaml config
 	bin/deptrac analyse --config-file=deptrac.yaml
 
-codesniffer: ## Run php_codesniffer only
-	./vendor/squizlabs/php_codesniffer/bin/phpcs --standard=phpcs.xml -n -p src/
+phpcs: ## Run php_codesniffer
+	php ./vendor/bin/phpcs --standard=phpcs.xml -n -p src/
 
 cs-fixer: ## Run php-cs-fixer
 	bin/php-cs-fixer fix --diff --verbose
@@ -147,15 +147,15 @@ client-lint: ## Lints Js files
 
 
 ## —— Docker 🐳 ———————————————————————————————————————————————————————————————————
-init: dist_file build start ## Initialize the project
+init: dist_file build up ## Initialize the project
 
 dist_file: .php-cs-fixer.php.dist phpcs.xml.dist phpunit.xml.dist # copy the .dist files
-	cp ./.php_cs.dist ./.php-cs-fixer
+	cp ./.php-cs-fixer.php.dist ./.php-cs-fixer.php
 	cp ./phpcs.xml.dist ./phpcs.xml
 	cp ./phpunit.xml.dist ./phpunit.xml
 build: compose.yaml ## build docker images
 	@$(DOCKER_COMP) build --pull --no-cache
-start: ## Start the containers
+up: ## Start the containers
 	@$(DOCKER_COMP) up --detach
 down: ## Stop the docker hub
 	@$(DOCKER_COMP) down --remove-orphans

@@ -17,6 +17,9 @@ use Article\Entities\Component\ZoneStorage;
 use PHPUnit\Framework\TestCase;
 use Shared\Entities\VO\NameField;
 
+/**
+ * @group unitTest
+ */
 final class ZoneStorageTest extends TestCase
 {
     public function testInstantiateZoneStorage(): void

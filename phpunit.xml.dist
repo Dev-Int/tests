@@ -36,8 +36,8 @@
     </php>
 
     <testsuites>
-        <testsuite name="Project Test Suite">
-            <directory>tests</directory>
+        <testsuite name="Modules">
+            <directory>src/**/Tests</directory>
         </testsuite>
     </testsuites>
 

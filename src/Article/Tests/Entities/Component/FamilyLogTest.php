@@ -11,15 +11,18 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Tests\Unit\Domain\Model\Common\Entities;
+namespace Article\Tests\Entities\Component;
 
 use PHPUnit\Framework\TestCase;
 use Shared\Entities\VO\FamilyLog;
 use Shared\Entities\VO\NameField;
 
-class FamilyLogTest extends TestCase
+/**
+ * @group unitTest
+ */
+final class FamilyLogTest extends TestCase
 {
-    final public function testInstantiateFamilyLog(): void
+    public function testInstantiateFamilyLog(): void
     {
         // Arrange & Act
         $surgele = FamilyLog::create(
@@ -32,10 +35,10 @@ class FamilyLogTest extends TestCase
         );
 
         // Assert
-        static::assertEquals('alimentaire:surgele:viande', $familyLog->path());
+        self::assertEquals('alimentaire:surgele:viande', $familyLog->path());
     }
 
-    final public function testGetTreeFamilyLog(): void
+    public function testGetTreeFamilyLog(): void
     {
         // Arrange
         $alimentaire = FamilyLog::create(
@@ -58,7 +61,7 @@ class FamilyLogTest extends TestCase
         $tree = $alimentaire->parseTree();
 
         // Assert
-        static::assertEquals(
+        self::assertEquals(
             [
                 'Alimentaire' => [
                     'Surgelé' => [

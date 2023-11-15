@@ -11,7 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Tests\Unit\Domain\Model\Supplier;
+namespace Article\Tests\Entities\Component;
 
 use Article\Entities\Component\Supplier;
 use PHPUnit\Framework\TestCase;
@@ -21,9 +21,12 @@ use Shared\Entities\VO\FamilyLog;
 use Shared\Entities\VO\NameField;
 use Shared\Entities\VO\PhoneField;
 
-class SupplierTest extends TestCase
+/**
+ * @group unitTest
+ */
+final class SupplierTest extends TestCase
 {
-    final public function testInstantiateSupplier(): void
+    public function testInstantiateSupplier(): void
     {
         // Arrange & Act
         $supplier = Supplier::create(
@@ -44,16 +47,16 @@ class SupplierTest extends TestCase
         );
 
         // Assert
-        static::assertSame('a136c6fe-8f6e-45ed-91bc-586374791033', $supplier->uuid()->toString());
-        static::assertSame('Davigel', $supplier->name()->getValue());
-        static::assertSame("15, rue des givrés\n75000 Paris, France", $supplier->address()->getFullAddress());
-        static::assertSame('+33100000001', $supplier->phone()->getValue());
-        static::assertSame('+33100000002', $supplier->facsimile()->getValue());
-        static::assertSame('contact@davigel.fr', $supplier->email()->getValue());
-        static::assertSame('David', $supplier->contact());
-        static::assertSame('+33600000001', $supplier->cellphone()->getValue());
-        static::assertSame('surgele', $supplier->familyLog()->path());
-        static::assertSame(3, $supplier->delayDelivery());
-        static::assertSame([1, 3], $supplier->orderDays());
+        self::assertSame('a136c6fe-8f6e-45ed-91bc-586374791033', $supplier->uuid()->toString());
+        self::assertSame('Davigel', $supplier->name()->getValue());
+        self::assertSame("15, rue des givrés\n75000 Paris, France", $supplier->address()->getFullAddress());
+        self::assertSame('+33100000001', $supplier->phone()->getValue());
+        self::assertSame('+33100000002', $supplier->facsimile()->getValue());
+        self::assertSame('contact@davigel.fr', $supplier->email()->getValue());
+        self::assertSame('David', $supplier->contact());
+        self::assertSame('+33600000001', $supplier->cellphone()->getValue());
+        self::assertSame('surgele', $supplier->familyLog()->path());
+        self::assertSame(3, $supplier->delayDelivery());
+        self::assertSame([1, 3], $supplier->orderDays());
     }
 }
