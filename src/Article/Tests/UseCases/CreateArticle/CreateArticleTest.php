@@ -25,7 +25,7 @@ use Article\UseCases\Gateway\ZoneStorageRepository;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @group UnitTest
+ * @group unitTest
  */
 final class CreateArticleTest extends TestCase
 {

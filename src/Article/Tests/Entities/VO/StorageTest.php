@@ -16,6 +16,9 @@ namespace Article\Tests\Entities\VO;
 use Article\Entities\VO\Storage;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @group unitTest
+ */
 final class StorageTest extends TestCase
 {
     public function testInstantiateStorage(): void

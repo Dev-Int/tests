@@ -28,13 +28,13 @@ $finder = (new PhpCsFixer\Finder())
         'var',
     ])
     ->notPath([
-        'config/bundles.php',
-        'src/Infrastructure/Kernel.php',
-        'config/preload.php',
+        'src/Shared/Kernel.php',
     ])
-    ->notName('bootstrap.php')
+    ->notName([
+        'bootstrap.php',
+        'Kernel.php'
+    ])
     ->in([
-        __DIR__ . '/config/',
         __DIR__ . '/src/',
         __DIR__ . '/tests/',
     ])
