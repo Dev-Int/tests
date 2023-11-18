@@ -17,7 +17,7 @@ use Shared\Entities\VO\NameField;
 
 final class ZoneStorage
 {
-    private string $name;
+    private NameField $name;
     private string $slug;
 
     public static function create(NameField $name): self
@@ -25,19 +25,19 @@ final class ZoneStorage
         return new self($name);
     }
 
-    public function __construct(NameField $name)
+    private function __construct(NameField $name)
     {
-        $this->name = $name->getValue();
+        $this->name = $name;
         $this->slug = $name->slugify();
     }
 
     public function renameZone(NameField $name): void
     {
-        $this->name = $name->getValue();
+        $this->name = $name;
         $this->slug = $name->slugify();
     }
 
-    public function name(): string
+    public function name(): NameField
     {
         return $this->name;
     }

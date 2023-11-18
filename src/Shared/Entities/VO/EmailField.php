@@ -15,24 +15,21 @@ namespace Shared\Entities\VO;
 
 use Shared\Entities\Exception\InvalidEmail;
 
-final class EmailField
+final readonly class EmailField
 {
-    private string $email;
-
     public static function fromString(string $email): self
     {
         return new self($email);
     }
 
-    private function __construct(string $email)
+    private function __construct(private string $email)
     {
         if (filter_var($email, \FILTER_VALIDATE_EMAIL) === false) {
-            throw new InvalidEmail();
+            throw new InvalidEmail($this->email);
         }
-        $this->email = $email;
     }
 
-    public function getValue(): string
+    public function toString(): string
     {
         return $this->email;
     }

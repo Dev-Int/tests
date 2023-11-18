@@ -27,9 +27,8 @@ final class StorageTest extends TestCase
         $storage = Storage::fromArray(['Colis', 1]);
 
         // Assert
-        self::assertEquals(
-            new Storage('colis', 1),
-            $storage
-        );
+        self::assertSame(['colis', 1.0], $storage->toArray());
+        self::assertSame('colis', $storage->unit());
+        self::assertSame(1.0, $storage->quantity());
     }
 }

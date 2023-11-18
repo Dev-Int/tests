@@ -17,7 +17,6 @@ use Shared\Entities\Exception\InvalidRateFormatException;
 
 final class Taxes
 {
-    private float $rate;
     private string $name;
 
     public static function fromFloat(float $rate): self
@@ -33,7 +32,7 @@ final class Taxes
         return new self((float) $float);
     }
 
-    private function __construct(float $rate)
+    private function __construct(private float $rate)
     {
         $fmtPercent = new \NumberFormatter('fr_FR', \NumberFormatter::PERCENT);
         $fmtPercent->setAttribute($fmtPercent::FRACTION_DIGITS, 2);
@@ -41,7 +40,7 @@ final class Taxes
         $this->rate = $rate / 100;
 
         $fraction = explode('.', (string) $rate);
-        if (\strlen($fraction[1]) > 2) {
+        if (isset($fraction[1]) && \strlen($fraction[1]) > 2) {
             $this->rate = $rate;
         }
 

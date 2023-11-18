@@ -15,6 +15,8 @@ namespace Article\Entities;
 
 use Article\Entities\Component\Supplier;
 use Article\Entities\Component\ZoneStorage;
+use Article\Entities\Component\ZoneStorageCollection;
+use Article\Entities\VO\Amount;
 use Article\Entities\VO\ArticleQuantity;
 use Article\Entities\VO\Packaging;
 use Shared\Entities\ResourceUuidInterface;
@@ -34,7 +36,7 @@ final class Article
         NameField $name,
         Supplier $supplier,
         Packaging $packaging,
-        float $price,
+        Amount $price,
         Taxes $taxes,
         float $minStock,
         array $zoneStorages,
@@ -45,6 +47,10 @@ final class Article
         if (null === $active) {
             $active = true;
         }
+        $storages = new ZoneStorageCollection();
+        foreach ($zoneStorages as $zoneStorage) {
+            $storages->add($zoneStorage);
+        }
 
         return new self(
             $uuid,
@@ -54,25 +60,22 @@ final class Article
             $price,
             $taxes,
             $minStock,
-            $zoneStorages,
+            $storages,
             $familyLog,
             ArticleQuantity::fromFloat($quantity),
             $active
         );
     }
 
-    /**
-     * @param array<ZoneStorage> $zoneStorages
-     */
     private function __construct(
         private readonly ResourceUuidInterface $uuid,
         private NameField $name,
         private readonly Supplier $supplier,
         private readonly Packaging $packaging,
-        private readonly float $price,
+        private readonly Amount $price,
         private readonly Taxes $taxes,
         private readonly float $minStock,
-        private readonly array $zoneStorages,
+        private readonly ZoneStorageCollection $zoneStorages,
         private readonly FamilyLog $familyLog,
         private readonly ArticleQuantity $quantity,
         private readonly bool $active
@@ -100,7 +103,7 @@ final class Article
         return $this->packaging;
     }
 
-    public function price(): float
+    public function price(): Amount
     {
         return $this->price;
     }
@@ -120,10 +123,7 @@ final class Article
         return $this->minStock;
     }
 
-    /**
-     * @return array<ZoneStorage>
-     */
-    public function zoneStorages(): array
+    public function zoneStorages(): ZoneStorageCollection
     {
         return $this->zoneStorages;
     }

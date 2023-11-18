@@ -18,23 +18,19 @@ use Shared\Entities\Exception\StringExceeds255Characters;
 
 final class NameField
 {
-    private string $name;
-
     public static function fromString(string $name): self
     {
         return new self($name);
     }
 
-    private function __construct(string $name)
+    private function __construct(private readonly string $name)
     {
         if (\strlen($name) > 255) {
-            throw new StringExceeds255Characters();
+            throw new StringExceeds255Characters($this->name);
         }
-
-        $this->name = $name;
     }
 
-    public function getValue(): string
+    public function toString(): string
     {
         return $this->name;
     }

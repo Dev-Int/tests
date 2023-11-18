@@ -25,22 +25,23 @@ final class FamilyLogTest extends TestCase
     public function testInstantiateFamilyLog(): void
     {
         // Arrange & Act
-        $surgele = FamilyLog::create(
+        $parent = FamilyLog::create(
             NameField::fromString('Surgelé'),
             FamilyLog::create(NameField::fromString('Alimentaire'))
         );
         $familyLog = FamilyLog::create(
             NameField::fromString('Viande'),
-            $surgele
+            $parent
         );
 
         // Assert
-        self::assertEquals('alimentaire:surgele:viande', $familyLog->path());
+        self::assertSame('alimentaire:surgele:viande', $familyLog->path());
+        self::assertSame('Viande', $familyLog->name()->toString());
     }
 
     public function testGetTreeFamilyLog(): void
     {
-        // Arrange
+        // Arrange && Act
         $alimentaire = FamilyLog::create(
             NameField::fromString('Alimentaire')
         );
@@ -57,11 +58,8 @@ final class FamilyLogTest extends TestCase
             $surgele
         );
 
-        // Act
-        $tree = $alimentaire->parseTree();
-
         // Assert
-        self::assertEquals(
+        self::assertSame(
             [
                 'Alimentaire' => [
                     'Surgelé' => [
@@ -70,7 +68,7 @@ final class FamilyLogTest extends TestCase
                     'Frais',
                 ],
             ],
-            $tree
+            $alimentaire->parseTree()
         );
     }
 }

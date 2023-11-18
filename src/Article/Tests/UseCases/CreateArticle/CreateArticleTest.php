@@ -23,6 +23,7 @@ use Article\UseCases\Gateway\FamilyLogRepository;
 use Article\UseCases\Gateway\SupplierRepository;
 use Article\UseCases\Gateway\ZoneStorageRepository;
 use PHPUnit\Framework\TestCase;
+use Shared\Entities\VO\FamilyLog;
 
 /**
  * @group unitTest
@@ -83,7 +84,19 @@ final class CreateArticleTest extends TestCase
         $article = $useCase->__invoke($request);
 
         // Assert
-        self::assertSame('Jambon Trad 6kg', $article->name()->getValue());
-        self::assertSame(12.250, $article->quantity()->getValue());
+        self::assertSame('Jambon Trad 6kg', $article->name()->toString());
+        self::assertSame('Davigel', $article->supplier()->name()->toString());
+        self::assertSame(['colis', 1.0], $article->packaging()->parcel());
+        self::assertSame(25.50, $article->price()->toFloat());
+        self::assertSame(2550, $article->price()->toInt());
+        self::assertSame(0.055, $article->taxes()->rate());
+        self::assertSame("5,50\u{a0}%", $article->taxes()->name());
+        self::assertSame(8.000, $article->minStock());
+        self::assertSame('reserve-positive', $article->zoneStorages()->current()->slug());
+        self::assertSame('Viande', $article->familyLog()->name()->toString());
+        $parent = $article->familyLog()->parent();
+        self::assertInstanceOf(FamilyLog::class, $parent);
+        self::assertSame('Frais', $parent->name()->toString());
+        self::assertSame(12.250, $article->quantity()->toFloat());
     }
 }

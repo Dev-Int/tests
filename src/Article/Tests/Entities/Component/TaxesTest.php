@@ -21,7 +21,7 @@ use Shared\Entities\VO\Taxes;
  */
 final class TaxesTest extends TestCase
 {
-    public function testInstantiateTaxesFromFloat(): void
+    public function testInstantiateTaxesFromFloatCalculated(): void
     {
         // Arrange & Act
         $taxes = Taxes::fromFloat(0.055);
@@ -29,6 +29,16 @@ final class TaxesTest extends TestCase
         // Assert
         self::assertEquals(0.055, $taxes->rate());
         self::assertEquals("5,50\u{a0}%", $taxes->name());
+    }
+
+    public function testInstantiateTaxesFromSimpleFloat(): void
+    {
+        // Arrange && Act
+        $taxes = Taxes::fromFloat(20.5);
+
+        // Assert
+        self::assertSame(0.205, $taxes->rate());
+        self::assertEquals("20,50\u{a0}%", $taxes->name());
     }
 
     public function testInstantiateTaxesFromPercent(): void

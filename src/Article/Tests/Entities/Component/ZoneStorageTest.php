@@ -28,10 +28,8 @@ final class ZoneStorageTest extends TestCase
         $zone = ZoneStorage::create(NameField::fromString('Réserve positive'));
 
         // Assert
-        self::assertEquals(
-            new ZoneStorage(NameField::fromString('Réserve positive')),
-            $zone
-        );
+        self::assertSame('Réserve positive', $zone->name()->toString());
+        self::assertSame('reserve-positive', $zone->slug());
     }
 
     public function testRenameZone(): void
@@ -43,9 +41,7 @@ final class ZoneStorageTest extends TestCase
         $zone->renameZone(NameField::fromString('Réserve négative'));
 
         // Assert
-        self::assertEquals(
-            new ZoneStorage(NameField::fromString('Réserve négative')),
-            $zone
-        );
+        self::assertSame('Réserve négative', $zone->name()->toString());
+        self::assertSame('reserve-negative', $zone->slug());
     }
 }

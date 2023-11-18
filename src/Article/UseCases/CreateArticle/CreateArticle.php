@@ -15,6 +15,7 @@ namespace Article\UseCases\CreateArticle;
 
 use Article\Entities\Article;
 use Article\Entities\Exception\ArticleAlreadyExistsException;
+use Article\Entities\VO\Amount;
 use Article\Entities\VO\Packaging;
 use Article\UseCases\Gateway\ArticleRepository;
 use Article\UseCases\Gateway\FamilyLogRepository;
@@ -48,7 +49,7 @@ final class CreateArticle
             NameField::fromString($request->name()),
             $supplier,
             Packaging::fromArray($request->packaging()),
-            $request->price(),
+            Amount::fromFloat($request->price()),
             Taxes::fromFloat($request->taxes()),
             $request->minStock(),
             $zoneStorages,

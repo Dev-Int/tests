@@ -15,9 +15,6 @@ namespace Shared\Entities\VO;
 
 final class FamilyLog
 {
-    private NameField $name;
-    private ?FamilyLog $parent = null;
-
     /**
      * @var array<FamilyLog>|null
      */
@@ -30,9 +27,8 @@ final class FamilyLog
         return new self($name, $parent);
     }
 
-    private function __construct(NameField $name, ?self $parent = null)
+    private function __construct(private readonly NameField $name, private ?self $parent = null)
     {
-        $this->name = $name;
         $this->path = $name->slugify();
         $this->slug = $name->slugify();
 
@@ -45,6 +41,11 @@ final class FamilyLog
                 $this->path = $this->parent->parent->slug() . ':' . $this->parent->slug() . ':' . $name->slugify();
             }
         }
+    }
+
+    public function name(): NameField
+    {
+        return $this->name;
     }
 
     public function parent(): ?self
@@ -66,18 +67,18 @@ final class FamilyLog
     {
         $arrayChildren = [];
         if (null === $this->children) {
-            return [$this->name->getValue() => $arrayChildren];
+            return [$this->name->toString() => $arrayChildren];
         }
 
         foreach ($this->children as $child) {
             if (null !== $this->hasChildren($child)) {
-                $arrayChildren[$child->name->getValue()] = $this->hasChildren($child);
+                $arrayChildren[$child->name->toString()] = $this->hasChildren($child);
             } else {
-                $arrayChildren[] = $child->name->getValue();
+                $arrayChildren[] = $child->name->toString();
             }
         }
 
-        return [$this->name->getValue() => $arrayChildren];
+        return [$this->name->toString() => $arrayChildren];
     }
 
     /**
@@ -87,7 +88,7 @@ final class FamilyLog
     {
         if (null !== $familyLog->children) {
             return array_map(static function ($child) {
-                return $child->name->getValue();
+                return $child->name->toString();
             }, $familyLog->children);
         }
 

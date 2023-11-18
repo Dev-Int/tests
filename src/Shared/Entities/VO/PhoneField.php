@@ -17,31 +17,29 @@ use Shared\Entities\Exception\InvalidPhone;
 
 final class PhoneField
 {
-    private string $phone;
-
-    public static function fromString(string $phone): self
+    public static function fromString(string $phoneNumber): self
     {
-        return new self($phone);
+        return new self($phoneNumber);
     }
 
-    private function __construct(string $phone)
+    private function __construct(private string $phoneNumber)
     {
-        if (false === filter_var($phone, \FILTER_SANITIZE_NUMBER_INT)) {
-            throw new InvalidPhone();
+        if (false === filter_var($phoneNumber, \FILTER_SANITIZE_NUMBER_INT)) {
+            throw new InvalidPhone($this->phoneNumber);
         }
 
-        $phoneSanitized = filter_var($phone, \FILTER_SANITIZE_NUMBER_INT);
+        $phoneSanitized = filter_var($phoneNumber, \FILTER_SANITIZE_NUMBER_INT);
         $phoneToCheck = str_replace('-', '', $phoneSanitized);
 
         if (10 > \strlen($phoneToCheck) || \strlen($phoneToCheck) > 14) {
-            throw new InvalidPhone();
+            throw new InvalidPhone($this->phoneNumber);
         }
 
-        $this->phone = $phoneSanitized;
+        $this->phoneNumber = $phoneSanitized;
     }
 
-    public function getValue(): string
+    public function toNumber(): string
     {
-        return $this->phone;
+        return $this->phoneNumber;
     }
 }

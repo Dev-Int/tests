@@ -13,24 +13,19 @@ declare(strict_types=1);
 
 namespace Shared\Entities\VO;
 
-final class ContactAddress
+final readonly class ContactAddress
 {
-    private string $address;
-    private string $zipCode;
-    private string $town;
-    private string $country;
-
     public static function fromString(string $address, string $zipCode, string $town, string $country): self
     {
         return new self($address, $zipCode, $town, $country);
     }
 
-    private function __construct(string $address, string $zipCode, string $town, string $country)
-    {
-        $this->address = $address;
-        $this->zipCode = $zipCode;
-        $this->town = $town;
-        $this->country = $country;
+    private function __construct(
+        private string $address,
+        private string $zipCode,
+        private string $town,
+        private string $country
+    ) {
     }
 
     public function address(): string
