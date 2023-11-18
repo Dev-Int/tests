@@ -17,21 +17,21 @@ use PHPUnit\Framework\TestCase;
 use Shared\Entities\Exception\InvalidPhone;
 use Shared\Entities\VO\PhoneField;
 
-class PhoneFieldTest extends TestCase
+/**
+ * @group unitTest
+ */
+final class PhoneFieldTest extends TestCase
 {
-    final public function testInstantiatePhoneNumber(): void
+    public function testInstantiatePhoneNumber(): void
     {
         // Arrange & Act
         $phone = PhoneField::fromString('+33179923223');
 
         // Assert
-        static::assertEquals(
-            '+33179923223',
-            $phone->getValue()
-        );
+        self::assertSame('+33179923223', $phone->toNumber());
     }
 
-    final public function testCreateWithInvalidStringThrowADomainException(): void
+    public function testCreateWithInvalidStringThrowADomainException(): void
     {
         // Arrange
         $this->expectException(InvalidPhone::class);

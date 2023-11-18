@@ -22,19 +22,7 @@ use Shared\Entities\VO\PhoneField;
 
 final class Supplier
 {
-    private ResourceUuid $uuid;
-    private NameField $name;
-    private ContactAddress $address;
-    private PhoneField $phone;
-    private PhoneField $facsimile;
-    private EmailField $email;
-    private string $contact;
-    private PhoneField $cellphone;
     private string $slug;
-    private FamilyLog $familyLog;
-    private int $delayDelivery;
-    private array $orderDays;
-    private bool $active;
 
     /**
      * @param array<int> $orderDays
@@ -72,33 +60,24 @@ final class Supplier
         );
     }
 
+    /**
+     * @param array<int> $orderDays
+     */
     private function __construct(
-        ResourceUuid $uuid,
-        NameField $name,
-        ContactAddress $address,
-        PhoneField $phone,
-        PhoneField $facsimile,
-        EmailField $email,
-        string $contact,
-        PhoneField $cellphone,
-        FamilyLog $familyLog,
-        int $delayDeliv,
-        array $orderDays,
-        bool $active = true
+        private readonly ResourceUuid $uuid,
+        private readonly NameField $name,
+        private readonly ContactAddress $address,
+        private readonly PhoneField $phone,
+        private readonly PhoneField $facsimile,
+        private readonly EmailField $email,
+        private readonly string $contact,
+        private readonly PhoneField $cellphone,
+        private readonly FamilyLog $familyLog,
+        private readonly int $delayDelivery,
+        private readonly array $orderDays,
+        private readonly bool $active = true
     ) {
-        $this->uuid = $uuid;
-        $this->name = $name;
-        $this->address = $address;
-        $this->phone = $phone;
-        $this->facsimile = $facsimile;
-        $this->email = $email;
-        $this->contact = $contact;
-        $this->cellphone = $cellphone;
-        $this->familyLog = $familyLog;
-        $this->delayDelivery = $delayDeliv;
-        $this->orderDays = $orderDays;
         $this->slug = $name->slugify();
-        $this->active = $active;
     }
 
     public function uuid(): ResourceUuid

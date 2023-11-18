@@ -15,6 +15,8 @@ namespace Article\UseCases\CreateArticle;
 
 use Article\Entities\Article;
 use Article\Entities\Component\Supplier;
+use Article\Entities\Component\ZoneStorageCollection;
+use Article\Entities\VO\Amount;
 use Article\Entities\VO\ArticleQuantity;
 use Article\Entities\VO\Packaging;
 use Shared\Entities\ResourceUuidInterface;
@@ -22,7 +24,7 @@ use Shared\Entities\VO\FamilyLog;
 use Shared\Entities\VO\NameField;
 use Shared\Entities\VO\Taxes;
 
-final class CreateArticleResponse
+final readonly class CreateArticleResponse
 {
     public static function create(Article $article): self
     {
@@ -43,18 +45,18 @@ final class CreateArticleResponse
     }
 
     private function __construct(
-        private readonly ResourceUuidInterface $uuid,
-        private readonly NameField $name,
-        private readonly Supplier $supplier,
-        private readonly Packaging $packaging,
-        private readonly float $price,
-        private readonly Taxes $taxes,
-        private readonly float $minStock,
-        private readonly array $zoneStorages,
-        private readonly FamilyLog $familyLog,
-        private readonly ArticleQuantity $quantity,
-        private readonly bool $active,
-        private readonly string $slug
+        private ResourceUuidInterface $uuid,
+        private NameField $name,
+        private Supplier $supplier,
+        private Packaging $packaging,
+        private Amount $price,
+        private Taxes $taxes,
+        private float $minStock,
+        private ZoneStorageCollection $zoneStorages,
+        private FamilyLog $familyLog,
+        private ArticleQuantity $quantity,
+        private bool $active,
+        private string $slug
     ) {
     }
 
@@ -78,7 +80,7 @@ final class CreateArticleResponse
         return $this->packaging;
     }
 
-    public function price(): float
+    public function price(): Amount
     {
         return $this->price;
     }
@@ -93,7 +95,7 @@ final class CreateArticleResponse
         return $this->minStock;
     }
 
-    public function zoneStorages(): array
+    public function zoneStorages(): ZoneStorageCollection
     {
         return $this->zoneStorages;
     }

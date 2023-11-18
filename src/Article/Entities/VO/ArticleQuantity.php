@@ -22,16 +22,24 @@ final class ArticleQuantity
         if (null !== $quantity && $quantity < 0.0) {
             throw new NegativeValueException($quantity);
         }
+        if ($quantity === null) {
+            $quantity = 0.0;
+        }
 
-        return new self($quantity ?? 0.000);
+        return new self((int) (round($quantity, 3) * 1000));
     }
 
-    private function __construct(private readonly float $value)
+    private function __construct(private readonly int $value)
     {
     }
 
-    public function getValue(): float
+    public function toInt(): int
     {
-        return round($this->value, 3);
+        return $this->value;
+    }
+
+    public function toFloat(): float
+    {
+        return round($this->value / 1000, 3);
     }
 }

@@ -15,10 +15,22 @@ namespace Shared\Entities\Exception;
 
 final class StringExceeds255Characters extends \DomainException
 {
-    public const MESSAGE = 'Le titre est trop long. Vous ne devriez pas excéder 255 caractères';
+    use ExceptionSerializableTrait;
 
-    public function __construct(?\Throwable $previous = null)
+    public const MESSAGE = 'Le texte saisie ne devrait pas excéder 255 caractères';
+
+    public function __construct(private readonly string $text, ?\Throwable $previous = null)
     {
         parent::__construct(self::MESSAGE, 400, $previous);
+    }
+
+    /**
+     * @return iterable<string, array<int, string>|int|string>
+     */
+    public function jsonSerialize(): iterable
+    {
+        return $this->toJson() + [
+            'text' => $this->text,
+        ];
     }
 }

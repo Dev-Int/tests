@@ -17,9 +17,21 @@ use PHPUnit\Framework\TestCase;
 use Shared\Entities\Exception\InvalidEmail;
 use Shared\Entities\VO\EmailField;
 
-class EmailFieldTest extends TestCase
+/**
+ * @group unitTest
+ */
+final class EmailFieldTest extends TestCase
 {
-    final public function testCreateWithInvalidEmailThrowsADomainException(): void
+    public function testInstantiateEmailSuccessfully(): void
+    {
+        // Arrange && Act
+        $email = EmailField::fromString('test@test.fr');
+
+        // Assert
+        self::assertSame('test@test.fr', $email->toString());
+    }
+
+    public function testCreateWithInvalidEmailThrowsADomainException(): void
     {
         // Arrange
         $this->expectException(InvalidEmail::class);

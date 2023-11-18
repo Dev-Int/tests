@@ -16,9 +16,12 @@ namespace Shared\Tests\Entities\VO;
 use PHPUnit\Framework\TestCase;
 use Shared\Entities\VO\ContactAddress;
 
-class ContactAddressTest extends TestCase
+/**
+ * @group unitTest
+ */
+final class ContactAddressTest extends TestCase
 {
-    final public function testInstantiateContactAddress(): void
+    public function testInstantiateContactAddress(): void
     {
         // Arrange & Act
         $address = ContactAddress::fromString(
@@ -29,26 +32,12 @@ class ContactAddressTest extends TestCase
         );
 
         // Assert
-        static::assertSame('2, rue de la truite', $address->address());
-        static::assertSame('75000', $address->zipCode());
-        static::assertSame('Paris', $address->town());
-        static::assertSame('France', $address->country());
-    }
-
-    final public function testGetValueOfContactAddress(): void
-    {
-        // Arrange && Act
-        $address = ContactAddress::fromString(
-            '2, rue de la truite',
-            '75000',
-            'Paris',
-            'France'
-        );
-
-        // Assert
-        static::assertSame(
-            '2, rue de la truite
-75000 Paris, France',
+        self::assertSame('2, rue de la truite', $address->address());
+        self::assertSame('75000', $address->zipCode());
+        self::assertSame('Paris', $address->town());
+        self::assertSame('France', $address->country());
+        self::assertSame(
+            "2, rue de la truite\n75000 Paris, France",
             $address->getFullAddress()
         );
     }

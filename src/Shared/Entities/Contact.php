@@ -18,36 +18,26 @@ use Shared\Entities\VO\EmailField;
 use Shared\Entities\VO\NameField;
 use Shared\Entities\VO\PhoneField;
 
-class Contact
+final class Contact
 {
-    protected ResourceUuid $uuid;
-    protected NameField $name;
-    protected ContactAddress $address;
-    protected PhoneField $phone;
-    protected PhoneField $facsimile;
-    protected EmailField $email;
-    protected string $contact;
-    protected PhoneField $cellphone;
-    protected string $slug;
+    private string $slug;
 
     public function __construct(
-        ResourceUuid $uuid,
-        NameField $name,
-        ContactAddress $address,
-        PhoneField $phone,
-        PhoneField $facsimile,
-        EmailField $email,
-        string $contact,
-        PhoneField $cellphone
+        private readonly ResourceUuid $uuid,
+        private NameField $name,
+        private ContactAddress $address,
+        private PhoneField $phone,
+        private PhoneField $facsimile,
+        private EmailField $email,
+        private string $contact,
+        private PhoneField $cellphone
     ) {
-        $this->uuid = $uuid;
-        $this->name = $name;
-        $this->address = $address;
-        $this->phone = $phone;
-        $this->facsimile = $facsimile;
-        $this->email = $email;
-        $this->contact = $contact;
-        $this->cellphone = $cellphone;
+        $this->slug = $name->slugify();
+    }
+
+    public function uuid(): ResourceUuid
+    {
+        return $this->uuid;
     }
 
     public function name(): NameField

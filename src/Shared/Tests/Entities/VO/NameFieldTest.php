@@ -17,9 +17,12 @@ use PHPUnit\Framework\TestCase;
 use Shared\Entities\Exception\StringExceeds255Characters;
 use Shared\Entities\VO\NameField;
 
-class NameFieldTest extends TestCase
+/**
+ * @group unitTest
+ */
+final class NameFieldTest extends TestCase
 {
-    final public function testCreateWithNameTooLongThrowsADomainException(): void
+    public function testCreateWithNameTooLongThrowsADomainException(): void
     {
         // Arrange
         $this->expectException(StringExceeds255Characters::class);
@@ -28,15 +31,13 @@ class NameFieldTest extends TestCase
         NameField::fromString(str_repeat('a', 256));
     }
 
-    final public function testSlugify(): void
+    public function testSlugify(): void
     {
-        // Arrange
+        // Arrange && Act
         $name = NameField::fromString('Test slugify');
 
-        // Act
-        $slug = $name->slugify();
-
         // Assert
-        static::assertEquals('test-slugify', $slug);
+        self::assertSame('test-slugify', $name->slugify());
+        self::assertSame('Test slugify', $name->toString());
     }
 }

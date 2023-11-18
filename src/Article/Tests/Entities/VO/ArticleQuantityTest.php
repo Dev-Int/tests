@@ -22,13 +22,24 @@ use PHPUnit\Framework\TestCase;
  */
 final class ArticleQuantityTest extends TestCase
 {
-    public function testInstantiateArticleQuantity(): void
+    public function testInstantiateArticleQuantityWithFloat(): void
     {
         // Arrange & Act
         $quantity = ArticleQuantity::fromFloat(1.25);
 
         // Assert
-        self::assertSame(1.250, $quantity->getValue());
+        self::assertSame(1.250, $quantity->toFloat());
+        self::assertSame(1250, $quantity->toInt());
+    }
+
+    public function testInstantiateArticleQuantityWithNull(): void
+    {
+        // Arrange & Act
+        $quantity = ArticleQuantity::fromFloat(null);
+
+        // Assert
+        self::assertSame(0.0, $quantity->toFloat());
+        self::assertSame(0, $quantity->toInt());
     }
 
     public function testArticleQuantityThrowNegativeValueException(): void

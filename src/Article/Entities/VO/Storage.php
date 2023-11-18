@@ -43,10 +43,20 @@ final class Storage
         return new self($unit, $quantity);
     }
 
-    public function __construct(string $unit, float $quantity)
+    private function __construct(string $unit, float $quantity)
     {
         $this->unit = $unit;
         $this->quantity = $quantity;
+    }
+
+    public function unit(): string
+    {
+        return $this->unit;
+    }
+
+    public function quantity(): float
+    {
+        return $this->quantity;
     }
 
     /**
