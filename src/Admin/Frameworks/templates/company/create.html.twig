@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block header %}
+    <h1>Create Company</h1>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    {{ form_row(form.name) }}
+    {{ form_row(form.address) }}
+    <div class="grid">
+        {{ form_row(form.postalCode) }}
+        {{ form_row(form.town) }}
+    </div>
+    {{ form_row(form.country) }}
+    <div class="grid">
+        {{ form_row(form.phone) }}
+        {{ form_row(form.email) }}
+    </div>
+    {{ form_row(form.contact) }}
+
+    <div class="grid">
+        <a role="button" href="{{ path('admin_index') }}" class="secondary"><< Annuler</a>
+        <button type="submit">Create</button>
+    </div>
+
+    {{ form_end(form) }}
+
+{% endblock %}

@@ -1,0 +1,39 @@
+/** Error management */
+.flash {
+    display: block;
+    position: absolute;
+    top: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: calc(var(--block-spacing-vertical) * .5) var(--block-spacing-horizontal);
+    border-radius: var(--border-radius);
+    border-width: 1px;
+    border-style: solid;
+    box-shadow: .3rem .5rem .4rem .2rem rgba(72, 72, 72, 0.8);
+    width: 30%;
+    margin: auto;
+    text-align: center;
+}
+
+.flash-error {
+    color: var(--color-error);
+    background-color: var(--color-error-bg);
+    border-color: var(--color-error);
+}
+
+.flash-success {
+    color: var(--color-success);
+    background-color: var(--color-success-bg);
+    border-color: var(--color-success);
+}
+
+.flash-warning {
+    color: var(--color-warning);
+    background-color: var(--color-warning-bg);
+    border-color: var(--color-warning);
+}
+.flash-info {
+    color: var(--color-info);
+    background-color: var(--color-info-bg);
+    border-color: var(--color-info);
+}

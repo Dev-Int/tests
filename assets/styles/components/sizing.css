@@ -1,0 +1,52 @@
+/** Sizing bloc */
+.row {
+    box-sizing: border-box;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-flex: 0;
+    -ms-flex: 0 1 auto;
+    flex: 0 1 auto;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    margin-right: calc(var(--nav-element-spacing-horizontal) * -1);
+    margin-left: calc(var(--nav-element-spacing-horizontal) * -1);
+}
+
+.col-md-3,.col-md-9 {
+    box-sizing: border-box;
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 auto;
+    flex: 0 0 auto;
+    padding-right: var(--nav-element-spacing-horizontal);
+    padding-left: var(--nav-element-spacing-horizontal);
+}
+
+.col-md-9 {
+    flex-basis: 75%;
+    max-width: 75%;
+}
+
+.col-md-3 {
+    flex-basis: 25%;
+    max-width: 25%;
+}
+
+.w100 {
+    min-width: 100%;
+    max-width: 100%;
+}
+
+/** Margin */
+#menu li {
+    padding-top: 0;
+}
+
+aside.col-md-3 + article {
+    margin-top: 0;
+    margin-bottom: var(--nav-element-spacing-horizontal);
+}
