@@ -1,6 +1,6 @@
 <?php
 
-namespace Shared;
+namespace App;
 
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -16,11 +16,9 @@ class Kernel extends BaseKernel
         $configDir = $this->getConfigDir();
 
         $container->import($configDir . '/{packages}/*.{php,yaml}');
-        $container->import($configDir . '/{packages}/' . $this->environment . '/*.{php,yaml}');
 
         if (is_file($configDir . '/services.yaml')) {
             $container->import($configDir . '/services.yaml');
-            $container->import($configDir . '/{services}_' . $this->environment . '.yaml');
         } else {
             $container->import($configDir . '/{services}.php');
         }
@@ -28,7 +26,7 @@ class Kernel extends BaseKernel
         // Dynamic services configuration
         $container->import($this->getProjectDir() . '/src/*/Frameworks/config/services.{yaml,php}');
         $container->import($this->getProjectDir() . '/src/*/Frameworks/config/{services}/*.yaml');
-        $container->import($this->getProjectDir() . '/src/*/Frameworks/config/packages/' . $this->environment . '/*.yaml');
+        $container->import($this->getProjectDir() . '/src/*/Frameworks/config/packages/*.yaml');
     }
 
     public function configureRoutes(RoutingConfigurator $routes): void

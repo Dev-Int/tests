@@ -20,7 +20,7 @@ DOCKER_COMP   = docker compose
 PHP_CONT      = $(DOCKER_COMP) exec php
 
 .DEFAULT_GOAL = help
-.PHONY        : help build up up down logs sh vendor composer
+.PHONY        : help build init up down logs sh vendor composer
 
 ## —— 🎵 🐳 The Symfony Docker Makefile 🐳 🎵 ——————————————————————————————————
 help: ## Outputs this help screen
@@ -59,7 +59,7 @@ purge: ## Purge cache and logs
 	rm -rf var/cache/* var/logs/*
 
 
-## —— Symfony binary ———————————————————————————————————————————————————————————
+## —— Symfony binary 🎵 —————————————————————————————————————————————————————————
 bin-install: ## Download and install the binary in the project (file is ignored)
 	curl -sS https://get.symfony.com/cli/installer | bash
 	mv ~/.symfony/bin/symfony .
@@ -92,6 +92,7 @@ tu: phpunit.xml ## Launch unit tests
 
 
 tf: phpunit.xml ## Launch functional tests implying external resources (API, services...)
+	php bin/console c:c -e test
 	php bin/phpunit --group=functionalTest --stop-on-failure
 
 ta: phpunit.xml ## Launch functional and unit tests
@@ -162,7 +163,7 @@ down: ## Stop the docker hub
 logs: ## Show live logs
 	@$(DOCKER_COMP) logs --tail=0 --follow
 sh: ## Connect to the PHP FPM container
-	@$(PHP_CONT) sh
+	@$(PHP_CONT) bash
 
 
 ## —— Stats ————————————————————————————————————————————————————————————————————

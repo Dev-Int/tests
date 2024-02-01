@@ -1,0 +1,10 @@
+controllers:
+    resource:
+        path: ../../Adapters/Controller/Symfony/Controller/
+        namespace: Admin\Adapters\Controller\Symfony\Controller
+    type: attribute
+    prefix: /admin
+
+kernel:
+    resource: App\Kernel
+    type: attribute

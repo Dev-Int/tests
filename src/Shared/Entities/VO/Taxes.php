@@ -44,7 +44,7 @@ final class Taxes
             $this->rate = $rate;
         }
 
-        if (($formattedRate = $fmtPercent->format($this->rate)) === false) {
+        if (\is_bool($formattedRate = $fmtPercent->format($this->rate))) {
             throw new InvalidRateFormatException($this->rate);
         }
 
