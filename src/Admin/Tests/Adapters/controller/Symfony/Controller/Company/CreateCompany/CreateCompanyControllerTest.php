@@ -11,15 +11,11 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Tests\Adapters\controller\Symfony\Controller;
+namespace Admin\Tests\Adapters\controller\Symfony\Controller\Company\CreateCompany;
 
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineCompanyRepository;
-use Admin\Entities\Company;
 use Admin\Entities\Exception\CompanyAlreadyExistsException;
-use Shared\Entities\VO\ContactAddress;
-use Shared\Entities\VO\EmailField;
-use Shared\Entities\VO\NameField;
-use Shared\Entities\VO\PhoneField;
+use Admin\Tests\DataBuilder\CompanyDataBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,6 +31,9 @@ final class CreateCompanyControllerTest extends WebTestCase
     {
         // Arrange
         $client = self::createClient();
+
+        /** @var DoctrineCompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
 
         // Act
         $crawler = $client->request(Request::METHOD_GET, self::CREATE_COMPANY_URI);
@@ -57,6 +56,9 @@ final class CreateCompanyControllerTest extends WebTestCase
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
         self::assertResponseRedirects('/admin/');
+
+        $companyCreated = $companyRepository->findByName('Dev-Int Création');
+        self::assertSame('dev-int-creation', $companyCreated->slug());
     }
 
     public function testCreateCompanyControllerWillThrowAlreadyExistsException(): void
@@ -67,18 +69,7 @@ final class CreateCompanyControllerTest extends WebTestCase
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
 
-        $company = Company::create(
-            NameField::fromString('TestCompany'),
-            ContactAddress::fromString(
-                'address',
-                '75000',
-                'Paris',
-                'France'
-            ),
-            PhoneField::fromString('0100000001'),
-            EmailField::fromString('test@test.fr'),
-            'test'
-        );
+        $company = (new CompanyDataBuilder())->create('TestCompany')->build();
         $companyRepository->save($company);
 
         // Act
@@ -104,8 +95,10 @@ final class CreateCompanyControllerTest extends WebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/');
 
-        $admin = $client->followRedirect();
-        $flash = $admin->filter('body > div.container')->children('div.flash')->text();
+        // The configuration only begin. The admin page is redirected throw admin configure.
+        $client->followRedirect(); // Admin page
+        $admin = $client->followRedirect(); // Configure page
+        $flash = $admin->filter('body > div.container')->children('div.flash.flash-error')->text();
 
         self::assertEquals(CompanyAlreadyExistsException::MESSAGE, $flash);
     }

@@ -53,6 +53,7 @@ final class CreateCompanyTest extends TestCase
         self::assertSame('+33297000000', $company->phone()->toNumber());
         self::assertSame('test@test.fr', $company->email()->toString());
         self::assertSame('Laurent', $company->contact());
+        self::assertSame('dev-int-creation', $company->slug());
     }
 
     public function testCreateCompanyThrowAlreadyExistsException(): void

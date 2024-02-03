@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\Tests\UseCases\Company\UpdateCompany;
 
 use Admin\Entities\Exception\CompanyNotFoundException;
-use Admin\Tests\Builder\CompanyBuilder;
+use Admin\Tests\DataBuilder\CompanyDataBuilder;
 use Admin\UseCases\Company\UpdateCompany\UpdateCompany;
 use Admin\UseCases\Company\UpdateCompany\UpdateCompanyRequest;
 use Admin\UseCases\Gateway\CompanyRepository;
@@ -28,7 +28,7 @@ final class UpdateCompanyTest extends TestCase
         $companyRepository = $this->createMock(CompanyRepository::class);
         $useCase = new UpdateCompany($companyRepository);
         $request = $this->createMock(UpdateCompanyRequest::class);
-        $companyBuilder = new CompanyBuilder();
+        $companyBuilder = new CompanyDataBuilder();
 
         $company = $companyBuilder->create('Dev-Int Création')->build();
         $companyToUpdate = $companyBuilder
@@ -70,7 +70,7 @@ final class UpdateCompanyTest extends TestCase
         $companyRepository = $this->createMock(CompanyRepository::class);
         $useCase = new UpdateCompany($companyRepository);
         $request = $this->createMock(UpdateCompanyRequest::class);
-        $companyBuilder = new CompanyBuilder();
+        $companyBuilder = new CompanyDataBuilder();
 
         $companyName = 'Dev-Int Création';
         $companyToUpdate = $companyBuilder

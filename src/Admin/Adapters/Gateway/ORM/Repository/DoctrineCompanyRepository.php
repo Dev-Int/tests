@@ -16,6 +16,7 @@ namespace Admin\Adapters\Gateway\ORM\Repository;
 use Admin\Adapters\Gateway\ORM\Entity\Company;
 use Admin\Entities\Company as CompanyDomain;
 use Admin\Entities\Exception\CompanyNotFoundException;
+use Admin\Entities\Exception\NoCompanyRegisteredException;
 use Admin\UseCases\Gateway\CompanyRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
@@ -74,15 +75,39 @@ final class DoctrineCompanyRepository extends ServiceEntityRepository implements
             ->getOneOrNullResult()
         ;
 
-        if ($company === null) {
+        if (!$company instanceof Company) {
             throw new CompanyNotFoundException($name);
         }
 
-        return $company;
+        return $company->toDomain();
     }
 
     public function update(CompanyDomain $company): void
     {
-        // TODO: Implement update() method.
+        $companyToUpdate = $this->find($company->slug());
+        if (!$companyToUpdate instanceof Company) {
+            throw new CompanyNotFoundException($company->name()->toString());
+        }
+
+        $companyToUpdate->update($company);
+
+        $this->_em->flush();
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function findCompany(): Company
+    {
+        $company = $this->createQueryBuilder(self::ALIAS)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+
+        if (!$company instanceof Company) {
+            throw new NoCompanyRegisteredException();
+        }
+
+        return $company;
     }
 }

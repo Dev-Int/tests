@@ -26,7 +26,7 @@ final class ConfigurationController extends AbstractController
     {
     }
 
-    #[Route('/configure', name: 'admin_configure')]
+    #[Route(path: '/configure', name: 'admin_configure')]
     public function __invoke(): Response
     {
         $hasCompany = $this->companyRepository->hasCompany();

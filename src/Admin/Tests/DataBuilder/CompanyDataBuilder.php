@@ -11,7 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Tests\Builder;
+namespace Admin\Tests\DataBuilder;
 
 use Admin\Entities\Company;
 use Shared\Entities\VO\ContactAddress;
@@ -19,9 +19,9 @@ use Shared\Entities\VO\EmailField;
 use Shared\Entities\VO\NameField;
 use Shared\Entities\VO\PhoneField;
 
-final class CompanyBuilder
+final class CompanyDataBuilder
 {
-    /** @var array<string> */
+    /** @var array<string, string> */
     private array $company = [];
 
     public function create(string $name): self

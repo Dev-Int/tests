@@ -15,14 +15,14 @@ namespace Shared\Entities\VO;
 
 final readonly class ContactAddress
 {
-    public static function fromString(string $address, string $zipCode, string $town, string $country): self
+    public static function fromString(string $address, string $postalCode, string $town, string $country): self
     {
-        return new self($address, $zipCode, $town, $country);
+        return new self($address, $postalCode, $town, $country);
     }
 
     private function __construct(
         private string $address,
-        private string $zipCode,
+        private string $postalCode,
         private string $town,
         private string $country
     ) {
@@ -35,7 +35,7 @@ final readonly class ContactAddress
 
     public function postalCode(): string
     {
-        return $this->zipCode;
+        return $this->postalCode;
     }
 
     public function town(): string
@@ -50,6 +50,6 @@ final readonly class ContactAddress
 
     public function getFullAddress(): string
     {
-        return $this->address . "\n" . $this->zipCode . ' ' . $this->town . ', ' . $this->country;
+        return $this->address . "\n" . $this->postalCode . ' ' . $this->town . ', ' . $this->country;
     }
 }

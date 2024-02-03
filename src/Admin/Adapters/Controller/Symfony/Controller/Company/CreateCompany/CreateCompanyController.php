@@ -11,7 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Adapters\Controller\Symfony\Controller\CreateCompany;
+namespace Admin\Adapters\Controller\Symfony\Controller\Company\CreateCompany;
 
 use Admin\Adapters\Form\Type\CompanyType;
 use Admin\Entities\Exception\CompanyAlreadyExistsException;
@@ -29,7 +29,7 @@ final class CreateCompanyController extends AbstractController
     {
     }
 
-    #[Route(path: '/company/create', name: 'company_create', methods: ['GET', 'POST'])]
+    #[Route(path: '/company/create', name: 'admin_company_create', methods: ['GET', 'POST'])]
     public function __invoke(Request $request): Response
     {
         $form = $this->createForm(CompanyType::class);
@@ -54,6 +54,7 @@ final class CreateCompanyController extends AbstractController
 
                 return $this->redirectToRoute('admin_index');
             }
+            $this->addFlash('success', 'Company created');
 
             return $this->redirectToRoute('admin_index', [], Response::HTTP_CREATED);
         }

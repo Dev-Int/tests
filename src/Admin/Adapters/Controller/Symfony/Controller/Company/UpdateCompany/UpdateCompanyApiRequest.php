@@ -11,11 +11,11 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Adapters\Controller\Symfony\Controller\CreateCompany;
+namespace Admin\Adapters\Controller\Symfony\Controller\Company\UpdateCompany;
 
-use Admin\UseCases\Company\CreateCompany\CreateCompanyRequest;
+use Admin\UseCases\Company\UpdateCompany\UpdateCompanyRequest;
 
-final readonly class CreateCompanyApiRequest implements CreateCompanyRequest
+final readonly class UpdateCompanyApiRequest implements UpdateCompanyRequest
 {
     public function __construct(
         public string $name,
@@ -25,7 +25,7 @@ final readonly class CreateCompanyApiRequest implements CreateCompanyRequest
         public string $country,
         public string $phone,
         public string $email,
-        public string $contact,
+        public string $contact
     ) {
     }
 

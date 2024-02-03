@@ -2,12 +2,11 @@
 
 {% block body %}
 
-    <h1>Create Company</h1>
+    <h1>Update Company "{{ companyName }}"</h1>
 
     {{ form_start(form) }}
     {{ form_errors(form) }}
 
-    {{ form_row(form.name) }}
     {{ form_row(form.address) }}
     <div class="grid">
         {{ form_row(form.postalCode) }}
@@ -21,8 +20,8 @@
     {{ form_row(form.contact) }}
 
     <div class="grid">
-        <a role="button" href="{{ path('admin_index') }}" class="secondary">Annuler</a>
-        <button type="submit">Create</button>
+        <a role="button" href="{{ path('admin_company_index') }}" class="secondary">Annuler</a>
+        <button type="submit">Update</button>
     </div>
 
     {{ form_end(form) }}

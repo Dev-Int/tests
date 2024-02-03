@@ -74,7 +74,13 @@ unserve: ## Stop the webserver
 	$(SYMFONY_BIN) server:stop
 
 
-## —— Project ——————————————————————————————————————————————————————————————————
+## —— Database —————————————————————————————————————————————————————————————————
+clean-db: cc ## Reset database (env : test)
+	- $(SYMFONY) doctrine:database:drop --force
+	$(SYMFONY) doctrine:database:create
+	$(SYMFONY) doctrine:migration:migrate --no-interaction
+.PHONY: clean-db
+
 reload: load-fixtures ## Reload fixtures
 
 load-fixtures: ## Build the DB, control the schema validity, load fixtures and check the migration status
@@ -86,22 +92,31 @@ load-fixtures: ## Build the DB, control the schema validity, load fixtures and c
 	$(SYMFONY) doctrine:fixtures:load -n
 
 
-## —— Tests ————————————————————————————————————————————————————————————————————
+## —— Tests 🐛️ —————————————————————————————————————————————————————————————————
+cc-test: ## Cache clear (env : test)
+	$(SYMFONY) cache:clear --env=test
+.PHONY: cc-test
+
+clean-db-test: cc-test ## Reset database (env : test)
+	- $(SYMFONY) doctrine:database:drop --force --env=test
+	$(SYMFONY) doctrine:database:create --env=test
+	$(SYMFONY) doctrine:migration:migrate --no-interaction --env=test
+.PHONY: clean-db-test
+
 tu: phpunit.xml ## Launch unit tests
 	php bin/phpunit --group=unitTest --stop-on-failure
 
 
-tf: phpunit.xml ## Launch functional tests implying external resources (API, services...)
-	php bin/console c:c -e test
+tf: phpunit.xml clean-db-test ## Launch functional tests implying external resources (API, services...)
 	php bin/phpunit --group=functionalTest --stop-on-failure
 
-ta: phpunit.xml ## Launch functional and unit tests
+ta: phpunit.xml clean-db-test ## Launch functional and unit tests
 	php bin/phpunit --stop-on-failure
 
 
 ## —— Coding standards ✨ ——————————————————————————————————————————————————————
 qa: phpcs stan cs-fixer # lint ## Launch all static analysis tools
-	#$(SYMFONY) lint:yaml config
+	$(SYMFONY) lint:yaml config
 	bin/deptrac analyse --config-file=deptrac.yaml
 
 phpcs: ## Run php_codesniffer
