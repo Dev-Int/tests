@@ -1,0 +1,8 @@
+/**
+ * Forms
+ */
+
+label.required:before {
+    content: "*";
+    padding-right: calc(var(--block-spacing-horizontal) * .25);
+}

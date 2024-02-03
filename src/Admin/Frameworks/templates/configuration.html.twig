@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block header %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+
+    <h1><i class="fas fa-cogs"></i> Configuration</h1>
+
+    <div class="row">
+        <aside class="col-md-3">
+            <nav id="menu">
+                <ul>
+                    <li>
+                        <a href="{{ path('admin_company_create') }}" role="button" class="{% if hasCompany %}secondary disable-link {% endif %}w100">
+                            {% if hasCompany %}<i class="fa-solid fa-square-check"></i>{% endif%} Create Company
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" role="button" class="{% if hasApplication %}secondary disable-link {% endif %}w100">
+                            {% if hasApplication %}<i class="fa-solid fa-square-check"></i> {% endif%}Configure application
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" role="button" class="{% if hasStorage %}secondary disable-link {% endif %}w100">
+                            {% if hasStorage %}<i class="fa-solid fa-square-check"></i> {% endif %}Create Storage area
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" role="button" class="{% if hasFamilyLog %}secondary disable-link {% endif %}w100">
+                            {% if hasFamilyLog %}<i class="fa-solid fa-square-check"></i> {% endif %}Create Logistic family
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" role="button" class="{% if hasSupplier %}secondary disable-link {% endif %}w100">
+                            {% if hasSupplier %}<i class="fa-solid fa-square-check"></i> {% endif %}Create Supplier
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" role="button" class="{% if hasArticle %}secondary disable-link {% endif %}w100">
+                            {% if hasArticle %}<i class="fa-solid fa-square-check"></i> {% endif %}Create Article
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+        <article class="col-md-9">
+            <p>Here you configure your application.</p>
+            <p>Select items in order.</p>
+            <p></p>
+            <p>Happy configure ;)</p>
+
+            <p><a href="{{ path('home') }}" role="button">Retour à l'accueil</a></p>
+        </article>
+    </div>
+
+{% endblock %}

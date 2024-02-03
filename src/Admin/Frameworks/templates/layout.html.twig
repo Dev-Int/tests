@@ -1,31 +1,56 @@
 {% extends 'base.html.twig' %}
 
 {% block header %}
-    <header>
-        <h1>Administration</h1>
-    </header>
+    {{ parent() }}
 {% endblock %}
 
 {% block body %}
+
+    <h1>Administration</h1>
 
     <div class="row">
         <aside class="col-md-3">
             <nav id="menu">
                 <ul>
-                    <li><a href="{{ path('company_create') }}" role="button" class="{% if hasCompany %}secondary {% endif %}w100">Create Company</a></li>
-                    <li><a href="#" role="button" class="secondary w100">Configure application</a></li>
-                    <li><a href="#" role="button" class="secondary w100">Create Storage area</a></li>
-                    <li><a href="#" role="button" class="secondary w100">Create Logistic family</a></li>
-                    <li><a href="#" role="button" class="secondary w100">Create Supplier</a></li>
-                    <li><a href="#" role="button" class="secondary w100">Create Article</a></li>
+                    <li>
+                        <a href="{{ path('admin_company_index') }}" role="button" class="w100">
+                            <i class="fa-solid fa-building"></i> Company
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" role="button" class="w100">
+                            <i class="fa-solid fa-cogs"></i> Configure application
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" role="button" class="w100">
+                            <i class="fa-solid fa-square-check"></i> Storage areas
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" role="button" class="w100">
+                            <i class="fa-solid fa-square-check"></i> Logistic families
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" role="button" class="w100">
+                            <i class="fa-solid fa-square-check"></i> Suppliers
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" role="button" class="w100">
+                            <i class="fa-solid fa-square-check"></i> Articles
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </aside>
         <article class="col-md-9">
-            <p>Here you configure your application.</p>
-            <p>Select items in order.</p>
+            <p>Here is how you administrate these application.</p>
             <p></p>
-            <p>Happy configure ;)</p>
+            <p>Happy use ;)</p>
+
+            <p><a href="{{ path('home') }}" role="button">Retour à l'accueil</a></p>
         </article>
     </div>
 

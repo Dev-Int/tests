@@ -1,0 +1,14 @@
+/**
+ * Navs
+ */
+
+body > header {
+    padding: 0;
+}
+header > nav {
+    padding: 0 var(--block-spacing-horizontal);
+}
+
+nav li > a[role="button"] {
+    text-align: left;
+}

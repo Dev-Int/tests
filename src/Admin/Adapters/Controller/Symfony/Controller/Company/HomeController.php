@@ -11,9 +11,10 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Adapters\Controller\Symfony\Controller;
+namespace Admin\Adapters\Controller\Symfony\Controller\Company;
 
-// use Admin\UseCases\Gateway\CompanyRepository;
+use Admin\Adapters\Gateway\ORM\Repository\DoctrineCompanyRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -22,19 +23,20 @@ use Symfony\Component\Routing\Attribute\Route;
 #[AsController]
 final class HomeController extends AbstractController
 {
-    // public function __construct(private readonly CompanyRepository $companyRepository)
-    // {
-    // }
+    public function __construct(private readonly DoctrineCompanyRepository $repository)
+    {
+    }
 
-    #[Route(path: '/', name: 'admin_index')]
+    /**
+     * @throws NonUniqueResultException
+     */
+    #[Route(path: 'company/', name: 'admin_company_index')]
     public function __invoke(): Response
     {
-        // $isConfigured = $this->companyRepository->hasCompany();
+        $company = $this->repository->findCompany();
 
-        // if ($isConfigured === false) {
-        return $this->redirectToRoute('admin_configure');
-        // }
-        //
-        // return $this->render('@admin/layout.html.twig');
+        return $this->render('@admin/company/index.html.twig', [
+            'company' => $company,
+        ]);
     }
 }

@@ -6,6 +6,7 @@
         <link rel="icon"
               href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
         {% block stylesheets %}
+            <script src="https://kit.fontawesome.com/7dde808140.js" crossorigin="anonymous"></script>
         {% endblock %}
 
         {% block javascripts %}
@@ -13,8 +14,23 @@
         {% endblock %}
     </head>
     <body>
+        {% block header %}
+            <header>
+                <nav>
+                    <ul>
+                        <li><strong>Application</strong></li>
+                    </ul>
+                    <ul>
+                        <li><a href="{{ path('admin_index') }}">Administration</a></li>
+                        <li><a href="#">Link</a></li>
+                        <li><a href="#" role="button">Connexion</a></li>
+                    </ul>
+                </nav>
+            </header>
+
+        {% endblock %}
+
         <div class="container">
-            {% block header %}{% endblock %}
 
             {% for label, messages in app.flashes %}
                 {% for message in messages %}
@@ -25,6 +41,7 @@
             {% endfor %}
 
             {% block body %}{% endblock %}
+
         </div>
     </body>
 </html>

@@ -13,28 +13,31 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller;
 
-// use Admin\UseCases\Gateway\CompanyRepository;
+use Admin\UseCases\Gateway\CompanyRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[AsController]
-final class HomeController extends AbstractController
+final class ConfigurationController extends AbstractController
 {
-    // public function __construct(private readonly CompanyRepository $companyRepository)
-    // {
-    // }
+    public function __construct(private readonly CompanyRepository $companyRepository)
+    {
+    }
 
-    #[Route(path: '/', name: 'admin_index')]
+    #[Route('/configure', name: 'admin_configure')]
     public function __invoke(): Response
     {
-        // $isConfigured = $this->companyRepository->hasCompany();
+        $hasCompany = $this->companyRepository->hasCompany();
 
-        // if ($isConfigured === false) {
-        return $this->redirectToRoute('admin_configure');
-        // }
-        //
-        // return $this->render('@admin/layout.html.twig');
+        return $this->render('@admin/configuration.html.twig', [
+            'hasCompany' => $hasCompany,
+            'hasApplication' => false,
+            'hasStorage' => false,
+            'hasFamilyLog' => false,
+            'hasSupplier' => false,
+            'hasArticle' => false,
+        ]);
     }
 }
