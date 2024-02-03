@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\CreateCompany;
 
-use Admin\UseCases\CreateCompany\CreateCompanyRequest;
+use Admin\UseCases\Company\CreateCompany\CreateCompanyRequest;
 
 final readonly class CreateCompanyApiRequest implements CreateCompanyRequest
 {

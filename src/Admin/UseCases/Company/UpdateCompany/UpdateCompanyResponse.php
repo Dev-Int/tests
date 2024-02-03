@@ -11,17 +11,13 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\UseCases\Gateway;
+namespace Admin\UseCases\Company\UpdateCompany;
 
 use Admin\Entities\Company;
 
-interface CompanyRepository
+final readonly class UpdateCompanyResponse
 {
-    public function save(Company $company): void;
-
-    public function hasCompany(): bool;
-
-    public function findByName(string $name): Company;
-
-    public function update(Company $company): void;
+    public function __construct(public Company $company)
+    {
+    }
 }

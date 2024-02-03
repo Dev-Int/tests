@@ -15,15 +15,15 @@ namespace Admin\Entities\Exception;
 
 use Shared\Entities\Exception\ExceptionSerializableTrait;
 
-final class CompanyAlreadyExistsException extends \DomainException implements \JsonSerializable
+final class CompanyNotFoundException extends \DomainException implements \JsonSerializable
 {
     use ExceptionSerializableTrait;
 
-    public const MESSAGE = 'A company already exists.';
+    public const MESSAGE = 'Company not found.';
 
     public function __construct(private readonly string $name, ?\Throwable $previous = null)
     {
-        parent::__construct(self::MESSAGE, 400, $previous);
+        parent::__construct(self::MESSAGE, 404, $previous);
     }
 
     /**

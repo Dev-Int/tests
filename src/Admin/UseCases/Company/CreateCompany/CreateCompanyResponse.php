@@ -11,18 +11,13 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\UseCases\CreateCompany;
+namespace Admin\UseCases\Company\CreateCompany;
 
 use Admin\Entities\Company;
 
 final readonly class CreateCompanyResponse
 {
-    public function __construct(private Company $company)
+    public function __construct(public Company $company)
     {
-    }
-
-    public function company(): Company
-    {
-        return $this->company;
     }
 }

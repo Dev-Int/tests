@@ -33,7 +33,7 @@ final class ContactAddressTest extends TestCase
 
         // Assert
         self::assertSame('2, rue de la truite', $address->address());
-        self::assertSame('75000', $address->zipCode());
+        self::assertSame('75000', $address->postalCode());
         self::assertSame('Paris', $address->town());
         self::assertSame('France', $address->country());
         self::assertSame(

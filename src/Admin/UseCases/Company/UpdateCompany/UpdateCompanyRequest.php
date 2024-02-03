@@ -11,9 +11,9 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\UseCases\CreateCompany;
+namespace Admin\UseCases\Company\UpdateCompany;
 
-interface CreateCompanyRequest
+interface UpdateCompanyRequest
 {
     public function name(): string;
 

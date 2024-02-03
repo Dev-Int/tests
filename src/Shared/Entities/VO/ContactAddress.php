@@ -33,7 +33,7 @@ final readonly class ContactAddress
         return $this->address;
     }
 
-    public function zipCode(): string
+    public function postalCode(): string
     {
         return $this->zipCode;
     }

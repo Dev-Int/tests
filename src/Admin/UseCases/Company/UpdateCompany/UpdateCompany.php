@@ -11,31 +11,26 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\UseCases\CreateCompany;
+namespace Admin\UseCases\Company\UpdateCompany;
 
 use Admin\Entities\Company;
-use Admin\Entities\Exception\CompanyAlreadyExistsException;
 use Admin\UseCases\Gateway\CompanyRepository;
 use Shared\Entities\VO\ContactAddress;
 use Shared\Entities\VO\EmailField;
-use Shared\Entities\VO\NameField;
 use Shared\Entities\VO\PhoneField;
 
-final readonly class CreateCompany
+final readonly class UpdateCompany
 {
     public function __construct(private CompanyRepository $companyRepository)
     {
     }
 
-    public function execute(CreateCompanyRequest $request): CreateCompanyResponse
+    public function execute(UpdateCompanyRequest $request): UpdateCompanyResponse
     {
-        $hasCompany = $this->companyRepository->hasCompany();
-        if ($hasCompany === true) {
-            throw new CompanyAlreadyExistsException();
-        }
+        $companyToUpdate = $this->companyRepository->findByName($request->name());
 
         $company = Company::create(
-            NameField::fromString($request->name()),
+            $companyToUpdate->name(),
             ContactAddress::fromString(
                 $request->address(),
                 $request->postalCode(),
@@ -47,8 +42,8 @@ final readonly class CreateCompany
             $request->contact()
         );
 
-        $this->companyRepository->save($company);
+        $this->companyRepository->update($company);
 
-        return new CreateCompanyResponse($company);
+        return new UpdateCompanyResponse($company);
     }
 }

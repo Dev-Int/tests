@@ -15,6 +15,7 @@ namespace Admin\Adapters\Gateway\ORM\Repository;
 
 use Admin\Adapters\Gateway\ORM\Entity\Company;
 use Admin\Entities\Company as CompanyDomain;
+use Admin\Entities\Exception\CompanyNotFoundException;
 use Admin\UseCases\Gateway\CompanyRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
@@ -58,5 +59,30 @@ final class DoctrineCompanyRepository extends ServiceEntityRepository implements
         }
 
         return $count > 0;
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function findByName(string $name): CompanyDomain
+    {
+        $alias = self::ALIAS;
+        $company = $this->createQueryBuilder($alias)
+            ->where("{$alias}.name = :name")
+            ->setParameter('name', $name)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+
+        if ($company === null) {
+            throw new CompanyNotFoundException($name);
+        }
+
+        return $company;
+    }
+
+    public function update(CompanyDomain $company): void
+    {
+        // TODO: Implement update() method.
     }
 }

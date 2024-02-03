@@ -11,11 +11,11 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Tests\UseCases\CreateCompany;
+namespace Admin\Tests\UseCases\Company\CreateCompany;
 
 use Admin\Entities\Exception\CompanyAlreadyExistsException;
-use Admin\UseCases\CreateCompany\CreateCompany;
-use Admin\UseCases\CreateCompany\CreateCompanyRequest;
+use Admin\UseCases\Company\CreateCompany\CreateCompany;
+use Admin\UseCases\Company\CreateCompany\CreateCompanyRequest;
 use Admin\UseCases\Gateway\CompanyRepository;
 use PHPUnit\Framework\TestCase;
 
@@ -45,7 +45,7 @@ final class CreateCompanyTest extends TestCase
 
         // Act
         $response = $useCase->execute($request);
-        $company = $response->company();
+        $company = $response->company;
 
         // Assert
         self::assertSame('Dev-Int Création', $company->name()->toString());
@@ -61,7 +61,7 @@ final class CreateCompanyTest extends TestCase
         $useCase = new CreateCompany($companyRepository);
         $request = $this->createMock(CreateCompanyRequest::class);
 
-        $request->expects(self::never())->method('name')->willReturn('Dev-Int Création');
+        $request->expects(self::once())->method('name')->willReturn('Dev-Int Création');
         $request->expects(self::never())->method('address')->willReturn('5, rue des Plantes');
         $request->expects(self::never())->method('postalCode')->willReturn('75000');
         $request->expects(self::never())->method('town')->willReturn('Paris');

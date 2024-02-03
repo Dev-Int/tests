@@ -18,8 +18,10 @@ use Shared\Entities\VO\EmailField;
 use Shared\Entities\VO\NameField;
 use Shared\Entities\VO\PhoneField;
 
-final readonly class Company
+final class Company
 {
+    private string $slug;
+
     public static function create(
         NameField $name,
         ContactAddress $address,
@@ -37,6 +39,7 @@ final readonly class Company
         private EmailField $email,
         private string $contact
     ) {
+        $this->slug = $this->name->slugify();
     }
 
     public function name(): NameField
@@ -62,5 +65,10 @@ final readonly class Company
     public function contact(): string
     {
         return $this->contact;
+    }
+
+    public function slug(): string
+    {
+        return $this->slug;
     }
 }

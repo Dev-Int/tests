@@ -15,7 +15,7 @@ namespace Admin\Adapters\Controller\Symfony\Controller\CreateCompany;
 
 use Admin\Adapters\Form\Type\CompanyType;
 use Admin\Entities\Exception\CompanyAlreadyExistsException;
-use Admin\UseCases\CreateCompany\CreateCompany;
+use Admin\UseCases\Company\CreateCompany\CreateCompany;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
