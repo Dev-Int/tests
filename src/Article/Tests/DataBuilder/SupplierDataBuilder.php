@@ -34,6 +34,8 @@ final class SupplierDataBuilder
     private PhoneField $gsm;
     private FamilyLog $familyLog;
     private int $delayDelivery;
+
+    /** @var array<int> */
     private array $orderDays;
     private bool $active;
 

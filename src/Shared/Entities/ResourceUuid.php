@@ -29,17 +29,8 @@ final class ResourceUuid implements ResourceUuidInterface
         }
     }
 
-    /**
-     * @phpstan-ignore-next-line
-     *
-     * @param UuidInterface $uuid
-     */
-    public static function fromUuid(object $uuid): self
+    public static function fromUuid(UuidInterface $uuid): self
     {
-        if (!$uuid instanceof UuidInterface) {
-            throw new \InvalidArgumentException('UuidInterface type excepted.');
-        }
-
         return new self($uuid);
     }
 

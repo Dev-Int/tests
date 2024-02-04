@@ -13,9 +13,11 @@ declare(strict_types=1);
 
 namespace Shared\Entities;
 
+use Ramsey\Uuid\UuidInterface;
+
 interface ResourceUuidInterface
 {
-    public static function fromUuid(object $uuid): self;
+    public static function fromUuid(UuidInterface $uuid): self;
 
     public static function generate(): self;
 

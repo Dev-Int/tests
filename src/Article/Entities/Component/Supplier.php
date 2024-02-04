@@ -130,6 +130,9 @@ final class Supplier
         return $this->delayDelivery;
     }
 
+    /**
+     * @return array<int>
+     */
     public function orderDays(): array
     {
         return $this->orderDays;

@@ -23,6 +23,9 @@ final class PackagingTest extends TestCase
 {
     /**
      * @dataProvider provideDistributeTheSubdivisionCases
+     *
+     * @param array<array{string, float}|null> $packaging
+     * @param array<array{string, float}|null> $expected
      */
     public function testDistributeTheSubdivision(array $packaging, array $expected): void
     {
@@ -35,31 +38,34 @@ final class PackagingTest extends TestCase
         self::assertEquals($expected[2], $packages->consumerUnit());
     }
 
+    /**
+     * @return iterable<string, array<array<int, array{string, float}|null>>>
+     */
     public function provideDistributeTheSubdivisionCases(): iterable
     {
         yield 'full distribution' => [
-            'packaging' => [['colis', 1], ['poche', 4], ['portion', 32]],
-            'expected' => [['colis', 1], ['poche', 4], ['portion', 32]],
+            'packaging' => [['colis', 1.0], ['poche', 4.0], ['portion', 32.0]],
+            'expected' => [['colis', 1.0], ['poche', 4.0], ['portion', 32.0]],
         ];
 
         yield 'distribution without consumer unit' => [
-            'packaging' => [['colis', 1], ['poche', 4], null],
-            'expected' => [['colis', 1], ['poche', 4], null],
+            'packaging' => [['colis', 1.0], ['poche', 4.0], null],
+            'expected' => [['colis', 1.0], ['poche', 4.0], null],
         ];
 
         yield 'distribution without sub package' => [
-            'packaging' => [['colis', 1], null, ['portion', 32]],
-            'expected' => [['colis', 1], null, ['portion', 32]],
+            'packaging' => [['colis', 1.0], null, ['portion', 32.0]],
+            'expected' => [['colis', 1.0], null, ['portion', 32.0]],
         ];
 
         yield 'distribution without sub package and float' => [
-            'packaging' => [['colis', 1], null, ['kilogramme', 6.000]],
-            'expected' => [['colis', 1], null, ['kilogramme', 6.000]],
+            'packaging' => [['colis', 1.0], null, ['kilogramme', 6.000]],
+            'expected' => [['colis', 1.0], null, ['kilogramme', 6.000]],
         ];
 
         yield 'distribution only parcel' => [
-            'packaging' => [['colis', 1], null, null],
-            'expected' => [['colis', 1], null, null],
+            'packaging' => [['colis', 1.0], null, null],
+            'expected' => [['colis', 1.0], null, null],
         ];
     }
 }

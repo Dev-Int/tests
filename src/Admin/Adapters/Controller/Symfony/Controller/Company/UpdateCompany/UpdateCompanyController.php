@@ -37,6 +37,7 @@ final class UpdateCompanyController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            /** @var Company $company */
             $company = $form->getData();
 
             try {

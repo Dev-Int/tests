@@ -63,6 +63,9 @@ final class FamilyLog
         return $this->slug;
     }
 
+    /**
+     * @return array<string, array<int|string, array<string>|string>>
+     */
     public function parseTree(): array
     {
         $arrayChildren = [];
