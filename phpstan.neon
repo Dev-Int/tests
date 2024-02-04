@@ -1,14 +1,10 @@
 parameters:
-    level: 8
+    level: 9
     paths:
         - src
         - tests
     excludePaths:
         - tests/bootstrap.php
-        - src/Domain/Model/Common/StringExceeds255Characters.php
-        - src/DoctrineMigrations
     bootstrapFiles:
         - vendor/autoload.php
-    checkMissingIterableValueType: false
     checkGenericClassInNonGenericObjectType: false
-    treatPhpDocTypesAsCertain: false

@@ -36,6 +36,7 @@ final class CreateCompanyController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            /** @var array<string, string> $company */
             $company = $form->getData();
 
             try {

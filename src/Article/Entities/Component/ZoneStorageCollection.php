@@ -54,6 +54,9 @@ final class ZoneStorageCollection implements Collection
         $this->key = 0;
     }
 
+    /**
+     * @return iterable<ZoneStorage>
+     */
     public function toArray(): iterable
     {
         return $this->zoneStorages;
