@@ -20,7 +20,7 @@ DOCKER_COMP   = docker compose
 PHP_CONT      = $(DOCKER_COMP) exec php
 
 .DEFAULT_GOAL = help
-.PHONY        : help build up up down logs sh vendor composer
+.PHONY        : help build init up down logs sh vendor composer
 
 ## —— 🎵 🐳 The Symfony Docker Makefile 🐳 🎵 ——————————————————————————————————
 help: ## Outputs this help screen
@@ -59,7 +59,7 @@ purge: ## Purge cache and logs
 	rm -rf var/cache/* var/logs/*
 
 
-## —— Symfony binary ———————————————————————————————————————————————————————————
+## —— Symfony binary 🎵 —————————————————————————————————————————————————————————
 bin-install: ## Download and install the binary in the project (file is ignored)
 	curl -sS https://get.symfony.com/cli/installer | bash
 	mv ~/.symfony/bin/symfony .
@@ -74,7 +74,13 @@ unserve: ## Stop the webserver
 	$(SYMFONY_BIN) server:stop
 
 
-## —— Project ——————————————————————————————————————————————————————————————————
+## —— Database —————————————————————————————————————————————————————————————————
+clean-db: cc ## Reset database (env : test)
+	- $(SYMFONY) doctrine:database:drop --force
+	$(SYMFONY) doctrine:database:create
+	$(SYMFONY) doctrine:migration:migrate --no-interaction
+.PHONY: clean-db
+
 reload: load-fixtures ## Reload fixtures
 
 load-fixtures: ## Build the DB, control the schema validity, load fixtures and check the migration status
@@ -86,21 +92,31 @@ load-fixtures: ## Build the DB, control the schema validity, load fixtures and c
 	$(SYMFONY) doctrine:fixtures:load -n
 
 
-## —— Tests ————————————————————————————————————————————————————————————————————
+## —— Tests 🐛️ —————————————————————————————————————————————————————————————————
+cc-test: ## Cache clear (env : test)
+	$(SYMFONY) cache:clear --env=test
+.PHONY: cc-test
+
+clean-db-test: cc-test ## Reset database (env : test)
+	- $(SYMFONY) doctrine:database:drop --force --env=test
+	$(SYMFONY) doctrine:database:create --env=test
+	$(SYMFONY) doctrine:migration:migrate --no-interaction --env=test
+.PHONY: clean-db-test
+
 tu: phpunit.xml ## Launch unit tests
 	php bin/phpunit --group=unitTest --stop-on-failure
 
 
-tf: phpunit.xml ## Launch functional tests implying external resources (API, services...)
+tf: phpunit.xml clean-db-test ## Launch functional tests implying external resources (API, services...)
 	php bin/phpunit --group=functionalTest --stop-on-failure
 
-ta: phpunit.xml ## Launch functional and unit tests
+ta: phpunit.xml clean-db-test ## Launch functional and unit tests
 	php bin/phpunit --stop-on-failure
 
 
 ## —— Coding standards ✨ ——————————————————————————————————————————————————————
 qa: phpcs stan cs-fixer # lint ## Launch all static analysis tools
-	#$(SYMFONY) lint:yaml config
+	$(SYMFONY) lint:yaml config
 	bin/deptrac analyse --config-file=deptrac.yaml
 
 phpcs: ## Run php_codesniffer
@@ -112,12 +128,12 @@ cs-fixer: ## Run php-cs-fixer
 stan: ## Run PHPStan only
 	./vendor/bin/phpstan analyse -c phpstan.neon --memory-limit 1G
 
-psalm: ## Run psalm only
-	./vendor/bin/psalm --show-info=false
-
-init-psalm: ## Init a new psalm config file for a given level, it must be decremented to have stricter rules
-	rm ./psalm.xml
-	./vendor/bin/psalm --init src/ 3
+#psalm: ## Run psalm only
+#	./vendor/bin/psalm --show-info=false
+#
+#init-psalm: ## Init a new psalm config file for a given level, it must be decremented to have stricter rules
+#	rm ./psalm.xml
+#	./vendor/bin/psalm --init src/ 3
 
 
 ## —— Deploy & Prod ————————————————————————————————————————————————————————————
@@ -162,7 +178,7 @@ down: ## Stop the docker hub
 logs: ## Show live logs
 	@$(DOCKER_COMP) logs --tail=0 --follow
 sh: ## Connect to the PHP FPM container
-	@$(PHP_CONT) sh
+	@$(PHP_CONT) bash
 
 
 ## —— Stats ————————————————————————————————————————————————————————————————————

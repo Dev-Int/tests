@@ -1,0 +1,10 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+    
+    Admin\:
+        resource: '%kernel.project_dir%/src/Admin/*'
+        exclude: 
+            - '%kernel.project_dir%/src/Admin/{Frameworks,Tests,Entities}'

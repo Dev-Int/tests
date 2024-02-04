@@ -1,0 +1,10 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+        
+    Shared\:
+        resource: '%kernel.project_dir%/src/Shared/*'
+        exclude:
+            - '%kernel.project_dir%/src/Shared/{Frameworks,Tests,Entities}'

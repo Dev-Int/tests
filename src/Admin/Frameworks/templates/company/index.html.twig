@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <h1><i class="fa-solid fa-building"></i> Company</h1>
+
+    <div class="row">
+        <aside class="col-md-3">
+            <nav class="menu">
+                <ul>
+                    <li>
+                        <a href="{{ path('admin_company_update', { 'slug': company.slug }) }}" role="button" class="w100">
+                            <i class="fa-solid fa-pen-to-square"></i> Update Company
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ path('admin_index') }}" role="button" class="w100">
+                            <i class="fa-solid fa-angles-left"></i> Retour à l'accueil
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+        <article class="col-md-9">
+            <table>
+                <tbody>
+                <tr>
+                    <td>Name</td>
+                    <td>{{ company.name }}</td>
+                </tr>
+                <tr>
+                    <td>Address</td>
+                    <td>{{ company.fullAddress | raw }}</td>
+                </tr>
+                <tr>
+                    <td>Phone</td>
+                    <td>{{ company.phone }}</td>
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td>{{ company.email }}</td>
+                </tr>
+                <tr>
+                    <td>Contact</td>
+                    <td>{{ company.contact }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </article>
+    </div>
+
+{% endblock %}
+

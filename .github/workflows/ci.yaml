@@ -1,38 +1,79 @@
 name: Tests
 
 on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main, develop ]
+    push:
+        branches: [ main, develop ]
+    pull_request:
+        branches: [ main, develop ]
+env:
+    DATABASE_URL: 'postgres://postgres:postgres@localhost:5432/app?serverVersion=16&charset=UTF-8'
 
 jobs:
-  build:
+    lint:
+        strategy:
+            fail-fast: false
+            matrix:
+                php-versions: ['8.2', '8.3']
+        runs-on: ubuntu-latest
+        name: Lint / PHP ${{ matrix.php-versions }}
+        steps:
+            - uses: actions/checkout@v2
 
-    runs-on: ubuntu-latest
+            - name: Setup PHP with PECL extension
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php-versions }}
+                  extensions: apcu, intl, opcache, zip, pdo_pgsql
 
-    steps:
-      - uses: actions/checkout@v2
+            - name: Validate composer.json and composer.lock
+              run: composer validate
 
-      - name: Setup PHP with PECL extension
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          extensions: apcu, intl, opcache, zip
+            - name: Install dependencies
+              run: composer install --prefer-dist --no-progress --no-suggest
 
-      - name: Validate composer.json and composer.lock
-        run: composer validate
+            - name: Run coding standards analysis
+              run: |
+                  php bin/console lint:yaml config
+                  composer run-script phpcs
+                  composer run-script phpstan
 
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-suggest
+    test:
+        strategy:
+            fail-fast: false
+            matrix:
+                php-versions: ['8.2', '8.3']
+        runs-on: ubuntu-latest
+        name: Tests / PHP ${{ matrix.php-versions }}
+        services:
+            postgres:
+                image: 'postgres:16'
+                env:
+                    POSTGRES_USER: postgres
+                    POSTGRES_PASSWORD: postgres
+                    POSTGRES_DB: app
+                ports:
+                    - '5432:5432'
+                options: '--health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5'
+        steps:
+            - uses: actions/checkout@v2
 
-      # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
-      # Docs: https://getcomposer.org/doc/articles/scripts.md
+            - name: Setup PHP with PECL extension
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php-versions }}
+                  extensions: apcu, intl, opcache, zip, pdo_pgsql
 
-      - name: Run test suite
-        run: composer run-script tests
+            - name: Validate composer.json and composer.lock
+              run: composer validate
 
-      - name: Run coding standards analysis
-        run: |
-            composer run-script phpcs
-            composer run-script phpstan
+            - name: Install dependencies
+              run: composer install --prefer-dist --no-progress --no-suggest
+
+            # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
+            # Docs: https://getcomposer.org/doc/articles/scripts.md
+
+            - name: Run test suite
+              run:  |
+                  cp phpunit.xml.dist phpunit.xml
+                  php bin/console importmap:install
+                  make ta

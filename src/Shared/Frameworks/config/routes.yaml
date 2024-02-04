@@ -1,0 +1,9 @@
+controllers:
+    resource:
+        path: ../../Adapters/Controller/Symfony/Controller
+        namespace: Shared\Adapters\Controller\Symfony\Controller
+    type: attribute
+
+kernel:
+    resource: App\Kernel
+    type: attribute

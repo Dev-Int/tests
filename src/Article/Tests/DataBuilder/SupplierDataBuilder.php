@@ -59,7 +59,7 @@ final class SupplierDataBuilder
             $this->uuid,
             $this->name,
             $this->address->address(),
-            $this->address->zipCode(),
+            $this->address->postalCode(),
             $this->address->town(),
             $this->address->country(),
             $this->phone,

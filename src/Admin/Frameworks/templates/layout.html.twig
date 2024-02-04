@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block header %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+
+    <h1>Administration</h1>
+
+    <div class="row">
+        <aside class="col-md-3">
+            <nav id="menu">
+                <ul>
+                    <li>
+                        <a href="{{ path('admin_company_index') }}" role="button" class="w100">
+                            <i class="fa-solid fa-building"></i> Company
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" role="button" class="w100">
+                            <i class="fa-solid fa-cogs"></i> Configure application
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" role="button" class="w100">
+                            <i class="fa-solid fa-square-check"></i> Storage areas
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" role="button" class="w100">
+                            <i class="fa-solid fa-square-check"></i> Logistic families
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" role="button" class="w100">
+                            <i class="fa-solid fa-square-check"></i> Suppliers
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" role="button" class="w100">
+                            <i class="fa-solid fa-square-check"></i> Articles
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+        <article class="col-md-9">
+            <p>Here is how you administrate these application.</p>
+            <p></p>
+            <p>Happy use ;)</p>
+
+            <p><a href="{{ path('home') }}" role="button">Retour à l'accueil</a></p>
+        </article>
+    </div>
+
+{% endblock %}

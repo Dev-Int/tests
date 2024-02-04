@@ -23,17 +23,24 @@ RUN apk add --no-cache \
 		gettext \
 		git \
 		make \
+		sudo \
+		bash \
 	;
 
 RUN set -eux; \
 	install-php-extensions \
+		@composer \
 		apcu \
+		gd \
 		intl \
 		opcache \
 		zip \
 	;
 
 ###> recipes ###
+###> doctrine/doctrine-bundle ###
+RUN install-php-extensions pdo_pgsql
+###< doctrine/doctrine-bundle ###
 ###< recipes ###
 
 COPY --link frankenphp/conf.d/app.ini $PHP_INI_DIR/conf.d/
@@ -53,6 +60,10 @@ CMD [ "frankenphp", "run", "--config", "/etc/caddy/Caddyfile" ]
 
 # Dev FrankenPHP image
 FROM frankenphp_base AS frankenphp_dev
+
+# add Symfony cli
+RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.alpine.sh' | sudo -E bash; \
+	sudo apk add symfony-cli;
 
 ENV APP_ENV=dev XDEBUG_MODE=off
 VOLUME /app/var/

@@ -1,0 +1,10 @@
+:root {
+    --color-error: rgb(170, 70, 70);
+    --color-error-bg: rgb(240, 220, 220);
+    --color-success: rgb(60,120,60);
+    --color-success-bg: rgb(220,240,220);
+    --color-warning: rgb(140,110,60);
+    --color-warning-bg: rgb(250,250,230);
+    --color-info: rgb(50, 110, 140);
+    --color-info-bg: rgb(220, 240, 250);
+}
