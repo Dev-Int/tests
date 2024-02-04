@@ -104,6 +104,7 @@
         "auto-scripts": [
         ],
         "tests": "php bin/phpunit",
+        "php-cs-fixer": "./bin/php-cs-fixer fix --diff",
         "phpcs": "php ./vendor/bin/phpcs --standard=phpcs.xml.dist -n -p src/",
         "phpstan": "php ./vendor/bin/phpstan analyse -c phpstan.neon --memory-limit 1G",
         "post-install-cmd": [

@@ -128,12 +128,12 @@ cs-fixer: ## Run php-cs-fixer
 stan: ## Run PHPStan only
 	./vendor/bin/phpstan analyse -c phpstan.neon --memory-limit 1G
 
-psalm: ## Run psalm only
-	./vendor/bin/psalm --show-info=false
-
-init-psalm: ## Init a new psalm config file for a given level, it must be decremented to have stricter rules
-	rm ./psalm.xml
-	./vendor/bin/psalm --init src/ 3
+#psalm: ## Run psalm only
+#	./vendor/bin/psalm --show-info=false
+#
+#init-psalm: ## Init a new psalm config file for a given level, it must be decremented to have stricter rules
+#	rm ./psalm.xml
+#	./vendor/bin/psalm --init src/ 3
 
 
 ## —— Deploy & Prod ————————————————————————————————————————————————————————————
