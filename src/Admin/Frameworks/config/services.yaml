@@ -8,3 +8,4 @@ services:
         resource: '%kernel.project_dir%/src/Admin/*'
         exclude: 
             - '%kernel.project_dir%/src/Admin/{Frameworks,Tests,Entities}'
+            - '%kernel.project_dir%/src/Admin/Adapters/Gateway/ORM/Entity'

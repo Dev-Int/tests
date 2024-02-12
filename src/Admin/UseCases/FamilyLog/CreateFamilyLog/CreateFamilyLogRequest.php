@@ -17,7 +17,7 @@ use Admin\Entities\FamilyLog;
 
 interface CreateFamilyLogRequest
 {
-    public function name(): string;
+    public function label(): string;
 
     public function parent(): ?FamilyLog;
 }

@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <h1><i class="fas fa-cogs"></i> Logistics Families</h1>
+
+    <div class="row">
+        <aside class="clo-md-3">
+            <nav class="menu">
+                <ul>
+                    <li><a href="{{ path('admin_family_logs_create') }}" class="w100" role="button">Create FamilyLog</a></li>
+                    <li><a href="#" class="w100" role="button">Update FamilyLog</a></li>
+                    <li>
+                        <a href="{{ path('admin_index') }}" role="button" class="w100">
+                            <i class="fa-solid fa-angles-left"></i> Retour à l'accueil
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+        <article class="clo-md-9">
+            <ul class="w100">
+                {% for family in familyLogs %}
+                <li>{{ family.path }}</li>
+                {% endfor %}
+            </ul>
+        </article>
+    </div>
+{% endblock %}

@@ -11,16 +11,13 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\UseCases\Gateway;
+namespace Admin\UseCases\FamilyLog\GetFamilyLogs;
 
-use Admin\Entities\FamilyLog;
 use Admin\Entities\FamilyLogCollection;
 
-interface FamilyLogRepository
+final readonly class GetFamilyLogsResponse
 {
-    public function save(FamilyLog $familyLog): void;
-
-    public function exists(string $label, ?FamilyLog $parent): bool;
-
-    public function findFamilyLogs(): FamilyLogCollection;
+    public function __construct(public FamilyLogCollection $familyLogs)
+    {
+    }
 }

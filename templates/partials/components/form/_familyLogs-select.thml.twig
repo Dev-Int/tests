@@ -1,0 +1,9 @@
+{% dump(field_choices(form.parent)) %}
+{{ form_label(form.parent) }}
+<select name="{{ field_name(form.parent) }}" class="form-control">
+    <option value="">{{ field_label(form.parent) }}</option>
+
+    {% for label, value in field_choices(form.parent) %}
+        <option value="{{ value }}">{{ label }}</option>
+    {% endfor %}
+</select>

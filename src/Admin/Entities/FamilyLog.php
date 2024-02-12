@@ -24,35 +24,40 @@ final class FamilyLog
     private string $slug;
     private string $path;
 
-    public static function create(NameField $name, ?self $parent = null): self
+    public static function create(NameField $label, ?self $parent = null): self
     {
-        return new self($name, $parent);
+        return new self($label, $parent);
     }
 
-    private function __construct(private readonly NameField $name, private ?self $parent = null)
+    private function __construct(private readonly NameField $label, private readonly ?self $parent = null)
     {
-        $this->path = $name->slugify();
-        $this->slug = $name->slugify();
+        $this->path = $label->slugify();
+        $this->slug = $label->slugify();
 
-        if (null !== $parent) {
-            $this->parent = $parent;
+        if (null !== $parent && $this->parent !== null) {
             $this->parent->addChild($this);
-            $this->path = $parent->slug() . ':' . $name->slugify();
-
-            if (null !== $this->parent && null !== $this->parent->parent) {
-                $this->path = $this->parent->parent->slug() . ':' . $this->parent->slug() . ':' . $name->slugify();
-            }
+            $slug = $parent->slug() . '-' . $label->slugify();
+            $this->path = $slug;
+            $this->slug = $slug;
         }
     }
 
-    public function name(): NameField
+    public function label(): NameField
     {
-        return $this->name;
+        return $this->label;
     }
 
     public function parent(): ?self
     {
         return $this->parent;
+    }
+
+    /**
+     * @return array<FamilyLog>|null
+     */
+    public function children(): ?array
+    {
+        return $this->children;
     }
 
     public function path(): string
@@ -72,18 +77,23 @@ final class FamilyLog
     {
         $arrayChildren = [];
         if (null === $this->children) {
-            return [$this->name->toString() => $arrayChildren];
+            return [$this->label->toString() => $arrayChildren];
         }
 
         foreach ($this->children as $child) {
             if (null !== $this->hasChildren($child)) {
-                $arrayChildren[$child->name->toString()] = $this->hasChildren($child);
+                $arrayChildren[$child->label->toString()] = $this->hasChildren($child);
             } else {
-                $arrayChildren[] = $child->name->toString();
+                $arrayChildren[] = $child->label->toString();
             }
         }
 
-        return [$this->name->toString() => $arrayChildren];
+        return [$this->label->toString() => $arrayChildren];
+    }
+
+    public function addChild(self $child): void
+    {
+        $this->children[] = $child;
     }
 
     /**
@@ -92,16 +102,11 @@ final class FamilyLog
     private function hasChildren(self $familyLog): ?array
     {
         if (null !== $familyLog->children) {
-            return array_map(static function ($child) {
-                return $child->name->toString();
+            return array_map(static function (FamilyLog $child) {
+                return $child->label->toString();
             }, $familyLog->children);
         }
 
         return null;
-    }
-
-    private function addChild(self $child): void
-    {
-        $this->children[] = $child;
     }
 }

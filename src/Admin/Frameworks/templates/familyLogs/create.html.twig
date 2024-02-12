@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Create Logistic Family</h1>
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    {{ form_row(form.label) }}
+
+    {{ include('partials/components/form/_familyLogs-select.thml.twig', {form: form}) }}
+
+    <div class="grid">
+        <a role="button" href="{{ path('admin_index') }}" class="secondary">Annuler</a>
+        <button type="submit">Create</button>
+    </div>
+
+    {{ form_end(form) }}
+
+{% endblock %}

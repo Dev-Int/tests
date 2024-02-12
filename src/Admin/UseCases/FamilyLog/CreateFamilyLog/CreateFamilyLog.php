@@ -26,13 +26,13 @@ final readonly class CreateFamilyLog
 
     public function execute(CreateFamilyLogRequest $request): CreateFamilyLogResponse
     {
-        $isExists = $this->familyLogRepository->exists($request->name(), $request->parent());
+        $isExists = $this->familyLogRepository->exists($request->label(), $request->parent());
         if ($isExists === true) {
-            throw new FamilyLogAlreadyExistsException($request->name());
+            throw new FamilyLogAlreadyExistsException($request->label());
         }
 
         $familyLog = FamilyLog::create(
-            NameField::fromString($request->name()),
+            NameField::fromString($request->label()),
             $request->parent()
         );
 

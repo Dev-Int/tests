@@ -18,25 +18,25 @@ use Shared\Entities\VO\NameField;
 
 final class FamilyLogDataBuilder
 {
-    private NameField $name;
+    private NameField $label;
     private ?FamilyLog $parent = null;
 
-    public function create(string $name): self
+    public function create(string $label): self
     {
-        $this->name = NameField::fromString($name);
+        $this->label = NameField::fromString($label);
 
         return $this;
     }
 
-    public function withParent(string $parentName): self
+    public function withParent(FamilyLog $parent): self
     {
-        $this->parent = FamilyLog::create(NameField::fromString($parentName));
+        $this->parent = $parent;
 
         return $this;
     }
 
     public function build(): FamilyLog
     {
-        return FamilyLog::create($this->name, $this->parent);
+        return FamilyLog::create($this->label, $this->parent);
     }
 }

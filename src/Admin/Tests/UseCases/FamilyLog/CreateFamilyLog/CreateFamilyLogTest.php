@@ -33,7 +33,7 @@ final class CreateFamilyLogTest extends TestCase
         $useCase = new CreateFamilyLog($familyLogRepository);
         $request = $this->createMock(CreateFamilyLogRequest::class);
 
-        $request->expects(self::exactly(2))->method('name')->willReturn('Surgelé');
+        $request->expects(self::exactly(2))->method('label')->willReturn('Surgelé');
         $request->expects(self::exactly(2))->method('parent')->willReturn(null);
 
         $familyLogRepository->expects(self::once())
@@ -49,7 +49,7 @@ final class CreateFamilyLogTest extends TestCase
         $familyLog = $response->familyLog;
 
         // Assert
-        self::assertSame('Surgelé', $familyLog->name()->toString());
+        self::assertSame('Surgelé', $familyLog->label()->toString());
         self::assertSame('surgele', $familyLog->slug());
         self::assertNull($familyLog->parent());
         self::assertSame('surgele', $familyLog->path());
@@ -64,7 +64,7 @@ final class CreateFamilyLogTest extends TestCase
         $request = $this->createMock(CreateFamilyLogRequest::class);
         $familyLogParent = $familyLogBuilder->create('Surgelé')->build();
 
-        $request->expects(self::exactly(2))->method('name')->willReturn('Viande');
+        $request->expects(self::exactly(2))->method('label')->willReturn('Viande');
         $request->expects(self::exactly(2))->method('parent')->willReturn($familyLogParent);
 
         $familyLogRepository->expects(self::once())
@@ -80,10 +80,9 @@ final class CreateFamilyLogTest extends TestCase
         $familyLog = $response->familyLog;
 
         // Assert
-        self::assertSame('Viande', $familyLog->name()->toString());
-        self::assertSame('viande', $familyLog->slug());
+        self::assertSame('Viande', $familyLog->label()->toString());
+        self::assertSame('surgele-viande', $familyLog->slug());
         self::assertInstanceOf(FamilyLog::class, $familyLog->parent());
-        self::assertSame('surgele:viande', $familyLog->path());
     }
 
     public function testCreateFamilyLogWithParentHasParentSucceed(): void
@@ -93,12 +92,13 @@ final class CreateFamilyLogTest extends TestCase
         $familyLogRepository = $this->createMock(FamilyLogRepository::class);
         $useCase = new CreateFamilyLog($familyLogRepository);
         $request = $this->createMock(CreateFamilyLogRequest::class);
+        $familyLogGrandParent = $familyLogBuilder->create('Surgelé')->build();
         $familyLogParent = $familyLogBuilder->create('Viande')
-            ->withParent('Surgelé')
+            ->withParent($familyLogGrandParent)
             ->build()
         ;
 
-        $request->expects(self::exactly(2))->method('name')->willReturn('Boeuf');
+        $request->expects(self::exactly(2))->method('label')->willReturn('Boeuf');
         $request->expects(self::exactly(2))->method('parent')->willReturn($familyLogParent);
 
         $familyLogRepository->expects(self::once())
@@ -114,10 +114,10 @@ final class CreateFamilyLogTest extends TestCase
         $familyLog = $response->familyLog;
 
         // Assert
-        self::assertSame('Boeuf', $familyLog->name()->toString());
-        self::assertSame('boeuf', $familyLog->slug());
+        self::assertSame('Boeuf', $familyLog->label()->toString());
+        self::assertSame('surgele-viande-boeuf', $familyLog->slug());
         self::assertInstanceOf(FamilyLog::class, $familyLog->parent());
-        self::assertSame('surgele:viande:boeuf', $familyLog->path());
+        self::assertSame('surgele-viande-boeuf', $familyLog->path());
     }
 
     public function testCreateFamilyLogFailWithAlreadyExistName(): void
@@ -133,7 +133,7 @@ final class CreateFamilyLogTest extends TestCase
             ->willReturn(true)
         ;
 
-        $request->expects(self::exactly(2))->method('name')->willReturn('Surgelé');
+        $request->expects(self::exactly(2))->method('label')->willReturn('Surgelé');
         $request->expects(self::once())->method('parent')->willReturn(null);
 
         $familyLogRepository->expects(self::never())->method('save');
