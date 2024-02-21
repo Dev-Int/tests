@@ -45,7 +45,11 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
         $familyLogOrm->fromDomain($familyLog);
 
         if ($familyLog->parent() !== null) {
-            $parent = $this->findBySlug($familyLog->parent()->slug());
+            $parent = $this->find($familyLog->parent()->slug());
+
+            if (!$parent instanceof FamilyLog) {
+                throw new FamilyLogNotFoundException($familyLog->parent()->slug());
+            }
             $level = $parent->level() + 1;
         }
 
@@ -66,10 +70,9 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
             ->where("{$alias}.label = :label")
             ->setParameter('label', $label)
         ;
+
         if ($parent === null) {
-            $queryBuilder
-                ->andWhere("{$alias}.parent IS NULL")
-            ;
+            $queryBuilder->andWhere("{$alias}.parent IS NULL");
         } else {
             $parentOrm = $this->find($parent->slug());
             $queryBuilder
@@ -85,12 +88,25 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
         return $familyLog !== null;
     }
 
-    public function findFamilyLogs(): FamilyLogCollection
+    public function findFamilyLogsOrderingBySlug(): FamilyLogCollection
     {
         $collection = new FamilyLogCollection();
-        $familyLogs = $this->findAll();
+        $alias = self::ALIAS;
+        $familyLogs = $this->createQueryBuilder($alias)
+            ->orderBy("{$alias}.slug", 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+
+        if (!\is_array($familyLogs)) {
+            throw new \RuntimeException('array expected');
+        }
 
         foreach ($familyLogs as $familyLog) {
+            if (!$familyLog instanceof FamilyLog) {
+                throw new \RuntimeException(sprintf('%s expected', FamilyLog::class));
+            }
+
             $collection->add($familyLog->toDomain());
         }
 
@@ -100,7 +116,7 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
     /**
      * @throws NonUniqueResultException
      */
-    public function findBySlug(string $slug): FamilyLog
+    public function findBySlug(string $slug): FamilyLogDomain
     {
         $alias = self::ALIAS;
         $familyLog = $this->createQueryBuilder($alias)
@@ -114,6 +130,18 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
             throw new FamilyLogNotFoundException($slug);
         }
 
-        return $familyLog;
+        return $familyLog->toDomain();
+    }
+
+    public function updateLabel(FamilyLogDomain $familyLog): void
+    {
+        $familyLogToUpdate = $this->find($familyLog->slug());
+        if (!$familyLogToUpdate instanceof FamilyLog) {
+            throw new FamilyLogNotFoundException($familyLog->slug());
+        }
+
+        $familyLogToUpdate->setLabel($familyLog->label()->toString());
+
+        $this->_em->flush();
     }
 }

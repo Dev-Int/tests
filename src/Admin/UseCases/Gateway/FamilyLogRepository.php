@@ -22,5 +22,9 @@ interface FamilyLogRepository
 
     public function exists(string $label, ?FamilyLog $parent): bool;
 
-    public function findFamilyLogs(): FamilyLogCollection;
+    public function findBySlug(string $slug): FamilyLog;
+
+    public function findFamilyLogsOrderingBySlug(): FamilyLogCollection;
+
+    public function updateLabel(FamilyLog $familyLog): void;
 }

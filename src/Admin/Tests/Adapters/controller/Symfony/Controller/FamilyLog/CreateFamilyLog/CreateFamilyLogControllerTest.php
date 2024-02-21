@@ -16,6 +16,7 @@ namespace Admin\Tests\Adapters\controller\Symfony\Controller\FamilyLog\CreateFam
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
 use Admin\Entities\Exception\FamilyLogAlreadyExistsException;
+use Admin\Entities\FamilyLog as FamilyLogDomain;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,7 +41,7 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         self::assertSelectorTextContains('h1', 'Create Logistic Family');
 
         $form = $crawler->selectButton('Create')->form([
-            'familyLog[label]' => 'Surgelé',
+            'createFamilyLog[label]' => 'Surgelé',
         ]);
         $client->submit($form);
 
@@ -48,9 +49,9 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
         self::assertResponseRedirects('/admin/family_logs/');
 
-        /** @var FamilyLog $familyCreated */
+        /** @var FamilyLogDomain $familyCreated */
         $familyCreated = $familyLogRepository->findBySlug('surgele');
-        self::assertSame('Surgelé', $familyCreated->label());
+        self::assertSame('Surgelé', $familyCreated->label()->toString());
     }
 
     public function testCreateFamilyLogWithParentWillSucceed(): void
@@ -71,8 +72,8 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         self::assertSelectorTextContains('h1', 'Create Logistic Family');
 
         $form = $crawler->selectButton('Create')->form([
-            'familyLog[label]' => 'Viande',
-            'familyLog[parent]' => $familyLogParentOrm->slug(),
+            'createFamilyLog[label]' => 'Viande',
+            'createFamilyLog[parent]' => $familyLogParentOrm->slug(),
         ]);
         $client->submit($form);
 
@@ -80,11 +81,11 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
         self::assertResponseRedirects('/admin/family_logs/');
 
-        /** @var FamilyLog $familyCreated */
+        /** @var FamilyLogDomain $familyCreated */
         $familyCreated = $familyLogRepository->findBySlug('surgele-viande');
-        self::assertSame('Viande', $familyCreated->label());
+        self::assertSame('Viande', $familyCreated->label()->toString());
         self::assertSame('surgele-viande', $familyCreated->slug());
-        self::assertSame('Surgelé', $familyCreated->parent()?->label());
+        self::assertSame('Surgelé', $familyCreated->parent()?->label()->toString());
     }
 
     public function testCreateFamilyLogWithGrandParentsWillSucceed(): void
@@ -111,8 +112,8 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         self::assertSelectorTextContains('h1', 'Create Logistic Family');
 
         $form = $crawler->selectButton('Create')->form([
-            'familyLog[label]' => 'Viande',
-            'familyLog[parent]' => $familyLogParentOrm->slug(),
+            'createFamilyLog[label]' => 'Viande',
+            'createFamilyLog[parent]' => $familyLogParentOrm->slug(),
         ]);
         $client->submit($form);
 
@@ -120,11 +121,11 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
         self::assertResponseRedirects('/admin/family_logs/');
 
-        /** @var FamilyLog $familyCreated */
+        /** @var FamilyLogDomain $familyCreated */
         $familyCreated = $familyLogRepository->findBySlug('surgele-viande');
-        self::assertSame('Viande', $familyCreated->label());
+        self::assertSame('Viande', $familyCreated->label()->toString());
         self::assertSame('surgele-viande', $familyCreated->slug());
-        self::assertSame('Surgelé', $familyCreated->parent()?->label());
+        self::assertSame('Surgelé', $familyCreated->parent()?->label()->toString());
     }
 
     public function testCreateFamilyLogFailWithAlreadyExistsException(): void
@@ -139,7 +140,7 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         $familyLogRepository->save($familyLog);
 
         /** @var FamilyLog $familyCreated */
-        $familyCreated = $familyLogRepository->findBySlug('surgele');
+        $familyCreated = $familyLogRepository->find('surgele');
         self::assertSame('Surgelé', $familyCreated->label());
         self::assertNull($familyCreated->parent());
 
@@ -150,7 +151,7 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         self::assertSelectorTextContains('h1', 'Create Logistic Family');
 
         $form = $crawler->selectButton('Create')->form([
-            'familyLog[label]' => 'Surgelé',
+            'createFamilyLog[label]' => 'Surgelé',
         ]);
         $client->submit($form);
 

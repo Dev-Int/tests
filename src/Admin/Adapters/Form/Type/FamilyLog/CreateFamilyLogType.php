@@ -11,7 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Adapters\Form\Type;
+namespace Admin\Adapters\Form\Type\FamilyLog;
 
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
 use Doctrine\ORM\EntityRepository;
@@ -21,7 +21,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-final class FamilyLogType extends AbstractType
+class CreateFamilyLogType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -52,6 +52,6 @@ final class FamilyLogType extends AbstractType
 
     public function getBlockPrefix(): string
     {
-        return 'familyLog';
+        return 'createFamilyLog';
     }
 }

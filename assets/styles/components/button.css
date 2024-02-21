@@ -1,9 +1,0 @@
-/** Button */
-a[role="button"] {
-    margin-bottom: var(--spacing);
-}
-
-a[role="button"].disable-link {
-    pointer-events: none;
-    cursor: default;
-}

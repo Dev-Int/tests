@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\FamilyLog\CreateFamilyLog;
 
-use Admin\Adapters\Form\Type\FamilyLogType;
+use Admin\Adapters\Form\Type\FamilyLog\CreateFamilyLogType;
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
 use Admin\Entities\Exception\FamilyLogAlreadyExistsException;
@@ -36,7 +36,7 @@ final class CreateFamilyLogController extends AbstractController
     #[Route(path: 'family_logs/create', name: 'admin_family_logs_create', methods: ['GET', 'POST'])]
     public function __invoke(Request $request): Response
     {
-        $form = $this->createForm(FamilyLogType::class);
+        $form = $this->createForm(CreateFamilyLogType::class);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -45,8 +45,7 @@ final class CreateFamilyLogController extends AbstractController
             /** @var array{label: string, parent: FamilyLog|null} $familyLog */
             $familyLog = $form->getData();
             if ($familyLog['parent'] !== null) {
-                $parentOrm = $this->familyLogRepository->findBySlug($familyLog['parent']->slug());
-                $parent = $parentOrm->toDomain();
+                $parent = $this->familyLogRepository->findBySlug($familyLog['parent']->slug());
             }
 
             try {

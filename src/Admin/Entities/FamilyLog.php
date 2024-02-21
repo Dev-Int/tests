@@ -24,27 +24,36 @@ final class FamilyLog
     private string $slug;
     private string $path;
 
+    private int $level;
+
     public static function create(NameField $label, ?self $parent = null): self
     {
         return new self($label, $parent);
     }
 
-    private function __construct(private readonly NameField $label, private readonly ?self $parent = null)
+    private function __construct(private NameField $label, private readonly ?self $parent = null)
     {
         $this->path = $label->slugify();
         $this->slug = $label->slugify();
+        $this->level = 1;
 
         if (null !== $parent && $this->parent !== null) {
             $this->parent->addChild($this);
             $slug = $parent->slug() . '-' . $label->slugify();
             $this->path = $slug;
             $this->slug = $slug;
+            $this->level += $this->parent->level;
         }
     }
 
     public function label(): NameField
     {
         return $this->label;
+    }
+
+    public function changeLabel(NameField $label): void
+    {
+        $this->label = $label;
     }
 
     public function parent(): ?self
@@ -68,6 +77,11 @@ final class FamilyLog
     public function slug(): string
     {
         return $this->slug;
+    }
+
+    public function level(): int
+    {
+        return $this->level;
     }
 
     /**

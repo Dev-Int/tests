@@ -23,7 +23,7 @@ final readonly class GetFamilyLogs
 
     public function execute(): GetFamilyLogsResponse
     {
-        $familyLogs = $this->repository->findFamilyLogs();
+        $familyLogs = $this->repository->findFamilyLogsOrderingBySlug();
 
         return new GetFamilyLogsResponse($familyLogs);
     }

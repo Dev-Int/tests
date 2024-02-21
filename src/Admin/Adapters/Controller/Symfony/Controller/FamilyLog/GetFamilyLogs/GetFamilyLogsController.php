@@ -11,7 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Adapters\Controller\Symfony\Controller\FamilyLog;
+namespace Admin\Adapters\Controller\Symfony\Controller\FamilyLog\GetFamilyLogs;
 
 use Admin\UseCases\FamilyLog\GetFamilyLogs\GetFamilyLogs;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,7 +20,7 @@ use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[AsController]
-final class HomeController extends AbstractController
+final class GetFamilyLogsController extends AbstractController
 {
     public function __construct(private readonly GetFamilyLogs $useCase)
     {
@@ -31,8 +31,10 @@ final class HomeController extends AbstractController
     {
         $familyLogs = $this->useCase->execute();
 
+        $response = new GetFamilyLogsWebResponse($familyLogs);
+
         return $this->render('@admin/familyLogs/index.html.twig', [
-            'familyLogs' => $familyLogs,
+            'familyLogs' => $response->familyLogs(),
         ]);
     }
 }

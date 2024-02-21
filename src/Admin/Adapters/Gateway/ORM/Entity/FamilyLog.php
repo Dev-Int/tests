@@ -50,6 +50,7 @@ class FamilyLog
         $this->slug = $familyLog->slug();
         $this->label = $familyLog->label()->toString();
         $this->path = $familyLog->path();
+        $this->level = $familyLog->level();
 
         return $this;
     }
@@ -144,9 +145,9 @@ class FamilyLog
 
     public function getIndentedLabel(): string
     {
-        $prefix = str_repeat('- ', $this->level);
+        $prefix = str_repeat('|- - ', $this->level);
 
-        return sprintf('|- %s %s', $prefix, $this->label);
+        return sprintf('%s %s', $prefix, $this->label);
     }
 
     /**
