@@ -27,4 +27,6 @@ interface FamilyLogRepository
     public function findFamilyLogsOrderingBySlug(): FamilyLogCollection;
 
     public function updateLabel(FamilyLog $familyLog): void;
+
+    public function assignParent(FamilyLog $familyLog): void;
 }

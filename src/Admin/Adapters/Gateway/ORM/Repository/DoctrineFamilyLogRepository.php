@@ -144,4 +144,9 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
 
         $this->_em->flush();
     }
+
+    public function assignParent(FamilyLogDomain $familyLog): void
+    {
+        // TODO: Implement assignParent() method.
+    }
 }

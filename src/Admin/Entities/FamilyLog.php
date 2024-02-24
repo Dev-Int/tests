@@ -31,18 +31,14 @@ final class FamilyLog
         return new self($label, $parent);
     }
 
-    private function __construct(private NameField $label, private readonly ?self $parent = null)
+    private function __construct(private NameField $label, private ?self $parent = null)
     {
         $this->path = $label->slugify();
         $this->slug = $label->slugify();
         $this->level = 1;
 
         if (null !== $parent && $this->parent !== null) {
-            $this->parent->addChild($this);
-            $slug = $parent->slug() . '-' . $label->slugify();
-            $this->path = $slug;
-            $this->slug = $slug;
-            $this->level += $this->parent->level;
+            $this->assignParent($parent, $label);
         }
     }
 
@@ -95,8 +91,8 @@ final class FamilyLog
         }
 
         foreach ($this->children as $child) {
-            if (null !== $this->hasChildren($child)) {
-                $arrayChildren[$child->label->toString()] = $this->hasChildren($child);
+            if (null !== $this->getChildrenLabel($child)) {
+                $arrayChildren[$child->label->toString()] = $this->getChildrenLabel($child);
             } else {
                 $arrayChildren[] = $child->label->toString();
             }
@@ -110,10 +106,33 @@ final class FamilyLog
         $this->children[] = $child;
     }
 
+    public function assignParent(self $parent, NameField $label): void
+    {
+        $this->parent = $parent;
+
+        if ($this->isChild($parent) === false) {
+            $this->parent->addChild($this);
+        }
+
+        $slug = $parent->slug() . '-' . $label->slugify();
+        $this->path = $slug;
+        $this->slug = $slug;
+
+        if ($this->parent !== null) {
+            $this->level = $this->parent->level + 1;
+        }
+
+        if ($this->children !== null) {
+            foreach ($this->children as $child) {
+                $child->assignParent($this, $child->label);
+            }
+        }
+    }
+
     /**
      * @return array<string>|null
      */
-    private function hasChildren(self $familyLog): ?array
+    private function getChildrenLabel(self $familyLog): ?array
     {
         if (null !== $familyLog->children) {
             return array_map(static function (FamilyLog $child) {
@@ -122,5 +141,18 @@ final class FamilyLog
         }
 
         return null;
+    }
+
+    private function isChild(self $parent): bool
+    {
+        if ($parent->children !== null) {
+            foreach ($parent->children as $child) {
+                if ($child->slug === $this->slug) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }
