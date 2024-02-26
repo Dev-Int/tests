@@ -16,6 +16,7 @@ namespace Admin\UseCases\FamilyLog\CreateFamilyLog;
 use Admin\Entities\Exception\FamilyLogAlreadyExistsException;
 use Admin\Entities\FamilyLog;
 use Admin\UseCases\Gateway\FamilyLogRepository;
+use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
 
 final readonly class CreateFamilyLog
@@ -32,6 +33,7 @@ final readonly class CreateFamilyLog
         }
 
         $familyLog = FamilyLog::create(
+            ResourceUuid::generate(),
             NameField::fromString($request->label()),
             $request->parent()
         );

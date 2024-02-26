@@ -26,7 +26,7 @@ final class GetFamilyLogsWebResponse
         foreach ($familyLogs->familyLogs as $familyLog) {
             $this->familyLogs[] = new FamilyLogDto(
                 (new FamilyLog())->fromDomain($familyLog)->getIndentedLabel(),
-                $familyLog->slug()
+                $familyLog->uuid()->toString()
             );
         }
     }

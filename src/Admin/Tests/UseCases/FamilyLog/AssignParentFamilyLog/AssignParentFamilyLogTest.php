@@ -18,6 +18,7 @@ use Admin\UseCases\FamilyLog\ChangeParentFamilyLog\AssignParentFamilyLog;
 use Admin\UseCases\FamilyLog\ChangeParentFamilyLog\AssignParentFamilyLogRequest;
 use Admin\UseCases\Gateway\FamilyLogRepository;
 use PHPUnit\Framework\TestCase;
+use Shared\Entities\ResourceUuid;
 
 use function PHPUnit\Framework\once;
 
@@ -29,16 +30,19 @@ final class AssignParentFamilyLogTest extends TestCase
         $repository = $this->createMock(FamilyLogRepository::class);
         $useCase = new AssignParentFamilyLog($repository);
         $familyLogBuilder = new FamilyLogDataBuilder();
-        $parent = $familyLogBuilder->create('Surgelé')->build();
+        $parent = $familyLogBuilder->create('Surgelé')
+            ->withUuid('99282a8d-f344-456c-bbd3-37fe89f3876c')
+            ->build()
+        ;
         $familyLog = $familyLogBuilder->create('Viande')->build();
 
         $request = $this->createMock(AssignParentFamilyLogRequest::class);
-        $request->expects(self::once())->method('slug')->willReturn('viande');
+        $request->expects(self::exactly(2))->method('uuid')->willReturn(FamilyLogDataBuilder::VALID_UUID);
         $request->expects(self::exactly(2))->method('parent')->willReturn($parent);
 
         $repository->expects(self::once())
-            ->method('findBySlug')
-            ->with('viande')
+            ->method('findByUuid')
+            ->with(ResourceUuid::fromString(FamilyLogDataBuilder::VALID_UUID))
             ->willReturn($familyLog)
         ;
 
@@ -71,17 +75,20 @@ final class AssignParentFamilyLogTest extends TestCase
         $repository = $this->createMock(FamilyLogRepository::class);
         $useCase = new AssignParentFamilyLog($repository);
         $familyLogBuilder = new FamilyLogDataBuilder();
-        $parent = $familyLogBuilder->create('Surgelé')->build();
+        $parent = $familyLogBuilder->create('Surgelé')
+            ->withUuid('99282a8d-f344-456c-bbd3-37fe89f3876c')
+            ->build()
+        ;
         $otherParent = $familyLogBuilder->create('Frais')->build();
         $familyLog = $familyLogBuilder->create('Viande')->withParent($parent)->build();
 
         $request = $this->createMock(AssignParentFamilyLogRequest::class);
-        $request->expects(self::once())->method('slug')->willReturn('viande');
+        $request->expects(self::exactly(2))->method('uuid')->willReturn(FamilyLogDataBuilder::VALID_UUID);
         $request->expects(self::exactly(2))->method('parent')->willReturn($otherParent);
 
         $repository->expects(self::once())
-            ->method('findBySlug')
-            ->with('viande')
+            ->method('findByUuid')
+            ->with(ResourceUuid::fromString(FamilyLogDataBuilder::VALID_UUID))
             ->willReturn($familyLog)
         ;
 
@@ -115,17 +122,24 @@ final class AssignParentFamilyLogTest extends TestCase
         $repository = $this->createMock(FamilyLogRepository::class);
         $useCase = new AssignParentFamilyLog($repository);
         $familyLogBuilder = new FamilyLogDataBuilder();
-        $parent = $familyLogBuilder->create('Surgelé')->build();
+        $parent = $familyLogBuilder->create('Surgelé')
+            ->withUuid('99282a8d-f344-456c-bbd3-37fe89f3876c')
+            ->build()
+        ;
         $familyLog = $familyLogBuilder->create('Viande')->build();
-        $familyLogBuilder->create('Poulet')->withParent($familyLog)->build();
+        $familyLogBuilder->create('Poulet')
+            ->withUuid('7e2a8ea8-71e6-449d-90eb-8a18d7ab8ced')
+            ->withParent($familyLog)
+            ->build()
+        ;
 
         $request = $this->createMock(AssignParentFamilyLogRequest::class);
-        $request->expects(self::once())->method('slug')->willReturn('viande');
+        $request->expects(self::exactly(2))->method('uuid')->willReturn(FamilyLogDataBuilder::VALID_UUID);
         $request->expects(self::exactly(2))->method('parent')->willReturn($parent);
 
         $repository->expects(self::once())
-            ->method('findBySlug')
-            ->with('viande')
+            ->method('findByUuid')
+            ->with(ResourceUuid::fromString(FamilyLogDataBuilder::VALID_UUID))
             ->willReturn($familyLog)
         ;
 
@@ -136,7 +150,11 @@ final class AssignParentFamilyLogTest extends TestCase
         ;
 
         $familyLogAssigned = $familyLogBuilder->create('Viande')->withParent($parent)->build();
-        $familyLogBuilder->create('Poulet')->withParent($familyLogAssigned)->build();
+        $familyLogBuilder->create('Poulet')
+            ->withParent($familyLogAssigned)
+            ->withUuid('7e2a8ea8-71e6-449d-90eb-8a18d7ab8ced')
+            ->build()
+        ;
         $repository->expects(self::once())
             ->method('assignParent')
             ->with($familyLogAssigned)
@@ -170,18 +188,28 @@ final class AssignParentFamilyLogTest extends TestCase
         $repository = $this->createMock(FamilyLogRepository::class);
         $useCase = new AssignParentFamilyLog($repository);
         $familyLogBuilder = new FamilyLogDataBuilder();
-        $parent = $familyLogBuilder->create('Surgelé')->build();
-        $otherParent = $familyLogBuilder->create('Frais')->build();
+        $parent = $familyLogBuilder->create('Surgelé')
+            ->withUuid('99282a8d-f344-456c-bbd3-37fe89f3876c')
+            ->build()
+        ;
+        $otherParent = $familyLogBuilder->create('Frais')
+            ->withUuid('fdfedfaa-9b1e-48e2-a689-1944a03a5927')
+            ->build()
+        ;
         $familyLog = $familyLogBuilder->create('Viande')->withParent($parent)->build();
-        $familyLogBuilder->create('Poulet')->withParent($familyLog)->build();
+        $familyLogBuilder->create('Poulet')
+            ->withParent($familyLog)
+            ->withUuid('7e2a8ea8-71e6-449d-90eb-8a18d7ab8ced')
+            ->build()
+        ;
 
         $request = $this->createMock(AssignParentFamilyLogRequest::class);
-        $request->expects(self::once())->method('slug')->willReturn('viande');
+        $request->expects(self::exactly(2))->method('uuid')->willReturn(FamilyLogDataBuilder::VALID_UUID);
         $request->expects(self::exactly(2))->method('parent')->willReturn($otherParent);
 
         $repository->expects(self::once())
-            ->method('findBySlug')
-            ->with('viande')
+            ->method('findByUuid')
+            ->with(ResourceUuid::fromString(FamilyLogDataBuilder::VALID_UUID))
             ->willReturn($familyLog)
         ;
 
@@ -192,7 +220,11 @@ final class AssignParentFamilyLogTest extends TestCase
         ;
 
         $familyLogAssigned = $familyLogBuilder->create('Viande')->withParent($otherParent)->build();
-        $familyLogBuilder->create('Poulet')->withParent($familyLogAssigned)->build();
+        $familyLogBuilder->create('Poulet')
+            ->withParent($familyLogAssigned)
+            ->withUuid('7e2a8ea8-71e6-449d-90eb-8a18d7ab8ced')
+            ->build()
+        ;
         $repository->expects(self::once())
             ->method('assignParent')
             ->with($familyLogAssigned)

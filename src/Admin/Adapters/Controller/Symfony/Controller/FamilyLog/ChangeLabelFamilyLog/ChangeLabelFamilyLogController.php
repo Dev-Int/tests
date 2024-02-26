@@ -29,24 +29,24 @@ final class ChangeLabelFamilyLogController extends AbstractController
     {
     }
 
-    #[Route(path: 'family_logs/{slug}/change-label', name: 'admin_family_logs_change-label', methods: ['GET', 'POST'])]
+    #[Route(path: 'family_logs/{uuid}/change-label', name: 'admin_family_logs_change-label', methods: ['GET', 'POST'])]
     public function __invoke(Request $request, FamilyLog $familyLog): Response
     {
         $form = $this->createForm(
             ChangeLabelFamilyLogType::class,
-            ['label' => $familyLog->label(), 'slug' => $familyLog->slug()]
+            ['label' => $familyLog->label()]
         );
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var array{label: string, slug: string} $familyLogToUpdate */
+            /** @var array{label: string} $familyLogToUpdate */
             $familyLogToUpdate = $form->getData();
 
             try {
                 $this->useCase->execute(
                     new ChangeLabelFamilyLogApiRequest(
-                        $familyLogToUpdate['slug'],
-                        $familyLogToUpdate['label'],
+                        $familyLog->uuid(),
+                        $familyLogToUpdate['label']
                     )
                 );
             } catch (\DomainException $exception) {

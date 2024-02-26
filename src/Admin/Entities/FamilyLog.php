@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Entities;
 
+use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
 
 final class FamilyLog
@@ -26,13 +27,16 @@ final class FamilyLog
 
     private int $level;
 
-    public static function create(NameField $label, ?self $parent = null): self
+    public static function create(ResourceUuid $uuid, NameField $label, ?self $parent = null): self
     {
-        return new self($label, $parent);
+        return new self($uuid, $label, $parent);
     }
 
-    private function __construct(private NameField $label, private ?self $parent = null)
-    {
+    private function __construct(
+        private readonly ResourceUuid $uuid,
+        private NameField $label,
+        private ?self $parent = null
+    ) {
         $this->path = $label->slugify();
         $this->slug = $label->slugify();
         $this->level = 1;
@@ -40,6 +44,11 @@ final class FamilyLog
         if (null !== $parent && $this->parent !== null) {
             $this->assignParent($parent, $label);
         }
+    }
+
+    public function uuid(): ResourceUuid
+    {
+        return $this->uuid;
     }
 
     public function label(): NameField

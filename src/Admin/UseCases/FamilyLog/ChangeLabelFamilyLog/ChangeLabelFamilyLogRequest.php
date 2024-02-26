@@ -15,7 +15,7 @@ namespace Admin\UseCases\FamilyLog\ChangeLabelFamilyLog;
 
 interface ChangeLabelFamilyLogRequest
 {
-    public function slug(): string;
+    public function uuid(): string;
 
     public function label(): string;
 }

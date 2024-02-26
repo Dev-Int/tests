@@ -18,23 +18,26 @@ use Admin\Entities\FamilyLog as FamilyLogDomain;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
 
 #[ORM\Entity(repositoryClass: DoctrineFamilyLogRepository::class)]
 class FamilyLog
 {
     #[ORM\Id]
-    #[ORM\Column]
-    private string $slug;
+    #[ORM\Column(name: 'uuid', type: 'guid', length: 26)]
+    private string $uuid;
     #[ORM\Column(name: 'label', type: 'string', length: 64)]
     private string $label;
+    #[ORM\Column]
+    private string $slug;
     #[ORM\Column(name: 'path', type: 'string', length: 3000)]
-    private string $path = '';
-    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children')]
-    #[ORM\JoinColumn(name: 'parent_path', referencedColumnName: 'slug', onDelete: 'CASCADE')]
-    private ?FamilyLog $parent;
-    #[ORM\Column(name: 'lvl', nullable: true)]
+    private string $path;
+    #[ORM\Column(name: 'lvl')]
     private int $level;
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children')]
+    #[ORM\JoinColumn(name: 'parent_uuid', referencedColumnName: 'uuid', onDelete: 'CASCADE')]
+    private ?FamilyLog $parent;
 
     /** @var Collection<FamilyLog> */
     #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class)]
@@ -47,8 +50,9 @@ class FamilyLog
 
     public function fromDomain(FamilyLogDomain $familyLog): self
     {
-        $this->slug = $familyLog->slug();
+        $this->uuid = $familyLog->uuid()->toString();
         $this->label = $familyLog->label()->toString();
+        $this->slug = $familyLog->slug();
         $this->path = $familyLog->path();
         $this->level = $familyLog->level();
 
@@ -57,7 +61,16 @@ class FamilyLog
 
     public function toDomain(): FamilyLogDomain
     {
-        return FamilyLogDomain::create(NameField::fromString($this->label), $this->parent?->toDomain());
+        return FamilyLogDomain::create(
+            ResourceUuid::fromString($this->uuid),
+            NameField::fromString($this->label),
+            $this->parent?->toDomain()
+        );
+    }
+
+    public function uuid(): string
+    {
+        return $this->uuid;
     }
 
     public function label(): string
@@ -65,9 +78,11 @@ class FamilyLog
         return $this->label;
     }
 
-    public function setLabel(string $label): void
+    public function setLabel(string $label): self
     {
         $this->label = $label;
+
+        return $this;
     }
 
     public function path(): string
@@ -75,9 +90,11 @@ class FamilyLog
         return $this->path;
     }
 
-    public function setPath(string $path): void
+    public function setPath(string $path): self
     {
         $this->path = $path;
+
+        return $this;
     }
 
     public function level(): int
@@ -85,9 +102,11 @@ class FamilyLog
         return $this->level;
     }
 
-    public function setLevel(int $level): void
+    public function setLevel(int $level): self
     {
         $this->level = $level;
+
+        return $this;
     }
 
     public function parent(): ?self
@@ -95,9 +114,11 @@ class FamilyLog
         return $this->parent;
     }
 
-    public function setParent(?self $parent): void
+    public function setParent(?self $parent): self
     {
         $this->parent = $parent;
+
+        return $this;
     }
 
     /**
@@ -108,9 +129,11 @@ class FamilyLog
         return $this->children;
     }
 
-    public function setChildren(Collection $children): void
+    public function setChildren(Collection $children): self
     {
         $this->children = $children;
+
+        return $this;
     }
 
     public function slug(): string
@@ -118,9 +141,11 @@ class FamilyLog
         return $this->slug;
     }
 
-    public function setSlug(string $slug): void
+    public function setSlug(string $slug): self
     {
         $this->slug = $slug;
+
+        return $this;
     }
 
     /**

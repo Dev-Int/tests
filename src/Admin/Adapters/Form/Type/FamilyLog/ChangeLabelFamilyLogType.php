@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Form\Type\FamilyLog;
 
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 final class ChangeLabelFamilyLogType extends CreateFamilyLogType
@@ -22,10 +21,7 @@ final class ChangeLabelFamilyLogType extends CreateFamilyLogType
     {
         parent::buildForm($builder, $options);
 
-        $builder
-            ->remove('parent')
-            ->add('slug', HiddenType::class)
-        ;
+        $builder->remove('parent');
     }
 
     public function getBlockPrefix(): string

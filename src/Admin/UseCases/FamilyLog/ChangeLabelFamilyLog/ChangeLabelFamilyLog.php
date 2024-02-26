@@ -15,6 +15,7 @@ namespace Admin\UseCases\FamilyLog\ChangeLabelFamilyLog;
 
 use Admin\Entities\Exception\FamilyLogAlreadyExistsException;
 use Admin\UseCases\Gateway\FamilyLogRepository;
+use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
 
 final readonly class ChangeLabelFamilyLog
@@ -25,7 +26,7 @@ final readonly class ChangeLabelFamilyLog
 
     public function execute(ChangeLabelFamilyLogRequest $request): ChangeLabelFamilyLogResponse
     {
-        $familyLog = $this->familyLogRepository->findBySlug($request->slug());
+        $familyLog = $this->familyLogRepository->findByUuid(ResourceUuid::fromString($request->uuid()));
 
         $isExists = $this->familyLogRepository->exists(
             $request->label(),

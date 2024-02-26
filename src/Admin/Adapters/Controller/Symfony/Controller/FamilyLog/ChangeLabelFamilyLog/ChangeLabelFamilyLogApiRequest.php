@@ -17,13 +17,13 @@ use Admin\UseCases\FamilyLog\ChangeLabelFamilyLog\ChangeLabelFamilyLogRequest;
 
 final readonly class ChangeLabelFamilyLogApiRequest implements ChangeLabelFamilyLogRequest
 {
-    public function __construct(public string $slug, public string $label)
+    public function __construct(public string $uuid, public string $label)
     {
     }
 
-    public function slug(): string
+    public function uuid(): string
     {
-        return $this->slug;
+        return $this->uuid;
     }
 
     public function label(): string

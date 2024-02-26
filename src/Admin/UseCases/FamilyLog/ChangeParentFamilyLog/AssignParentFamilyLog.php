@@ -15,6 +15,7 @@ namespace Admin\UseCases\FamilyLog\ChangeParentFamilyLog;
 
 use Admin\Entities\Exception\FamilyLogAlreadyExistsException;
 use Admin\UseCases\Gateway\FamilyLogRepository;
+use Shared\Entities\ResourceUuid;
 
 final readonly class AssignParentFamilyLog
 {
@@ -24,7 +25,7 @@ final readonly class AssignParentFamilyLog
 
     public function execute(AssignParentFamilyLogRequest $request): AssignParentFamilyLogResponse
     {
-        $familyLog = $this->familyLogRepository->findBySlug($request->slug());
+        $familyLog = $this->familyLogRepository->findByUuid(ResourceUuid::fromString($request->uuid()));
 
         $isExists = $this->familyLogRepository->exists($familyLog->label()->toString(), $request->parent());
         if ($isExists === true) {
@@ -33,7 +34,7 @@ final readonly class AssignParentFamilyLog
 
         $familyLog->assignParent($request->parent(), $familyLog->label());
 
-        $this->familyLogRepository->assignParent($familyLog);
+        $this->familyLogRepository->assignParent($familyLog, $request->uuid());
 
         return new AssignParentFamilyLogResponse($familyLog);
     }

@@ -17,7 +17,7 @@ use Admin\Entities\FamilyLog;
 
 interface AssignParentFamilyLogRequest
 {
-    public function parent(): FamilyLog;
+    public function uuid(): string;
 
-    public function slug(): string;
+    public function parent(): FamilyLog;
 }

@@ -15,7 +15,7 @@ namespace Admin\Adapters\Controller\Symfony\Controller\FamilyLog\GetFamilyLogs;
 
 final readonly class FamilyLogDto
 {
-    public function __construct(public string $path, public string $slug)
+    public function __construct(public string $path, public string $uuid)
     {
     }
 }

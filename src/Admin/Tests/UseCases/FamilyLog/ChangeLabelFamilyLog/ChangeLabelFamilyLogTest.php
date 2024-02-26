@@ -19,6 +19,7 @@ use Admin\UseCases\FamilyLog\ChangeLabelFamilyLog\ChangeLabelFamilyLog;
 use Admin\UseCases\FamilyLog\ChangeLabelFamilyLog\ChangeLabelFamilyLogRequest;
 use Admin\UseCases\Gateway\FamilyLogRepository;
 use PHPUnit\Framework\TestCase;
+use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
 
 final class ChangeLabelFamilyLogTest extends TestCase
@@ -30,12 +31,12 @@ final class ChangeLabelFamilyLogTest extends TestCase
         $useCase = new ChangeLabelFamilyLog($repository);
         $familyLog = (new FamilyLogDataBuilder())->create('Viande')->build();
         $request = $this->createMock(ChangeLabelFamilyLogRequest::class);
-        $request->expects(self::once())->method('slug')->willReturn('viande');
+        $request->expects(self::once())->method('uuid')->willReturn(FamilyLogDataBuilder::VALID_UUID);
         $request->expects(self::exactly(2))->method('label')->willReturn('Viandes');
 
         $repository->expects(self::once())
-            ->method('findBySlug')
-            ->with('viande')
+            ->method('findByUuid')
+            ->with(ResourceUuid::fromString(FamilyLogDataBuilder::VALID_UUID))
             ->willReturn($familyLog)
         ;
         $repository->expects(self::once())
@@ -65,12 +66,12 @@ final class ChangeLabelFamilyLogTest extends TestCase
         $useCase = new ChangeLabelFamilyLog($repository);
         $familyLog = (new FamilyLogDataBuilder())->create('Viande')->build();
         $request = $this->createMock(ChangeLabelFamilyLogRequest::class);
-        $request->expects(self::once())->method('slug')->willReturn('viande');
+        $request->expects(self::once())->method('uuid')->willReturn(FamilyLogDataBuilder::VALID_UUID);
         $request->expects(self::exactly(2))->method('label')->willReturn('Viandes');
 
         $repository->expects(self::once())
-            ->method('findBySlug')
-            ->with('viande')
+            ->method('findByUuid')
+            ->with(ResourceUuid::fromString(FamilyLogDataBuilder::VALID_UUID))
             ->willReturn($familyLog)
         ;
         $repository->expects(self::once())
@@ -85,6 +86,6 @@ final class ChangeLabelFamilyLogTest extends TestCase
         $this->expectException(FamilyLogAlreadyExistsException::class);
 
         // Act
-        $response = $useCase->execute($request);
+        $useCase->execute($request);
     }
 }

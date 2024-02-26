@@ -24,7 +24,7 @@ final class ChangeLabelFamilyLogControllerTest extends WebTestCase
 {
     private const CHANGE_LABEL_FAMILY_LOG_URI = '/admin/family_logs/%s/change-label';
 
-    public function testUpdateFamilyLogWillSucceed(): void
+    public function testChangeLabelFamilyLogWillSucceed(): void
     {
         // Arrange
         $client = self::createClient();
@@ -33,21 +33,24 @@ final class ChangeLabelFamilyLogControllerTest extends WebTestCase
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
         $familyLogBuilder = new FamilyLogDataBuilder();
 
-        $familyLogGrandParent = $familyLogBuilder->create('Surgelé')->build();
-        $familyLogRepository->save($familyLogGrandParent);
-
-        $familyLogParent = $familyLogBuilder->create('Viande')
-            ->withParent($familyLogGrandParent)
+        $familyLogParent = $familyLogBuilder->create('Surgelé')
+            ->withUuid('99282a8d-f344-456c-bbd3-37fe89f3876c')
             ->build()
         ;
         $familyLogRepository->save($familyLogParent);
+
+        $familyLog = $familyLogBuilder->create('Viande')
+            ->withParent($familyLogParent)
+            ->build()
+        ;
+        $familyLogRepository->save($familyLog);
         $familyLogs = $familyLogRepository->findAll();
         self::assertCount(2, $familyLogs);
 
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            sprintf(self::CHANGE_LABEL_FAMILY_LOG_URI, $familyLogParent->slug())
+            sprintf(self::CHANGE_LABEL_FAMILY_LOG_URI, $familyLog->uuid()->toString())
         );
 
         self::assertResponseIsSuccessful();
@@ -55,7 +58,6 @@ final class ChangeLabelFamilyLogControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('Update')->form([
             'changeLabelFamilyLog[label]' => 'Viandes',
-            'changeLabelFamilyLog[slug]' => $familyLogParent->slug(),
         ]);
         $client->submit($form);
 
@@ -63,12 +65,12 @@ final class ChangeLabelFamilyLogControllerTest extends WebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/family_logs/');
 
-        /** @var FamilyLog $familyCreated */
-        $familyCreated = $familyLogRepository->find('surgele-viande');
+        /** @var FamilyLog $familyLogUpdated */
+        $familyLogUpdated = $familyLogRepository->find(FamilyLogDataBuilder::VALID_UUID);
         $familyLogs = $familyLogRepository->findAll();
         self::assertCount(2, $familyLogs);
-        self::assertSame('Viandes', $familyCreated->label());
-        self::assertSame('surgele-viande', $familyCreated->slug());
-        self::assertSame('Surgelé', $familyCreated->parent()?->label());
+        self::assertSame('Viandes', $familyLogUpdated->label());
+        self::assertSame('surgele-viande', $familyLogUpdated->slug());
+        self::assertSame('Surgelé', $familyLogUpdated->parent()?->label());
     }
 }

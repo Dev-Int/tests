@@ -61,9 +61,12 @@ final class CreateFamilyLogControllerTest extends WebTestCase
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
-        $familyLogParent = (new FamilyLogDataBuilder())->create('Surgelé')->build();
+        $familyLogParent = (new FamilyLogDataBuilder())->create('Surgelé')
+            ->withUuid('99282a8d-f344-456c-bbd3-37fe89f3876c')
+            ->build()
+        ;
         $familyLogRepository->save($familyLogParent);
-        $familyLogParentOrm = $familyLogRepository->findBySlug('surgele');
+        $familyLogParentOrm = $familyLogRepository->findByUuid($familyLogParent->uuid());
 
         // Act
         $crawler = $client->request(Request::METHOD_GET, self::CREATE_FAMILY_LOG_URI);
@@ -73,7 +76,7 @@ final class CreateFamilyLogControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('Create')->form([
             'createFamilyLog[label]' => 'Viande',
-            'createFamilyLog[parent]' => $familyLogParentOrm->slug(),
+            'createFamilyLog[parent]' => $familyLogParentOrm->uuid()->toString(),
         ]);
         $client->submit($form);
 
@@ -96,7 +99,10 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
         $familyLogBuilder = new FamilyLogDataBuilder();
-        $familyLogGrandParent = $familyLogBuilder->create('Surgelé')->build();
+        $familyLogGrandParent = $familyLogBuilder->create('Surgelé')
+            ->withUuid('99282a8d-f344-456c-bbd3-37fe89f3876c')
+            ->build()
+        ;
         $familyLogRepository->save($familyLogGrandParent);
         $familyLogParent = $familyLogBuilder->create('Viande')
             ->withParent($familyLogGrandParent)
@@ -113,7 +119,7 @@ final class CreateFamilyLogControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('Create')->form([
             'createFamilyLog[label]' => 'Viande',
-            'createFamilyLog[parent]' => $familyLogParentOrm->slug(),
+            'createFamilyLog[parent]' => $familyLogParentOrm->uuid()->toString(),
         ]);
         $client->submit($form);
 
@@ -140,7 +146,7 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         $familyLogRepository->save($familyLog);
 
         /** @var FamilyLog $familyCreated */
-        $familyCreated = $familyLogRepository->find('surgele');
+        $familyCreated = $familyLogRepository->find(FamilyLogDataBuilder::VALID_UUID);
         self::assertSame('Surgelé', $familyCreated->label());
         self::assertNull($familyCreated->parent());
 

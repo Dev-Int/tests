@@ -21,7 +21,7 @@ final class FamilyLogNotFoundException extends \DomainException implements \Json
 
     private const MESSAGE = 'FamilyLog not found.';
 
-    public function __construct(private readonly string $slug, ?\Throwable $previous = null)
+    public function __construct(private readonly string $identifier, ?\Throwable $previous = null)
     {
         parent::__construct(self::MESSAGE, 0, $previous);
     }
@@ -32,7 +32,7 @@ final class FamilyLogNotFoundException extends \DomainException implements \Json
     public function jsonSerialize(): iterable
     {
         return $this->toJson() + [
-            'slug' => $this->slug,
+            'identifier' => $this->identifier,
         ];
     }
 }

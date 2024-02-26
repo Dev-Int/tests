@@ -21,6 +21,7 @@ use Admin\UseCases\Gateway\FamilyLogRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
+use Shared\Entities\ResourceUuid;
 
 /**
  * @template-extends ServiceEntityRepository<FamilyLog>
@@ -39,25 +40,38 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
      */
     public function save(FamilyLogDomain $familyLog): void
     {
-        $parent = null;
-        $level = 0;
         $familyLogOrm = new FamilyLog();
         $familyLogOrm->fromDomain($familyLog);
 
+        $parent = null;
         if ($familyLog->parent() !== null) {
-            $parent = $this->find($familyLog->parent()->slug());
+            $parent = $this->find($familyLog->parent()->uuid()->toString());
 
             if (!$parent instanceof FamilyLog) {
                 throw new FamilyLogNotFoundException($familyLog->parent()->slug());
             }
-            $level = $parent->level() + 1;
         }
-
         $familyLogOrm->setParent($parent);
-        $familyLogOrm->setLevel($level);
 
         $this->_em->persist($familyLogOrm);
         $this->_em->flush();
+    }
+
+    public function findByUuid(ResourceUuid $uuid): FamilyLogDomain
+    {
+        $alias = self::ALIAS;
+        $familyLog = $this->createQueryBuilder($alias)
+            ->where("{$alias}.uuid = :uuid")
+            ->setParameter('uuid', $uuid->toString())
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+
+        if (!$familyLog instanceof FamilyLog) {
+            throw new FamilyLogNotFoundException($uuid->toString());
+        }
+
+        return $familyLog->toDomain();
     }
 
     /**
@@ -74,7 +88,7 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
         if ($parent === null) {
             $queryBuilder->andWhere("{$alias}.parent IS NULL");
         } else {
-            $parentOrm = $this->find($parent->slug());
+            $parentOrm = $this->find($parent->uuid()->toString());
             $queryBuilder
                 ->andWhere("{$alias}.parent = :parent")
                 ->setParameter('parent', $parentOrm)
@@ -135,7 +149,7 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
 
     public function updateLabel(FamilyLogDomain $familyLog): void
     {
-        $familyLogToUpdate = $this->find($familyLog->slug());
+        $familyLogToUpdate = $this->find($familyLog->uuid()->toString());
         if (!$familyLogToUpdate instanceof FamilyLog) {
             throw new FamilyLogNotFoundException($familyLog->slug());
         }
@@ -145,8 +159,25 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
         $this->_em->flush();
     }
 
-    public function assignParent(FamilyLogDomain $familyLog): void
+    public function assignParent(FamilyLogDomain $familyLog, string $uuid): void
     {
-        // TODO: Implement assignParent() method.
+        $familyLogToUpdate = $this->find($uuid);
+        if (!$familyLogToUpdate instanceof FamilyLog) {
+            throw new FamilyLogNotFoundException($familyLog->slug());
+        }
+
+        if ($familyLog->parent() !== null) {
+            $parent = $this->find($familyLog->parent()->uuid()->toString());
+            if (!$parent instanceof FamilyLog) {
+                throw new FamilyLogNotFoundException($familyLog->parent()->slug());
+            }
+
+            $familyLogToUpdate->setParent($parent)
+                ->setSlug($familyLog->slug())
+                ->setPath($familyLog->path())
+            ;
+        }
+
+        $this->_em->flush();
     }
 }

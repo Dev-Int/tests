@@ -92,8 +92,12 @@ final class CreateFamilyLogTest extends TestCase
         $familyLogRepository = $this->createMock(FamilyLogRepository::class);
         $useCase = new CreateFamilyLog($familyLogRepository);
         $request = $this->createMock(CreateFamilyLogRequest::class);
-        $familyLogGrandParent = $familyLogBuilder->create('Surgelé')->build();
+        $familyLogGrandParent = $familyLogBuilder->create('Surgelé')
+            ->withUuid('99282a8d-f344-456c-bbd3-37fe89f3876c')
+            ->build()
+        ;
         $familyLogParent = $familyLogBuilder->create('Viande')
+            ->withUuid('7e2a8ea8-71e6-449d-90eb-8a18d7ab8ced')
             ->withParent($familyLogGrandParent)
             ->build()
         ;
