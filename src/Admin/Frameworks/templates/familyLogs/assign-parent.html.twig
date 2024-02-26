@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Assign parent to "{{ form.vars.value.label }}"</h1>
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    {{ include('partials/components/form/_familyLogs-select.thml.twig', {form: form}) }}
+
+
+    <div class="grid">
+        <a role="button" href="{{ path('admin_family_logs_index') }}" class="secondary">Annuler</a>
+        <button type="submit">Assign</button>
+    </div>
+
+    {{ form_end(form) }}
+
+{% endblock %}
+
