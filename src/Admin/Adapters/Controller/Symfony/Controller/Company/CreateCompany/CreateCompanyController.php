@@ -57,7 +57,7 @@ final class CreateCompanyController extends AbstractController
             }
             $this->addFlash('success', 'Company created');
 
-            return $this->redirectToRoute('admin_index', [], Response::HTTP_CREATED);
+            return $this->redirectToRoute('admin_index', [], Response::HTTP_FOUND);
         }
 
         return $this->render('@admin/company/create.html.twig', [

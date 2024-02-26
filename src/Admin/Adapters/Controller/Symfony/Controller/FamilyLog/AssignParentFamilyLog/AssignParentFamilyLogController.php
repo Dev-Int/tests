@@ -31,7 +31,7 @@ final class AssignParentFamilyLogController extends AbstractController
 
     #[Route(
         path: '/family_logs/{uuid}/assign-parent',
-        name: 'admin_family_log_assign-parent',
+        name: 'admin_family_logs_assign-parent',
         methods: ['GET', 'POST']
     )]
     public function __invoke(Request $request, FamilyLog $familyLog): Response

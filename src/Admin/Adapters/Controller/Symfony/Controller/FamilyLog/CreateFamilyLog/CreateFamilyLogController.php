@@ -62,7 +62,7 @@ final class CreateFamilyLogController extends AbstractController
             }
             $this->addFlash('success', 'FamilyLog created');
 
-            return $this->redirectToRoute('admin_family_logs_index', [], Response::HTTP_CREATED);
+            return $this->redirectToRoute('admin_family_logs_index', [], Response::HTTP_FOUND);
         }
 
         return $this->render('@admin/familyLogs/create.html.twig', [
