@@ -27,7 +27,6 @@ final class GetFamilyLogsControllerTest extends WebTestCase
         // Arrange
         $client = self::createClient();
 
-
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
         $familyLogBuilder = new FamilyLogDataBuilder();
