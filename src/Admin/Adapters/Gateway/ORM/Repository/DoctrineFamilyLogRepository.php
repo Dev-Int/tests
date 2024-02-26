@@ -20,6 +20,8 @@ use Admin\Entities\FamilyLogCollection;
 use Admin\UseCases\Gateway\FamilyLogRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\UnexpectedResultException;
 use Doctrine\Persistence\ManagerRegistry;
 use Shared\Entities\ResourceUuid;
 
@@ -179,5 +181,26 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
         }
 
         $this->_em->flush();
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     * @throws UnexpectedResultException
+     */
+    public function hasFamilyLog(): bool
+    {
+        $alias = self::ALIAS;
+        $count = $this->createQueryBuilder($alias)
+            ->select("COUNT({$alias}.uuid)")
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+
+        if (!\is_int($count)) {
+            throw new UnexpectedResultException();
+        }
+
+        return $count > 0;
     }
 }

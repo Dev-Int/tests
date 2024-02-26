@@ -32,4 +32,6 @@ interface FamilyLogRepository
     public function updateLabel(FamilyLog $familyLog): void;
 
     public function assignParent(FamilyLog $familyLog, string $uuid): void;
+
+    public function hasFamilyLog(): bool;
 }
