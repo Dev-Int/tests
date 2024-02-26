@@ -54,11 +54,18 @@ final class CreateCompanyControllerTest extends WebTestCase
         $client->submit($form);
 
         // Assert
-        self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
+        self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/');
 
         $companyCreated = $companyRepository->findByName('Dev-Int Création');
         self::assertSame('dev-int-creation', $companyCreated->slug());
+
+        // The configuration only begin. The admin page is redirected throw admin configure.
+        $client->followRedirect(); // Admin page
+        $admin = $client->followRedirect(); // Configure page
+        $flash = $admin->filter('body > div.container')->children('div.flash.flash-success')->text();
+
+        self::assertEquals('Company created', $flash);
     }
 
     public function testCreateCompanyControllerWillThrowAlreadyExistsException(): void

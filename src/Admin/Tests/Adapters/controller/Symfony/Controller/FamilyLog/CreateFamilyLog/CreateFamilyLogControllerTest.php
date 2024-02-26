@@ -46,8 +46,13 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         $client->submit($form);
 
         // Assert
-        self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
+        self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/family_logs/');
+
+        $admin = $client->followRedirect();
+        $flash = $admin->filter('body > div.container')->children('div.flash.flash-success')->text();
+
+        self::assertSame('FamilyLog created', $flash);
 
         /** @var FamilyLogDomain $familyCreated */
         $familyCreated = $familyLogRepository->findBySlug('surgele');
@@ -81,8 +86,13 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         $client->submit($form);
 
         // Assert
-        self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
+        self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/family_logs/');
+
+        $admin = $client->followRedirect();
+        $flash = $admin->filter('body > div.container')->children('div.flash.flash-success')->text();
+
+        self::assertSame('FamilyLog created', $flash);
 
         /** @var FamilyLogDomain $familyCreated */
         $familyCreated = $familyLogRepository->findBySlug('surgele-viande');
@@ -118,20 +128,25 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         self::assertSelectorTextContains('h1', 'Create Logistic Family');
 
         $form = $crawler->selectButton('Create')->form([
-            'createFamilyLog[label]' => 'Viande',
+            'createFamilyLog[label]' => 'Poulet',
             'createFamilyLog[parent]' => $familyLogParentOrm->uuid()->toString(),
         ]);
         $client->submit($form);
 
         // Assert
-        self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
+        self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/family_logs/');
 
+        $admin = $client->followRedirect();
+        $flash = $admin->filter('body > div.container')->children('div.flash.flash-success')->text();
+
+        self::assertSame('FamilyLog created', $flash);
+
         /** @var FamilyLogDomain $familyCreated */
-        $familyCreated = $familyLogRepository->findBySlug('surgele-viande');
-        self::assertSame('Viande', $familyCreated->label()->toString());
-        self::assertSame('surgele-viande', $familyCreated->slug());
-        self::assertSame('Surgelé', $familyCreated->parent()?->label()->toString());
+        $familyCreated = $familyLogRepository->findBySlug('surgele-viande-poulet');
+        self::assertSame('Poulet', $familyCreated->label()->toString());
+        self::assertSame('surgele-viande-poulet', $familyCreated->slug());
+        self::assertSame('Viande', $familyCreated->parent()?->label()->toString());
     }
 
     public function testCreateFamilyLogFailWithAlreadyExistsException(): void
