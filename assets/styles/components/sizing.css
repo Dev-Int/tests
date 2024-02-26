@@ -50,3 +50,8 @@ aside.col-md-3 + article {
     margin-top: 0;
     margin-bottom: var(--nav-element-spacing-horizontal);
 }
+
+.flex-between {
+    display: flex;
+    justify-content: space-between;
+}

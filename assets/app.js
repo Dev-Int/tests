@@ -8,4 +8,9 @@ import './bootstrap.js';
 import '@picocss/pico/css/pico.min.css';
 import './styles/app.css';
 
+/* Timeout on flashes */
+const flashes = document.getElementById('flashes');
+setTimeout(() => {flashes.style.display = 'none'}, 2000);
+
+
 console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉')

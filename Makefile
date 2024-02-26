@@ -113,6 +113,9 @@ tf: phpunit.xml clean-db-test ## Launch functional tests implying external resou
 ta: phpunit.xml clean-db-test ## Launch functional and unit tests
 	php bin/phpunit --stop-on-failure
 
+tcov: phpunit.xml clean-db-test ## Launch all tests with coverage
+	XDEBUG_MODE=coverage php bin/phpunit --coverage-html=coverage
+
 
 ## —— Coding standards ✨ ——————————————————————————————————————————————————————
 qa: phpcs stan cs-fixer # lint ## Launch all static analysis tools
