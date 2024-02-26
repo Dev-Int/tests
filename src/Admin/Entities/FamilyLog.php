@@ -24,7 +24,6 @@ final class FamilyLog
     private ?array $children = null;
     private string $slug;
     private string $path;
-
     private int $level;
 
     public static function create(ResourceUuid $uuid, NameField $label, ?self $parent = null): self
