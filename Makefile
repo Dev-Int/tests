@@ -57,7 +57,7 @@ assets: purge ## Install the assets with symlinks in the public folder
 
 purge: ## Purge cache and logs
 	rm -rf var/cache/* var/logs/*
-
+.PHONY: sf fix-perms assets purge
 
 ## —— Symfony binary 🎵 —————————————————————————————————————————————————————————
 bin-install: ## Download and install the binary in the project (file is ignored)
@@ -72,14 +72,13 @@ serve: ## Serve the application with HTTPS support
 
 unserve: ## Stop the webserver
 	$(SYMFONY_BIN) server:stop
-
+.PHONY: bin-install cert-install serve unserve
 
 ## —— Database —————————————————————————————————————————————————————————————————
 clean-db: cc ## Reset database (env : test)
 	- $(SYMFONY) doctrine:database:drop --force
 	$(SYMFONY) doctrine:database:create
 	$(SYMFONY) doctrine:migration:migrate --no-interaction
-.PHONY: clean-db
 
 reload: load-fixtures ## Reload fixtures
 
@@ -90,18 +89,17 @@ load-fixtures: ## Build the DB, control the schema validity, load fixtures and c
 	$(SYMFONY) doctrine:schema:create
 	$(SYMFONY) doctrine:schema:validate
 	$(SYMFONY) doctrine:fixtures:load -n
+.PHONY: reload load-fixtures clean-db
 
 
 ## —— Tests 🐛️ —————————————————————————————————————————————————————————————————
 cc-test: ## Cache clear (env : test)
 	$(SYMFONY) cache:clear --env=test
-.PHONY: cc-test
 
 clean-db-test: cc-test ## Reset database (env : test)
 	- $(SYMFONY) doctrine:database:drop --force --env=test
 	$(SYMFONY) doctrine:database:create --env=test
 	$(SYMFONY) doctrine:migration:migrate --no-interaction --env=test
-.PHONY: clean-db-test
 
 tu: phpunit.xml ## Launch unit tests
 	php bin/phpunit --group=unitTest --stop-on-failure
@@ -113,8 +111,9 @@ tf: phpunit.xml clean-db-test ## Launch functional tests implying external resou
 ta: phpunit.xml clean-db-test ## Launch functional and unit tests
 	php bin/phpunit --stop-on-failure
 
-tcov: phpunit.xml clean-db-test ## Launch all tests with coverage
+tc: phpunit.xml clean-db-test ## Launch all tests with coverage
 	XDEBUG_MODE=coverage php bin/phpunit --coverage-html=coverage
+.PHONY: cc-test clean-db-test tu tf ta tc
 
 
 ## —— Coding standards ✨ ——————————————————————————————————————————————————————
@@ -130,6 +129,7 @@ cs-fixer: ## Run php-cs-fixer
 
 stan: ## Run PHPStan only
 	./vendor/bin/phpstan analyse -c phpstan.neon --memory-limit 1G
+.PHONY: qa phpcs cs-fixer stan
 
 #psalm: ## Run psalm only
 #	./vendor/bin/psalm --show-info=false
@@ -163,6 +163,7 @@ client-build: ## Build assets for production
 
 client-lint: ## Lints Js files
 	npx eslint assets/js --fix
+.PHONY: client-dev client-watch client-build client-lint
 
 
 ## —— Docker 🐳 ———————————————————————————————————————————————————————————————————
@@ -181,7 +182,8 @@ down: ## Stop the docker hub
 logs: ## Show live logs
 	@$(DOCKER_COMP) logs --tail=0 --follow
 sh: ## Connect to the PHP FPM container
-	@$(PHP_CONT) bash
+	@$(PHP_CONT) sh
+.PHONY: dist_file sh
 
 
 ## —— Stats ————————————————————————————————————————————————————————————————————

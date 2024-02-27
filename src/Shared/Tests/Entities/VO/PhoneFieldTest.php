@@ -31,7 +31,7 @@ final class PhoneFieldTest extends TestCase
         self::assertSame('+33179923223', $phone->toNumber());
     }
 
-    public function testCreateWithInvalidStringThrowADomainException(): void
+    public function testCreateWithStringTooLongThrowADomainException(): void
     {
         // Arrange
         $this->expectException(InvalidPhone::class);

@@ -24,15 +24,15 @@ final class PhoneField
 
     private function __construct(private string $phoneNumber)
     {
-        if (false === filter_var($phoneNumber, \FILTER_SANITIZE_NUMBER_INT)) {
-            throw new InvalidPhone($this->phoneNumber);
+        $phoneSanitized = filter_var($phoneNumber, \FILTER_SANITIZE_NUMBER_INT);
+        if ($phoneSanitized === false) {
+            throw new InvalidPhone($phoneNumber);
         }
 
-        $phoneSanitized = filter_var($phoneNumber, \FILTER_SANITIZE_NUMBER_INT);
         $phoneToCheck = str_replace('-', '', $phoneSanitized);
 
-        if (10 > \strlen($phoneToCheck) || \strlen($phoneToCheck) > 14) {
-            throw new InvalidPhone($this->phoneNumber);
+        if (preg_match('/^(\+\d{2}|0)([12345679]\d{8})$/', $phoneToCheck) !== 1) {
+            throw new InvalidPhone($phoneNumber);
         }
 
         $this->phoneNumber = $phoneSanitized;

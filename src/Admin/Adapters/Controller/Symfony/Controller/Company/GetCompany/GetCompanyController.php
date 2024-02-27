@@ -11,9 +11,10 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Adapters\Controller\Symfony\Controller\Company;
+namespace Admin\Adapters\Controller\Symfony\Controller\Company\GetCompany;
 
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineCompanyRepository;
+use Admin\Entities\Exception\NoCompanyRegisteredException;
 use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,7 +22,7 @@ use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[AsController]
-final class HomeController extends AbstractController
+final class GetCompanyController extends AbstractController
 {
     public function __construct(private readonly DoctrineCompanyRepository $repository)
     {
@@ -33,7 +34,13 @@ final class HomeController extends AbstractController
     #[Route(path: 'company/', name: 'admin_company_index')]
     public function __invoke(): Response
     {
-        $company = $this->repository->findCompany();
+        try {
+            $company = $this->repository->findCompany();
+        } catch (NoCompanyRegisteredException $exception) {
+            $this->addFlash('error', $exception->getMessage());
+
+            return $this->redirectToRoute('admin_index');
+        }
 
         return $this->render('@admin/company/index.html.twig', [
             'company' => $company,

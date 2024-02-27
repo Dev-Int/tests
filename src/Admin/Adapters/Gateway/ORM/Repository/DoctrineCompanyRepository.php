@@ -96,6 +96,7 @@ final class DoctrineCompanyRepository extends ServiceEntityRepository implements
 
     /**
      * @throws NonUniqueResultException
+     * @throws NoCompanyRegisteredException
      */
     public function findCompany(): Company
     {

@@ -22,16 +22,7 @@ final class ResourceUuid implements ResourceUuidInterface
 
     public static function generate(): self
     {
-        try {
-            return new self(Uuid::uuid4());
-        } catch (\Throwable $exception) {
-            throw new \RuntimeException('Cannot generate a new uuid.', 0, $exception);
-        }
-    }
-
-    public static function fromUuid(UuidInterface $uuid): self
-    {
-        return new self($uuid);
+        return new self(Uuid::uuid4());
     }
 
     public static function fromString(string $uuid): self

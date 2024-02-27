@@ -15,7 +15,6 @@ namespace Admin\Adapters\Controller\Symfony\Controller\Company\UpdateCompany;
 
 use Admin\Adapters\Form\Type\CompanyUpdateType;
 use Admin\Adapters\Gateway\ORM\Entity\Company;
-use Admin\Entities\Exception\CompanyNotFoundException;
 use Admin\UseCases\Company\UpdateCompany\UpdateCompany;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,22 +39,17 @@ final class UpdateCompanyController extends AbstractController
             /** @var Company $company */
             $company = $form->getData();
 
-            try {
-                $this->useCase->execute(new UpdateCompanyApiRequest(
-                    $companyToUpdate->name(),
-                    $company->address(),
-                    $company->postalCode(),
-                    $company->town(),
-                    $company->country(),
-                    $company->phone(),
-                    $company->email(),
-                    $company->contact()
-                ));
-            } catch (CompanyNotFoundException $exception) {
-                $this->addFlash('error', $exception->getMessage());
+            $this->useCase->execute(new UpdateCompanyApiRequest(
+                $companyToUpdate->name(),
+                $company->address(),
+                $company->postalCode(),
+                $company->town(),
+                $company->country(),
+                $company->phone(),
+                $company->email(),
+                $company->contact()
+            ));
 
-                return $this->redirectToRoute('admin_index');
-            }
             $this->addFlash('success', 'Company updated');
 
             return $this->redirectToRoute('admin_company_index');

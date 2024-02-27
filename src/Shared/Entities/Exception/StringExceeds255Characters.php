@@ -26,6 +26,8 @@ final class StringExceeds255Characters extends \DomainException
 
     /**
      * @return iterable<string, array<int, string>|int|string>
+     *
+     * @codeCoverageIgnore
      */
     public function jsonSerialize(): iterable
     {

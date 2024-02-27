@@ -26,6 +26,8 @@ final class InvalidRateFormatException extends \DomainException implements \Json
 
     /**
      * @return iterable<string, array<int, string>|int|string>
+     *
+     * @codeCoverageIgnore
      */
     public function jsonSerialize(): iterable
     {

@@ -22,6 +22,9 @@ use PHPUnit\Framework\TestCase;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
 
+/**
+ * @group unitTest
+ */
 final class ChangeLabelFamilyLogTest extends TestCase
 {
     public function testChangeLabelFamilyLogSucceed(): void

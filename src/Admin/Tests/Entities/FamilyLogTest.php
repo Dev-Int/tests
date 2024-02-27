@@ -13,8 +13,9 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Entities;
 
+use Admin\Entities\FamilyLog;
 use PHPUnit\Framework\TestCase;
-use Shared\Entities\VO\FamilyLog;
+use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
 
 /**
@@ -26,34 +27,57 @@ final class FamilyLogTest extends TestCase
     {
         // Arrange & Act
         $parent = FamilyLog::create(
+            ResourceUuid::generate(),
             NameField::fromString('Surgelé'),
-            FamilyLog::create(NameField::fromString('Alimentaire'))
+            FamilyLog::create(ResourceUuid::generate(), NameField::fromString('Alimentaire'))
         );
         $familyLog = FamilyLog::create(
+            ResourceUuid::generate(),
             NameField::fromString('Viande'),
             $parent
         );
 
         // Assert
-        self::assertSame('alimentaire:surgele:viande', $familyLog->path());
-        self::assertSame('Viande', $familyLog->name()->toString());
+        self::assertSame('alimentaire-surgele-viande', $familyLog->path());
+        self::assertSame('Viande', $familyLog->label()->toString());
+    }
+
+    public function testGetSmallTreeFamilyLog(): void
+    {
+        // Arrange && Act
+        $alimentaire = FamilyLog::create(
+            ResourceUuid::generate(),
+            NameField::fromString('Alimentaire')
+        );
+
+        // Assert
+        self::assertSame(
+            [
+                'Alimentaire' => [],
+            ],
+            $alimentaire->parseTree()
+        );
     }
 
     public function testGetTreeFamilyLog(): void
     {
         // Arrange && Act
         $alimentaire = FamilyLog::create(
+            ResourceUuid::generate(),
             NameField::fromString('Alimentaire')
         );
         $surgele = FamilyLog::create(
+            ResourceUuid::generate(),
             NameField::fromString('Surgelé'),
             $alimentaire
         );
         FamilyLog::create(
+            ResourceUuid::generate(),
             NameField::fromString('Frais'),
             $alimentaire
         );
         FamilyLog::create(
+            ResourceUuid::generate(),
             NameField::fromString('Viande'),
             $surgele
         );

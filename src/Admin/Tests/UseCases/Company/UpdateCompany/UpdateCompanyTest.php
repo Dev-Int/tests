@@ -20,6 +20,9 @@ use Admin\UseCases\Company\UpdateCompany\UpdateCompanyRequest;
 use Admin\UseCases\Gateway\CompanyRepository;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @group unitTest
+ */
 final class UpdateCompanyTest extends TestCase
 {
     public function testUpdateCompanySucceed(): void

@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\FamilyLog\AssignParentFamilyLog;
 
+use Admin\Entities\Exception\FamilyLogAlreadyExistsException;
+use Admin\Entities\Exception\FamilyLogNotFoundException;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\UseCases\FamilyLog\ChangeParentFamilyLog\AssignParentFamilyLog;
 use Admin\UseCases\FamilyLog\ChangeParentFamilyLog\AssignParentFamilyLogRequest;
@@ -22,6 +24,9 @@ use Shared\Entities\ResourceUuid;
 
 use function PHPUnit\Framework\once;
 
+/**
+ * @group unitTest
+ */
 final class AssignParentFamilyLogTest extends TestCase
 {
     public function testAssignParentFamilyLogSucceedWithoutParentWithoutChildren(): void
@@ -250,5 +255,81 @@ final class AssignParentFamilyLogTest extends TestCase
             self::assertSame('frais-viande-poulet', $childrenChild->path());
             self::assertSame(3, $childrenChild->level());
         }
+    }
+
+    public function testAssignParentFamilyLogFailWithFamilyLogAlreadyExists(): void
+    {
+        // Arrange
+        $repository = $this->createMock(FamilyLogRepository::class);
+        $useCase = new AssignParentFamilyLog($repository);
+        $familyLogBuilder = new FamilyLogDataBuilder();
+        $parent = $familyLogBuilder->create('Surgelé')
+            ->withUuid('99282a8d-f344-456c-bbd3-37fe89f3876c')
+            ->build()
+        ;
+
+        $familyLog = $familyLogBuilder->create('Viande')->build();
+
+        $request = $this->createMock(AssignParentFamilyLogRequest::class);
+        $request->expects(self::once())->method('uuid')->willReturn(FamilyLogDataBuilder::VALID_UUID);
+        $request->expects(self::once())->method('parent')->willReturn($parent);
+
+        $repository->expects(self::once())
+            ->method('findByUuid')
+            ->with(ResourceUuid::fromString(FamilyLogDataBuilder::VALID_UUID))
+            ->willReturn($familyLog)
+        ;
+
+        $repository->expects(once())
+            ->method('exists')
+            ->with('Viande', $parent)
+            ->willReturn(true)
+        ;
+
+        $familyLogAssigned = $familyLogBuilder->create('Viande')->withParent($parent)->build();
+        $repository->expects(self::never())
+            ->method('assignParent')
+            ->with($familyLogAssigned)
+        ;
+
+        // Act && Assert
+        $this->expectException(FamilyLogAlreadyExistsException::class);
+
+        $useCase->execute($request);
+    }
+
+    public function testAssignParentFamilyLogFailWithNotFoundException(): void
+    {
+        // Arrange
+        $repository = $this->createMock(FamilyLogRepository::class);
+        $useCase = new AssignParentFamilyLog($repository);
+        $familyLogBuilder = new FamilyLogDataBuilder();
+        $parent = $familyLogBuilder->create('Surgelé')
+            ->withUuid('99282a8d-f344-456c-bbd3-37fe89f3876c')
+            ->build()
+        ;
+
+        $request = $this->createMock(AssignParentFamilyLogRequest::class);
+        $request->expects(self::once())->method('uuid')->willReturn(FamilyLogDataBuilder::VALID_UUID);
+        $request->expects(self::never())->method('parent')->willReturn($parent);
+
+        $repository->expects(self::once())
+            ->method('findByUuid')
+            ->with(ResourceUuid::fromString(FamilyLogDataBuilder::VALID_UUID))
+            ->will(self::throwException(new FamilyLogNotFoundException(FamilyLogDataBuilder::VALID_UUID)))
+        ;
+
+        $repository->expects(self::never())
+            ->method('exists')
+        ;
+
+        $repository->expects(self::never())
+            ->method('assignParent')
+        ;
+
+        // Act && Assert
+        $this->expectException(FamilyLogNotFoundException::class);
+
+        $useCase->execute($request);
     }
 }

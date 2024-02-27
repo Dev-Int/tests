@@ -26,6 +26,8 @@ final class InvalidEmail extends \DomainException implements \JsonSerializable
 
     /**
      * @return iterable<string, array<int, string>|int|string>
+     *
+     * @codeCoverageIgnore
      */
     public function jsonSerialize(): iterable
     {

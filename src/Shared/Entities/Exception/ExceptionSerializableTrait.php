@@ -17,6 +17,8 @@ trait ExceptionSerializableTrait
 {
     /**
      * @return iterable<string, array<int, string>|int|string>
+     *
+     * @codeCoverageIgnore
      */
     public function toJson(): iterable
     {

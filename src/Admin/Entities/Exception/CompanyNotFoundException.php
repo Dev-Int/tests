@@ -28,6 +28,8 @@ final class CompanyNotFoundException extends \DomainException implements \JsonSe
 
     /**
      * @return iterable<string, array<int, string>|int|string>
+     *
+     * @codeCoverageIgnore
      */
     public function jsonSerialize(): iterable
     {
