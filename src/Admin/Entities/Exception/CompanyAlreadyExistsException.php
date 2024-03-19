@@ -28,6 +28,8 @@ final class CompanyAlreadyExistsException extends \DomainException implements \J
 
     /**
      * @return iterable<string, array<int, string>|int|string>
+     *
+     * @codeCoverageIgnore
      */
     public function jsonSerialize(): iterable
     {

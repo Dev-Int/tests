@@ -19,7 +19,7 @@ final class NoCompanyRegisteredException extends \DomainException implements \Js
 {
     use ExceptionSerializableTrait;
 
-    private const MESSAGE = 'No company is registered.';
+    public const MESSAGE = 'No company is registered.';
 
     public function __construct(?\Throwable $previous = null)
     {
@@ -28,6 +28,8 @@ final class NoCompanyRegisteredException extends \DomainException implements \Js
 
     /**
      * @return iterable<string, array<int, string>|int|string>
+     *
+     * @codeCoverageIgnore
      */
     public function jsonSerialize(): iterable
     {

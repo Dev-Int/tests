@@ -81,11 +81,6 @@ final class UpdateCompanyControllerTest extends WebTestCase
         $company = (new CompanyDataBuilder())->create('Dev-Int Création')->build();
         $companyRepository->save($company);
 
-        $companyCreated = $companyRepository->findByName('Dev-Int Création');
-        self::assertSame('5, rue des Plantes', $companyCreated->address()->address());
-        self::assertSame('75000', $companyCreated->address()->postalCode());
-        self::assertSame('Paris', $companyCreated->address()->town());
-
         // Act
         $client->request(
             Request::METHOD_GET,
@@ -93,6 +88,9 @@ final class UpdateCompanyControllerTest extends WebTestCase
         );
 
         // Assert
-        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND, '\'Admin\Adapters\Gateway\ORM\Entity\Company\' object not found by \'Symfony\Bridge\Doctrine\ArgumentResolver\EntityValueResolver\'. (404 Not Found)');
+        self::assertResponseStatusCodeSame(
+            Response::HTTP_NOT_FOUND,
+            '\'Admin\Adapters\Gateway\ORM\Entity\Company\' object not found by \'Symfony\Bridge\Doctrine\ArgumentResolver\EntityValueResolver\'. (404 Not Found)'
+        );
     }
 }

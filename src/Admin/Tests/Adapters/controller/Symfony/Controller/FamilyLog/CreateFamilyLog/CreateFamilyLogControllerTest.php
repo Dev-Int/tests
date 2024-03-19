@@ -22,6 +22,9 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * @group functionalTest
+ */
 final class CreateFamilyLogControllerTest extends WebTestCase
 {
     private const CREATE_FAMILY_LOG_URI = '/admin/family_logs/create';

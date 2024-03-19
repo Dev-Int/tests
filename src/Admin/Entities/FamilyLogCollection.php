@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Admin\Entities;
 
 use Shared\Entities\Collection;
+use Webmozart\Assert\Assert;
 
 final class FamilyLogCollection implements Collection
 {
@@ -23,9 +24,8 @@ final class FamilyLogCollection implements Collection
 
     public function add(object $item): void
     {
-        if (!$item instanceof FamilyLog) {
-            throw new \InvalidArgumentException('FamilyLog expected.');
-        }
+        Assert::isInstanceOf($item, FamilyLog::class);
+
         $this->familyLogs[] = $item;
     }
 

@@ -18,11 +18,14 @@ use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @group functionalTest
+ */
 final class GetFamilyLogsControllerTest extends WebTestCase
 {
     private const GET_FAMILY_LOGS_URI = '/admin/family_logs/';
 
-    public function testGetFamilyLogsWillSuccedd(): void
+    public function testGetFamilyLogsWillSucceed(): void
     {
         // Arrange
         $client = self::createClient();
@@ -49,12 +52,12 @@ final class GetFamilyLogsControllerTest extends WebTestCase
         // Act
         $crawler = $client->request(Request::METHOD_GET, self::GET_FAMILY_LOGS_URI);
 
+        // Assert
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', 'Logistics Families');
 
         $list = $crawler->filter('body > div.container > div.row > article > ul.w100')->children('li.li-unstyled');
 
-        // Assert
         self::assertCount(3, $list);
     }
 }
