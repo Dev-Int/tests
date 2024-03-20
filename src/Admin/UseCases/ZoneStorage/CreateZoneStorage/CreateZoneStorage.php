@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\UseCases\ZoneStorage\CreateZoneStorage;
 
 use Admin\Entities\Exception\ZoneStorageAlreadyExistsException;
-use Admin\Entities\ZoneStorage;
+use Admin\Entities\ZoneStorage\ZoneStorage;
 use Admin\UseCases\Gateway\ZoneStorageRepository;
 use Shared\Entities\VO\NameField;
 

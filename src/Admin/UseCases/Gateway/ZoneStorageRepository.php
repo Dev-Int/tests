@@ -13,11 +13,14 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Gateway;
 
-use Admin\Entities\ZoneStorage;
+use Admin\Entities\ZoneStorage\ZoneStorage;
+use Admin\Entities\ZoneStorage\ZoneStorageCollection;
 
 interface ZoneStorageRepository
 {
     public function exists(string $label): bool;
 
     public function save(ZoneStorage $zoneStorage): void;
+
+    public function findAllZone(): ZoneStorageCollection;
 }

@@ -16,19 +16,15 @@ namespace DoctrineMigrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
 final class Version20240320191933 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Add zoneStorage table.';
     }
 
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
         $this->addSql(
             'CREATE TABLE zone_storage (' .
             'slug VARCHAR(255) NOT NULL, ' .
@@ -46,8 +42,6 @@ final class Version20240320191933 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE SCHEMA public');
         $this->addSql('ALTER TABLE zone_storage DROP CONSTRAINT FK_EA4E180C5B84275F');
         $this->addSql('DROP TABLE zone_storage');
         $this->addSql('ALTER INDEX idx_494fd646ec9c6612 RENAME TO idx_494fd64636b7bdbb');

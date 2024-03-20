@@ -11,8 +11,9 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Entities;
+namespace Admin\Entities\ZoneStorage;
 
+use Admin\Entities\FamilyLog;
 use Shared\Entities\VO\NameField;
 
 final readonly class ZoneStorage

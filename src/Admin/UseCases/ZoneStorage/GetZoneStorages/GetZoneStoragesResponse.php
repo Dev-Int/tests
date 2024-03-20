@@ -11,13 +11,13 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\UseCases\ZoneStorage\CreateZoneStorage;
+namespace Admin\UseCases\ZoneStorage\GetZoneStorages;
 
-use Admin\Entities\ZoneStorage\ZoneStorage;
+use Admin\Entities\ZoneStorage\ZoneStorageCollection;
 
-final readonly class CreateZoneStorageResponse
+final readonly class GetZoneStoragesResponse
 {
-    public function __construct(public ZoneStorage $zoneStorage)
+    public function __construct(public ZoneStorageCollection $zoneStorages)
     {
     }
 }

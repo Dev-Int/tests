@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\Adapters\Gateway\ORM\Entity;
 
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineZoneStorageRepository;
-use Admin\Entities\ZoneStorage as ZoneStorageDomain;
+use Admin\Entities\ZoneStorage\ZoneStorage as ZoneStorageDomain;
 use Doctrine\ORM\Mapping as ORM;
 use Shared\Entities\VO\NameField;
 

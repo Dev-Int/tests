@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\Tests\DataBuilder;
 
 use Admin\Entities\FamilyLog;
-use Admin\Entities\ZoneStorage;
+use Admin\Entities\ZoneStorage\ZoneStorage;
 use Shared\Entities\VO\NameField;
 
 final class ZoneStorageDataBuilder
