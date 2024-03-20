@@ -15,6 +15,7 @@ namespace Admin\Adapters\Controller\Symfony\Controller;
 
 use Admin\UseCases\Gateway\CompanyRepository;
 use Admin\UseCases\Gateway\FamilyLogRepository;
+use Admin\UseCases\Gateway\ZoneStorageRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -25,7 +26,8 @@ final class ConfigurationController extends AbstractController
 {
     public function __construct(
         private readonly CompanyRepository $companyRepository,
-        private readonly FamilyLogRepository $familyLogRepository
+        private readonly FamilyLogRepository $familyLogRepository,
+        private readonly ZoneStorageRepository $zoneStorageRepository
     ) {
     }
 
@@ -34,11 +36,12 @@ final class ConfigurationController extends AbstractController
     {
         $hasCompany = $this->companyRepository->hasCompany();
         $hasFamilyLog = $this->familyLogRepository->hasFamilyLog();
+        $hasZoneStorage = $this->zoneStorageRepository->hasZoneStorage();
 
         return $this->render('@admin/configuration.html.twig', [
             'hasCompany' => $hasCompany,
             'hasApplication' => false,
-            'hasStorage' => false,
+            'hasStorage' => $hasZoneStorage,
             'hasFamilyLog' => $hasFamilyLog,
             'hasSupplier' => false,
             'hasArticle' => false,

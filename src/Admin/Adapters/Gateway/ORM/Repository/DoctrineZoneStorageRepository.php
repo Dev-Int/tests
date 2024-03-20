@@ -21,6 +21,8 @@ use Admin\Entities\ZoneStorage\ZoneStorageCollection;
 use Admin\UseCases\Gateway\ZoneStorageRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\UnexpectedResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -67,6 +69,33 @@ final class DoctrineZoneStorageRepository extends ServiceEntityRepository implem
 
     public function findAllZone(): ZoneStorageCollection
     {
-        return new ZoneStorageCollection();
+        $zoneStorages = $this->findAll();
+        $collection = new ZoneStorageCollection();
+
+        foreach ($zoneStorages as $zoneStorage) {
+            $collection->add($zoneStorage->toDomain());
+        }
+
+        return $collection;
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException|UnexpectedResultException
+     */
+    public function hasZoneStorage(): bool
+    {
+        $alias = self::ALIAS;
+        $count = $this->createQueryBuilder($alias)
+            ->select("COUNT({$alias}.slug)")
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+
+        if (!\is_int($count)) {
+            throw new UnexpectedResultException();
+        }
+
+        return $count > 0;
     }
 }

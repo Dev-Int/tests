@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <h1>Storage Zones</h1>
+
+    <div class="row">
+        <aside class="col-md-3">
+            <nav class="menu">
+                <ul>
+                    <li><a href="{{ path('admin_zone_storages_create') }}" class="w100" role="button">Create ZoneStorage</a></li>
+                    <li>
+                        <a href="{{ path('admin_index') }}" class="w100" role="button">
+                            <i class="fa-solid fa-angles-left"></i> Retour à l'accueil
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+        <article class="col-md-9">
+            <ul class="w100">
+                {% for zone in zoneStorages %}
+                <li class="li-unstyled flex-between">
+                    {{ zone.label }}&nbsp;
+                    <span>
+                        <a href="#" role="button">Change label</a>
+                        <a href="#" role="button">Change familyLog</a>
+                    </span>
+                </li>
+                {% endfor %}
+            </ul>
+        </article>
+    </div>
+
+{% endblock %}
+

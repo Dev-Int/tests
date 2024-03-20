@@ -23,4 +23,6 @@ interface ZoneStorageRepository
     public function save(ZoneStorage $zoneStorage): void;
 
     public function findAllZone(): ZoneStorageCollection;
+
+    public function hasZoneStorage(): bool;
 }
