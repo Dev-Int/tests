@@ -11,7 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Adapters\Form\Type;
+namespace Admin\Adapters\Form\Type\ZoneStorage;
 
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
 use Doctrine\ORM\EntityRepository;

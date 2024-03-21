@@ -16,6 +16,7 @@ namespace Admin\Adapters\Gateway\ORM\Repository;
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
 use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
 use Admin\Entities\Exception\FamilyLogNotFoundException;
+use Admin\Entities\Exception\ZoneStorageNotFoundException;
 use Admin\Entities\ZoneStorage\ZoneStorage as ZoneStorageDomain;
 use Admin\Entities\ZoneStorage\ZoneStorageCollection;
 use Admin\UseCases\Gateway\ZoneStorageRepository;
@@ -53,32 +54,6 @@ final class DoctrineZoneStorageRepository extends ServiceEntityRepository implem
         return $zoneStorage !== null;
     }
 
-    public function save(ZoneStorageDomain $zoneStorage): void
-    {
-        $zoneStorageOrm = new ZoneStorage();
-        $familyLog = $this->familyLogRepository->find($zoneStorage->familyLog()->uuid()->toString());
-        if (!$familyLog instanceof FamilyLog) {
-            throw new FamilyLogNotFoundException($zoneStorage->familyLog()->uuid()->toString());
-        }
-
-        $zoneStorageOrm->fromDomain($zoneStorage, $familyLog);
-
-        $this->_em->persist($zoneStorageOrm);
-        $this->_em->flush();
-    }
-
-    public function findAllZone(): ZoneStorageCollection
-    {
-        $zoneStorages = $this->findAll();
-        $collection = new ZoneStorageCollection();
-
-        foreach ($zoneStorages as $zoneStorage) {
-            $collection->add($zoneStorage->toDomain());
-        }
-
-        return $collection;
-    }
-
     /**
      * @throws NonUniqueResultException
      * @throws NoResultException|UnexpectedResultException
@@ -97,5 +72,63 @@ final class DoctrineZoneStorageRepository extends ServiceEntityRepository implem
         }
 
         return $count > 0;
+    }
+
+    public function save(ZoneStorageDomain $zoneStorage): void
+    {
+        $zoneStorageOrm = new ZoneStorage();
+        $familyLog = $this->familyLogRepository->find($zoneStorage->familyLog()->uuid()->toString());
+        if (!$familyLog instanceof FamilyLog) {
+            throw new FamilyLogNotFoundException($zoneStorage->familyLog()->uuid()->toString());
+        }
+
+        $zoneStorageOrm->fromDomain($zoneStorage, $familyLog);
+
+        $this->_em->persist($zoneStorageOrm);
+        $this->_em->flush();
+    }
+
+    public function changeLabel(ZoneStorageDomain $zoneStorage): void
+    {
+        $zoneStorageToUpdate = $this->find($zoneStorage->uuid()->toString());
+        if (!$zoneStorageToUpdate instanceof ZoneStorage) {
+            throw new ZoneStorageNotFoundException($zoneStorage->uuid()->toString());
+        }
+
+        $zoneStorageToUpdate->setLabel($zoneStorage->label()->toString())->setSlug($zoneStorage->slug());
+
+        $this->_em->flush();
+    }
+
+    public function findAllZone(): ZoneStorageCollection
+    {
+        $zoneStorages = $this->findAll();
+        $collection = new ZoneStorageCollection();
+
+        foreach ($zoneStorages as $zoneStorage) {
+            $collection->add($zoneStorage->toDomain());
+        }
+
+        return $collection;
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function findBySlug(string $slug): ZoneStorageDomain
+    {
+        $alias = self::ALIAS;
+        $zoneStorage = $this->createQueryBuilder($alias)
+            ->where("{$alias}.slug = :slug")
+            ->setParameter('slug', $slug)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+
+        if (!$zoneStorage instanceof ZoneStorage) {
+            throw new ZoneStorageNotFoundException($slug);
+        }
+
+        return $zoneStorage->toDomain();
     }
 }

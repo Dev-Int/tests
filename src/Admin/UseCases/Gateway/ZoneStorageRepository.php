@@ -20,9 +20,13 @@ interface ZoneStorageRepository
 {
     public function exists(string $label): bool;
 
+    public function hasZoneStorage(): bool;
+
     public function save(ZoneStorage $zoneStorage): void;
+
+    public function changeLabel(ZoneStorage $zoneStorage): void;
 
     public function findAllZone(): ZoneStorageCollection;
 
-    public function hasZoneStorage(): bool;
+    public function findBySlug(string $slug): ZoneStorage;
 }

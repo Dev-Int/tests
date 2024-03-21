@@ -11,35 +11,29 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\UseCases\ZoneStorage\CreateZoneStorage;
+namespace Admin\UseCases\ZoneStorage\ChangeZoneStorageLabel;
 
 use Admin\Entities\Exception\ZoneStorageAlreadyExistsException;
-use Admin\Entities\ZoneStorage\ZoneStorage;
 use Admin\UseCases\Gateway\ZoneStorageRepository;
-use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
 
-final readonly class CreateZoneStorage
+final readonly class ChangeZoneStorageLabel
 {
     public function __construct(private ZoneStorageRepository $zoneStorageRepository)
     {
     }
 
-    public function execute(CreateZoneStorageRequest $request): CreateZoneStorageResponse
+    public function execute(ChangeZoneStorageLabelRequest $request): ChangeZoneStorageLabelResponse
     {
         $isExists = $this->zoneStorageRepository->exists($request->label());
         if ($isExists) {
             throw new ZoneStorageAlreadyExistsException($request->label());
         }
+        $zoneStorage = $this->zoneStorageRepository->findBySlug($request->slug());
+        $zoneStorage->changeLabel(NameField::fromString($request->label()));
 
-        $zoneStorage = ZoneStorage::create(
-            ResourceUuid::generate(),
-            NameField::fromString($request->label()),
-            $request->familyLog()
-        );
+        $this->zoneStorageRepository->changeLabel($zoneStorage);
 
-        $this->zoneStorageRepository->save($zoneStorage);
-
-        return new CreateZoneStorageResponse($zoneStorage);
+        return new ChangeZoneStorageLabelResponse($zoneStorage);
     }
 }

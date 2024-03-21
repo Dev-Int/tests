@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\CreateZoneStorage;
 
-use Admin\Adapters\Form\Type\ZoneStorageType;
+use Admin\Adapters\Form\Type\ZoneStorage\ZoneStorageType;
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
 use Admin\Entities\Exception\ZoneStorageAlreadyExistsException;
 use Admin\UseCases\Gateway\FamilyLogRepository;
@@ -54,11 +54,11 @@ final class CreateZoneStorageController extends AbstractController
             } catch (ZoneStorageAlreadyExistsException $exception) {
                 $this->addFlash('error', $exception->getMessage());
 
-                return $this->redirectToRoute('admin_configure');
+                return $this->redirectToRoute('admin_zone_storages_index');
             }
             $this->addFlash('success', 'Zone storage created');
 
-            return $this->redirectToRoute('admin_configure', [], Response::HTTP_FOUND);
+            return $this->redirectToRoute('admin_zone_storages_index', [], Response::HTTP_FOUND);
         }
 
         return $this->render('@admin/zoneStorages/create.html.twig', [

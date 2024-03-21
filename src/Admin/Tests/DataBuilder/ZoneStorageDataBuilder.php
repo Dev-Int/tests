@@ -15,10 +15,14 @@ namespace Admin\Tests\DataBuilder;
 
 use Admin\Entities\FamilyLog;
 use Admin\Entities\ZoneStorage\ZoneStorage;
+use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
 
 final class ZoneStorageDataBuilder
 {
+    public const VALID_UUID = '27463995-9deb-4637-b2d1-0568b274db1d';
+
+    private string $uuid = self::VALID_UUID;
     private string $label;
 
     private FamilyLog $familyLog;
@@ -31,8 +35,19 @@ final class ZoneStorageDataBuilder
         return $this;
     }
 
+    public function withUuid(string $uuid): self
+    {
+        $this->uuid = $uuid;
+
+        return $this;
+    }
+
     public function build(): ZoneStorage
     {
-        return ZoneStorage::create(NameField::fromString($this->label), $this->familyLog);
+        return ZoneStorage::create(
+            ResourceUuid::fromString($this->uuid),
+            NameField::fromString($this->label),
+            $this->familyLog
+        );
     }
 }

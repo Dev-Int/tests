@@ -14,20 +14,29 @@ declare(strict_types=1);
 namespace Admin\Entities\ZoneStorage;
 
 use Admin\Entities\FamilyLog;
+use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
 
-final readonly class ZoneStorage
+final class ZoneStorage
 {
     private string $slug;
 
-    public static function create(NameField $label, FamilyLog $familyLog): self
+    public static function create(ResourceUuid $uuid, NameField $label, FamilyLog $familyLog): self
     {
-        return new self($label, $familyLog);
+        return new self($uuid, $label, $familyLog);
     }
 
-    private function __construct(private NameField $label, private FamilyLog $familyLog)
-    {
+    private function __construct(
+        private readonly ResourceUuid $uuid,
+        private NameField $label,
+        private readonly FamilyLog $familyLog
+    ) {
         $this->slug = $this->label->slugify();
+    }
+
+    public function uuid(): ResourceUuid
+    {
+        return $this->uuid;
     }
 
     public function label(): NameField
@@ -43,5 +52,11 @@ final readonly class ZoneStorage
     public function slug(): string
     {
         return $this->slug;
+    }
+
+    public function changeLabel(NameField $label): void
+    {
+        $this->label = $label;
+        $this->slug = $label->slugify();
     }
 }

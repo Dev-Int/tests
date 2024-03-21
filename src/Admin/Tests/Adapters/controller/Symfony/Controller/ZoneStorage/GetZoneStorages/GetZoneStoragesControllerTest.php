@@ -41,7 +41,11 @@ final class GetZoneStoragesControllerTest extends WebTestCase
         ;
         $familyLogRepository->save($familyLog);
         $zoneStorage1 = $zoneStorageBuilder->create('Réserve négative', $familyLog)->build();
-        $zoneStorage2 = $zoneStorageBuilder->create('Réserve positive', $familyLog)->build();
+        $zoneStorage2 = $zoneStorageBuilder
+            ->create('Réserve positive', $familyLog)
+            ->withUuid('99282a8d-f344-456c-bbd3-37fe89f3876c')
+            ->build()
+        ;
         $zoneStorageRepository->save($zoneStorage1);
         $zoneStorageRepository->save($zoneStorage2);
 

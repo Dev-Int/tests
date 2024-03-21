@@ -27,10 +27,11 @@ final class Version20240320191933 extends AbstractMigration
     {
         $this->addSql(
             'CREATE TABLE zone_storage (' .
-            'slug VARCHAR(255) NOT NULL, ' .
+            'uuid UUID NOT NULL, ' .
             'label VARCHAR(255) NOT NULL, ' .
             'familyLog_id UUID DEFAULT NULL, ' .
-            'PRIMARY KEY(slug))'
+            'slug VARCHAR(255) NOT NULL, ' .
+            'PRIMARY KEY(uuid))'
         );
         $this->addSql('CREATE INDEX IDX_EA4E180C5B84275F ON zone_storage (familyLog_id)');
         $this->addSql(
