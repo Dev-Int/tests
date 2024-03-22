@@ -100,6 +100,23 @@ final class DoctrineZoneStorageRepository extends ServiceEntityRepository implem
         $this->_em->flush();
     }
 
+    public function changeFamilyLog(ZoneStorageDomain $zoneStorage): void
+    {
+        $familyLog = $this->familyLogRepository->find($zoneStorage->familyLog()->uuid()->toString());
+        if (!$familyLog instanceof FamilyLog) {
+            throw new FamilyLogNotFoundException($zoneStorage->familyLog()->uuid()->toString());
+        }
+
+        $zoneStorageToUpdate = $this->find($zoneStorage->uuid()->toString());
+        if (!$zoneStorageToUpdate instanceof ZoneStorage) {
+            throw new ZoneStorageNotFoundException($zoneStorage->slug());
+        }
+
+        $zoneStorageToUpdate->setFamilyLog($familyLog);
+
+        $this->_em->flush();
+    }
+
     public function findAllZone(): ZoneStorageCollection
     {
         $zoneStorages = $this->findAll();
@@ -130,10 +147,5 @@ final class DoctrineZoneStorageRepository extends ServiceEntityRepository implem
         }
 
         return $zoneStorage->toDomain();
-    }
-
-    public function changeFamilyLog(ZoneStorageDomain $zoneStorage): void
-    {
-        // TODO: Implement changeFamilyLog() method.
     }
 }

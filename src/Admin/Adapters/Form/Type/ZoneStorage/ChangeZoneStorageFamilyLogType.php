@@ -15,17 +15,17 @@ namespace Admin\Adapters\Form\Type\ZoneStorage;
 
 use Symfony\Component\Form\FormBuilderInterface;
 
-final class ChangeLabelZoneStorageType extends ZoneStorageType
+final class ChangeZoneStorageFamilyLogType extends ZoneStorageType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         parent::buildForm($builder, $options);
 
-        $builder->remove('familyLog');
+        $builder->remove('label');
     }
 
     public function getBlockPrefix(): string
     {
-        return 'changeZoneStorageLabel';
+        return 'changeZoneStorageFamilyLog';
     }
 }

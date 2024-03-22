@@ -11,11 +11,13 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\ChangeZoneStorageLabel;
+namespace Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\ChangeZoneStorageFamilyLog;
 
-use Admin\Adapters\Form\Type\ZoneStorage\ChangeLabelZoneStorageType;
+use Admin\Adapters\Form\Type\ZoneStorage\ChangeZoneStorageFamilyLogType;
+use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
 use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
-use Admin\UseCases\ZoneStorage\ChangeZoneStorageLabel\ChangeZoneStorageLabel;
+use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
+use Admin\UseCases\ZoneStorage\ChangeZoneStorageFamilyLog\ChangeZoneStorageFamilyLog;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,30 +25,33 @@ use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[AsController]
-final class ChangeZoneStorageLabelController extends AbstractController
+final class ChangeZoneStorageFamilyLogController extends AbstractController
 {
-    public function __construct(private readonly ChangeZoneStorageLabel $useCase)
-    {
+    public function __construct(
+        private readonly ChangeZoneStorageFamilyLog $useCase,
+        private readonly DoctrineFamilyLogRepository $familyLogRepository
+    ) {
     }
 
     #[Route(
-        path: 'zone_storages/{slug}/change-label',
-        name: 'admin_zone_storages_change-label',
+        path: 'zone_storages/{slug}/change-family_log',
+        name: 'admin_zone_storages_change-family_log',
         methods: ['GET', 'POST']
     )]
     public function __invoke(Request $request, ZoneStorage $zoneStorage): Response
     {
-        $form = $this->createForm(ChangeLabelZoneStorageType::class, ['label' => $zoneStorage->label()]);
+        $familyLog = $this->familyLogRepository->findOneBy(['label' => $zoneStorage->familyLog()->label()]);
+        $form = $this->createForm(ChangeZoneStorageFamilyLogType::class, ['familyLog' => $familyLog]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var array{label: string} $zoneStorageToUpdate */
+            /** @var array{familyLog: FamilyLog} $zoneStorageToUpdate */
             $zoneStorageToUpdate = $form->getData();
 
             try {
                 $this->useCase->execute(
-                    new ChangeZoneStorageLabelApiRequest(
-                        $zoneStorageToUpdate['label'],
+                    new ChangeZoneStorageFamilyLogApiRequest(
+                        $zoneStorageToUpdate['familyLog'],
                         $zoneStorage->slug()
                     )
                 );
@@ -60,7 +65,7 @@ final class ChangeZoneStorageLabelController extends AbstractController
             return $this->redirectToRoute('admin_zone_storages_index');
         }
 
-        return $this->render('@admin/zoneStorages/change-label.html.twig', [
+        return $this->render('@admin/zoneStorages/change-family_log.html.twig', [
             'form' => $form,
             'zoneStorage' => $zoneStorage,
         ]);

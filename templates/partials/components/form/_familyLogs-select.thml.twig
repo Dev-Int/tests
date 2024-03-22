@@ -6,6 +6,8 @@
 
     {% if form.vars.value.parent.uuid is defined %}
         {% set uuid = form.vars.value.parent.uuid %}
+    {% else %}
+        {% set uuid = familyLog.vars.value %}
     {% endif %}
     {% for label, value in field_choices(familyLog) %}
         <option value="{{ value }}"{% if uuid is same as(value) %} selected{% endif %}>{{ label }}</option>
