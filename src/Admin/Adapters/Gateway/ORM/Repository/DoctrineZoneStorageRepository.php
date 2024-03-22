@@ -131,4 +131,9 @@ final class DoctrineZoneStorageRepository extends ServiceEntityRepository implem
 
         return $zoneStorage->toDomain();
     }
+
+    public function changeFamilyLog(ZoneStorageDomain $zoneStorage): void
+    {
+        // TODO: Implement changeFamilyLog() method.
+    }
 }

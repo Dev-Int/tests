@@ -26,6 +26,8 @@ interface ZoneStorageRepository
 
     public function changeLabel(ZoneStorage $zoneStorage): void;
 
+    public function changeFamilyLog(ZoneStorage $zoneStorage): void;
+
     public function findAllZone(): ZoneStorageCollection;
 
     public function findBySlug(string $slug): ZoneStorage;

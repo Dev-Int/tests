@@ -29,7 +29,7 @@ final class ZoneStorage
     private function __construct(
         private readonly ResourceUuid $uuid,
         private NameField $label,
-        private readonly FamilyLog $familyLog
+        private FamilyLog $familyLog
     ) {
         $this->slug = $this->label->slugify();
     }
@@ -58,5 +58,10 @@ final class ZoneStorage
     {
         $this->label = $label;
         $this->slug = $label->slugify();
+    }
+
+    public function changeFamilyLog(FamilyLog $familyLog): void
+    {
+        $this->familyLog = $familyLog;
     }
 }
