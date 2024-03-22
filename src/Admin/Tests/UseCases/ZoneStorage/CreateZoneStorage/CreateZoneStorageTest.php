@@ -13,8 +13,10 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\ZoneStorage\CreateZoneStorage;
 
+use Admin\Entities\Exception\FamilyLogNotFoundException;
 use Admin\Entities\Exception\ZoneStorageAlreadyExistsException;
 use Admin\Entities\FamilyLog;
+use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\UseCases\Gateway\ZoneStorageRepository;
 use Admin\UseCases\ZoneStorage\CreateZoneStorage\CreateZoneStorage;
 use Admin\UseCases\ZoneStorage\CreateZoneStorage\CreateZoneStorageRequest;
@@ -59,7 +61,7 @@ final class CreateZoneStorageTest extends TestCase
         $zoneStorageRepository = $this->createMock(ZoneStorageRepository::class);
         $useCase = new CreateZoneStorage($zoneStorageRepository);
         $request = $this->createMock(CreateZoneStorageRequest::class);
-        $familyLog = FamilyLog::create(ResourceUuid::generate(), NameField::fromString('Surgelé'));
+        $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
 
         $request->expects(self::exactly(2))->method('label')->willReturn('Réserve négative');
         $request->expects(self::never())->method('familyLog')->willReturn($familyLog);
@@ -75,6 +77,35 @@ final class CreateZoneStorageTest extends TestCase
         // Act && Assert
         $this->expectException(ZoneStorageAlreadyExistsException::class);
         $this->expectExceptionMessage(ZoneStorageAlreadyExistsException::MESSAGE);
+        $useCase->execute($request);
+    }
+
+    public function testCreateZoneStorageFailWithFamilyLogNotFoundException(): void
+    {
+        // Arrange
+        $zoneStorageRepository = $this->createMock(ZoneStorageRepository::class);
+        $useCase = new CreateZoneStorage($zoneStorageRepository);
+        $request = $this->createMock(CreateZoneStorageRequest::class);
+        $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
+
+        $request->expects(self::exactly(2))->method('label')->willReturn('Réserve négative');
+        $request->expects(self::once())->method('familyLog')->willReturn($familyLog);
+
+        $zoneStorageRepository->expects(self::once())
+            ->method('exists')
+            ->with('Réserve négative')
+            ->willReturn(false)
+        ;
+
+        // Act && Assert
+        $this->expectException(FamilyLogNotFoundException::class);
+        $this->expectExceptionMessage(FamilyLogNotFoundException::MESSAGE);
+
+        $zoneStorageRepository->expects(self::once())
+            ->method('save')
+            ->will(self::throwException(new FamilyLogNotFoundException($familyLog->slug())))
+        ;
+
         $useCase->execute($request);
     }
 }

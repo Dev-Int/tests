@@ -22,13 +22,14 @@ final class ZoneStorageDataBuilder
 {
     public const VALID_UUID = '27463995-9deb-4637-b2d1-0568b274db1d';
 
-    private string $uuid = self::VALID_UUID;
+    private string $uuid;
     private string $label;
 
     private FamilyLog $familyLog;
 
     public function create(string $label, FamilyLog $familyLog): self
     {
+        $this->uuid = self::VALID_UUID;
         $this->label = $label;
         $this->familyLog = $familyLog;
 

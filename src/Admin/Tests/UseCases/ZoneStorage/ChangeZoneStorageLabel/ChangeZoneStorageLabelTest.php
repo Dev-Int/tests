@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Admin\Tests\UseCases\ZoneStorage\ChangeZoneStorageLabel;
 
 use Admin\Entities\Exception\ZoneStorageAlreadyExistsException;
+use Admin\Entities\Exception\ZoneStorageNotFoundException;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
 use Admin\UseCases\Gateway\ZoneStorageRepository;
@@ -94,6 +95,41 @@ final class ChangeZoneStorageLabelTest extends TestCase
         // Act && Assert
         $this->expectException(ZoneStorageAlreadyExistsException::class);
         $this->expectExceptionMessage(ZoneStorageAlreadyExistsException::MESSAGE);
+        $useCase->execute($request);
+    }
+
+    public function testChangeZoneStorageLabelFailWithZoneStorageNotFoundException(): void
+    {
+        // Arrange
+        $zoneStorageRepository = $this->createMock(ZoneStorageRepository::class);
+        $useCase = new ChangeZoneStorageLabel($zoneStorageRepository);
+        $request = $this->createMock(ChangeZoneStorageLabelRequest::class);
+        $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
+        $zoneStorage = (new ZoneStorageDataBuilder())->create('Réserve négative', $familyLog)->build();
+
+        $request->expects(self::once())->method('slug')->willReturn('reserve-negative');
+        $request->expects(self::once())->method('label')->willReturn('Réserve positive');
+
+        $zoneStorageRepository->expects(self::once())
+            ->method('exists')
+            ->with('Réserve positive')
+            ->willReturn(false)
+        ;
+
+        $zoneStorageRepository->expects(self::once())
+            ->method('findBySlug')
+            ->with('reserve-negative')
+            ->will(self::throwException(new ZoneStorageNotFoundException($zoneStorage->slug())))
+        ;
+
+        // Act && Assert
+        $this->expectException(ZoneStorageNotFoundException::class);
+        $this->expectExceptionMessage(ZoneStorageNotFoundException::MESSAGE);
+
+        $zoneStorageRepository->expects(self::never())
+            ->method('changeLabel')
+            ->with($zoneStorage)
+        ;
         $useCase->execute($request);
     }
 }

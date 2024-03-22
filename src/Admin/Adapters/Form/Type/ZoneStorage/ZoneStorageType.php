@@ -24,7 +24,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 /**
  * @group functionalTest
  */
-final class ZoneStorageType extends AbstractType
+class ZoneStorageType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {

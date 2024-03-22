@@ -19,7 +19,7 @@ final class FamilyLogNotFoundException extends \DomainException implements \Json
 {
     use ExceptionSerializableTrait;
 
-    private const MESSAGE = 'FamilyLog not found.';
+    public const MESSAGE = 'FamilyLog not found.';
 
     public function __construct(private readonly string $identifier, ?\Throwable $previous = null)
     {
