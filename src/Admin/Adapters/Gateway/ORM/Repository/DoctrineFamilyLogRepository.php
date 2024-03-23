@@ -185,8 +185,7 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
 
     /**
      * @throws NonUniqueResultException
-     * @throws NoResultException
-     * @throws UnexpectedResultException
+     * @throws NoResultException|UnexpectedResultException
      */
     public function hasFamilyLog(): bool
     {

@@ -23,13 +23,13 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" role="button" class="{% if hasStorage %}secondary disable-link {% endif %}w100">
-                            {% if hasStorage %}<i class="fa-solid fa-square-check"></i> {% endif %}Create Storage area
+                        <a href="{{ path('admin_family_logs_create') }}" role="button" class="{% if hasFamilyLog %}secondary disable-link {% endif %}w100">
+                            {% if hasFamilyLog %}<i class="fa-solid fa-square-check"></i> {% endif %}Create Logistic family
                         </a>
                     </li>
                     <li>
-                        <a href="{{ path('admin_family_logs_create') }}" role="button" class="{% if hasFamilyLog %}secondary disable-link {% endif %}w100">
-                            {% if hasFamilyLog %}<i class="fa-solid fa-square-check"></i> {% endif %}Create Logistic family
+                        <a href="{{ path('admin_zone_storages_create') }}" role="button" class="{% if hasStorage %}secondary disable-link {% endif %}w100">
+                            {% if hasStorage %}<i class="fa-solid fa-square-check"></i> {% endif %}Create Storage area
                         </a>
                     </li>
                     <li>

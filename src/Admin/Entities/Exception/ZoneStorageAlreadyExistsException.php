@@ -15,13 +15,13 @@ namespace Admin\Entities\Exception;
 
 use Shared\Entities\Exception\ExceptionSerializableTrait;
 
-final class FamilyLogNotFoundException extends \DomainException implements \JsonSerializable
+final class ZoneStorageAlreadyExistsException extends \DomainException implements \JsonSerializable
 {
     use ExceptionSerializableTrait;
 
-    public const MESSAGE = 'FamilyLog not found.';
+    public const MESSAGE = 'Zone storage already exists.';
 
-    public function __construct(private readonly string $identifier, ?\Throwable $previous = null)
+    public function __construct(private readonly string $label, ?\Throwable $previous = null)
     {
         parent::__construct(self::MESSAGE, 0, $previous);
     }
@@ -34,7 +34,7 @@ final class FamilyLogNotFoundException extends \DomainException implements \Json
     public function jsonSerialize(): iterable
     {
         return $this->toJson() + [
-            'identifier' => $this->identifier,
+            'label' => $this->label,
         ];
     }
 }
