@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Create Unit</h1>
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    {{ form_row(form.label) }}
+    {{ form_row(form.abbreviation) }}
+
+    <div class="grid">
+        <a href="{{ path('admin_configure') }}" class="secondary" >Annuler</a>
+        <button type="submit">Create</button>
+    </div>
+
+    {{ form_end(form) }}
+
+{% endblock %}
