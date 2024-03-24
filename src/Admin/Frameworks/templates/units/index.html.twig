@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <h1>Units</h1>
+
+    <div class="row">
+        <aside class="col-md-3">
+            <nav class="menu">
+                <ul>
+                    <li><a href="{{ path('admin_unit_create') }}" class="w100" role="button">Create Unit</a></li>
+                    <li>
+                        <a href="{{ path('home') }}" class="w100" role="button">
+                            <i class="fa-solid fa-angles-left"></i> Retour à l'accueil
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+        <article class="col-md-9">
+            <ul class="w100">
+                {% for unit in units %}
+                <li class="li-unstyled flex-between">
+                    {{ unit.label }} {{ unit.abbreviation }}
+                    <span>
+                        <a href="{{ path('admin_units_change-label', {slug: unit.slug}) }}" role="button">Change label</a>
+                    </span>
+                </li>
+                {% endfor %}
+            </ul>
+        </article>
+    </div>
+
+{% endblock %}
+
