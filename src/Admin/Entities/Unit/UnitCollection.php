@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Admin\Entities\Unit;
 
-use Admin\Entities\Unit;
 use Shared\Entities\Collection;
 use Webmozart\Assert\Assert;
 

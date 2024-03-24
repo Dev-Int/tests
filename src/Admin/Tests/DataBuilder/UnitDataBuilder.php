@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Tests\DataBuilder;
 
-use Admin\Entities\Unit;
+use Admin\Entities\Unit\Unit;
 use Shared\Entities\VO\NameField;
 
 final class UnitDataBuilder

@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\Adapters\Gateway\ORM\Entity;
 
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineUnitRepository;
-use Admin\Entities\Unit as UnitDomain;
+use Admin\Entities\Unit\Unit as UnitDomain;
 use Doctrine\ORM\Mapping as ORM;
 use Shared\Entities\VO\NameField;
 

@@ -11,7 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Entities;
+namespace Admin\Entities\Unit;
 
 use Shared\Entities\VO\NameField;
 
@@ -24,7 +24,7 @@ final class Unit
         return new self($label, $abbreviation);
     }
 
-    public function __construct(private NameField $label, private string $abbreviation)
+    private function __construct(private NameField $label, private string $abbreviation)
     {
         $this->slug = $label->slugify();
     }
@@ -42,5 +42,12 @@ final class Unit
     public function slug(): string
     {
         return $this->slug;
+    }
+
+    public function changeLabel(NameField $label, string $abbreviation): void
+    {
+        $this->label = $label;
+        $this->abbreviation = $abbreviation;
+        $this->slug = $label->slugify();
     }
 }

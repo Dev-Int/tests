@@ -13,16 +13,20 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Gateway;
 
-use Admin\Entities\Unit;
+use Admin\Entities\Unit\Unit;
 use Admin\Entities\Unit\UnitCollection;
 
 interface UnitRepository
 {
     public function exists(string $label): bool;
 
-    public function save(Unit $unit): void;
-
     public function hasUnit(): bool;
 
+    public function save(Unit $unit): void;
+
+    public function changeLabel(Unit $unit): void;
+
     public function findAllUnits(): UnitCollection;
+
+    public function findBySlug(string $slug): Unit;
 }

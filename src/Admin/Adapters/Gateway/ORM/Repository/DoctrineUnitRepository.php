@@ -14,7 +14,8 @@ declare(strict_types=1);
 namespace Admin\Adapters\Gateway\ORM\Repository;
 
 use Admin\Adapters\Gateway\ORM\Entity\Unit;
-use Admin\Entities\Unit as UnitDomain;
+use Admin\Entities\Exception\UnitNotFoundException;
+use Admin\Entities\Unit\Unit as UnitDomain;
 use Admin\Entities\Unit\UnitCollection;
 use Admin\UseCases\Gateway\UnitRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -51,14 +52,6 @@ final class DoctrineUnitRepository extends ServiceEntityRepository implements Un
         return $unit !== null;
     }
 
-    public function save(UnitDomain $unit): void
-    {
-        $unitOrm = (new Unit())->fromDomain($unit);
-
-        $this->_em->persist($unitOrm);
-        $this->_em->flush();
-    }
-
     /**
      * @throws NonUniqueResultException
      * @throws NoResultException|UnexpectedResultException
@@ -79,6 +72,19 @@ final class DoctrineUnitRepository extends ServiceEntityRepository implements Un
         return $count > 0;
     }
 
+    public function save(UnitDomain $unit): void
+    {
+        $unitOrm = (new Unit())->fromDomain($unit);
+
+        $this->_em->persist($unitOrm);
+        $this->_em->flush();
+    }
+
+    public function changeLabel(UnitDomain $unit): void
+    {
+        // TODO: Implement changeLabel() method.
+    }
+
     public function findAllUnits(): UnitCollection
     {
         $units = $this->findAll();
@@ -89,5 +95,25 @@ final class DoctrineUnitRepository extends ServiceEntityRepository implements Un
         }
 
         return $collection;
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function findBySlug(string $slug): UnitDomain
+    {
+        $alias = self::ALIAS;
+        $unit = $this->createQueryBuilder($alias)
+            ->where("{$alias}}.slug = :slug")
+            ->setParameter('slug', $slug)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+
+        if (!$unit instanceof Unit) {
+            throw new UnitNotFoundException($slug);
+        }
+
+        return $unit->toDomain();
     }
 }

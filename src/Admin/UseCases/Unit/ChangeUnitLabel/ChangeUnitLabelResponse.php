@@ -11,11 +11,11 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\UseCases\Unit\CreateUnit;
+namespace Admin\UseCases\Unit\ChangeUnitLabel;
 
 use Admin\Entities\Unit\Unit;
 
-final readonly class CreateUnitResponse
+final readonly class ChangeUnitLabelResponse
 {
     public function __construct(public Unit $unit)
     {

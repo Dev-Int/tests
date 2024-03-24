@@ -11,33 +11,30 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\UseCases\Unit\CreateUnit;
+namespace Admin\UseCases\Unit\ChangeUnitLabel;
 
 use Admin\Entities\Exception\UnitAlreadyExistsException;
-use Admin\Entities\Unit\Unit;
 use Admin\UseCases\Gateway\UnitRepository;
 use Shared\Entities\VO\NameField;
 
-final readonly class CreateUnit
+final readonly class ChangeUnitLabel
 {
     public function __construct(private UnitRepository $unitRepository)
     {
     }
 
-    public function execute(CreateUnitRequest $request): CreateUnitResponse
+    public function execute(ChangeUnitLabelRequest $request): ChangeUnitLabelResponse
     {
         $isExists = $this->unitRepository->exists($request->label());
         if ($isExists) {
             throw new UnitAlreadyExistsException($request->label());
         }
 
-        $unit = Unit::create(
-            NameField::fromString($request->label()),
-            $request->abbreviation()
-        );
+        $unit = $this->unitRepository->findBySlug($request->slug());
+        $unit->changeLabel(NameField::fromString($request->label()), $request->abbreviation());
 
-        $this->unitRepository->save($unit);
+        $this->unitRepository->changeLabel($unit);
 
-        return new CreateUnitResponse($unit);
+        return new ChangeUnitLabelResponse($unit);
     }
 }
