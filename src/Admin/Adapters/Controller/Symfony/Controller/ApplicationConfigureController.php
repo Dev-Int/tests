@@ -14,9 +14,7 @@ declare(strict_types=1);
 namespace Admin\Adapters\Controller\Symfony\Controller;
 
 use Admin\UseCases\Gateway\CompanyRepository;
-use Admin\UseCases\Gateway\FamilyLogRepository;
 use Admin\UseCases\Gateway\UnitRepository;
-use Admin\UseCases\Gateway\ZoneStorageRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -27,8 +25,6 @@ final class ApplicationConfigureController extends AbstractController
 {
     public function __construct(
         private readonly CompanyRepository $companyRepository,
-        private readonly FamilyLogRepository $familyLogRepository,
-        private readonly ZoneStorageRepository $zoneStorageRepository,
         private readonly UnitRepository $unitRepository
     ) {
     }
@@ -36,9 +32,7 @@ final class ApplicationConfigureController extends AbstractController
     #[Route(path: '/configure/application', name: 'admin_configure_application')]
     public function __invoke(): Response
     {
-        $hasBefore = $this->companyRepository->hasCompany()
-            && $this->familyLogRepository->hasFamilyLog()
-            && $this->zoneStorageRepository->hasZoneStorage();
+        $hasBefore = $this->companyRepository->hasCompany();
         if ($hasBefore === false) {
             return $this->redirectToRoute('admin_configure');
         }

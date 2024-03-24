@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\Unit\CreateUnit;
 
-use Admin\Adapters\Form\Type\UnitType;
+use Admin\Adapters\Form\Type\Unit\UnitType;
 use Admin\UseCases\Unit\CreateUnit\CreateUnit;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;

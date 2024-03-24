@@ -1,15 +1,16 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Change label "{{ zoneStorage.label }}"</h1>
+    <h1>Change label "{{ unit.label }}"</h1>
 
     {{ form_start(form) }}
     {{ form_errors(form) }}
 
     {{ form_row(form.label) }}
+    {{ form_row(form.abbreviation) }}
 
     <div class="grid">
-        <a href="{{ path('admin_zone_storages_index') }}" class="secondary" role="button">Annuler</a>
+        <a href="{{ path('admin_units_index') }}" class="secondary" role="button">Annuler</a>
         <button type="submit">Change label</button>
     </div>
 

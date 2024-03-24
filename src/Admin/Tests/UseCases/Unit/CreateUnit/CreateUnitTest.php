@@ -36,7 +36,6 @@ final class CreateUnitTest extends TestCase
 
         $unitRepository->expects(self::once())
             ->method('exists')
-            ->with('Kilogramme')
             ->willReturn(false)
         ;
 
@@ -64,7 +63,6 @@ final class CreateUnitTest extends TestCase
 
         $unitRepository->expects(self::once())
             ->method('exists')
-            ->with('Kilogramme')
             ->willReturn(true)
         ;
 

@@ -11,7 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Adapters\Form\Type;
+namespace Admin\Adapters\Form\Type\Unit;
 
 use Admin\Adapters\Controller\Symfony\Controller\Unit\CreateUnit\CreateUnitApiRequest;
 use Symfony\Component\Form\AbstractType;
@@ -19,7 +19,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-final class UnitType extends AbstractType
+class UnitType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {

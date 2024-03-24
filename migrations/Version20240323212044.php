@@ -27,10 +27,11 @@ final class Version20240323212044 extends AbstractMigration
     {
         $this->addSql(
             'CREATE TABLE unit (' .
-            'slug VARCHAR(50) NOT NULL, ' .
+            'uuid UUID NOT NULL, ' .
             'label VARCHAR(50) NOT NULL, ' .
             'abbreviation VARCHAR(5) NOT NULL, ' .
-            'PRIMARY KEY(slug))'
+            'slug VARCHAR(50) NOT NULL, ' .
+            'PRIMARY KEY(uuid))'
         );
     }
 

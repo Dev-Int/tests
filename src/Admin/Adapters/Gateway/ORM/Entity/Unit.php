@@ -16,12 +16,15 @@ namespace Admin\Adapters\Gateway\ORM\Entity;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineUnitRepository;
 use Admin\Entities\Unit\Unit as UnitDomain;
 use Doctrine\ORM\Mapping as ORM;
+use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
 
 #[ORM\Entity(repositoryClass: DoctrineUnitRepository::class)]
 final class Unit
 {
     #[ORM\Id]
+    #[ORM\Column(name: 'uuid', type: 'guid')]
+    private string $uuid;
     #[ORM\Column(name: 'slug', type: 'string', length: 50)]
     private string $slug;
     #[ORM\Column(name: 'label', type: 'string', length: 50)]
@@ -31,6 +34,7 @@ final class Unit
 
     public function fromDomain(UnitDomain $unit): self
     {
+        $this->uuid = $unit->uuid()->toString();
         $this->label = $unit->label()->toString();
         $this->slug = $unit->slug();
         $this->abbreviation = $unit->abbreviation();
@@ -40,12 +44,16 @@ final class Unit
 
     public function toDomain(): UnitDomain
     {
-        return UnitDomain::create(NameField::fromString($this->label), $this->abbreviation);
+        return UnitDomain::create(
+            ResourceUuid::fromString($this->uuid),
+            NameField::fromString($this->label),
+            $this->abbreviation
+        );
     }
 
-    public function slug(): string
+    public function uuid(): string
     {
-        return $this->slug;
+        return $this->uuid;
     }
 
     public function label(): string
@@ -53,8 +61,34 @@ final class Unit
         return $this->label;
     }
 
+    public function setLabel(string $label): self
+    {
+        $this->label = $label;
+
+        return $this;
+    }
+
     public function abbreviation(): string
     {
         return $this->abbreviation;
+    }
+
+    public function setAbbreviation(string $abbreviation): self
+    {
+        $this->abbreviation = $abbreviation;
+
+        return $this;
+    }
+
+    public function slug(): string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): self
+    {
+        $this->slug = $slug;
+
+        return $this;
     }
 }

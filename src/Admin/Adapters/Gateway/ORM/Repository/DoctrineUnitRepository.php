@@ -39,12 +39,13 @@ final class DoctrineUnitRepository extends ServiceEntityRepository implements Un
     /**
      * @throws NonUniqueResultException
      */
-    public function exists(string $label): bool
+    public function exists(string $label, string $uuid): bool
     {
         $alias = self::ALIAS;
         $unit = $this->createQueryBuilder($alias)
             ->where("{$alias}.label = :label")
-            ->setParameter('label', $label)
+            ->andWhere("{$alias}.uuid != :uuid")
+            ->setParameters(['label' => $label, 'uuid' => $uuid])
             ->getQuery()
             ->getOneOrNullResult()
         ;
@@ -82,7 +83,17 @@ final class DoctrineUnitRepository extends ServiceEntityRepository implements Un
 
     public function changeLabel(UnitDomain $unit): void
     {
-        // TODO: Implement changeLabel() method.
+        $unitToUpdate = $this->find($unit->uuid()->toString());
+        if (!$unitToUpdate instanceof Unit) {
+            throw new UnitNotFoundException($unit->slug());
+        }
+
+        $unitToUpdate->setLabel($unit->label()->toString())
+            ->setAbbreviation($unit->abbreviation())
+            ->setSlug($unit->slug())
+        ;
+
+        $this->_em->flush();
     }
 
     public function findAllUnits(): UnitCollection
@@ -104,7 +115,7 @@ final class DoctrineUnitRepository extends ServiceEntityRepository implements Un
     {
         $alias = self::ALIAS;
         $unit = $this->createQueryBuilder($alias)
-            ->where("{$alias}}.slug = :slug")
+            ->where("{$alias}.slug = :slug")
             ->setParameter('slug', $slug)
             ->getQuery()
             ->getOneOrNullResult()

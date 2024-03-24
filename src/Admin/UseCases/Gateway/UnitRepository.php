@@ -18,7 +18,7 @@ use Admin\Entities\Unit\UnitCollection;
 
 interface UnitRepository
 {
-    public function exists(string $label): bool;
+    public function exists(string $label, string $uuid): bool;
 
     public function hasUnit(): bool;
 

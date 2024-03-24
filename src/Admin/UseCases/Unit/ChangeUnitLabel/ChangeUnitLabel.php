@@ -25,12 +25,12 @@ final readonly class ChangeUnitLabel
 
     public function execute(ChangeUnitLabelRequest $request): ChangeUnitLabelResponse
     {
-        $isExists = $this->unitRepository->exists($request->label());
+        $unit = $this->unitRepository->findBySlug($request->slug());
+        $isExists = $this->unitRepository->exists($request->label(), $unit->uuid()->toString());
         if ($isExists) {
             throw new UnitAlreadyExistsException($request->label());
         }
 
-        $unit = $this->unitRepository->findBySlug($request->slug());
         $unit->changeLabel(NameField::fromString($request->label()), $request->abbreviation());
 
         $this->unitRepository->changeLabel($unit);

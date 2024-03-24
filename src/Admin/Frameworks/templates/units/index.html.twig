@@ -23,8 +23,7 @@
                 <li class="li-unstyled flex-between">
                     {{ unit.label }} {{ unit.abbreviation }}
                     <span>
-                        <a href="#" role="button">Change label</a>
-                        <a href="#" role="button">Change abréviation</a>
+                        <a href="{{ path('admin_units_change-label', {slug: unit.slug}) }}" role="button">Change label</a>
                     </span>
                 </li>
                 {% endfor %}

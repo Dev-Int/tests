@@ -34,7 +34,10 @@ final class GetUnitsControllerTest extends WebTestCase
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
         $unitBuilder = new UnitDataBuilder();
         $unit1 = $unitBuilder->create('Kilogramme', 'kg')->build();
-        $unit2 = $unitBuilder->create('Litre', 'L')->build();
+        $unit2 = $unitBuilder->create('Litre', 'L')
+            ->withUuid('30eca73f-dc2b-4abf-885a-ae1b7022e816')
+            ->build()
+        ;
         $unitRepository->save($unit1);
         $unitRepository->save($unit2);
 

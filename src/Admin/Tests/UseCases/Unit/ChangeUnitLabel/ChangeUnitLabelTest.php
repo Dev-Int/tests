@@ -38,15 +38,14 @@ final class ChangeUnitLabelTest extends TestCase
         $request->expects(self::once())->method('slug')->willReturn('kilogramme');
 
         $unitRepository->expects(self::once())
-            ->method('exists')
-            ->with('Kilogrammes')
-            ->willReturn(false)
-        ;
-
-        $unitRepository->expects(self::once())
             ->method('findBySlug')
             ->with('kilogramme')
             ->willReturn($unit)
+        ;
+
+        $unitRepository->expects(self::once())
+            ->method('exists')
+            ->willReturn(false)
         ;
 
         $unitRepository->expects(self::once())
@@ -77,15 +76,14 @@ final class ChangeUnitLabelTest extends TestCase
         $request->expects(self::once())->method('slug')->willReturn('kilogramme');
 
         $unitRepository->expects(self::once())
-            ->method('exists')
-            ->with('Kilogramme')
-            ->willReturn(false)
-        ;
-
-        $unitRepository->expects(self::once())
             ->method('findBySlug')
             ->with('kilogramme')
             ->willReturn($unit)
+        ;
+
+        $unitRepository->expects(self::once())
+            ->method('exists')
+            ->willReturn(false)
         ;
 
         $unitRepository->expects(self::once())
@@ -112,17 +110,18 @@ final class ChangeUnitLabelTest extends TestCase
         $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
 
         $request->expects(self::exactly(2))->method('label')->willReturn('Kilogrammes');
-        $request->expects(self::never())->method('slug')->willReturn('kilogramme');
+        $request->expects(self::never())->method('abbreviation')->willReturn('kg');
+        $request->expects(self::once())->method('slug')->willReturn('kilogramme');
+
+        $unitRepository->expects(self::once())
+            ->method('findBySlug')
+            ->with('kilogramme')
+            ->willReturn($unit)
+        ;
 
         $unitRepository->expects(self::once())
             ->method('exists')
-            ->with('Kilogrammes')
             ->willReturn(true)
-        ;
-
-        $unitRepository->expects(self::never())
-            ->method('findBySlug')
-            ->with('kilogramme')
         ;
 
         $unitRepository->expects(self::never())

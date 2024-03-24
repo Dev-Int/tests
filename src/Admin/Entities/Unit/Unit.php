@@ -13,20 +13,26 @@ declare(strict_types=1);
 
 namespace Admin\Entities\Unit;
 
+use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
 
 final class Unit
 {
     private string $slug;
 
-    public static function create(NameField $label, string $abbreviation): self
+    public static function create(ResourceUuid $uuid, NameField $label, string $abbreviation): self
     {
-        return new self($label, $abbreviation);
+        return new self($uuid, $label, $abbreviation);
     }
 
-    private function __construct(private NameField $label, private string $abbreviation)
+    private function __construct(private ResourceUuid $uuid, private NameField $label, private string $abbreviation)
     {
         $this->slug = $label->slugify();
+    }
+
+    public function uuid(): ResourceUuid
+    {
+        return $this->uuid;
     }
 
     public function label(): NameField

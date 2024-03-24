@@ -14,11 +14,7 @@ declare(strict_types=1);
 namespace Admin\Tests\Adapters\controller\Symfony\Controller;
 
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineCompanyRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineZoneStorageRepository;
 use Admin\Tests\DataBuilder\CompanyDataBuilder;
-use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
-use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -34,21 +30,8 @@ final class ApplicationConfigureControllerTest extends WebTestCase
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
-
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
-
         $company = (new CompanyDataBuilder())->create('TestCompany')->build();
         $companyRepository->save($company);
-        $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
-        $familyLogRepository->save($familyLog);
-        $zoneStorage = (new ZoneStorageDataBuilder())
-            ->create('Réserve négative', $familyLog)
-            ->build()
-        ;
-        $zoneStorageRepository->save($zoneStorage);
 
         // Act
         $client->request(Request::METHOD_GET, self::APPLICATION_CONFIGURE_URI);
