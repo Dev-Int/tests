@@ -19,8 +19,13 @@ use Admin\Entities\Unit\UnitCollection;
 use Admin\UseCases\Gateway\UnitRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\UnexpectedResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
+/**
+ * @template-extends ServiceEntityRepository<Unit>
+ */
 final class DoctrineUnitRepository extends ServiceEntityRepository implements UnitRepository
 {
     public const ALIAS = 'unit';
@@ -54,8 +59,35 @@ final class DoctrineUnitRepository extends ServiceEntityRepository implements Un
         $this->_em->flush();
     }
 
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException|UnexpectedResultException
+     */
+    public function hasUnit(): bool
+    {
+        $alias = self::ALIAS;
+        $count = $this->createQueryBuilder($alias)
+            ->select("COUNT({$alias}.slug)")
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+
+        if (!\is_int($count)) {
+            throw new UnexpectedResultException();
+        }
+
+        return $count > 0;
+    }
+
     public function findAllUnits(): UnitCollection
     {
-        return new UnitCollection();
+        $units = $this->findAll();
+        $collection = new UnitCollection();
+
+        foreach ($units as $unit) {
+            $collection->add($unit->toDomain());
+        }
+
+        return $collection;
     }
 }

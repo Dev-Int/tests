@@ -43,11 +43,11 @@ final class CreateUnitController extends AbstractController
             } catch (\DomainException $exception) {
                 $this->addFlash('error', $exception->getMessage());
 
-                return $this->redirectToRoute('admin_configure');
+                return $this->redirectToRoute('admin_units_index');
             }
             $this->addFlash('success', 'Unit created');
 
-            return $this->redirectToRoute('admin_configure');
+            return $this->redirectToRoute('admin_units_index');
         }
 
         return $this->render('@admin/units/create.html.twig', [

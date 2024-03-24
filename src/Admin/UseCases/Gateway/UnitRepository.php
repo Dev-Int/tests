@@ -22,5 +22,7 @@ interface UnitRepository
 
     public function save(Unit $unit): void;
 
+    public function hasUnit(): bool;
+
     public function findAllUnits(): UnitCollection;
 }

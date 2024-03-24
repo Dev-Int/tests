@@ -18,7 +18,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" role="button" class="{% if hasApplication %}secondary disable-link {% endif %}w100">
+                        <a href="{{ path('admin_configure_application') }}" role="button" class="{% if hasApplication %}secondary disable-link {% endif %}w100">
                             {% if hasApplication %}<i class="fa-solid fa-square-check"></i> {% endif%}Configure application
                         </a>
                     </li>
@@ -51,7 +51,11 @@
             <p></p>
             <p>Happy configure ;)</p>
 
-            <p><a href="{{ path('home') }}" role="button">Retour à l'accueil</a></p>
+            <p>
+                <a href="{{ path('home') }}" role="button">
+                    <i class="fa-solid fa-angles-left"></i> Retour à l'accueil
+                </a>
+            </p>
         </article>
     </div>
 

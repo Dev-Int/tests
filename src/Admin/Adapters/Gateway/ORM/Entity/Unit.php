@@ -16,6 +16,7 @@ namespace Admin\Adapters\Gateway\ORM\Entity;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineUnitRepository;
 use Admin\Entities\Unit as UnitDomain;
 use Doctrine\ORM\Mapping as ORM;
+use Shared\Entities\VO\NameField;
 
 #[ORM\Entity(repositoryClass: DoctrineUnitRepository::class)]
 final class Unit
@@ -35,6 +36,11 @@ final class Unit
         $this->abbreviation = $unit->abbreviation();
 
         return $this;
+    }
+
+    public function toDomain(): UnitDomain
+    {
+        return UnitDomain::create(NameField::fromString($this->label), $this->abbreviation);
     }
 
     public function slug(): string

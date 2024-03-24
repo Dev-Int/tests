@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block header %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+
+    <h1>Configure application</h1>
+
+    <div class="row">
+        <aside class="col-md-3">
+            <nav class="menu">
+                <ul>
+                    <li>
+                        <a href="{{ path('admin_unit_create') }}" class="{% if hasUnit %}secondary disable-link {% endif %}w100" role="button">
+                            {% if hasUnit %}<i class="fa-solid fa-square-check"></i>{% endif%} Create Unit
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="{% if hasTaxe %}secondary disable-link {% endif %}w100" role="button">
+                            {% if hasTaxe %}<i class="fa-solid fa-square-check"></i>{% endif%} Create Taxe
+                        </a>
+                    </li>
+                    <li><a href="#" class="w100" role="button">Create anything else</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <article class="col-md-9">
+            <p>Here you configure specific items of your application.</p>
+            <p>Select items in order.</p>
+            <p></p>
+            <p>Happy configure ;)</p>
+
+            <p>
+                <a href="{{ path('admin_configure') }}" role="button">
+                    <i class="fa-solid fa-angles-left"></i> Retour à la configuration
+                </a>
+            </p>
+        </article>
+    </div>
+
+{% endblock %}
