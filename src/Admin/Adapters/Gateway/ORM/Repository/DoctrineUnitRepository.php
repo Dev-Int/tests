@@ -15,6 +15,7 @@ namespace Admin\Adapters\Gateway\ORM\Repository;
 
 use Admin\Adapters\Gateway\ORM\Entity\Unit;
 use Admin\Entities\Unit as UnitDomain;
+use Admin\Entities\Unit\UnitCollection;
 use Admin\UseCases\Gateway\UnitRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
@@ -51,5 +52,10 @@ final class DoctrineUnitRepository extends ServiceEntityRepository implements Un
 
         $this->_em->persist($unitOrm);
         $this->_em->flush();
+    }
+
+    public function findAllUnits(): UnitCollection
+    {
+        return new UnitCollection();
     }
 }

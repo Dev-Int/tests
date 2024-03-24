@@ -11,16 +11,13 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\UseCases\Gateway;
+namespace Admin\UseCases\Unit\GetUnits;
 
-use Admin\Entities\Unit;
 use Admin\Entities\Unit\UnitCollection;
 
-interface UnitRepository
+final readonly class GetUnitsResponse
 {
-    public function exists(string $label): bool;
-
-    public function save(Unit $unit): void;
-
-    public function findAllUnits(): UnitCollection;
+    public function __construct(public UnitCollection $units)
+    {
+    }
 }
