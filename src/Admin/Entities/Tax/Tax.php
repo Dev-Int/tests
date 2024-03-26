@@ -28,7 +28,8 @@ final class Tax
         private readonly NameField $name,
         private float $rate
     ) {
-        $this->rate = $rate / 100;
+        $coeff = preg_match('/0,|\.\d+/', (string) $this->rate) === 1 ? 1 : 100;
+        $this->rate = $rate / $coeff;
     }
 
     public function uuid(): ResourceUuid
