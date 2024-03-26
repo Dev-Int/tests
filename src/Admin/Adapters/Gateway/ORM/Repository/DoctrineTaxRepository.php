@@ -19,6 +19,8 @@ use Admin\Entities\Tax\TaxCollection;
 use Admin\UseCases\Gateway\TaxRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\UnexpectedResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -49,6 +51,26 @@ final class DoctrineTaxRepository extends ServiceEntityRepository implements Tax
         return $tax !== null;
     }
 
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException|UnexpectedResultException
+     */
+    public function hasTax(): bool
+    {
+        $alias = self::ALIAS;
+        $count = $this->createQueryBuilder($alias)
+            ->select("COUNT({$alias}.uuid)")
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+
+        if (!\is_int($count)) {
+            throw new UnexpectedResultException();
+        }
+
+        return $count > 0;
+    }
+
     public function save(TaxDomain $tax): void
     {
         $taxOrm = (new Tax())->fromDomain($tax);
@@ -59,6 +81,13 @@ final class DoctrineTaxRepository extends ServiceEntityRepository implements Tax
 
     public function findAllTaxes(): TaxCollection
     {
-        return new TaxCollection();
+        $taxes = $this->findAll();
+        $collection = new TaxCollection();
+
+        foreach ($taxes as $tax) {
+            $collection->add($tax->toDomain());
+        }
+
+        return $collection;
     }
 }

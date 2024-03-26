@@ -47,7 +47,7 @@ final class CreateTaxControllerTest extends WebTestCase
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        self::assertResponseRedirects('/admin/configure');
+        self::assertResponseRedirects('/admin/taxes');
 
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container')->children('div.flash.flash-success')->text();
@@ -84,7 +84,7 @@ final class CreateTaxControllerTest extends WebTestCase
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        self::assertResponseRedirects('/admin/configure');
+        self::assertResponseRedirects('/admin/taxes');
 
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container')->children('div.flash.flash-error')->text();
@@ -119,7 +119,6 @@ final class CreateTaxControllerTest extends WebTestCase
         $response = $client->getCrawler();
 
         $nameField = $response->filter('form')->children('div')->first();
-        $rateField = $nameField->siblings();
 
         self::assertSame('Nom de la taxe', $nameField->children('label')->text());
         self::assertSame('This value should not be blank.', $nameField->children('ul > li')->text());

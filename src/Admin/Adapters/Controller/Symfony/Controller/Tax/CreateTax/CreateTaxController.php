@@ -42,13 +42,15 @@ final class CreateTaxController extends AbstractController
                 $this->useCase->execute($taxToCreate);
             } catch (\DomainException $exception) {
                 $this->addFlash('error', $exception->getMessage());
+
+                return $this->redirectToRoute('admin_taxes_index');
             }
             $this->addFlash('success', 'Tax created');
 
-            return $this->redirectToRoute('admin_configure');
+            return $this->redirectToRoute('admin_taxes_index');
         }
 
-        return $this->render('@admin/tax/create.html.twig', [
+        return $this->render('@admin/taxes/create.html.twig', [
             'form' => $form,
         ]);
     }

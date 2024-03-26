@@ -16,6 +16,8 @@ namespace Admin\Adapters\Gateway\ORM\Entity;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineTaxRepository;
 use Admin\Entities\Tax\Tax as TaxDomain;
 use Doctrine\ORM\Mapping as ORM;
+use Shared\Entities\ResourceUuid;
+use Shared\Entities\VO\NameField;
 
 #[ORM\Entity(repositoryClass: DoctrineTaxRepository::class)]
 final class Tax
@@ -35,6 +37,15 @@ final class Tax
         $this->rate = $tax->rate();
 
         return $this;
+    }
+
+    public function toDomain(): TaxDomain
+    {
+        return TaxDomain::create(
+            ResourceUuid::fromString($this->uuid),
+            NameField::fromString($this->name),
+            $this->rate
+        );
     }
 
     public function uuid(): string
