@@ -15,6 +15,7 @@ namespace Admin\Adapters\Gateway\ORM\Repository;
 
 use Admin\Adapters\Gateway\ORM\Entity\Tax;
 use Admin\Entities\Tax\Tax as TaxDomain;
+use Admin\Entities\Tax\TaxCollection;
 use Admin\UseCases\Gateway\TaxRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
@@ -54,5 +55,10 @@ final class DoctrineTaxRepository extends ServiceEntityRepository implements Tax
 
         $this->_em->persist($taxOrm);
         $this->_em->flush();
+    }
+
+    public function findAllTaxes(): TaxCollection
+    {
+        return new TaxCollection();
     }
 }

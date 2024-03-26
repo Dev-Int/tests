@@ -33,6 +33,13 @@ final class TaxDataBuilder
         return $this;
     }
 
+    public function withUuid(string $uuid): self
+    {
+        $this->uuid = $uuid;
+
+        return $this;
+    }
+
     public function build(): Tax
     {
         return Tax::create(

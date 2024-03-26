@@ -11,16 +11,13 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\UseCases\Gateway;
+namespace Admin\UseCases\Tax\GetTaxes;
 
-use Admin\Entities\Tax\Tax;
 use Admin\Entities\Tax\TaxCollection;
 
-interface TaxRepository
+final readonly class GetTaxesResponse
 {
-    public function exists(float $rate): bool;
-
-    public function save(Tax $tax): void;
-
-    public function findAllTaxes(): TaxCollection;
+    public function __construct(public TaxCollection $taxes)
+    {
+    }
 }
