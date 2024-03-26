@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <h1>Taxes</h1>
+
+    <div class="row">
+        <aside class="col-md-3">
+            <nav class="menu">
+                <ul>
+                    <li><a href="{{ path('admin_taxes_create') }}" class="w100" role="button">Create Tax</a></li>
+                    <li>
+                        <a href="{{ path('admin_index') }}" class="w100" role="button">
+                            <i class="fa-solid fa-angles-left"></i> Retour à l'accueil
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+        <article class="col-md-9">
+            <ul class="w100">
+                {%  for tax in taxes %}
+                <li class="li-unstyled flex-between">
+                    {{ tax.name }} {{ tax.rate }}
+                    <span>
+                        <a href="#" role="button">Rename tax</a>
+                        <a href="#" role="button">Reevaluate tax</a>
+                    </span>
+                </li>
+                {% endfor %}
+            </ul>
+        </article>
+    </div>
+
+{% endblock %}
