@@ -18,7 +18,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="{% if hasTaxe %}secondary disable-link {% endif %}w100" role="button">
+                        <a href="{{ path('admin_taxes_create') }}" class="{% if hasTaxe %}secondary disable-link {% endif %}w100" role="button">
                             {% if hasTaxe %}<i class="fa-solid fa-square-check"></i>{% endif%} Create Taxe
                         </a>
                     </li>

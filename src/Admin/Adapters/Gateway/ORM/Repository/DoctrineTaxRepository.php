@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Admin\Adapters\Gateway\ORM\Repository;
 
 use Admin\Adapters\Gateway\ORM\Entity\Tax;
+use Admin\Entities\Exception\TaxNotFoundException;
 use Admin\Entities\Tax\Tax as TaxDomain;
 use Admin\Entities\Tax\TaxCollection;
 use Admin\UseCases\Gateway\TaxRepository;
@@ -22,8 +23,6 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\UnexpectedResultException;
 use Doctrine\Persistence\ManagerRegistry;
-use Shared\Entities\ResourceUuid;
-use Shared\Entities\VO\NameField;
 
 /**
  * @template-extends ServiceEntityRepository<Tax>
@@ -38,8 +37,6 @@ final class DoctrineTaxRepository extends ServiceEntityRepository implements Tax
     }
 
     /**
-     * @param float $rate *
-     *
      * @throws NonUniqueResultException
      */
     public function exists(string $name, float $rate): bool
@@ -47,7 +44,8 @@ final class DoctrineTaxRepository extends ServiceEntityRepository implements Tax
         $alias = self::ALIAS;
         $tax = $this->createQueryBuilder($alias)
             ->where("{$alias}.rate = :rate")
-            ->setParameter('rate', $rate)
+            ->andWhere("{$alias}.name = :name")
+            ->setParameters(['rate' => $rate, 'name' => $name])
             ->getQuery()
             ->getOneOrNullResult()
         ;
@@ -83,6 +81,18 @@ final class DoctrineTaxRepository extends ServiceEntityRepository implements Tax
         $this->_em->flush();
     }
 
+    public function rename(TaxDomain $tax): void
+    {
+        $taxToRename = $this->find($tax->uuid()->toString());
+        if (!$taxToRename instanceof Tax) {
+            throw new TaxNotFoundException($tax->uuid()->toString());
+        }
+
+        $taxToRename->setName($tax->name()->toString());
+
+        $this->_em->flush();
+    }
+
     public function findAllTaxes(): TaxCollection
     {
         $taxes = $this->findAll();
@@ -97,6 +107,11 @@ final class DoctrineTaxRepository extends ServiceEntityRepository implements Tax
 
     public function findById(string $uuid): TaxDomain
     {
-        return TaxDomain::create(ResourceUuid::fromString($uuid), NameField::fromString(''), 20.0);
+        $tax = $this->find($uuid);
+        if (!$tax instanceof Tax) {
+            throw new TaxNotFoundException($uuid);
+        }
+
+        return $tax->toDomain();
     }
 }

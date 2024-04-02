@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\Tax\CreateTax;
 
-use Admin\Adapters\Form\Type\TaxType;
+use Admin\Adapters\Form\Type\Tax\TaxType;
 use Admin\UseCases\Tax\CreateTax\CreateTax;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;

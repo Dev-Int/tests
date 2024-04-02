@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Admin\Tests\UseCases\Tax\RenameTax;
 
 use Admin\Entities\Exception\TaxAlreadyExistsException;
+use Admin\Entities\Exception\TaxNotFoundException;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
 use Admin\UseCases\Gateway\TaxRepository;
 use Admin\UseCases\Tax\RenameTax\RenameTax;
@@ -48,7 +49,7 @@ final class RenameTaxTest extends TestCase
             ->willReturn($tax)
         ;
 
-        $taxRepository->expects(self::once())->method('save');
+        $taxRepository->expects(self::once())->method('rename');
 
         // Act
         $response = $useCase->execute($request);
@@ -82,11 +83,40 @@ final class RenameTaxTest extends TestCase
             ->willReturn(true)
         ;
 
-        $taxRepository->expects(self::never())->method('save');
+        $taxRepository->expects(self::never())->method('rename');
 
         // Act && Assert
         $this->expectException(TaxAlreadyExistsException::class);
         $this->expectExceptionMessage(TaxAlreadyExistsException::MESSAGE);
+        $useCase->execute($request);
+    }
+
+    public function testRenameTaxFailWithTaxNotFoundException(): void
+    {
+        // Arrange
+        $taxRepository = $this->createMock(TaxRepository::class);
+        $useCase = new RenameTax($taxRepository);
+        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
+        $request = $this->createMock(RenameTaxRequest::class);
+
+        $request->expects(self::never())->method('name')->willReturn('TVA taux réduit');
+        $request->expects(self::once())->method('uuid')->willReturn(TaxDataBuilder::UUID_VALID);
+
+        $taxRepository->expects(self::once())
+            ->method('findById')
+            ->with(TaxDataBuilder::UUID_VALID)
+            ->will(self::throwException(new TaxNotFoundException(TaxDataBuilder::UUID_VALID)))
+        ;
+
+        $taxRepository->expects(self::never())
+            ->method('exists')
+        ;
+
+        $taxRepository->expects(self::never())->method('rename');
+
+        // Act && Assert
+        $this->expectException(TaxNotFoundException::class);
+        $this->expectExceptionMessage(TaxNotFoundException::MESSAGE);
         $useCase->execute($request);
     }
 }

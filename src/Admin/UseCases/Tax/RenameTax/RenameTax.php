@@ -34,7 +34,7 @@ final readonly class RenameTax
 
         $tax->rename(NameField::fromString($request->name()));
 
-        $this->taxRepository->save($tax);
+        $this->taxRepository->rename($tax);
 
         return new RenameTaxResponse($tax);
     }
