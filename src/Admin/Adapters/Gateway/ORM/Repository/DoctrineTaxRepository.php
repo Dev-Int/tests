@@ -22,6 +22,8 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\UnexpectedResultException;
 use Doctrine\Persistence\ManagerRegistry;
+use Shared\Entities\ResourceUuid;
+use Shared\Entities\VO\NameField;
 
 /**
  * @template-extends ServiceEntityRepository<Tax>
@@ -36,9 +38,11 @@ final class DoctrineTaxRepository extends ServiceEntityRepository implements Tax
     }
 
     /**
+     * @param float $rate *
+     *
      * @throws NonUniqueResultException
      */
-    public function exists(float $rate): bool
+    public function exists(string $name, float $rate): bool
     {
         $alias = self::ALIAS;
         $tax = $this->createQueryBuilder($alias)
@@ -89,5 +93,10 @@ final class DoctrineTaxRepository extends ServiceEntityRepository implements Tax
         }
 
         return $collection;
+    }
+
+    public function findById(string $uuid): TaxDomain
+    {
+        return TaxDomain::create(ResourceUuid::fromString($uuid), NameField::fromString(''), 20.0);
     }
 }

@@ -28,12 +28,12 @@ final class CreateTaxTest extends TestCase
         $useCase = new CreateTax($taxRepository);
         $request = $this->createMock(CreateTaxRequest::class);
 
-        $request->expects(self::once())->method('name')->willReturn('TVA taux normal');
+        $request->expects(self::exactly(2))->method('name')->willReturn('TVA taux normal');
         $request->expects(self::exactly(2))->method('rate')->willReturn(20.0);
 
         $taxRepository->expects(self::once())
             ->method('exists')
-            ->with(20.0)
+            ->with('TVA taux normal', 20.0)
             ->willReturn(false)
         ;
 
@@ -55,12 +55,12 @@ final class CreateTaxTest extends TestCase
         $useCase = new CreateTax($taxRepository);
         $request = $this->createMock(CreateTaxRequest::class);
 
-        $request->expects(self::once())->method('name')->willReturn('TVA taux normal');
+        $request->expects(self::exactly(2))->method('name')->willReturn('TVA taux normal');
         $request->expects(self::exactly(2))->method('rate')->willReturn(20.0);
 
         $taxRepository->expects(self::once())
             ->method('exists')
-            ->with(20.0)
+            ->with('TVA taux normal', 20.0)
             ->willReturn(true)
         ;
 

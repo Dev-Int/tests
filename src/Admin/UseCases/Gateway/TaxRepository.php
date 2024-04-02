@@ -18,11 +18,13 @@ use Admin\Entities\Tax\TaxCollection;
 
 interface TaxRepository
 {
-    public function exists(float $rate): bool;
+    public function exists(string $name, float $rate): bool;
 
     public function hasTax(): bool;
 
     public function save(Tax $tax): void;
+
+    public function findById(string $uuid): Tax;
 
     public function findAllTaxes(): TaxCollection;
 }

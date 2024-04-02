@@ -11,35 +11,31 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\UseCases\Tax\CreateTax;
+namespace Admin\UseCases\Tax\RenameTax;
 
 use Admin\Entities\Exception\TaxAlreadyExistsException;
-use Admin\Entities\Tax\Tax;
 use Admin\UseCases\Gateway\TaxRepository;
-use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
 
-final readonly class CreateTax
+final readonly class RenameTax
 {
     public function __construct(private TaxRepository $taxRepository)
     {
     }
 
-    public function execute(CreateTaxRequest $request): CreateTaxResponse
+    public function execute(RenameTaxRequest $request): RenameTaxResponse
     {
-        $isExists = $this->taxRepository->exists($request->name(), $request->rate());
+        $tax = $this->taxRepository->findById($request->uuid());
+
+        $isExists = $this->taxRepository->exists($request->name(), $tax->rate());
         if ($isExists) {
-            throw new TaxAlreadyExistsException($request->name(), $request->rate());
+            throw new TaxAlreadyExistsException($request->name(), $tax->rate());
         }
 
-        $tax = Tax::create(
-            ResourceUuid::generate(),
-            NameField::fromString($request->name()),
-            $request->rate()
-        );
+        $tax->rename(NameField::fromString($request->name()));
 
         $this->taxRepository->save($tax);
 
-        return new CreateTaxResponse($tax);
+        return new RenameTaxResponse($tax);
     }
 }

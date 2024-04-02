@@ -25,7 +25,7 @@ final class Tax
 
     private function __construct(
         private readonly ResourceUuid $uuid,
-        private readonly NameField $name,
+        private NameField $name,
         private float $rate
     ) {
         $coeff = preg_match('/^0[,|.]\d+/', (string) $this->rate) === 1 ? 1 : 100;
@@ -45,5 +45,10 @@ final class Tax
     public function name(): NameField
     {
         return $this->name;
+    }
+
+    public function rename(NameField $name): void
+    {
+        $this->name = $name;
     }
 }
