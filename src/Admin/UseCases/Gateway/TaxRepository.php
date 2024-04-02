@@ -26,6 +26,8 @@ interface TaxRepository
 
     public function rename(Tax $tax): void;
 
+    public function revaluate(Tax $tax): void;
+
     public function findById(string $uuid): Tax;
 
     public function findAllTaxes(): TaxCollection;

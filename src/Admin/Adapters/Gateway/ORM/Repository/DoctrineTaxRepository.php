@@ -93,6 +93,11 @@ final class DoctrineTaxRepository extends ServiceEntityRepository implements Tax
         $this->_em->flush();
     }
 
+    public function revaluate(TaxDomain $tax): void
+    {
+        // TODO: Implement reevaluate() method.
+    }
+
     public function findAllTaxes(): TaxCollection
     {
         $taxes = $this->findAll();
