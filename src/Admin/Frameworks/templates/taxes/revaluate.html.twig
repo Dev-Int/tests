@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Revaluate Tax "{{ tax.name }}"</h1>
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    {{ form_row(form.rate) }}
+    {{  form_row(form.uuid) }}
+
+    <div class="grid">
+        <a href="{{ path('admin_taxes_index') }}" class="secondary" role="button">Annuler</a>
+        <button type="submit">Revaluate</button>
+    </div>
+
+    {{ form_end(form) }}
+
+{% endblock %}
+

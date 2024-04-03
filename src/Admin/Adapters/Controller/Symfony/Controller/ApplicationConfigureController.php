@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Admin\Adapters\Controller\Symfony\Controller;
 
 use Admin\UseCases\Gateway\CompanyRepository;
+use Admin\UseCases\Gateway\TaxRepository;
 use Admin\UseCases\Gateway\UnitRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,7 +26,8 @@ final class ApplicationConfigureController extends AbstractController
 {
     public function __construct(
         private readonly CompanyRepository $companyRepository,
-        private readonly UnitRepository $unitRepository
+        private readonly UnitRepository $unitRepository,
+        private readonly TaxRepository $taxRepository
     ) {
     }
 
@@ -38,10 +40,11 @@ final class ApplicationConfigureController extends AbstractController
         }
 
         $hasUnit = $this->unitRepository->hasUnit();
+        $hasTax = $this->taxRepository->hasTax();
 
         return $this->render('@admin/configure/application.html.twig', [
             'hasUnit' => $hasUnit,
-            'hasTaxe' => false,
+            'hasTaxe' => $hasTax,
         ]);
     }
 }
