@@ -11,7 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Tests\Adapters\controller\Symfony\Controller\Tax\RenameTax;
+namespace Admin\Tests\Adapters\controller\Symfony\Controller\Tax\RevaluateTax;
 
 use Admin\Entities\Exception\TaxAlreadyExistsException;
 use Admin\Entities\Tax\Tax;
@@ -24,11 +24,11 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * @group functionalTest
  */
-final class RenameTaxControllerTest extends WebTestCase
+final class RevaluateTaxControllerTest extends WebTestCase
 {
-    private const RENAME_TAX_URI = '/admin/taxes/%s/rename';
+    private const REEVALUATE_TAX_URI = '/admin/taxes/%s/revaluate';
 
-    public function testRenameTaxWillSucceed(): void
+    public function testRevaluateTaxWillSucceed(): void
     {
         // Arrange
         $client = self::createClient();
@@ -41,14 +41,14 @@ final class RenameTaxControllerTest extends WebTestCase
         self::assertCount(1, $taxes);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, sprintf(self::RENAME_TAX_URI, TaxDataBuilder::UUID_VALID));
+        $crawler = $client->request(Request::METHOD_GET, sprintf(self::REEVALUATE_TAX_URI, TaxDataBuilder::UUID_VALID));
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Rename Tax');
+        self::assertSelectorTextContains('h1', 'Revaluate Tax');
 
-        $form = $crawler->selectButton('Rename')->form([
-            'renameTax[name]' => 'TVA taux réduit',
-            'renameTax[uuid]' => $tax->uuid()->toString(),
+        $form = $crawler->selectButton('Revaluate')->form([
+            'revaluateTax[rate]' => 10,
+            'revaluateTax[uuid]' => $tax->uuid()->toString(),
         ]);
         $client->submit($form);
 
@@ -59,18 +59,18 @@ final class RenameTaxControllerTest extends WebTestCase
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container')->children('div.flash.flash-success')->text();
 
-        self::assertSame('Tax renamed', $flash);
+        self::assertSame('Tax revaluated', $flash);
 
         $taxes = $taxRepository->findAllTaxes();
         self::assertCount(1, $taxes);
 
         /** @var Tax $taxRenamed */
         $taxRenamed = $taxRepository->findById($tax->uuid()->toString());
-        self::assertSame('TVA taux réduit', $taxRenamed->name()->toString());
-        self::assertSame(0.2, $taxRenamed->rate());
+        self::assertSame('TVA taux normal', $taxRenamed->name()->toString());
+        self::assertSame(0.1, $taxRenamed->rate());
     }
 
-    public function testRenameTaxFailWithAlreadyExistsException(): void
+    public function testRevaluateTaxFailWithAlreadyExistsException(): void
     {
         // Arrange
         $client = self::createClient();
@@ -78,7 +78,7 @@ final class RenameTaxControllerTest extends WebTestCase
         /** @var TaxRepository $taxRepository */
         $taxRepository = self::getContainer()->get(TaxRepository::class);
         $tax1 = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
-        $tax2 = (new TaxDataBuilder())->create('TVA taux réduit', 20.0)
+        $tax2 = (new TaxDataBuilder())->create('TVA taux normal', 10.0)
             ->withUuid('2fd3cd27-c9e8-49e2-b993-48390d3c665a')
             ->build()
         ;
@@ -88,14 +88,14 @@ final class RenameTaxControllerTest extends WebTestCase
         self::assertCount(2, $taxes);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, sprintf(self::RENAME_TAX_URI, TaxDataBuilder::UUID_VALID));
+        $crawler = $client->request(Request::METHOD_GET, sprintf(self::REEVALUATE_TAX_URI, TaxDataBuilder::UUID_VALID));
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Rename Tax');
+        self::assertSelectorTextContains('h1', 'Revaluate Tax');
 
-        $form = $crawler->selectButton('Rename')->form([
-            'renameTax[name]' => 'TVA taux réduit',
-            'renameTax[uuid]' => $tax1->uuid()->toString(),
+        $form = $crawler->selectButton('Revaluate')->form([
+            'revaluateTax[rate]' => 10,
+            'revaluateTax[uuid]' => $tax1->uuid()->toString(),
         ]);
         $client->submit($form);
 
@@ -111,9 +111,9 @@ final class RenameTaxControllerTest extends WebTestCase
         $taxes = $taxRepository->findAllTaxes();
         self::assertCount(2, $taxes);
 
-        /** @var Tax $taxRenamed */
-        $taxRenamed = $taxRepository->findById($tax1->uuid()->toString());
-        self::assertSame('TVA taux normal', $taxRenamed->name()->toString());
-        self::assertSame(0.2, $taxRenamed->rate());
+        /** @var Tax $taxRevaluated */
+        $taxRevaluated = $taxRepository->findById($tax1->uuid()->toString());
+        self::assertSame('TVA taux normal', $taxRevaluated->name()->toString());
+        self::assertSame(0.2, $taxRevaluated->rate());
     }
 }

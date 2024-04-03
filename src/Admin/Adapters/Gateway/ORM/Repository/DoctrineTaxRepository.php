@@ -95,7 +95,14 @@ final class DoctrineTaxRepository extends ServiceEntityRepository implements Tax
 
     public function revaluate(TaxDomain $tax): void
     {
-        // TODO: Implement reevaluate() method.
+        $taxToRevaluate = $this->find($tax->uuid()->toString());
+        if (!$taxToRevaluate instanceof Tax) {
+            throw new TaxNotFoundException($tax->uuid()->toString());
+        }
+
+        $taxToRevaluate->setRate($tax->rate());
+
+        $this->_em->flush();
     }
 
     public function findAllTaxes(): TaxCollection

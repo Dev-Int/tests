@@ -67,4 +67,9 @@ final class Tax
     {
         return $this->rate;
     }
+
+    public function setRate(float $rate): void
+    {
+        $this->rate = $rate;
+    }
 }

@@ -24,7 +24,7 @@
                     {{ tax.name }} {{ tax.rate }}
                     <span>
                         <a href="{{ path('admin_taxes_rename', {'uuid': tax.uuid}) }}" role="button">Rename tax</a>
-                        <a href="#" role="button">Reevaluate tax</a>
+                        <a href="{{ path('admin_taxes_revaluate', {'uuid': tax.uuid}) }}" role="button">Reevaluate tax</a>
                     </span>
                 </li>
                 {% endfor %}
