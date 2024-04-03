@@ -11,12 +11,15 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Adapters\Form\Type;
+namespace Admin\Adapters\Form\Type\Company;
 
+use Admin\Adapters\Controller\Symfony\Controller\Company\CreateCompany\CreateCompanyApiRequest;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CompanyType extends AbstractType
 {
@@ -58,7 +61,7 @@ class CompanyType extends AbstractType
                     'placeholder' => 'Le pays où est domiciliée votre société',
                 ],
             ])
-            ->add('phone', TextType::class, [
+            ->add('phone', TelType::class, [
                 'required' => true,
                 'label' => 'Téléphone',
                 'attr' => [
@@ -80,6 +83,13 @@ class CompanyType extends AbstractType
                 ],
             ])
         ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => CreateCompanyApiRequest::class,
+        ]);
     }
 
     public function getBlockPrefix(): string

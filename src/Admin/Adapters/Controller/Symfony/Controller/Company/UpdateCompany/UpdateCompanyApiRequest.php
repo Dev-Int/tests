@@ -14,18 +14,30 @@ declare(strict_types=1);
 namespace Admin\Adapters\Controller\Symfony\Controller\Company\UpdateCompany;
 
 use Admin\UseCases\Company\UpdateCompany\UpdateCompanyRequest;
+use Symfony\Component\Validator\Constraints as Assert;
 
-final readonly class UpdateCompanyApiRequest implements UpdateCompanyRequest
+final class UpdateCompanyApiRequest implements UpdateCompanyRequest
 {
     public function __construct(
+        #[Assert\NotBlank]
         public string $name,
+        #[Assert\NotBlank]
         public string $address,
+        #[Assert\NotBlank]
+        #[Assert\Regex('/\d{5}/')]
+        #[Assert\Type(type: 'numeric')]
         public string $postalCode,
+        #[Assert\NotBlank]
         public string $town,
+        #[Assert\NotBlank]
         public string $country,
+        #[Assert\NotBlank]
         public string $phone,
+        #[Assert\NotBlank]
+        #[Assert\Email]
         public string $email,
-        public string $contact
+        #[Assert\NotBlank]
+        public string $contact,
     ) {
     }
 

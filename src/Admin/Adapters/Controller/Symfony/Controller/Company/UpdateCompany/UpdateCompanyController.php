@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\Company\UpdateCompany;
 
-use Admin\Adapters\Form\Type\CompanyUpdateType;
+use Admin\Adapters\Form\Type\Company\CompanyUpdateType;
 use Admin\Adapters\Gateway\ORM\Entity\Company;
 use Admin\UseCases\Company\UpdateCompany\UpdateCompany;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -30,25 +30,26 @@ final class UpdateCompanyController extends AbstractController
     }
 
     #[Route(path: '/company/{slug}/update', name: 'admin_company_update', methods: ['GET', 'POST'])]
-    public function __invoke(Request $request, Company $companyToUpdate): Response
+    public function __invoke(Request $request, Company $company): Response
     {
+        $companyToUpdate = new UpdateCompanyApiRequest(
+            $company->name(),
+            $company->address(),
+            $company->postalCode(),
+            $company->town(),
+            $company->country(),
+            $company->phone(),
+            $company->email(),
+            $company->contact()
+        );
         $form = $this->createForm(CompanyUpdateType::class, $companyToUpdate);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var Company $company */
-            $company = $form->getData();
+            /** @var UpdateCompanyApiRequest $companyRequest */
+            $companyRequest = $form->getData();
 
-            $this->useCase->execute(new UpdateCompanyApiRequest(
-                $companyToUpdate->name(),
-                $company->address(),
-                $company->postalCode(),
-                $company->town(),
-                $company->country(),
-                $company->phone(),
-                $company->email(),
-                $company->contact()
-            ));
+            $this->useCase->execute($companyRequest);
 
             $this->addFlash('success', 'Company updated');
 
