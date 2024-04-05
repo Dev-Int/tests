@@ -13,15 +13,35 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Form\Type\FamilyLog;
 
+use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-final class AssignParentFamilyLogType extends CreateFamilyLogType
+final class AssignParentFamilyLogType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        parent::buildForm($builder, $options);
-
-        $builder->remove('label');
+        $builder
+            ->add('parent', EntityType::class, [
+                'class' => FamilyLog::class,
+                'query_builder' => static function (EntityRepository $repository): QueryBuilder {
+                    return $repository->createQueryBuilder('f')
+                        ->orderBy('f.slug', 'asc')
+                    ;
+                },
+                'choice_label' => 'indentedLabel',
+                'required' => false,
+                'label' => 'Famille logistique parente',
+                'attr' => [
+                    'placeholder' => 'La famille logistique parente',
+                ],
+            ])
+            ->add('uuid', HiddenType::class)
+        ;
     }
 
     public function getBlockPrefix(): string

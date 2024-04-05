@@ -32,23 +32,24 @@ final class AssignParentFamilyLogController extends AbstractController
     #[Route(
         path: '/family_logs/{uuid}/assign-parent',
         name: 'admin_family_logs_assign-parent',
+        requirements: ['uuid' => '^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$'],
         methods: ['GET', 'POST']
     )]
     public function __invoke(Request $request, FamilyLog $familyLog): Response
     {
         $form = $this->createForm(
             AssignParentFamilyLogType::class,
-            ['parent' => $familyLog->parent(), 'label' => $familyLog->label()]
+            ['parent' => $familyLog->parent(), 'uuid' => $familyLog->uuid()]
         );
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var array{label: string, parent: FamilyLog} $familyLogToUpdate */
+            /** @var array{uuid: string, parent: FamilyLog} $familyLogToUpdate */
             $familyLogToUpdate = $form->getData();
 
             try {
                 $this->useCase->execute(
                     new AssignParentFamilyLogApiRequest(
-                        $familyLog->uuid(),
+                        $familyLogToUpdate['uuid'],
                         $familyLogToUpdate['parent']->toDomain()
                     )
                 );
@@ -64,6 +65,7 @@ final class AssignParentFamilyLogController extends AbstractController
 
         return $this->render('@admin/familyLogs/assign-parent.html.twig', [
             'form' => $form,
+            'familyLog' => $familyLog,
         ]);
     }
 }

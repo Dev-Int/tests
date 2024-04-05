@@ -13,7 +13,9 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Form\Type\FamilyLog;
 
+use Admin\Adapters\Controller\Symfony\Controller\FamilyLog\ChangeLabelFamilyLog\ChangeLabelFamilyLogApiRequest;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class ChangeLabelFamilyLogType extends CreateFamilyLogType
 {
@@ -22,6 +24,13 @@ final class ChangeLabelFamilyLogType extends CreateFamilyLogType
         parent::buildForm($builder, $options);
 
         $builder->remove('parent');
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => ChangeLabelFamilyLogApiRequest::class,
+        ]);
     }
 
     public function getBlockPrefix(): string

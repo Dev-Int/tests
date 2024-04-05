@@ -14,11 +14,17 @@ declare(strict_types=1);
 namespace Admin\Adapters\Controller\Symfony\Controller\FamilyLog\ChangeLabelFamilyLog;
 
 use Admin\UseCases\FamilyLog\ChangeLabelFamilyLog\ChangeLabelFamilyLogRequest;
+use Symfony\Component\Validator\Constraints as Assert;
 
-final readonly class ChangeLabelFamilyLogApiRequest implements ChangeLabelFamilyLogRequest
+final class ChangeLabelFamilyLogApiRequest implements ChangeLabelFamilyLogRequest
 {
-    public function __construct(public string $uuid, public string $label)
-    {
+    public function __construct(
+        #[Assert\Regex('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/')]
+        #[Assert\NotBlank]
+        public string $uuid,
+        #[Assert\NotBlank]
+        public string $label
+    ) {
     }
 
     public function uuid(): string

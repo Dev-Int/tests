@@ -13,13 +13,18 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\FamilyLog\CreateFamilyLog;
 
-use Admin\Entities\FamilyLog;
+use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
+use Admin\Entities\FamilyLog as FamilyLogDomain;
 use Admin\UseCases\FamilyLog\CreateFamilyLog\CreateFamilyLogRequest;
+use Symfony\Component\Validator\Constraints as Assert;
 
-final readonly class CreateFamilyLogApiRequest implements CreateFamilyLogRequest
+final class CreateFamilyLogApiRequest implements CreateFamilyLogRequest
 {
-    public function __construct(public string $label, public ?FamilyLog $parent = null)
-    {
+    public function __construct(
+        #[Assert\NotBlank]
+        public string $label = '',
+        public ?FamilyLog $parent = null
+    ) {
     }
 
     public function label(): string
@@ -27,8 +32,8 @@ final readonly class CreateFamilyLogApiRequest implements CreateFamilyLogRequest
         return $this->label;
     }
 
-    public function parent(): ?FamilyLog
+    public function parent(): ?FamilyLogDomain
     {
-        return $this->parent;
+        return $this->parent?->toDomain();
     }
 }

@@ -55,6 +55,7 @@ final class AssignParentFamilyLogControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('Assign')->form([
             'assignParentFamilyLog[parent]' => $parent->uuid()->toString(),
+            'assignParentFamilyLog[uuid]' => $familyLog->uuid()->toString(),
         ]);
         $client->submit($form);
 
@@ -108,6 +109,7 @@ final class AssignParentFamilyLogControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('Assign')->form([
             'assignParentFamilyLog[parent]' => $parent->uuid()->toString(),
+            'assignParentFamilyLog[uuid]' => $familyLog->uuid()->toString(),
         ]);
         $client->submit($form);
 

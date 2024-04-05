@@ -34,21 +34,16 @@ final class ChangeLabelFamilyLogController extends AbstractController
     {
         $form = $this->createForm(
             ChangeLabelFamilyLogType::class,
-            ['label' => $familyLog->label()]
+            new ChangeLabelFamilyLogApiRequest($familyLog->uuid(), $familyLog->label())
         );
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var array{label: string} $familyLogToUpdate */
+            /** @var ChangeLabelFamilyLogApiRequest $familyLogToUpdate */
             $familyLogToUpdate = $form->getData();
 
             try {
-                $this->useCase->execute(
-                    new ChangeLabelFamilyLogApiRequest(
-                        $familyLog->uuid(),
-                        $familyLogToUpdate['label']
-                    )
-                );
+                $this->useCase->execute($familyLogToUpdate);
             } catch (\DomainException $exception) {
                 $this->addFlash('error', $exception->getMessage());
 
