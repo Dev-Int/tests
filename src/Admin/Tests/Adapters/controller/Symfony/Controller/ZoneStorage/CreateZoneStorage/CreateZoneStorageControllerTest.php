@@ -71,7 +71,7 @@ final class CreateZoneStorageControllerTest extends WebTestCase
         self::assertEquals('Surgelé', $zoneStorageCreated->familyLog()->label());
     }
 
-    public function testCreateZoneStorageFailWithAlreadyExistsLabel(): void
+    public function testCreateZoneStorageFailWithAlreadyExistsLabelException(): void
     {
         // Arrange
         $client = self::createClient();
@@ -111,5 +111,47 @@ final class CreateZoneStorageControllerTest extends WebTestCase
         $flash = $admin->filter('body > div.container')->children('div.flash.flash-error')->text();
 
         self::assertSame(ZoneStorageAlreadyExistsException::MESSAGE, $flash);
+    }
+
+    public function testCreateZoneStorageFailWithInvalidArgumentException(): void
+    {
+        // Arrange
+        $client = self::createClient();
+
+        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+
+        /** @var DoctrineFamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
+        $zoneStorage = (new ZoneStorageDataBuilder())
+            ->create('Réserve négative', $familyLog)
+            ->build()
+        ;
+        $familyLogRepository->save($familyLog);
+        $zoneStorageRepository->save($zoneStorage);
+
+        // Act
+        $crawler = $client->request(Request::METHOD_POST, self::CREATE_ZONE_STORAGE_URI);
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('h1', 'Create Zone Storage');
+
+        $form = $crawler->selectButton('Create')->form([
+            'createZoneStorage[label]' => 'Réserve négative',
+            'createZoneStorage[familyLog]' => '',
+        ]);
+        $client->submit($form);
+
+        // Assert
+        self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response = $client->getCrawler();
+
+        $labelField = $response->filter('form')->children('div')->first();
+        $familyLogField = $labelField->siblings();
+
+        self::assertSame('Nom de la zone de stockage', $labelField->children('label')->text());
+        self::assertSame('Famille logistique', $familyLogField->children('label')->text());
+        self::assertSame('This value should not be blank.', $familyLogField->children('ul > li')->text());
     }
 }

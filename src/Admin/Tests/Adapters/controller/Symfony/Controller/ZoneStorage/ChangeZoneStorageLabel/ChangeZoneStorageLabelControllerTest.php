@@ -55,6 +55,7 @@ final class ChangeZoneStorageLabelControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('Change label')->form([
             'changeZoneStorageLabel[label]' => 'Réserve positive',
+            'changeZoneStorageLabel[slug]' => 'reserve-negative',
         ]);
         $client->submit($form);
 

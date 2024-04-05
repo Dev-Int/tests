@@ -36,20 +36,18 @@ final class ChangeZoneStorageLabelController extends AbstractController
     )]
     public function __invoke(Request $request, ZoneStorage $zoneStorage): Response
     {
-        $form = $this->createForm(ChangeLabelZoneStorageType::class, ['label' => $zoneStorage->label()]);
+        $form = $this->createForm(
+            ChangeLabelZoneStorageType::class,
+            new ChangeZoneStorageLabelApiRequest($zoneStorage->label(), $zoneStorage->slug())
+        );
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var array{label: string} $zoneStorageToUpdate */
+            /** @var ChangeZoneStorageLabelApiRequest $zoneStorageToUpdate */
             $zoneStorageToUpdate = $form->getData();
 
             try {
-                $this->useCase->execute(
-                    new ChangeZoneStorageLabelApiRequest(
-                        $zoneStorageToUpdate['label'],
-                        $zoneStorage->slug()
-                    )
-                );
+                $this->useCase->execute($zoneStorageToUpdate);
             } catch (\DomainException $exception) {
                 $this->addFlash('error', $exception->getMessage());
 

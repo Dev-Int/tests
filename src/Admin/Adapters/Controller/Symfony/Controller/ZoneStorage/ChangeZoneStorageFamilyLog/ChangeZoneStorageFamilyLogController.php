@@ -14,9 +14,9 @@ declare(strict_types=1);
 namespace Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\ChangeZoneStorageFamilyLog;
 
 use Admin\Adapters\Form\Type\ZoneStorage\ChangeZoneStorageFamilyLogType;
-use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
 use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
+use Admin\Entities\Exception\FamilyLogNotFoundException;
 use Admin\UseCases\ZoneStorage\ChangeZoneStorageFamilyLog\ChangeZoneStorageFamilyLog;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,17 +41,24 @@ final class ChangeZoneStorageFamilyLogController extends AbstractController
     public function __invoke(Request $request, ZoneStorage $zoneStorage): Response
     {
         $familyLog = $this->familyLogRepository->findOneBy(['label' => $zoneStorage->familyLog()->label()]);
-        $form = $this->createForm(ChangeZoneStorageFamilyLogType::class, ['familyLog' => $familyLog]);
+        if ($familyLog === null) {
+            throw new FamilyLogNotFoundException($zoneStorage->familyLog()->slug());
+        }
+
+        $form = $this->createForm(
+            ChangeZoneStorageFamilyLogType::class,
+            new ChangeZoneStorageFamilyLogDto($familyLog, $zoneStorage->slug())
+        );
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var array{familyLog: FamilyLog} $zoneStorageToUpdate */
+            /** @var ChangeZoneStorageFamilyLogDto $zoneStorageToUpdate */
             $zoneStorageToUpdate = $form->getData();
 
             try {
                 $this->useCase->execute(
                     new ChangeZoneStorageFamilyLogApiRequest(
-                        $zoneStorageToUpdate['familyLog'],
+                        $zoneStorageToUpdate->familyLog,
                         $zoneStorage->slug()
                     )
                 );

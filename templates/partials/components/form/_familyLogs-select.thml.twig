@@ -1,15 +1,18 @@
 {% set uuid = null %}
 
-{{ form_label(familyLog) }}
-<select name="{{ field_name(familyLog) }}" class="form-control">
-    <option value="">{{ field_label(familyLog) }}</option>
+<div>
+    {{ form_label(familyLog) }}
+    {{ form_errors(familyLog) }}
+    <select name="{{ field_name(familyLog) }}" class="form-control">
+        <option value="">{{ field_label(familyLog) }}</option>
 
-    {% if form.vars.value.parent.uuid is defined %}
-        {% set uuid = form.vars.value.parent.uuid %}
-    {% else %}
-        {% set uuid = familyLog.vars.value %}
-    {% endif %}
-    {% for label, value in field_choices(familyLog) %}
-        <option value="{{ value }}"{% if uuid is same as(value) %} selected{% endif %}>{{ label }}</option>
-    {% endfor %}
-</select>
+        {% if form.vars.value.parent.uuid is defined %}
+            {% set uuid = form.vars.value.parent.uuid %}
+        {% else %}
+            {% set uuid = familyLog.vars.value %}
+        {% endif %}
+        {% for label, value in field_choices(familyLog) %}
+            <option value="{{ value }}"{% if uuid is same as(value) %} selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+    </select>
+</div>
