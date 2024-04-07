@@ -26,7 +26,7 @@ final class GetFamilyLogsController extends AbstractController
     {
     }
 
-    #[Route(path: '/family_logs/', name: 'admin_family_logs_index')]
+    #[Route(path: '/family_logs', name: 'admin_family_logs_index')]
     public function __invoke(): Response
     {
         $familyLogs = $this->useCase->execute();

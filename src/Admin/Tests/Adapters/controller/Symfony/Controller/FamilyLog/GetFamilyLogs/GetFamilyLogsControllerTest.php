@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 final class GetFamilyLogsControllerTest extends WebTestCase
 {
-    private const GET_FAMILY_LOGS_URI = '/admin/family_logs/';
+    private const GET_FAMILY_LOGS_URI = '/admin/family_logs';
 
     public function testGetFamilyLogsWillSucceed(): void
     {

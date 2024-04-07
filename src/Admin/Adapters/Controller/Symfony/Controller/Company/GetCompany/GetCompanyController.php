@@ -31,7 +31,7 @@ final class GetCompanyController extends AbstractController
     /**
      * @throws NonUniqueResultException
      */
-    #[Route(path: 'company/', name: 'admin_company_index')]
+    #[Route(path: 'company', name: 'admin_company_index')]
     public function __invoke(): Response
     {
         try {

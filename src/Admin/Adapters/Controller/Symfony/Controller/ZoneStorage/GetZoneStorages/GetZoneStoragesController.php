@@ -26,7 +26,7 @@ final class GetZoneStoragesController extends AbstractController
     {
     }
 
-    #[Route(path: '/zone_storages/', name: 'admin_zone_storages_index')]
+    #[Route(path: '/zone_storages', name: 'admin_zone_storages_index')]
     public function __invoke(): Response
     {
         $zoneStorages = $this->useCase->execute();

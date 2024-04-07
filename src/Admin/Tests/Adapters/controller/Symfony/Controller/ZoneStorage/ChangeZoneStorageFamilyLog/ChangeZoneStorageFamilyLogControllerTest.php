@@ -65,7 +65,7 @@ final class ChangeZoneStorageFamilyLogControllerTest extends WebTestCase
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        self::assertResponseRedirects('/admin/zone_storages/');
+        self::assertResponseRedirects('/admin/zone_storages');
 
         $zoneStorages = $zoneStorageRepository->findAllZone();
         self::assertCount(1, $zoneStorages);
