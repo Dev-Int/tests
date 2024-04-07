@@ -22,7 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class GetCompanyControllerTest extends WebTestCase
 {
-    private const GET_COMPANY_URI = '/admin/company/';
+    private const GET_COMPANY_URI = '/admin/company';
 
     public function testGetCompanyWillSucceed(): void
     {

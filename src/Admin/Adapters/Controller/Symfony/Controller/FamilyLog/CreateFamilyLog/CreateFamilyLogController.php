@@ -14,8 +14,6 @@ declare(strict_types=1);
 namespace Admin\Adapters\Controller\Symfony\Controller\FamilyLog\CreateFamilyLog;
 
 use Admin\Adapters\Form\Type\FamilyLog\CreateFamilyLogType;
-use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
 use Admin\Entities\Exception\FamilyLogAlreadyExistsException;
 use Admin\UseCases\FamilyLog\CreateFamilyLog\CreateFamilyLog;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,10 +25,8 @@ use Symfony\Component\Routing\Attribute\Route;
 #[AsController]
 final class CreateFamilyLogController extends AbstractController
 {
-    public function __construct(
-        private readonly CreateFamilyLog $useCase,
-        private readonly DoctrineFamilyLogRepository $familyLogRepository
-    ) {
+    public function __construct(private readonly CreateFamilyLog $useCase)
+    {
     }
 
     #[Route(path: 'family_logs/create', name: 'admin_family_logs_create', methods: ['GET', 'POST'])]
@@ -40,21 +36,11 @@ final class CreateFamilyLogController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $parent = null;
-
-            /** @var array{label: string, parent: FamilyLog|null} $familyLog */
+            /** @var CreateFamilyLogApiRequest $familyLog */
             $familyLog = $form->getData();
-            if ($familyLog['parent'] !== null) {
-                $parent = $this->familyLogRepository->findBySlug($familyLog['parent']->slug());
-            }
 
             try {
-                $this->useCase->execute(
-                    new CreateFamilyLogApiRequest(
-                        $familyLog['label'],
-                        $parent
-                    )
-                );
+                $this->useCase->execute($familyLog);
             } catch (FamilyLogAlreadyExistsException $exception) {
                 $this->addFlash('error', $exception->getMessage());
 

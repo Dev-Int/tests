@@ -22,7 +22,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 final class GetZoneStoragesControllerTest extends WebTestCase
 {
-    private const GET_ZONE_STORAGES_URI = '/admin/zone_storages/';
+    private const GET_ZONE_STORAGES_URI = '/admin/zone_storages';
 
     public function testGetZoneStoragesWillSucceed(): void
     {

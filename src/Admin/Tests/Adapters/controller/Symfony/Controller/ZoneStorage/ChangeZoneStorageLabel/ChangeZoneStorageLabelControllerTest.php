@@ -55,12 +55,13 @@ final class ChangeZoneStorageLabelControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('Change label')->form([
             'changeZoneStorageLabel[label]' => 'Réserve positive',
+            'changeZoneStorageLabel[slug]' => 'reserve-negative',
         ]);
         $client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        self::assertResponseRedirects('/admin/zone_storages/');
+        self::assertResponseRedirects('/admin/zone_storages');
 
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container')->children('div.flash.flash-success')->text();

@@ -66,7 +66,7 @@ final class ChangeLabelFamilyLogControllerTest extends WebTestCase
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        self::assertResponseRedirects('/admin/family_logs/');
+        self::assertResponseRedirects('/admin/family_logs');
 
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container')->children('div.flash.flash-success')->text();
@@ -125,7 +125,7 @@ final class ChangeLabelFamilyLogControllerTest extends WebTestCase
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        self::assertResponseRedirects('/admin/family_logs/');
+        self::assertResponseRedirects('/admin/family_logs');
 
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container')->children('div.flash.flash-error')->text();

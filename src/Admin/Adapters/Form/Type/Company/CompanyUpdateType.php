@@ -11,9 +11,11 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Adapters\Form\Type;
+namespace Admin\Adapters\Form\Type\Company;
 
+use Admin\Adapters\Controller\Symfony\Controller\Company\UpdateCompany\UpdateCompanyApiRequest;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class CompanyUpdateType extends CompanyType
 {
@@ -22,6 +24,13 @@ final class CompanyUpdateType extends CompanyType
         parent::buildForm($builder, $options);
 
         $builder->remove('name');
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => UpdateCompanyApiRequest::class,
+        ]);
     }
 
     public function getBlockPrefix(): string

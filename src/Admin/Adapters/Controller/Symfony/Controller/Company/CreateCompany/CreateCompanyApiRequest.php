@@ -14,18 +14,30 @@ declare(strict_types=1);
 namespace Admin\Adapters\Controller\Symfony\Controller\Company\CreateCompany;
 
 use Admin\UseCases\Company\CreateCompany\CreateCompanyRequest;
+use Symfony\Component\Validator\Constraints as Assert;
 
-final readonly class CreateCompanyApiRequest implements CreateCompanyRequest
+final class CreateCompanyApiRequest implements CreateCompanyRequest
 {
     public function __construct(
-        public string $name,
-        public string $address,
-        public string $postalCode,
-        public string $town,
-        public string $country,
-        public string $phone,
-        public string $email,
-        public string $contact,
+        #[Assert\NotBlank]
+        public string $name = '',
+        #[Assert\NotBlank]
+        public string $address = '',
+        #[Assert\NotBlank]
+        #[Assert\Regex('/\d{5}/')]
+        #[Assert\Type(type: 'numeric')]
+        public string $postalCode = '',
+        #[Assert\NotBlank]
+        public string $town = '',
+        #[Assert\NotBlank]
+        public string $country = '',
+        #[Assert\NotBlank]
+        public string $phone = '',
+        #[Assert\NotBlank]
+        #[Assert\Email]
+        public string $email = '',
+        #[Assert\NotBlank]
+        public string $contact = '',
     ) {
     }
 

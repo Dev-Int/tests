@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Form\Type\ZoneStorage;
 
+use Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\CreateZoneStorage\CreateZoneStorageDto;
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -20,6 +21,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @group functionalTest
@@ -51,6 +53,13 @@ class ZoneStorageType extends AbstractType
                 ],
             ])
         ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => CreateZoneStorageDto::class,
+        ]);
     }
 
     public function getBlockPrefix(): string

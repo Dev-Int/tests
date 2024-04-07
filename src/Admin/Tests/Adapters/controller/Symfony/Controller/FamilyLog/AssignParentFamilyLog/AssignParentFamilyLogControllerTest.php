@@ -55,12 +55,13 @@ final class AssignParentFamilyLogControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('Assign')->form([
             'assignParentFamilyLog[parent]' => $parent->uuid()->toString(),
+            'assignParentFamilyLog[uuid]' => $familyLog->uuid()->toString(),
         ]);
         $client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        self::assertResponseRedirects('/admin/family_logs/');
+        self::assertResponseRedirects('/admin/family_logs');
 
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container')->children('div.flash.flash-success')->text();
@@ -108,12 +109,13 @@ final class AssignParentFamilyLogControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('Assign')->form([
             'assignParentFamilyLog[parent]' => $parent->uuid()->toString(),
+            'assignParentFamilyLog[uuid]' => $familyLog->uuid()->toString(),
         ]);
         $client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        self::assertResponseRedirects('/admin/family_logs/');
+        self::assertResponseRedirects('/admin/family_logs');
 
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container')->children('div.flash.flash-error')->text();

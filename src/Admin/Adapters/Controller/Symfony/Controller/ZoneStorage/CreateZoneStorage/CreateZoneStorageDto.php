@@ -11,29 +11,19 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Adapters\Controller\Symfony\Controller\FamilyLog\CreateFamilyLog;
+namespace Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\CreateZoneStorage;
 
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
-use Admin\Entities\FamilyLog as FamilyLogDomain;
-use Admin\UseCases\FamilyLog\CreateFamilyLog\CreateFamilyLogRequest;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class CreateFamilyLogApiRequest implements CreateFamilyLogRequest
+final class CreateZoneStorageDto
 {
     public function __construct(
         #[Assert\NotBlank]
         public string $label = '',
-        public ?FamilyLog $parent = null
+        #[Assert\NotBlank]
+        #[Assert\Valid]
+        public ?FamilyLog $familyLog = null
     ) {
-    }
-
-    public function label(): string
-    {
-        return $this->label;
-    }
-
-    public function parent(): ?FamilyLogDomain
-    {
-        return $this->parent?->toDomain();
     }
 }

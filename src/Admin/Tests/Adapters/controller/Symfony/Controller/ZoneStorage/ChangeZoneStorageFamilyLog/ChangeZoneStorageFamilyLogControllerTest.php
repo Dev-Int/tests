@@ -59,12 +59,16 @@ final class ChangeZoneStorageFamilyLogControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('Change FamilyLog')->form([
             'changeZoneStorageFamilyLog[familyLog]' => $familyLogOrm?->uuid(),
+            'changeZoneStorageFamilyLog[slug]' => $zoneStorage->slug(),
         ]);
         $client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        self::assertResponseRedirects('/admin/zone_storages/');
+        self::assertResponseRedirects('/admin/zone_storages');
+
+        $zoneStorages = $zoneStorageRepository->findAllZone();
+        self::assertCount(1, $zoneStorages);
 
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container')->children('div.flash.flash-success')->text();
@@ -75,7 +79,5 @@ final class ChangeZoneStorageFamilyLogControllerTest extends WebTestCase
         $zoneStorageUpdated = $zoneStorageRepository->findOneBy(['slug' => 'reserve-negative']);
         self::assertSame('Réserve négative', $zoneStorageUpdated->label());
         self::assertEquals('Frais', $zoneStorageUpdated->familyLog()->label());
-        $zoneStorages = $zoneStorageRepository->findAllZone();
-        self::assertCount(1, $zoneStorages);
     }
 }

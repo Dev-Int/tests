@@ -11,28 +11,19 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\ChangeZoneStorageLabel;
+namespace Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\ChangeZoneStorageFamilyLog;
 
-use Admin\UseCases\ZoneStorage\ChangeZoneStorageLabel\ChangeZoneStorageLabelRequest;
+use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class ChangeZoneStorageLabelApiRequest implements ChangeZoneStorageLabelRequest
+final class ChangeZoneStorageFamilyLogDto
 {
     public function __construct(
         #[Assert\NotBlank]
-        public string $label,
+        #[Assert\Valid]
+        public FamilyLog $familyLog,
         #[Assert\NotBlank]
         public string $slug
     ) {
-    }
-
-    public function label(): string
-    {
-        return $this->label;
-    }
-
-    public function slug(): string
-    {
-        return $this->slug;
     }
 }

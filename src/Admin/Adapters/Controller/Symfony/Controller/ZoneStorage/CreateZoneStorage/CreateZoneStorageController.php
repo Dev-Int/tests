@@ -14,10 +14,9 @@ declare(strict_types=1);
 namespace Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\CreateZoneStorage;
 
 use Admin\Adapters\Form\Type\ZoneStorage\ZoneStorageType;
-use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
 use Admin\Entities\Exception\ZoneStorageAlreadyExistsException;
-use Admin\UseCases\Gateway\FamilyLogRepository;
 use Admin\UseCases\ZoneStorage\CreateZoneStorage\CreateZoneStorage;
+use Ramsey\Uuid\Exception\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,10 +26,8 @@ use Symfony\Component\Routing\Attribute\Route;
 #[AsController]
 final class CreateZoneStorageController extends AbstractController
 {
-    public function __construct(
-        private readonly CreateZoneStorage $useCase,
-        private readonly FamilyLogRepository $familyLogRepository
-    ) {
+    public function __construct(private readonly CreateZoneStorage $useCase)
+    {
     }
 
     #[Route(path: 'zone_storages/create', name: 'admin_zone_storages_create', methods: ['GET', 'POST'])]
@@ -40,15 +37,18 @@ final class CreateZoneStorageController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var array{label: string, familyLog: FamilyLog} $zoneStorage */
+            /** @var CreateZoneStorageDto $zoneStorage */
             $zoneStorage = $form->getData();
-            $familyLog = $this->familyLogRepository->findBySlug($zoneStorage['familyLog']->slug());
+
+            if ($zoneStorage->familyLog === null) {
+                throw new InvalidArgumentException('FamilyLog expected!');
+            }
 
             try {
                 $this->useCase->execute(
                     new CreateZoneStorageApiRequest(
-                        $zoneStorage['label'],
-                        $familyLog
+                        $zoneStorage->label,
+                        $zoneStorage->familyLog->toDomain()
                     )
                 );
             } catch (ZoneStorageAlreadyExistsException $exception) {

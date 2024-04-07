@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\Company\CreateCompany;
 
-use Admin\Adapters\Form\Type\CompanyType;
+use Admin\Adapters\Form\Type\Company\CompanyType;
 use Admin\Entities\Exception\CompanyAlreadyExistsException;
 use Admin\UseCases\Company\CreateCompany\CreateCompany;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -36,20 +36,11 @@ final class CreateCompanyController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var array<string, string> $company */
+            /** @var CreateCompanyApiRequest $company */
             $company = $form->getData();
 
             try {
-                $this->useCase->execute(new CreateCompanyApiRequest(
-                    $company['name'],
-                    $company['address'],
-                    $company['postalCode'],
-                    $company['town'],
-                    $company['country'],
-                    $company['phone'],
-                    $company['email'],
-                    $company['contact']
-                ));
+                $this->useCase->execute($company);
             } catch (CompanyAlreadyExistsException $exception) {
                 $this->addFlash('error', $exception->getMessage());
 

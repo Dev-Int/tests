@@ -13,7 +13,10 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Form\Type\ZoneStorage;
 
+use Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\ChangeZoneStorageLabel\ChangeZoneStorageLabelApiRequest;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class ChangeLabelZoneStorageType extends ZoneStorageType
 {
@@ -21,7 +24,17 @@ final class ChangeLabelZoneStorageType extends ZoneStorageType
     {
         parent::buildForm($builder, $options);
 
-        $builder->remove('familyLog');
+        $builder
+            ->remove('familyLog')
+            ->add('slug', HiddenType::class)
+        ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => ChangeZoneStorageLabelApiRequest::class,
+        ]);
     }
 
     public function getBlockPrefix(): string

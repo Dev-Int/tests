@@ -63,7 +63,7 @@ final class UpdateCompanyControllerTest extends WebTestCase
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        self::assertResponseRedirects('/admin/company/');
+        self::assertResponseRedirects('/admin/company');
 
         $companyCreated = $companyRepository->findByName('Dev-Int Création');
         self::assertSame('12, rue des Singes', $companyCreated->address()->address());
