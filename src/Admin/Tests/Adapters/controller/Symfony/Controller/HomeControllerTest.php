@@ -15,10 +15,12 @@ namespace Admin\Tests\Adapters\controller\Symfony\Controller;
 
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineCompanyRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
+use Admin\Adapters\Gateway\ORM\Repository\DoctrineTaxRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineUnitRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineZoneStorageRepository;
 use Admin\Tests\DataBuilder\CompanyDataBuilder;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
+use Admin\Tests\DataBuilder\TaxDataBuilder;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -26,7 +28,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 final class HomeControllerTest extends WebTestCase
 {
-    private const HOME_URI = '/';
+    private const HOME_URI = '/admin/';
 
     public function testHomePageWillSucceed(): void
     {
@@ -45,6 +47,9 @@ final class HomeControllerTest extends WebTestCase
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
 
+        /** @var DoctrineTaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+
         $company = (new CompanyDataBuilder())->create('TestCompany')->build();
         $companyRepository->save($company);
         $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
@@ -56,13 +61,15 @@ final class HomeControllerTest extends WebTestCase
         $zoneStorageRepository->save($zoneStorage);
         $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
         $unitRepository->save($unit);
+        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
+        $taxRepository->save($tax);
 
         // Act
         $crawler = $client->request(Request::METHOD_GET, self::HOME_URI);
 
         // Assert
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Application');
+        self::assertSelectorTextContains('h1', 'Administration');
         $brand = $crawler->filter('body > header > nav')->children('ul')->first();
         self::assertSame('Application', $brand->text());
     }
