@@ -14,9 +14,11 @@ declare(strict_types=1);
 namespace Admin\Tests\Adapters\controller\Symfony\Controller\FamilyLog\GetFamilyLogs;
 
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
+use Admin\Entities\Exception\NoFamilyLogRegisteredException;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @group functionalTest
@@ -59,5 +61,23 @@ final class GetFamilyLogsControllerTest extends WebTestCase
         $list = $crawler->filter('body > div.container > div.row > article > ul.w100')->children('li.li-unstyled');
 
         self::assertCount(3, $list);
+    }
+
+    public function testGetFamilyLogsFailWithNoFamilyLogRegisteredException(): void
+    {
+        // Arrange
+        $client = self::createClient();
+
+        // Act
+        $client->request(Request::METHOD_GET, self::GET_FAMILY_LOGS_URI);
+
+        // Assert
+        self::assertResponseRedirects('/admin/configure');
+
+        self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
+        $admin = $client->followRedirect();
+        $flash = $admin->filter('body > div.container')->children('div.flash.flash-error')->text();
+
+        self::assertSame(NoFamilyLogRegisteredException::MESSAGE, $flash);
     }
 }

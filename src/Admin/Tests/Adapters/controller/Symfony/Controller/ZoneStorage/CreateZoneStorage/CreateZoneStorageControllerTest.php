@@ -16,6 +16,7 @@ namespace Admin\Tests\Adapters\controller\Symfony\Controller\ZoneStorage\CreateZ
 use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineZoneStorageRepository;
+use Admin\Entities\Exception\NoFamilyLogRegisteredException;
 use Admin\Entities\Exception\ZoneStorageAlreadyExistsException;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
@@ -153,5 +154,26 @@ final class CreateZoneStorageControllerTest extends WebTestCase
         self::assertSame('Nom de la zone de stockage', $labelField->children('label')->text());
         self::assertSame('Famille logistique', $familyLogField->children('label')->text());
         self::assertSame('This value should not be blank.', $familyLogField->children('ul > li')->text());
+    }
+
+    public function testCreateZoneStorageFailWithNoFamilyLogExistsException(): void
+    {
+        // Arrange
+        $client = self::createClient();
+
+        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+
+        // Act
+        $client->request(Request::METHOD_POST, self::CREATE_ZONE_STORAGE_URI);
+
+        // Assert
+        self::assertResponseRedirects('/admin/configure');
+
+        self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
+        $admin = $client->followRedirect();
+        $flash = $admin->filter('body > div.container')->children('div.flash.flash-error')->text();
+
+        self::assertSame(NoFamilyLogRegisteredException::MESSAGE, $flash);
     }
 }

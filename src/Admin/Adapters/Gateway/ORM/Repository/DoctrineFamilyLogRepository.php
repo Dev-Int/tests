@@ -15,6 +15,7 @@ namespace Admin\Adapters\Gateway\ORM\Repository;
 
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
 use Admin\Entities\Exception\FamilyLogNotFoundException;
+use Admin\Entities\Exception\NoFamilyLogRegisteredException;
 use Admin\Entities\FamilyLog as FamilyLogDomain;
 use Admin\Entities\FamilyLogCollection;
 use Admin\UseCases\Gateway\FamilyLogRepository;
@@ -116,6 +117,10 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
 
         if (!\is_array($familyLogs)) {
             throw new \RuntimeException('array expected');
+        }
+
+        if ($familyLogs === []) {
+            throw new NoFamilyLogRegisteredException();
         }
 
         foreach ($familyLogs as $familyLog) {
