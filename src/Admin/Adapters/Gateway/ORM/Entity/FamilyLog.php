@@ -100,18 +100,6 @@ class FamilyLog
         return $this;
     }
 
-    public function level(): int
-    {
-        return $this->level;
-    }
-
-    public function setLevel(int $level): self
-    {
-        $this->level = $level;
-
-        return $this;
-    }
-
     public function parent(): ?self
     {
         return $this->parent;
@@ -134,13 +122,6 @@ class FamilyLog
         return $this->children;
     }
 
-    public function setChildren(Collection $children): self
-    {
-        $this->children = $children;
-
-        return $this;
-    }
-
     public function slug(): string
     {
         return $this->slug;
@@ -153,47 +134,10 @@ class FamilyLog
         return $this;
     }
 
-    /**
-     * @return array<string, array<int|string, iterable<string>|string>>
-     */
-    public function parseTree(): array
-    {
-        $arrayChildren = [];
-        if ($this->children->count() > 0) {
-            return [$this->label => $arrayChildren];
-        }
-        foreach ($this->children as $child) {
-            if ($this->childrenArrayLabels($child) !== null) {
-                $arrayChildren[$child->label()] = $this->childrenArrayLabels($child);
-            } else {
-                $arrayChildren[] = $child->label();
-            }
-        }
-
-        return [$this->label => $arrayChildren];
-    }
-
     public function getIndentedLabel(): string
     {
         $prefix = str_repeat('|- - ', $this->level);
 
         return sprintf('%s %s', $prefix, $this->label);
-    }
-
-    /**
-     * @return iterable<string>|null
-     */
-    private function childrenArrayLabels(self $familyLog): ?iterable
-    {
-        if ($familyLog->children->count() > 0) {
-            $childrenNames = [];
-            foreach ($familyLog->children as $child) {
-                $childrenNames[] = $child->label();
-            }
-
-            return $childrenNames;
-        }
-
-        return null;
     }
 }

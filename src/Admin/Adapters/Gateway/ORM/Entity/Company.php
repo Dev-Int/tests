@@ -86,19 +86,9 @@ final class Company
         return $this->slug;
     }
 
-    public function setSlug(string $slug): void
-    {
-        $this->slug = $slug;
-    }
-
     public function name(): string
     {
         return $this->name;
-    }
-
-    public function setName(string $name): void
-    {
-        $this->name = $name;
     }
 
     public function address(): string
@@ -106,19 +96,9 @@ final class Company
         return $this->address;
     }
 
-    public function setAddress(string $address): void
-    {
-        $this->address = $address;
-    }
-
     public function postalCode(): string
     {
         return $this->postalCode;
-    }
-
-    public function setPostalCode(string $postalCode): void
-    {
-        $this->postalCode = $postalCode;
     }
 
     public function town(): string
@@ -126,19 +106,9 @@ final class Company
         return $this->town;
     }
 
-    public function setTown(string $town): void
-    {
-        $this->town = $town;
-    }
-
     public function country(): string
     {
         return $this->country;
-    }
-
-    public function setCountry(string $country): void
-    {
-        $this->country = $country;
     }
 
     public function fullAddress(): string
@@ -151,29 +121,14 @@ final class Company
         return $this->phone;
     }
 
-    public function setPhone(string $phone): void
-    {
-        $this->phone = $phone;
-    }
-
     public function email(): string
     {
         return $this->email;
     }
 
-    public function setEmail(string $email): void
-    {
-        $this->email = $email;
-    }
-
     public function contact(): string
     {
         return $this->contact;
-    }
-
-    public function setContact(string $contact): void
-    {
-        $this->contact = $contact;
     }
 
     public function update(CompanyDomain $company): void

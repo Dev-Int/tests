@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Admin\Tests\UseCases\Unit\ChangeUnitLabel;
 
 use Admin\Entities\Exception\UnitAlreadyExistsException;
+use Admin\Entities\Exception\UnitNotFoundException;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\UseCases\Gateway\UnitRepository;
 use Admin\UseCases\Unit\ChangeUnitLabel\ChangeUnitLabel;
@@ -45,6 +46,7 @@ final class ChangeUnitLabelTest extends TestCase
 
         $unitRepository->expects(self::once())
             ->method('exists')
+            ->with('Kilogrammes', $unit->uuid()->toString())
             ->willReturn(false)
         ;
 
@@ -83,6 +85,7 @@ final class ChangeUnitLabelTest extends TestCase
 
         $unitRepository->expects(self::once())
             ->method('exists')
+            ->with('Kilogramme', $unit->uuid()->toString())
             ->willReturn(false)
         ;
 
@@ -121,6 +124,7 @@ final class ChangeUnitLabelTest extends TestCase
 
         $unitRepository->expects(self::once())
             ->method('exists')
+            ->with('Kilogrammes', $unit->uuid()->toString())
             ->willReturn(true)
         ;
 
@@ -132,6 +136,40 @@ final class ChangeUnitLabelTest extends TestCase
         // Act
         $this->expectException(UnitAlreadyExistsException::class);
         $this->expectExceptionMessage(UnitAlreadyExistsException::MESSAGE);
+        $useCase->execute($request);
+    }
+
+    public function testChangeUnitLabelFailWithUnitNotFoundException(): void
+    {
+        // Arrange
+        $unitRepository = $this->createMock(UnitRepository::class);
+        $useCase = new ChangeUnitLabel($unitRepository);
+        $request = $this->createMock(ChangeUnitLabelRequest::class);
+        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
+
+        $request->expects(self::never())->method('label')->willReturn('Kilogrammes');
+        $request->expects(self::never())->method('abbreviation')->willReturn('kg');
+        $request->expects(self::once())->method('slug')->willReturn('kilogramme');
+
+        $unitRepository->expects(self::once())
+            ->method('findBySlug')
+            ->with('kilogramme')
+            ->will(self::throwException(new UnitNotFoundException('kilogramme')))
+        ;
+
+        $unitRepository->expects(self::never())
+            ->method('exists')
+            ->willReturn(true)
+        ;
+
+        $unitRepository->expects(self::never())
+            ->method('changeLabel')
+            ->with($unit)
+        ;
+
+        // Act
+        $this->expectException(UnitNotFoundException::class);
+        $this->expectExceptionMessage(UnitNotFoundException::MESSAGE);
         $useCase->execute($request);
     }
 }
