@@ -15,7 +15,7 @@ namespace Admin\Tests\UseCases\ZoneStorage\CreateZoneStorage;
 
 use Admin\Entities\Exception\FamilyLogNotFoundException;
 use Admin\Entities\Exception\ZoneStorageAlreadyExistsException;
-use Admin\Entities\FamilyLog;
+use Admin\Entities\FamilyLog\FamilyLog;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\UseCases\Gateway\ZoneStorageRepository;
 use Admin\UseCases\ZoneStorage\CreateZoneStorage\CreateZoneStorage;

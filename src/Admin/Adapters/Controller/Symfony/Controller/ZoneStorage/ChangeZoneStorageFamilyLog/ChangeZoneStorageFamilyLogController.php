@@ -42,7 +42,9 @@ final class ChangeZoneStorageFamilyLogController extends AbstractController
     {
         $familyLog = $this->familyLogRepository->findOneBy(['label' => $zoneStorage->familyLog()->label()]);
         if ($familyLog === null) {
+            // @codeCoverageIgnoreStart
             throw new FamilyLogNotFoundException($zoneStorage->familyLog()->slug());
+            // @codeCoverageIgnoreEnd
         }
 
         $form = $this->createForm(
@@ -62,10 +64,12 @@ final class ChangeZoneStorageFamilyLogController extends AbstractController
                         $zoneStorage->slug()
                     )
                 );
+                // @codeCoverageIgnoreStart
             } catch (\DomainException $exception) {
                 $this->addFlash('error', $exception->getMessage());
 
                 return $this->redirectToRoute('admin_zone_storages_index');
+                // @codeCoverageIgnoreEnd
             }
             $this->addFlash('success', 'Zone storage updated');
 

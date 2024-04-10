@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\FamilyLog\GetFamilyLogs;
 
-use Admin\Entities\FamilyLogCollection;
+use Admin\Entities\FamilyLog\FamilyLogCollection;
 
 final readonly class GetFamilyLogsResponse
 {

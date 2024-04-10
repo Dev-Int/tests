@@ -16,7 +16,7 @@ namespace Admin\Tests\Adapters\controller\Symfony\Controller\FamilyLog\CreateFam
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
 use Admin\Entities\Exception\FamilyLogAlreadyExistsException;
-use Admin\Entities\FamilyLog as FamilyLogDomain;
+use Admin\Entities\FamilyLog\FamilyLog as FamilyLogDomain;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;

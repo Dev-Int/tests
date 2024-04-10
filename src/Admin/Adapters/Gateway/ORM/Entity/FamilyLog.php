@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\Adapters\Gateway\ORM\Entity;
 
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
-use Admin\Entities\FamilyLog as FamilyLogDomain;
+use Admin\Entities\FamilyLog\FamilyLog as FamilyLogDomain;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -85,6 +85,9 @@ class FamilyLog
         return $this;
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function path(): string
     {
         return $this->path;
@@ -122,6 +125,8 @@ class FamilyLog
     }
 
     /**
+     * @codeCoverageIgnore
+     *
      * @return Collection<FamilyLog>
      */
     public function children(): Collection

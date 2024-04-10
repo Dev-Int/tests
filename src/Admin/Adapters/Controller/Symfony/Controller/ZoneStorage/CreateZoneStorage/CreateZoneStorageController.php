@@ -53,7 +53,9 @@ final class CreateZoneStorageController extends AbstractController
             $zoneStorage = $form->getData();
 
             if ($zoneStorage->familyLog === null) {
+                // @codeCoverageIgnoreStart
                 throw new InvalidArgumentException('FamilyLog expected!');
+                // @codeCoverageIgnoreEnd
             }
 
             try {

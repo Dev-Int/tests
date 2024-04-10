@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\FamilyLog\GetFamilyLogs;
 
-use Admin\Entities\FamilyLog;
-use Admin\Entities\FamilyLogCollection;
+use Admin\Entities\FamilyLog\FamilyLog;
+use Admin\Entities\FamilyLog\FamilyLogCollection;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\UseCases\FamilyLog\GetFamilyLogs\GetFamilyLogs;
 use Admin\UseCases\Gateway\FamilyLogRepository;

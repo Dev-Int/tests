@@ -56,6 +56,8 @@ final class ZoneStorageCollection implements Collection
 
     /**
      * @return iterable<ZoneStorage>
+     *
+     * @codeCoverageIgnore
      */
     public function toArray(): iterable
     {

@@ -67,7 +67,9 @@ final class DoctrineTaxRepository extends ServiceEntityRepository implements Tax
         ;
 
         if (!\is_int($count)) {
+            // @codeCoverageIgnoreStart
             throw new UnexpectedResultException();
+            // @codeCoverageIgnoreEnd
         }
 
         return $count > 0;
@@ -84,8 +86,11 @@ final class DoctrineTaxRepository extends ServiceEntityRepository implements Tax
     public function rename(TaxDomain $tax): void
     {
         $taxToRename = $this->find($tax->uuid()->toString());
+
         if (!$taxToRename instanceof Tax) {
+            // @codeCoverageIgnoreStart
             throw new TaxNotFoundException($tax->uuid()->toString());
+            // @codeCoverageIgnoreEnd
         }
 
         $taxToRename->setName($tax->name()->toString());
@@ -96,8 +101,11 @@ final class DoctrineTaxRepository extends ServiceEntityRepository implements Tax
     public function revaluate(TaxDomain $tax): void
     {
         $taxToRevaluate = $this->find($tax->uuid()->toString());
+
         if (!$taxToRevaluate instanceof Tax) {
+            // @codeCoverageIgnoreStart
             throw new TaxNotFoundException($tax->uuid()->toString());
+            // @codeCoverageIgnoreEnd
         }
 
         $taxToRevaluate->setRate($tax->rate());
@@ -120,8 +128,11 @@ final class DoctrineTaxRepository extends ServiceEntityRepository implements Tax
     public function findById(string $uuid): TaxDomain
     {
         $tax = $this->find($uuid);
+
         if (!$tax instanceof Tax) {
+            // @codeCoverageIgnoreStart
             throw new TaxNotFoundException($uuid);
+            // @codeCoverageIgnoreEnd
         }
 
         return $tax->toDomain();

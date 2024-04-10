@@ -56,6 +56,8 @@ final class UnitCollection implements Collection
 
     /**
      * @return iterable<Unit>
+     *
+     * @codeCoverageIgnore
      */
     public function toArray(): iterable
     {

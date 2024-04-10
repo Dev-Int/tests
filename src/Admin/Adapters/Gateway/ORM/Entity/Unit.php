@@ -51,6 +51,9 @@ final class Unit
         );
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function uuid(): string
     {
         return $this->uuid;

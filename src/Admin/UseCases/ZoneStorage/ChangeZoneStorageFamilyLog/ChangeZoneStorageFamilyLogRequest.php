@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\ZoneStorage\ChangeZoneStorageFamilyLog;
 
-use Admin\Entities\FamilyLog;
+use Admin\Entities\FamilyLog\FamilyLog;
 
 interface ChangeZoneStorageFamilyLogRequest
 {

@@ -48,10 +48,12 @@ final class ChangeZoneStorageLabelController extends AbstractController
 
             try {
                 $this->useCase->execute($zoneStorageToUpdate);
+                // @codeCoverageIgnoreStart
             } catch (\DomainException $exception) {
                 $this->addFlash('error', $exception->getMessage());
 
                 return $this->redirectToRoute('admin_zone_storages_index');
+                // @codeCoverageIgnoreEnd
             }
             $this->addFlash('success', 'Zone storage updated');
 

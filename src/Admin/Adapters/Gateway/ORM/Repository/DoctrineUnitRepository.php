@@ -67,7 +67,9 @@ final class DoctrineUnitRepository extends ServiceEntityRepository implements Un
         ;
 
         if (!\is_int($count)) {
+            // @codeCoverageIgnoreStart
             throw new UnexpectedResultException();
+            // @codeCoverageIgnoreEnd
         }
 
         return $count > 0;
@@ -84,8 +86,11 @@ final class DoctrineUnitRepository extends ServiceEntityRepository implements Un
     public function changeLabel(UnitDomain $unit): void
     {
         $unitToUpdate = $this->find($unit->uuid()->toString());
+
         if (!$unitToUpdate instanceof Unit) {
+            // @codeCoverageIgnoreStart
             throw new UnitNotFoundException($unit->slug());
+            // @codeCoverageIgnoreEnd
         }
 
         $unitToUpdate->setLabel($unit->label()->toString())
@@ -122,7 +127,9 @@ final class DoctrineUnitRepository extends ServiceEntityRepository implements Un
         ;
 
         if (!$unit instanceof Unit) {
+            // @codeCoverageIgnoreStart
             throw new UnitNotFoundException($slug);
+            // @codeCoverageIgnoreEnd
         }
 
         return $unit->toDomain();

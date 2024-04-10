@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Entities\ZoneStorage;
 
-use Admin\Entities\FamilyLog;
+use Admin\Entities\FamilyLog\FamilyLog;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
 

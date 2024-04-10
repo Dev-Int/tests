@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\CreateZoneStorage;
 
-use Admin\Entities\FamilyLog;
+use Admin\Entities\FamilyLog\FamilyLog;
 use Admin\UseCases\ZoneStorage\CreateZoneStorage\CreateZoneStorageRequest;
 use Symfony\Component\Validator\Constraints as Assert;
 

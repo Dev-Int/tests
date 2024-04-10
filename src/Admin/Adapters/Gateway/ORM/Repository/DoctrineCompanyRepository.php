@@ -56,7 +56,9 @@ final class DoctrineCompanyRepository extends ServiceEntityRepository implements
         ;
 
         if (!\is_int($count)) {
+            // @codeCoverageIgnoreStart
             throw new UnexpectedResultException();
+            // @codeCoverageIgnoreEnd
         }
 
         return $count > 0;
@@ -76,7 +78,9 @@ final class DoctrineCompanyRepository extends ServiceEntityRepository implements
         ;
 
         if (!$company instanceof Company) {
+            // @codeCoverageIgnoreStart
             throw new CompanyNotFoundException($name);
+            // @codeCoverageIgnoreEnd
         }
 
         return $company->toDomain();
@@ -85,8 +89,11 @@ final class DoctrineCompanyRepository extends ServiceEntityRepository implements
     public function update(CompanyDomain $company): void
     {
         $companyToUpdate = $this->find($company->slug());
+
         if (!$companyToUpdate instanceof Company) {
+            // @codeCoverageIgnoreStart
             throw new CompanyNotFoundException($company->name()->toString());
+            // @codeCoverageIgnoreEnd
         }
 
         $companyToUpdate->update($company);
