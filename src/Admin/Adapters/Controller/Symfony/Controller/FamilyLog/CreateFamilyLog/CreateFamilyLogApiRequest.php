@@ -23,6 +23,7 @@ final class CreateFamilyLogApiRequest implements CreateFamilyLogRequest
     public function __construct(
         #[Assert\NotBlank]
         public string $label = '',
+        #[Assert\Valid]
         public ?FamilyLog $parent = null
     ) {
     }

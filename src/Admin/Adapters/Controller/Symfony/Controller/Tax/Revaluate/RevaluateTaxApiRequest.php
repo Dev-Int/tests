@@ -20,9 +20,11 @@ final class RevaluateTaxApiRequest implements RevaluateTaxRequest
 {
     public function __construct(
         #[Assert\NotBlank]
+        #[Assert\Positive]
+        #[Assert\LessThanOrEqual(value: 1, message: 'This value should be less than or equal to 100%.')]
         public float $rate,
-        #[Assert\Regex('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/')]
         #[Assert\NotBlank]
+        #[Assert\Regex('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/')]
         public string $uuid
     ) {
     }

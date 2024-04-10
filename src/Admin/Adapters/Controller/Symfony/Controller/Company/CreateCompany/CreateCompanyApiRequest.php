@@ -32,6 +32,7 @@ final class CreateCompanyApiRequest implements CreateCompanyRequest
         #[Assert\NotBlank]
         public string $country = '',
         #[Assert\NotBlank]
+        #[Assert\Regex('/^(?:0|\(?\+33\)?\s?|0033\s?)[1-79](?:[\.\-\s]?\d\d){4}$/')]
         public string $phone = '',
         #[Assert\NotBlank]
         #[Assert\Email]

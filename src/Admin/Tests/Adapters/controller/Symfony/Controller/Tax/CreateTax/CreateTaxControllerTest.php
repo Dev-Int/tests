@@ -123,4 +123,32 @@ final class CreateTaxControllerTest extends WebTestCase
         self::assertSame('Nom de la taxe', $nameField->children('label')->text());
         self::assertSame('This value should not be blank.', $nameField->children('ul > li')->text());
     }
+
+    public function testCreateTaxFailWithRateTooLargeException(): void
+    {
+        // Arrange
+        $client = self::createClient();
+
+        // Act
+        $crawler = $client->request(Request::METHOD_GET, self::CREATE_TAX_URI);
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('h1', 'Create Tax');
+
+        $form = $crawler->selectButton('Create')->form([
+            'createTax[name]' => 'TVA taux normal',
+            'createTax[rate]' => 120.0,
+        ]);
+        $client->submit($form);
+
+        // Assert
+        self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response = $client->getCrawler();
+
+        $nameField = $response->filter('form')->children('div')->first();
+        $rateField = $nameField->siblings();
+
+        self::assertSame('Taux de la taxe', $rateField->children('label')->text());
+        self::assertSame('This value should be less than or equal to 100%.', $rateField->children('ul > li')->text());
+    }
 }

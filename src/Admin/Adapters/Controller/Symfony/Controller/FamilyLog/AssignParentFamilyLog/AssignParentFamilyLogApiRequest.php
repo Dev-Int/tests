@@ -15,11 +15,18 @@ namespace Admin\Adapters\Controller\Symfony\Controller\FamilyLog\AssignParentFam
 
 use Admin\Entities\FamilyLog;
 use Admin\UseCases\FamilyLog\ChangeParentFamilyLog\AssignParentFamilyLogRequest;
+use Symfony\Component\Validator\Constraints as Assert;
 
 final class AssignParentFamilyLogApiRequest implements AssignParentFamilyLogRequest
 {
-    public function __construct(public string $uuid, public FamilyLog $parent)
-    {
+    public function __construct(
+        #[Assert\NotBlank]
+        #[Assert\Regex('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/')]
+        public string $uuid,
+        #[Assert\NotBlank]
+        #[Assert\Valid]
+        public FamilyLog $parent
+    ) {
     }
 
     public function uuid(): string

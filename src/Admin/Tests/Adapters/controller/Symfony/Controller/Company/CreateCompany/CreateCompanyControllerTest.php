@@ -109,4 +109,45 @@ final class CreateCompanyControllerTest extends WebTestCase
 
         self::assertEquals(CompanyAlreadyExistsException::MESSAGE, $flash);
     }
+
+    public function testCreateCompanyControllerWillThrowBadRequestException(): void
+    {
+        // Arrange
+        $client = self::createClient();
+
+        /** @var DoctrineCompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+
+        $company = (new CompanyDataBuilder())->create('TestCompany')->build();
+        $companyRepository->save($company);
+
+        // Act
+        $crawler = $client->request(Request::METHOD_GET, self::CREATE_COMPANY_URI);
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('h1', 'Create Company');
+
+        $form = $crawler->selectButton('Create')->form([
+            'createCompany[name]' => 'Dev-Int Création',
+            'createCompany[address]' => '5, rue des Plantes',
+            'createCompany[postalCode]' => '75000',
+            'createCompany[town]' => 'Paris',
+            'createCompany[country]' => 'France',
+            'createCompany[phone]' => '02.97-00 000',
+            'createCompany[email]' => 'test@test.fr',
+            'createCompany[contact]' => 'Laurent',
+        ]);
+
+        $client->submit($form);
+
+        // Assert
+        self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response = $client->getCrawler();
+
+        $groupField = $response->filter('form')->children('div')->eq(4);
+        $phoneField = $groupField->children('div')->first();
+
+        self::assertSame('Téléphone', $phoneField->children('label')->text());
+        self::assertSame('This value is not valid.', $phoneField->children('ul > li')->text());
+    }
 }

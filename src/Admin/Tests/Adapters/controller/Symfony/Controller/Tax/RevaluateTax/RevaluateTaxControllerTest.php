@@ -94,7 +94,7 @@ final class RevaluateTaxControllerTest extends WebTestCase
         self::assertSelectorTextContains('h1', 'Revaluate Tax');
 
         $form = $crawler->selectButton('Revaluate')->form([
-            'revaluateTax[rate]' => 10,
+            'revaluateTax[rate]' => 10.0,
             'revaluateTax[uuid]' => $tax1->uuid()->toString(),
         ]);
         $client->submit($form);
@@ -115,5 +115,37 @@ final class RevaluateTaxControllerTest extends WebTestCase
         $taxRevaluated = $taxRepository->findById($tax1->uuid()->toString());
         self::assertSame('TVA taux normal', $taxRevaluated->name()->toString());
         self::assertSame(0.2, $taxRevaluated->rate());
+    }
+
+    public function testCreateTaxFailWithBadRequestException(): void
+    {
+        // Arrange
+        $client = self::createClient();
+
+        /** @var TaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(TaxRepository::class);
+        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
+        $taxRepository->save($tax);
+
+        // Act
+        $crawler = $client->request(Request::METHOD_GET, sprintf(self::REEVALUATE_TAX_URI, TaxDataBuilder::UUID_VALID));
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('h1', 'Revaluate Tax');
+
+        $form = $crawler->selectButton('Revaluate')->form([
+            'revaluateTax[rate]' => 120.0,
+            'revaluateTax[uuid]' => $tax->uuid()->toString(),
+        ]);
+        $client->submit($form);
+
+        // Assert
+        self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response = $client->getCrawler();
+
+        $rateField = $response->filter('form')->children('div')->first();
+
+        self::assertSame('Taux de la taxe', $rateField->children('label')->text());
+        self::assertSame('This value should be less than or equal to 100%.', $rateField->children('ul > li')->text());
     }
 }
