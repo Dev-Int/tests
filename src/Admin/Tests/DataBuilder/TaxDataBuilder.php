@@ -17,7 +17,7 @@ use Admin\Entities\Tax\Tax;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
 
-final class TaxDataBuilder
+final class TaxDataBuilder implements DataBuilderInterface
 {
     public const UUID_VALID = '288106e1-a5e0-413b-8489-f1b32aa25c25';
     private string $uuid;
