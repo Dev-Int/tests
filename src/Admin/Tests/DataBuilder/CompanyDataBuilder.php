@@ -19,42 +19,48 @@ use Shared\Entities\VO\EmailField;
 use Shared\Entities\VO\NameField;
 use Shared\Entities\VO\PhoneField;
 
-final class CompanyDataBuilder
+final class CompanyDataBuilder implements DataBuilderInterface
 {
-    /** @var array<string, string> */
-    private array $company = [];
+    private string $name;
+    private string $address;
+    private string $postalCode;
+    private string $town;
+    private string $country;
+    private string $phone;
+    private string $email;
+    private string $contact;
 
     public function create(string $name): self
     {
-        $this->company['name'] = $name;
-        $this->company['address'] = '5, rue des Plantes';
-        $this->company['postalCode'] = '75000';
-        $this->company['town'] = 'Paris';
-        $this->company['country'] = 'France';
-        $this->company['phone'] = '+33297000000';
-        $this->company['email'] = 'test@test.fr';
-        $this->company['contact'] = 'Laurent';
+        $this->name = $name;
+        $this->address = '5, rue des Plantes';
+        $this->postalCode = '75000';
+        $this->town = 'Paris';
+        $this->country = 'France';
+        $this->phone = '+33297000000';
+        $this->email = 'test@test.fr';
+        $this->contact = 'Laurent';
 
         return $this;
     }
 
     public function withAddress(string $address): self
     {
-        $this->company['address'] = $address;
+        $this->address = $address;
 
         return $this;
     }
 
     public function withPostalCode(string $postalCode): self
     {
-        $this->company['postalCode'] = $postalCode;
+        $this->postalCode = $postalCode;
 
         return $this;
     }
 
     public function withTown(string $town): self
     {
-        $this->company['town'] = $town;
+        $this->town = $town;
 
         return $this;
     }
@@ -62,16 +68,16 @@ final class CompanyDataBuilder
     public function build(): Company
     {
         return Company::create(
-            NameField::fromString($this->company['name']),
+            NameField::fromString($this->name),
             ContactAddress::fromString(
-                $this->company['address'],
-                $this->company['postalCode'],
-                $this->company['town'],
-                $this->company['country']
+                $this->address,
+                $this->postalCode,
+                $this->town,
+                $this->country
             ),
-            PhoneField::fromString($this->company['phone']),
-            EmailField::fromString($this->company['email']),
-            $this->company['contact']
+            PhoneField::fromString($this->phone),
+            EmailField::fromString($this->email),
+            $this->contact
         );
     }
 }

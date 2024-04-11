@@ -18,13 +18,12 @@ use Admin\Entities\ZoneStorage\ZoneStorage;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
 
-final class ZoneStorageDataBuilder
+final class ZoneStorageDataBuilder implements DataBuilderInterface
 {
     public const VALID_UUID = '27463995-9deb-4637-b2d1-0568b274db1d';
 
     private string $uuid;
     private string $label;
-
     private FamilyLog $familyLog;
 
     public function create(string $label, FamilyLog $familyLog): self

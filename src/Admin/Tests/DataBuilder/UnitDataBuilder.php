@@ -17,7 +17,7 @@ use Admin\Entities\Unit\Unit;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
 
-final class UnitDataBuilder
+final class UnitDataBuilder implements DataBuilderInterface
 {
     public const UUID_VALID = 'b842c3f4-ec8b-4d39-b1d9-271c2ccd334a';
 

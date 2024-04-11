@@ -17,25 +17,26 @@ use Admin\Entities\FamilyLog\FamilyLog;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
 
-final class FamilyLogDataBuilder
+final class FamilyLogDataBuilder implements DataBuilderInterface
 {
     public const VALID_UUID = '48e50c4f-7d87-427c-bc93-c67564664266';
 
-    private ResourceUuid $uuid;
-    private NameField $label;
+    private string $uuid;
+    private string $label;
     private ?FamilyLog $parent = null;
 
     public function create(string $label): self
     {
-        $this->uuid = ResourceUuid::fromString(self::VALID_UUID);
-        $this->label = NameField::fromString($label);
+        $this->uuid = self::VALID_UUID;
+        $this->label = $label;
+        $this->parent = null;
 
         return $this;
     }
 
     public function withUuid(string $uuid): self
     {
-        $this->uuid = ResourceUuid::fromString($uuid);
+        $this->uuid = $uuid;
 
         return $this;
     }
@@ -49,6 +50,10 @@ final class FamilyLogDataBuilder
 
     public function build(): FamilyLog
     {
-        return FamilyLog::create($this->uuid, $this->label, $this->parent);
+        return FamilyLog::create(
+            ResourceUuid::fromString($this->uuid),
+            NameField::fromString($this->label),
+            $this->parent
+        );
     }
 }
