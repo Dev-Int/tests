@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Admin\Adapters\Gateway\ORM\Repository;
 
 use Admin\Adapters\Gateway\ORM\Entity\Tax;
+use Admin\Entities\Exception\NoTaxRegisteredException;
 use Admin\Entities\Exception\TaxNotFoundException;
 use Admin\Entities\Tax\Tax as TaxDomain;
 use Admin\Entities\Tax\TaxCollection;
@@ -67,7 +68,9 @@ final class DoctrineTaxRepository extends ServiceEntityRepository implements Tax
         ;
 
         if (!\is_int($count)) {
+            // @codeCoverageIgnoreStart
             throw new UnexpectedResultException();
+            // @codeCoverageIgnoreEnd
         }
 
         return $count > 0;
@@ -84,8 +87,11 @@ final class DoctrineTaxRepository extends ServiceEntityRepository implements Tax
     public function rename(TaxDomain $tax): void
     {
         $taxToRename = $this->find($tax->uuid()->toString());
+
         if (!$taxToRename instanceof Tax) {
+            // @codeCoverageIgnoreStart
             throw new TaxNotFoundException($tax->uuid()->toString());
+            // @codeCoverageIgnoreEnd
         }
 
         $taxToRename->setName($tax->name()->toString());
@@ -96,8 +102,11 @@ final class DoctrineTaxRepository extends ServiceEntityRepository implements Tax
     public function revaluate(TaxDomain $tax): void
     {
         $taxToRevaluate = $this->find($tax->uuid()->toString());
+
         if (!$taxToRevaluate instanceof Tax) {
+            // @codeCoverageIgnoreStart
             throw new TaxNotFoundException($tax->uuid()->toString());
+            // @codeCoverageIgnoreEnd
         }
 
         $taxToRevaluate->setRate($tax->rate());
@@ -110,6 +119,10 @@ final class DoctrineTaxRepository extends ServiceEntityRepository implements Tax
         $taxes = $this->findAll();
         $collection = new TaxCollection();
 
+        if ($taxes === []) {
+            throw new NoTaxRegisteredException();
+        }
+
         foreach ($taxes as $tax) {
             $collection->add($tax->toDomain());
         }
@@ -120,8 +133,11 @@ final class DoctrineTaxRepository extends ServiceEntityRepository implements Tax
     public function findById(string $uuid): TaxDomain
     {
         $tax = $this->find($uuid);
+
         if (!$tax instanceof Tax) {
+            // @codeCoverageIgnoreStart
             throw new TaxNotFoundException($uuid);
+            // @codeCoverageIgnoreEnd
         }
 
         return $tax->toDomain();

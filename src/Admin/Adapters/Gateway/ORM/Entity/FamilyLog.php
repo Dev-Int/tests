@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\Adapters\Gateway\ORM\Entity;
 
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
-use Admin\Entities\FamilyLog as FamilyLogDomain;
+use Admin\Entities\FamilyLog\FamilyLog as FamilyLogDomain;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -85,6 +85,9 @@ class FamilyLog
         return $this;
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function path(): string
     {
         return $this->path;
@@ -93,18 +96,6 @@ class FamilyLog
     public function setPath(string $path): self
     {
         $this->path = $path;
-
-        return $this;
-    }
-
-    public function level(): int
-    {
-        return $this->level;
-    }
-
-    public function setLevel(int $level): self
-    {
-        $this->level = $level;
 
         return $this;
     }
@@ -122,18 +113,13 @@ class FamilyLog
     }
 
     /**
+     * @codeCoverageIgnore
+     *
      * @return Collection<FamilyLog>
      */
     public function children(): Collection
     {
         return $this->children;
-    }
-
-    public function setChildren(Collection $children): self
-    {
-        $this->children = $children;
-
-        return $this;
     }
 
     public function slug(): string
@@ -148,47 +134,10 @@ class FamilyLog
         return $this;
     }
 
-    /**
-     * @return array<string, array<int|string, iterable<string>|string>>
-     */
-    public function parseTree(): array
-    {
-        $arrayChildren = [];
-        if ($this->children->count() > 0) {
-            return [$this->label => $arrayChildren];
-        }
-        foreach ($this->children as $child) {
-            if ($this->childrenArrayLabels($child) !== null) {
-                $arrayChildren[$child->label()] = $this->childrenArrayLabels($child);
-            } else {
-                $arrayChildren[] = $child->label();
-            }
-        }
-
-        return [$this->label => $arrayChildren];
-    }
-
     public function getIndentedLabel(): string
     {
         $prefix = str_repeat('|- - ', $this->level);
 
         return sprintf('%s %s', $prefix, $this->label);
-    }
-
-    /**
-     * @return iterable<string>|null
-     */
-    private function childrenArrayLabels(self $familyLog): ?iterable
-    {
-        if ($familyLog->children->count() > 0) {
-            $childrenNames = [];
-            foreach ($familyLog->children as $child) {
-                $childrenNames[] = $child->label();
-            }
-
-            return $childrenNames;
-        }
-
-        return null;
     }
 }

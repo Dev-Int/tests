@@ -20,6 +20,9 @@ use Admin\UseCases\Gateway\ZoneStorageRepository;
 use Admin\UseCases\ZoneStorage\GetZoneStorages\GetZoneStorages;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @group unitTest
+ */
 final class GetZoneStoragesTest extends TestCase
 {
     public function testGetZoneStoragesWillSucceed(): void

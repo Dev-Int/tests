@@ -11,7 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Entities;
+namespace Admin\Entities\FamilyLog;
 
 use Shared\Entities\Collection;
 use Webmozart\Assert\Assert;
@@ -56,6 +56,8 @@ final class FamilyLogCollection implements Collection
 
     /**
      * @return iterable<FamilyLog>
+     *
+     * @codeCoverageIgnore
      */
     public function toArray(): iterable
     {

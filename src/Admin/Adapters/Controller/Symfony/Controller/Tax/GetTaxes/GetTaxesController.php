@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\Tax\GetTaxes;
 
+use Admin\Entities\Exception\NoTaxRegisteredException;
 use Admin\UseCases\Tax\GetTaxes\GetTaxes;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,7 +30,13 @@ final class GetTaxesController extends AbstractController
     #[Route(path: '/taxes', name: 'admin_taxes_index', methods: ['GET'])]
     public function __invoke(): Response
     {
-        $taxes = $this->useCase->execute();
+        try {
+            $taxes = $this->useCase->execute();
+        } catch (NoTaxRegisteredException $exception) {
+            $this->addFlash('error', $exception->getMessage());
+
+            return $this->redirectToRoute('admin_configure');
+        }
 
         $response = new GetTaxesWebResponse($taxes);
 

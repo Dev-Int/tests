@@ -14,13 +14,21 @@ declare(strict_types=1);
 namespace Admin\Tests\Adapters\controller\Symfony\Controller\Tax\CreateTax;
 
 use Admin\Adapters\Gateway\ORM\Entity\Tax;
+use Admin\Adapters\Gateway\ORM\Repository\DoctrineCompanyRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineTaxRepository;
+use Admin\Adapters\Gateway\ORM\Repository\DoctrineUnitRepository;
+use Admin\Entities\Exception\NoUnitRegisteredException;
 use Admin\Entities\Exception\TaxAlreadyExistsException;
+use Admin\Tests\DataBuilder\CompanyDataBuilder;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
+use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * @group functionalTest
+ */
 final class CreateTaxControllerTest extends WebTestCase
 {
     private const CREATE_TAX_URI = '/admin/taxes/create';
@@ -29,6 +37,16 @@ final class CreateTaxControllerTest extends WebTestCase
     {
         // Arrange
         $client = self::createClient();
+
+        /** @var DoctrineCompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        $company = (new CompanyDataBuilder())->create('Test company')->build();
+        $companyRepository->save($company);
+
+        /** @var DoctrineUnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
+        $unitRepository->save($unit);
 
         /** @var DoctrineTaxRepository $taxRepository */
         $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
@@ -64,6 +82,16 @@ final class CreateTaxControllerTest extends WebTestCase
     {
         // Arrange
         $client = self::createClient();
+
+        /** @var DoctrineCompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        $company = (new CompanyDataBuilder())->create('Test company')->build();
+        $companyRepository->save($company);
+
+        /** @var DoctrineUnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
+        $unitRepository->save($unit);
 
         /** @var DoctrineTaxRepository $taxRepository */
         $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
@@ -102,6 +130,16 @@ final class CreateTaxControllerTest extends WebTestCase
         // Arrange
         $client = self::createClient();
 
+        /** @var DoctrineCompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        $company = (new CompanyDataBuilder())->create('Test company')->build();
+        $companyRepository->save($company);
+
+        /** @var DoctrineUnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
+        $unitRepository->save($unit);
+
         // Act
         $crawler = $client->request(Request::METHOD_GET, self::CREATE_TAX_URI);
 
@@ -122,5 +160,66 @@ final class CreateTaxControllerTest extends WebTestCase
 
         self::assertSame('Nom de la taxe', $nameField->children('label')->text());
         self::assertSame('This value should not be blank.', $nameField->children('ul > li')->text());
+    }
+
+    public function testCreateTaxFailWithRateTooLargeException(): void
+    {
+        // Arrange
+        $client = self::createClient();
+
+        /** @var DoctrineCompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        $company = (new CompanyDataBuilder())->create('Test company')->build();
+        $companyRepository->save($company);
+
+        /** @var DoctrineUnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
+        $unitRepository->save($unit);
+
+        // Act
+        $crawler = $client->request(Request::METHOD_GET, self::CREATE_TAX_URI);
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('h1', 'Create Tax');
+
+        $form = $crawler->selectButton('Create')->form([
+            'createTax[name]' => 'TVA taux normal',
+            'createTax[rate]' => 120.0,
+        ]);
+        $client->submit($form);
+
+        // Assert
+        self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response = $client->getCrawler();
+
+        $nameField = $response->filter('form')->children('div')->first();
+        $rateField = $nameField->siblings();
+
+        self::assertSame('Taux de la taxe', $rateField->children('label')->text());
+        self::assertSame('This value should be less than or equal to 100%.', $rateField->children('ul > li')->text());
+    }
+
+    public function testCreateUnitFailWithNoCompanyRegisteredException(): void
+    {
+        // Arrange
+        $client = self::createClient();
+
+        /** @var DoctrineCompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        $company = (new CompanyDataBuilder())->create('Test company')->build();
+        $companyRepository->save($company);
+
+        // Act
+        $client->request(Request::METHOD_POST, self::CREATE_TAX_URI);
+
+        // Assert
+        self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
+        self::assertResponseRedirects('/admin/configure');
+
+        $admin = $client->followRedirect();
+        $flash = $admin->filter('body > div.container')->children('div.flash.flash-error')->text();
+
+        self::assertSame(NoUnitRegisteredException::MESSAGE, $flash);
     }
 }

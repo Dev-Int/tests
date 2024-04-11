@@ -52,6 +52,9 @@ final class ZoneStorage
         );
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function uuid(): string
     {
         return $this->uuid;

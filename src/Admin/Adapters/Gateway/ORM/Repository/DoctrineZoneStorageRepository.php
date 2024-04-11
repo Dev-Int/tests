@@ -16,6 +16,7 @@ namespace Admin\Adapters\Gateway\ORM\Repository;
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
 use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
 use Admin\Entities\Exception\FamilyLogNotFoundException;
+use Admin\Entities\Exception\NoZoneStorageRegisteredException;
 use Admin\Entities\Exception\ZoneStorageNotFoundException;
 use Admin\Entities\ZoneStorage\ZoneStorage as ZoneStorageDomain;
 use Admin\Entities\ZoneStorage\ZoneStorageCollection;
@@ -33,8 +34,10 @@ final class DoctrineZoneStorageRepository extends ServiceEntityRepository implem
 {
     public const ALIAS = 'zone_storage';
 
-    public function __construct(ManagerRegistry $registry, private readonly DoctrineFamilyLogRepository $familyLogRepository)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly DoctrineFamilyLogRepository $familyLogRepository
+    ) {
         parent::__construct($registry, ZoneStorage::class);
     }
 
@@ -68,7 +71,9 @@ final class DoctrineZoneStorageRepository extends ServiceEntityRepository implem
         ;
 
         if (!\is_int($count)) {
+            // @codeCoverageIgnoreStart
             throw new UnexpectedResultException();
+            // @codeCoverageIgnoreEnd
         }
 
         return $count > 0;
@@ -78,8 +83,11 @@ final class DoctrineZoneStorageRepository extends ServiceEntityRepository implem
     {
         $zoneStorageOrm = new ZoneStorage();
         $familyLog = $this->familyLogRepository->find($zoneStorage->familyLog()->uuid()->toString());
+
         if (!$familyLog instanceof FamilyLog) {
+            // @codeCoverageIgnoreStart
             throw new FamilyLogNotFoundException($zoneStorage->familyLog()->uuid()->toString());
+            // @codeCoverageIgnoreEnd
         }
 
         $zoneStorageOrm->fromDomain($zoneStorage, $familyLog);
@@ -91,8 +99,11 @@ final class DoctrineZoneStorageRepository extends ServiceEntityRepository implem
     public function changeLabel(ZoneStorageDomain $zoneStorage): void
     {
         $zoneStorageToUpdate = $this->find($zoneStorage->uuid()->toString());
+
         if (!$zoneStorageToUpdate instanceof ZoneStorage) {
+            // @codeCoverageIgnoreStart
             throw new ZoneStorageNotFoundException($zoneStorage->uuid()->toString());
+            // @codeCoverageIgnoreEnd
         }
 
         $zoneStorageToUpdate->setLabel($zoneStorage->label()->toString())->setSlug($zoneStorage->slug());
@@ -103,13 +114,18 @@ final class DoctrineZoneStorageRepository extends ServiceEntityRepository implem
     public function changeFamilyLog(ZoneStorageDomain $zoneStorage): void
     {
         $familyLog = $this->familyLogRepository->find($zoneStorage->familyLog()->uuid()->toString());
+
         if (!$familyLog instanceof FamilyLog) {
+            // @codeCoverageIgnoreStart
             throw new FamilyLogNotFoundException($zoneStorage->familyLog()->uuid()->toString());
+            // @codeCoverageIgnoreEnd
         }
 
         $zoneStorageToUpdate = $this->find($zoneStorage->uuid()->toString());
         if (!$zoneStorageToUpdate instanceof ZoneStorage) {
+            // @codeCoverageIgnoreStart
             throw new ZoneStorageNotFoundException($zoneStorage->slug());
+            // @codeCoverageIgnoreEnd
         }
 
         $zoneStorageToUpdate->setFamilyLog($familyLog);
@@ -121,6 +137,10 @@ final class DoctrineZoneStorageRepository extends ServiceEntityRepository implem
     {
         $zoneStorages = $this->findAll();
         $collection = new ZoneStorageCollection();
+
+        if ($zoneStorages === []) {
+            throw new NoZoneStorageRegisteredException();
+        }
 
         foreach ($zoneStorages as $zoneStorage) {
             $collection->add($zoneStorage->toDomain());
@@ -143,7 +163,9 @@ final class DoctrineZoneStorageRepository extends ServiceEntityRepository implem
         ;
 
         if (!$zoneStorage instanceof ZoneStorage) {
+            // @codeCoverageIgnoreStart
             throw new ZoneStorageNotFoundException($slug);
+            // @codeCoverageIgnoreEnd
         }
 
         return $zoneStorage->toDomain();

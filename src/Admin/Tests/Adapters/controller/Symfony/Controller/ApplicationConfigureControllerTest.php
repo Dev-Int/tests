@@ -18,6 +18,9 @@ use Admin\Tests\DataBuilder\CompanyDataBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @group functionalTest
+ */
 final class ApplicationConfigureControllerTest extends WebTestCase
 {
     private const APPLICATION_CONFIGURE_URI = '/admin/configure/application';

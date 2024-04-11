@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Tests\DataBuilder;
 
-use Admin\Entities\FamilyLog;
+use Admin\Entities\FamilyLog\FamilyLog;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
 

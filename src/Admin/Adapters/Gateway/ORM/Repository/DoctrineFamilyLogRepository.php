@@ -15,8 +15,9 @@ namespace Admin\Adapters\Gateway\ORM\Repository;
 
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
 use Admin\Entities\Exception\FamilyLogNotFoundException;
-use Admin\Entities\FamilyLog as FamilyLogDomain;
-use Admin\Entities\FamilyLogCollection;
+use Admin\Entities\Exception\NoFamilyLogRegisteredException;
+use Admin\Entities\FamilyLog\FamilyLog as FamilyLogDomain;
+use Admin\Entities\FamilyLog\FamilyLogCollection;
 use Admin\UseCases\Gateway\FamilyLogRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
@@ -35,45 +36,6 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, FamilyLog::class);
-    }
-
-    /**
-     * @throws NonUniqueResultException
-     */
-    public function save(FamilyLogDomain $familyLog): void
-    {
-        $familyLogOrm = new FamilyLog();
-        $familyLogOrm->fromDomain($familyLog);
-
-        $parent = null;
-        if ($familyLog->parent() !== null) {
-            $parent = $this->find($familyLog->parent()->uuid()->toString());
-
-            if (!$parent instanceof FamilyLog) {
-                throw new FamilyLogNotFoundException($familyLog->parent()->slug());
-            }
-        }
-        $familyLogOrm->setParent($parent);
-
-        $this->_em->persist($familyLogOrm);
-        $this->_em->flush();
-    }
-
-    public function findByUuid(ResourceUuid $uuid): FamilyLogDomain
-    {
-        $alias = self::ALIAS;
-        $familyLog = $this->createQueryBuilder($alias)
-            ->where("{$alias}.uuid = :uuid")
-            ->setParameter('uuid', $uuid->toString())
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-
-        if (!$familyLog instanceof FamilyLog) {
-            throw new FamilyLogNotFoundException($uuid->toString());
-        }
-
-        return $familyLog->toDomain();
     }
 
     /**
@@ -104,29 +66,112 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
         return $familyLog !== null;
     }
 
-    public function findFamilyLogsOrderingBySlug(): FamilyLogCollection
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException|UnexpectedResultException
+     */
+    public function hasFamilyLog(): bool
     {
-        $collection = new FamilyLogCollection();
         $alias = self::ALIAS;
-        $familyLogs = $this->createQueryBuilder($alias)
-            ->orderBy("{$alias}.slug", 'ASC')
+        $count = $this->createQueryBuilder($alias)
+            ->select("COUNT({$alias}.uuid)")
             ->getQuery()
-            ->getResult()
+            ->getSingleScalarResult()
         ;
 
-        if (!\is_array($familyLogs)) {
-            throw new \RuntimeException('array expected');
+        if (!\is_int($count)) {
+            // @codeCoverageIgnoreStart
+            throw new UnexpectedResultException();
+            // @codeCoverageIgnoreEnd
         }
 
-        foreach ($familyLogs as $familyLog) {
-            if (!$familyLog instanceof FamilyLog) {
-                throw new \RuntimeException(sprintf('%s expected', FamilyLog::class));
+        return $count > 0;
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function save(FamilyLogDomain $familyLog): void
+    {
+        $familyLogOrm = new FamilyLog();
+        $familyLogOrm->fromDomain($familyLog);
+
+        $parent = null;
+        if ($familyLog->parent() !== null) {
+            $parent = $this->find($familyLog->parent()->uuid()->toString());
+
+            if (!$parent instanceof FamilyLog) {
+                // @codeCoverageIgnoreStart
+                throw new FamilyLogNotFoundException($familyLog->parent()->slug());
+                // @codeCoverageIgnoreEnd
+            }
+        }
+        $familyLogOrm->setParent($parent);
+
+        $this->_em->persist($familyLogOrm);
+        $this->_em->flush();
+    }
+
+    public function updateLabel(FamilyLogDomain $familyLog): void
+    {
+        $familyLogToUpdate = $this->find($familyLog->uuid()->toString());
+
+        if (!$familyLogToUpdate instanceof FamilyLog) {
+            // @codeCoverageIgnoreStart
+            throw new FamilyLogNotFoundException($familyLog->slug());
+            // @codeCoverageIgnoreEnd
+        }
+
+        $familyLogToUpdate->setLabel($familyLog->label()->toString());
+
+        $this->_em->flush();
+    }
+
+    public function assignParent(FamilyLogDomain $familyLog, string $uuid): void
+    {
+        $familyLogToUpdate = $this->find($uuid);
+
+        if (!$familyLogToUpdate instanceof FamilyLog) {
+            // @codeCoverageIgnoreStart
+            throw new FamilyLogNotFoundException($familyLog->slug());
+            // @codeCoverageIgnoreEnd
+        }
+
+        if ($familyLog->parent() !== null) {
+            $parent = $this->find($familyLog->parent()->uuid()->toString());
+
+            if (!$parent instanceof FamilyLog) {
+                // @codeCoverageIgnoreStart
+                throw new FamilyLogNotFoundException($familyLog->parent()->slug());
+                // @codeCoverageIgnoreEnd
             }
 
-            $collection->add($familyLog->toDomain());
+            $familyLogToUpdate->setParent($parent)
+                ->setSlug($familyLog->slug())
+                ->setPath($familyLog->path())
+            ;
         }
 
-        return $collection;
+        $this->_em->flush();
+    }
+
+    public function findByUuid(ResourceUuid $uuid): FamilyLogDomain
+    {
+        $alias = self::ALIAS;
+        $familyLog = $this->createQueryBuilder($alias)
+            ->where("{$alias}.uuid = :uuid")
+            ->setParameter('uuid', $uuid->toString())
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+
+        if (!$familyLog instanceof FamilyLog) {
+            // @codeCoverageIgnoreStart
+            throw new FamilyLogNotFoundException($uuid->toString());
+            // @codeCoverageIgnoreEnd
+        }
+
+        return $familyLog->toDomain();
     }
 
     /**
@@ -143,63 +188,44 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
         ;
 
         if (!$familyLog instanceof FamilyLog) {
+            // @codeCoverageIgnoreStart
             throw new FamilyLogNotFoundException($slug);
+            // @codeCoverageIgnoreEnd
         }
 
         return $familyLog->toDomain();
     }
 
-    public function updateLabel(FamilyLogDomain $familyLog): void
+    public function findFamilyLogsOrderingBySlug(): FamilyLogCollection
     {
-        $familyLogToUpdate = $this->find($familyLog->uuid()->toString());
-        if (!$familyLogToUpdate instanceof FamilyLog) {
-            throw new FamilyLogNotFoundException($familyLog->slug());
-        }
-
-        $familyLogToUpdate->setLabel($familyLog->label()->toString());
-
-        $this->_em->flush();
-    }
-
-    public function assignParent(FamilyLogDomain $familyLog, string $uuid): void
-    {
-        $familyLogToUpdate = $this->find($uuid);
-        if (!$familyLogToUpdate instanceof FamilyLog) {
-            throw new FamilyLogNotFoundException($familyLog->slug());
-        }
-
-        if ($familyLog->parent() !== null) {
-            $parent = $this->find($familyLog->parent()->uuid()->toString());
-            if (!$parent instanceof FamilyLog) {
-                throw new FamilyLogNotFoundException($familyLog->parent()->slug());
-            }
-
-            $familyLogToUpdate->setParent($parent)
-                ->setSlug($familyLog->slug())
-                ->setPath($familyLog->path())
-            ;
-        }
-
-        $this->_em->flush();
-    }
-
-    /**
-     * @throws NonUniqueResultException
-     * @throws NoResultException|UnexpectedResultException
-     */
-    public function hasFamilyLog(): bool
-    {
+        $collection = new FamilyLogCollection();
         $alias = self::ALIAS;
-        $count = $this->createQueryBuilder($alias)
-            ->select("COUNT({$alias}.uuid)")
+        $familyLogs = $this->createQueryBuilder($alias)
+            ->orderBy("{$alias}.slug", 'ASC')
             ->getQuery()
-            ->getSingleScalarResult()
+            ->getResult()
         ;
 
-        if (!\is_int($count)) {
-            throw new UnexpectedResultException();
+        if (!\is_array($familyLogs)) {
+            // @codeCoverageIgnoreStart
+            throw new \RuntimeException('array expected');
+            // @codeCoverageIgnoreEnd
         }
 
-        return $count > 0;
+        if ($familyLogs === []) {
+            throw new NoFamilyLogRegisteredException();
+        }
+
+        foreach ($familyLogs as $familyLog) {
+            if (!$familyLog instanceof FamilyLog) {
+                // @codeCoverageIgnoreStart
+                throw new \RuntimeException(sprintf('%s expected', FamilyLog::class));
+                // @codeCoverageIgnoreEnd
+            }
+
+            $collection->add($familyLog->toDomain());
+        }
+
+        return $collection;
     }
 }

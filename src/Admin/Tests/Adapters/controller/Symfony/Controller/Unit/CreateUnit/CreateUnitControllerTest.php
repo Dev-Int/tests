@@ -14,7 +14,10 @@ declare(strict_types=1);
 namespace Admin\Tests\Adapters\controller\Symfony\Controller\Unit\CreateUnit;
 
 use Admin\Adapters\Gateway\ORM\Entity\Unit;
+use Admin\Adapters\Gateway\ORM\Repository\DoctrineCompanyRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineUnitRepository;
+use Admin\Entities\Exception\NoCompanyRegisteredException;
+use Admin\Tests\DataBuilder\CompanyDataBuilder;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,6 +34,11 @@ final class CreateUnitControllerTest extends WebTestCase
     {
         // Arrange
         $client = self::createClient();
+
+        /** @var DoctrineCompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        $company = (new CompanyDataBuilder())->create('Test company')->build();
+        $companyRepository->save($company);
 
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
@@ -67,6 +75,11 @@ final class CreateUnitControllerTest extends WebTestCase
     {
         // Arrange
         $client = self::createClient();
+
+        /** @var DoctrineCompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        $company = (new CompanyDataBuilder())->create('Test company')->build();
+        $companyRepository->save($company);
 
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
@@ -105,6 +118,11 @@ final class CreateUnitControllerTest extends WebTestCase
         // Arrange
         $client = self::createClient();
 
+        /** @var DoctrineCompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        $company = (new CompanyDataBuilder())->create('Test company')->build();
+        $companyRepository->save($company);
+
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
         $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
@@ -139,5 +157,28 @@ final class CreateUnitControllerTest extends WebTestCase
         $unitCreated = $unitRepository->findOneBy(['slug' => 'kilogramme']);
         self::assertSame('Kilogramme', $unitCreated->label());
         self::assertSame('kg', $unitCreated->abbreviation());
+    }
+
+    public function testCreateUnitFailWithNoCompanyRegisteredException(): void
+    {
+        // Arrange
+        $client = self::createClient();
+
+        /** @var DoctrineUnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
+        $unitRepository->save($unit);
+
+        // Act
+        $client->request(Request::METHOD_POST, self::CREATE_UNIT_URI);
+
+        // Assert
+        self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
+        self::assertResponseRedirects('/admin/configure');
+
+        $admin = $client->followRedirect();
+        $flash = $admin->filter('body > div.container')->children('div.flash.flash-error')->text();
+
+        self::assertSame(NoCompanyRegisteredException::MESSAGE, $flash);
     }
 }

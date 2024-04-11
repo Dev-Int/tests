@@ -14,9 +14,11 @@ declare(strict_types=1);
 namespace Admin\Tests\Adapters\controller\Symfony\Controller\Unit\GetUnits;
 
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineUnitRepository;
+use Admin\Entities\Exception\NoUnitRegisteredException;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @group functionalTest
@@ -51,5 +53,23 @@ final class GetUnitsControllerTest extends WebTestCase
         $list = $crawler->filter('body > div.container > div.row > article > ul.w100')->children('li.li-unstyled');
 
         self::assertCount(2, $list);
+    }
+
+    public function testGetUnitsFailWithNoUnitRegisteredException(): void
+    {
+        // Arrange
+        $client = self::createClient();
+
+        // Act
+        $client->request(Request::METHOD_GET, self::GET_UNITS_URI);
+
+        // Assert
+        self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
+        self::assertResponseRedirects('/admin/configure');
+
+        $admin = $client->followRedirect();
+        $flash = $admin->filter('body > div.container')->children('div.flash.flash-error')->text();
+
+        self::assertSame(NoUnitRegisteredException::MESSAGE, $flash);
     }
 }

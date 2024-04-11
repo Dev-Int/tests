@@ -13,13 +13,19 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\CreateZoneStorage;
 
-use Admin\Entities\FamilyLog;
+use Admin\Entities\FamilyLog\FamilyLog;
 use Admin\UseCases\ZoneStorage\CreateZoneStorage\CreateZoneStorageRequest;
+use Symfony\Component\Validator\Constraints as Assert;
 
 final class CreateZoneStorageApiRequest implements CreateZoneStorageRequest
 {
-    public function __construct(public string $label, public FamilyLog $familyLog)
-    {
+    public function __construct(
+        #[Assert\NotBlank]
+        public string $label,
+        #[Assert\NotBlank]
+        #[Assert\Valid]
+        public FamilyLog $familyLog
+    ) {
     }
 
     public function label(): string

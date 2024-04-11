@@ -15,7 +15,7 @@ namespace Admin\Tests\UseCases\ZoneStorage\CreateZoneStorage;
 
 use Admin\Entities\Exception\FamilyLogNotFoundException;
 use Admin\Entities\Exception\ZoneStorageAlreadyExistsException;
-use Admin\Entities\FamilyLog;
+use Admin\Entities\FamilyLog\FamilyLog;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\UseCases\Gateway\ZoneStorageRepository;
 use Admin\UseCases\ZoneStorage\CreateZoneStorage\CreateZoneStorage;
@@ -24,6 +24,9 @@ use PHPUnit\Framework\TestCase;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
 
+/**
+ * @group unitTest
+ */
 final class CreateZoneStorageTest extends TestCase
 {
     public function testCreateZoneStorageSucceed(): void

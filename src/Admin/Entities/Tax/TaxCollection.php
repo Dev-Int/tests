@@ -57,6 +57,8 @@ final class TaxCollection implements Collection
 
     /**
      * @return iterable<Tax>
+     *
+     * @codeCoverageIgnore
      */
     public function toArray(): iterable
     {

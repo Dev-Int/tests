@@ -25,6 +25,7 @@ final class ChangeUnitLabelApiRequest implements ChangeUnitLabelRequest
         #[Assert\NotBlank]
         #[Assert\Length(max: 5)]
         public string $abbreviation,
+        #[Assert\NotBlank]
         public readonly string $slug
     ) {
     }

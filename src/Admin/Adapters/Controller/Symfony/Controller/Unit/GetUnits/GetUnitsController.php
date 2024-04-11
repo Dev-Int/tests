@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\Unit\GetUnits;
 
+use Admin\Entities\Exception\NoUnitRegisteredException;
 use Admin\UseCases\Unit\GetUnits\GetUnits;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,7 +30,13 @@ final class GetUnitsController extends AbstractController
     #[Route(path: '/units', name: 'admin_units_index', methods: ['GET'])]
     public function __invoke(): Response
     {
-        $units = $this->useCase->execute();
+        try {
+            $units = $this->useCase->execute();
+        } catch (NoUnitRegisteredException $exception) {
+            $this->addFlash('error', $exception->getMessage());
+
+            return $this->redirectToRoute('admin_configure');
+        }
 
         $response = new GetUnitsWebResponse($units);
 

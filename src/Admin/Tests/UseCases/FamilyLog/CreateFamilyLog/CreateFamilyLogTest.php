@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\Tests\UseCases\FamilyLog\CreateFamilyLog;
 
 use Admin\Entities\Exception\FamilyLogAlreadyExistsException;
-use Admin\Entities\FamilyLog;
+use Admin\Entities\FamilyLog\FamilyLog;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\UseCases\FamilyLog\CreateFamilyLog\CreateFamilyLog;
 use Admin\UseCases\FamilyLog\CreateFamilyLog\CreateFamilyLogRequest;

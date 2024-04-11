@@ -14,10 +14,17 @@ declare(strict_types=1);
 namespace Admin\Tests\Adapters\controller\Symfony\Controller\FamilyLog\CreateFamilyLog;
 
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
+use Admin\Adapters\Gateway\ORM\Repository\DoctrineCompanyRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
+use Admin\Adapters\Gateway\ORM\Repository\DoctrineTaxRepository;
+use Admin\Adapters\Gateway\ORM\Repository\DoctrineUnitRepository;
 use Admin\Entities\Exception\FamilyLogAlreadyExistsException;
-use Admin\Entities\FamilyLog as FamilyLogDomain;
+use Admin\Entities\Exception\NoTaxRegisteredException;
+use Admin\Entities\FamilyLog\FamilyLog as FamilyLogDomain;
+use Admin\Tests\DataBuilder\CompanyDataBuilder;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
+use Admin\Tests\DataBuilder\TaxDataBuilder;
+use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,6 +40,21 @@ final class CreateFamilyLogControllerTest extends WebTestCase
     {
         // Arrange
         $client = self::createClient();
+
+        /** @var DoctrineCompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        $company = (new CompanyDataBuilder())->create('Test company')->build();
+        $companyRepository->save($company);
+
+        /** @var DoctrineUnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
+        $unitRepository->save($unit);
+
+        /** @var DoctrineTaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
+        $taxRepository->save($tax);
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
@@ -66,6 +88,21 @@ final class CreateFamilyLogControllerTest extends WebTestCase
     {
         // Arrange
         $client = self::createClient();
+
+        /** @var DoctrineCompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        $company = (new CompanyDataBuilder())->create('Test company')->build();
+        $companyRepository->save($company);
+
+        /** @var DoctrineUnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
+        $unitRepository->save($unit);
+
+        /** @var DoctrineTaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
+        $taxRepository->save($tax);
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
@@ -108,6 +145,21 @@ final class CreateFamilyLogControllerTest extends WebTestCase
     {
         // Arrange
         $client = self::createClient();
+
+        /** @var DoctrineCompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        $company = (new CompanyDataBuilder())->create('Test company')->build();
+        $companyRepository->save($company);
+
+        /** @var DoctrineUnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
+        $unitRepository->save($unit);
+
+        /** @var DoctrineTaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
+        $taxRepository->save($tax);
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
@@ -157,6 +209,21 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         // Arrange
         $client = self::createClient();
 
+        /** @var DoctrineCompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        $company = (new CompanyDataBuilder())->create('Test company')->build();
+        $companyRepository->save($company);
+
+        /** @var DoctrineUnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
+        $unitRepository->save($unit);
+
+        /** @var DoctrineTaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
+        $taxRepository->save($tax);
+
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
         $familyLogBuilder = new FamilyLogDataBuilder();
@@ -187,5 +254,33 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         $flash = $admin->filter('body > div.container')->children('div.flash.flash-error')->text();
 
         self::assertSame(FamilyLogAlreadyExistsException::MESSAGE, $flash);
+    }
+
+    public function testCreateUnitFailWithNoCompanyRegisteredException(): void
+    {
+        // Arrange
+        $client = self::createClient();
+
+        /** @var DoctrineCompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        $company = (new CompanyDataBuilder())->create('Test company')->build();
+        $companyRepository->save($company);
+
+        /** @var DoctrineUnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
+        $unitRepository->save($unit);
+
+        // Act
+        $client->request(Request::METHOD_POST, self::CREATE_FAMILY_LOG_URI);
+
+        // Assert
+        self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
+        self::assertResponseRedirects('/admin/configure');
+
+        $admin = $client->followRedirect();
+        $flash = $admin->filter('body > div.container')->children('div.flash.flash-error')->text();
+
+        self::assertSame(NoTaxRegisteredException::MESSAGE, $flash);
     }
 }

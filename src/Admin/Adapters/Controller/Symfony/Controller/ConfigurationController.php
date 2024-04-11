@@ -13,10 +13,9 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller;
 
+use Admin\Adapters\Gateway\ConfigurationService;
 use Admin\UseCases\Gateway\CompanyRepository;
 use Admin\UseCases\Gateway\FamilyLogRepository;
-use Admin\UseCases\Gateway\TaxRepository;
-use Admin\UseCases\Gateway\UnitRepository;
 use Admin\UseCases\Gateway\ZoneStorageRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,8 +27,7 @@ final class ConfigurationController extends AbstractController
 {
     public function __construct(
         private readonly CompanyRepository $companyRepository,
-        private readonly UnitRepository $unitRepository,
-        private readonly TaxRepository $taxRepository,
+        private readonly ConfigurationService $configurationService,
         private readonly FamilyLogRepository $familyLogRepository,
         private readonly ZoneStorageRepository $zoneStorageRepository
     ) {
@@ -39,7 +37,7 @@ final class ConfigurationController extends AbstractController
     public function __invoke(): Response
     {
         $hasCompany = $this->companyRepository->hasCompany();
-        $hasApplication = $this->unitRepository->hasUnit() && $this->taxRepository->hasTax();
+        $hasApplication = $this->configurationService->isApplicationConfigured();
         $hasFamilyLog = $this->familyLogRepository->hasFamilyLog();
         $hasZoneStorage = $this->zoneStorageRepository->hasZoneStorage();
 

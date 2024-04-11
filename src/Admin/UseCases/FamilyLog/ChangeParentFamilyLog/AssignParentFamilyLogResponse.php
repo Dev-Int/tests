@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\FamilyLog\ChangeParentFamilyLog;
 
-use Admin\Entities\FamilyLog;
+use Admin\Entities\FamilyLog\FamilyLog;
 
 final readonly class AssignParentFamilyLogResponse
 {
