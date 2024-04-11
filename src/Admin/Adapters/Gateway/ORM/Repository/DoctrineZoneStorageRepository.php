@@ -16,6 +16,7 @@ namespace Admin\Adapters\Gateway\ORM\Repository;
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
 use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
 use Admin\Entities\Exception\FamilyLogNotFoundException;
+use Admin\Entities\Exception\NoZoneStorageRegisteredException;
 use Admin\Entities\Exception\ZoneStorageNotFoundException;
 use Admin\Entities\ZoneStorage\ZoneStorage as ZoneStorageDomain;
 use Admin\Entities\ZoneStorage\ZoneStorageCollection;
@@ -136,6 +137,10 @@ final class DoctrineZoneStorageRepository extends ServiceEntityRepository implem
     {
         $zoneStorages = $this->findAll();
         $collection = new ZoneStorageCollection();
+
+        if ($zoneStorages === []) {
+            throw new NoZoneStorageRegisteredException();
+        }
 
         foreach ($zoneStorages as $zoneStorage) {
             $collection->add($zoneStorage->toDomain());

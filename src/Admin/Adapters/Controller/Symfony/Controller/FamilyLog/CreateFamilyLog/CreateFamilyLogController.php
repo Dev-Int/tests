@@ -14,7 +14,9 @@ declare(strict_types=1);
 namespace Admin\Adapters\Controller\Symfony\Controller\FamilyLog\CreateFamilyLog;
 
 use Admin\Adapters\Form\Type\FamilyLog\CreateFamilyLogType;
+use Admin\Adapters\Gateway\ConfigurationService;
 use Admin\Entities\Exception\FamilyLogAlreadyExistsException;
+use Admin\Entities\Exception\NoTaxRegisteredException;
 use Admin\UseCases\FamilyLog\CreateFamilyLog\CreateFamilyLog;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,13 +27,21 @@ use Symfony\Component\Routing\Attribute\Route;
 #[AsController]
 final class CreateFamilyLogController extends AbstractController
 {
-    public function __construct(private readonly CreateFamilyLog $useCase)
-    {
+    public function __construct(
+        private readonly CreateFamilyLog $useCase,
+        private readonly ConfigurationService $configurationService
+    ) {
     }
 
     #[Route(path: 'family_logs/create', name: 'admin_family_logs_create', methods: ['GET', 'POST'])]
     public function __invoke(Request $request): Response
     {
+        if (!$this->configurationService->isTaxConfigured()) {
+            $this->addFlash('error', NoTaxRegisteredException::MESSAGE);
+
+            return $this->redirectToRoute('admin_configure');
+        }
+
         $form = $this->createForm(CreateFamilyLogType::class);
 
         $form->handleRequest($request);

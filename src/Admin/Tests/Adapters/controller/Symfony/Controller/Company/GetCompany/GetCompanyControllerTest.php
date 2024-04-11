@@ -63,11 +63,9 @@ final class GetCompanyControllerTest extends WebTestCase
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        self::assertResponseRedirects('/admin/');
+        self::assertResponseRedirects('/admin/configure');
 
-        // The configuration only begin. The admin page is redirected throw admin configure.
-        $client->followRedirect(); // Admin page
-        $admin = $client->followRedirect(); // Configure page
+        $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container')->children('div.flash.flash-error')->text();
 
         self::assertSame(NoCompanyRegisteredException::MESSAGE, $flash);

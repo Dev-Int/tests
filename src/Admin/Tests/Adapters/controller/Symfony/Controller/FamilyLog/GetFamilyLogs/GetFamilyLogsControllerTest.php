@@ -72,9 +72,9 @@ final class GetFamilyLogsControllerTest extends WebTestCase
         $client->request(Request::METHOD_GET, self::GET_FAMILY_LOGS_URI);
 
         // Assert
+        self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/configure');
 
-        self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container')->children('div.flash.flash-error')->text();
 

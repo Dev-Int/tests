@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Admin\Adapters\Gateway\ORM\Repository;
 
 use Admin\Adapters\Gateway\ORM\Entity\Unit;
+use Admin\Entities\Exception\NoUnitRegisteredException;
 use Admin\Entities\Exception\UnitNotFoundException;
 use Admin\Entities\Unit\Unit as UnitDomain;
 use Admin\Entities\Unit\UnitCollection;
@@ -105,6 +106,10 @@ final class DoctrineUnitRepository extends ServiceEntityRepository implements Un
     {
         $units = $this->findAll();
         $collection = new UnitCollection();
+
+        if ($units === []) {
+            throw new NoUnitRegisteredException();
+        }
 
         foreach ($units as $unit) {
             $collection->add($unit->toDomain());

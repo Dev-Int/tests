@@ -39,7 +39,7 @@ final class GetCompanyController extends AbstractController
         } catch (NoCompanyRegisteredException $exception) {
             $this->addFlash('error', $exception->getMessage());
 
-            return $this->redirectToRoute('admin_index');
+            return $this->redirectToRoute('admin_configure');
         }
 
         return $this->render('@admin/company/index.html.twig', [

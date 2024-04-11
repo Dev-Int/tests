@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Admin\Adapters\Gateway\ORM\Repository;
 
 use Admin\Adapters\Gateway\ORM\Entity\Tax;
+use Admin\Entities\Exception\NoTaxRegisteredException;
 use Admin\Entities\Exception\TaxNotFoundException;
 use Admin\Entities\Tax\Tax as TaxDomain;
 use Admin\Entities\Tax\TaxCollection;
@@ -117,6 +118,10 @@ final class DoctrineTaxRepository extends ServiceEntityRepository implements Tax
     {
         $taxes = $this->findAll();
         $collection = new TaxCollection();
+
+        if ($taxes === []) {
+            throw new NoTaxRegisteredException();
+        }
 
         foreach ($taxes as $tax) {
             $collection->add($tax->toDomain());

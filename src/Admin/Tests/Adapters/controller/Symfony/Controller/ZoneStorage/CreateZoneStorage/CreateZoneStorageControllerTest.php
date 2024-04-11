@@ -14,11 +14,17 @@ declare(strict_types=1);
 namespace Admin\Tests\Adapters\controller\Symfony\Controller\ZoneStorage\CreateZoneStorage;
 
 use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
+use Admin\Adapters\Gateway\ORM\Repository\DoctrineCompanyRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
+use Admin\Adapters\Gateway\ORM\Repository\DoctrineTaxRepository;
+use Admin\Adapters\Gateway\ORM\Repository\DoctrineUnitRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineZoneStorageRepository;
 use Admin\Entities\Exception\NoFamilyLogRegisteredException;
 use Admin\Entities\Exception\ZoneStorageAlreadyExistsException;
+use Admin\Tests\DataBuilder\CompanyDataBuilder;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
+use Admin\Tests\DataBuilder\TaxDataBuilder;
+use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,8 +42,20 @@ final class CreateZoneStorageControllerTest extends WebTestCase
         // Arrange
         $client = self::createClient();
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+        /** @var DoctrineCompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        $company = (new CompanyDataBuilder())->create('Test company')->build();
+        $companyRepository->save($company);
+
+        /** @var DoctrineUnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
+        $unitRepository->save($unit);
+
+        /** @var DoctrineTaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
+        $taxRepository->save($tax);
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
@@ -47,6 +65,9 @@ final class CreateZoneStorageControllerTest extends WebTestCase
         ;
         $familyLogRepository->save($familyLog);
         $familyLogOrm = $familyLogRepository->find($familyLog->uuid()->toString());
+
+        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
 
         // Act
         $crawler = $client->request(Request::METHOD_POST, self::CREATE_ZONE_STORAGE_URI);
@@ -80,12 +101,27 @@ final class CreateZoneStorageControllerTest extends WebTestCase
         // Arrange
         $client = self::createClient();
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+        /** @var DoctrineCompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        $company = (new CompanyDataBuilder())->create('Test company')->build();
+        $companyRepository->save($company);
+
+        /** @var DoctrineUnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
+        $unitRepository->save($unit);
+
+        /** @var DoctrineTaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
+        $taxRepository->save($tax);
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
         $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
+
+        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
         $zoneStorage = (new ZoneStorageDataBuilder())
             ->create('Réserve négative', $familyLog)
             ->build()
@@ -122,12 +158,27 @@ final class CreateZoneStorageControllerTest extends WebTestCase
         // Arrange
         $client = self::createClient();
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+        /** @var DoctrineCompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        $company = (new CompanyDataBuilder())->create('Test company')->build();
+        $companyRepository->save($company);
+
+        /** @var DoctrineUnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
+        $unitRepository->save($unit);
+
+        /** @var DoctrineTaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
+        $taxRepository->save($tax);
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
         $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
+
+        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
         $zoneStorage = (new ZoneStorageDataBuilder())
             ->create('Réserve négative', $familyLog)
             ->build()
@@ -159,13 +210,10 @@ final class CreateZoneStorageControllerTest extends WebTestCase
         self::assertSame('This value should not be blank.', $familyLogField->children('ul > li')->text());
     }
 
-    public function testCreateZoneStorageFailWithNoFamilyLogExistsException(): void
+    public function testCreateZoneStorageFailWithNoFamilyLogRegisteredException(): void
     {
         // Arrange
         $client = self::createClient();
-
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
 
         // Act
         $client->request(Request::METHOD_POST, self::CREATE_ZONE_STORAGE_URI);

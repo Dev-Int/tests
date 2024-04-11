@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace Admin\Adapters\Controller\Symfony\Controller\Tax\CreateTax;
 
 use Admin\Adapters\Form\Type\Tax\TaxType;
+use Admin\Adapters\Gateway\ConfigurationService;
+use Admin\Entities\Exception\NoUnitRegisteredException;
 use Admin\UseCases\Tax\CreateTax\CreateTax;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,13 +26,21 @@ use Symfony\Component\Routing\Attribute\Route;
 #[AsController]
 final class CreateTaxController extends AbstractController
 {
-    public function __construct(private readonly CreateTax $useCase)
-    {
+    public function __construct(
+        private readonly CreateTax $useCase,
+        private readonly ConfigurationService $configurationService
+    ) {
     }
 
     #[Route(path: 'taxes/create', name: 'admin_taxes_create', methods: ['GET', 'POST'])]
     public function __invoke(Request $request): Response
     {
+        if (!$this->configurationService->isUnitConfigured()) {
+            $this->addFlash('error', NoUnitRegisteredException::MESSAGE);
+
+            return $this->redirectToRoute('admin_configure');
+        }
+
         $form = $this->createForm(TaxType::class);
 
         $form->handleRequest($request);

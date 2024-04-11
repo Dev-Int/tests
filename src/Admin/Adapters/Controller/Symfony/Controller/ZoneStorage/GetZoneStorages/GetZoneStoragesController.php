@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\GetZoneStorages;
 
+use Admin\Entities\Exception\NoZoneStorageRegisteredException;
 use Admin\UseCases\ZoneStorage\GetZoneStorages\GetZoneStorages;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,7 +30,13 @@ final class GetZoneStoragesController extends AbstractController
     #[Route(path: '/zone_storages', name: 'admin_zone_storages_index')]
     public function __invoke(): Response
     {
-        $zoneStorages = $this->useCase->execute();
+        try {
+            $zoneStorages = $this->useCase->execute();
+        } catch (NoZoneStorageRegisteredException $exception) {
+            $this->addFlash('error', $exception->getMessage());
+
+            return $this->redirectToRoute('admin_configure');
+        }
 
         $response = new GetZoneStoragesWebResponse($zoneStorages);
 

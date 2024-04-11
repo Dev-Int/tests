@@ -40,8 +40,36 @@ final readonly class ConfigurationService
         return $hasCompany && $hasApplication && $hasFamilyLog && $hasZoneStorage;
     }
 
+    public function isCompanyConfigured(): bool
+    {
+        return $this->companyRepository->hasCompany();
+    }
+
+    public function isUnitConfigured(): bool
+    {
+        $hasCompany = $this->companyRepository->hasCompany();
+        $hasUnit = $this->unitRepository->hasUnit();
+
+        return $hasCompany && $hasUnit;
+    }
+
+    public function isTaxConfigured(): bool
+    {
+        $hasCompany = $this->companyRepository->hasCompany();
+        $hasApplication = $this->unitRepository->hasUnit() && $this->taxRepository->hasTax();
+
+        return $hasCompany && $hasApplication;
+    }
+
     public function isApplicationConfigured(): bool
     {
-        return $this->unitRepository->hasUnit() && $this->taxRepository->hasTax();
+        return $this->isTaxConfigured();
+    }
+
+    public function isFamilyLogConfigured(): bool
+    {
+        $hasFamilyLog = $this->familyLogRepository->hasFamilyLog();
+
+        return $hasFamilyLog && $this->isApplicationConfigured();
     }
 }

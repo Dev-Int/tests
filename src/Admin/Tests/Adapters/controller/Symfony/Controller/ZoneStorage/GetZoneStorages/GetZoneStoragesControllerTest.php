@@ -15,10 +15,12 @@ namespace Admin\Tests\Adapters\controller\Symfony\Controller\ZoneStorage\GetZone
 
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineZoneStorageRepository;
+use Admin\Entities\Exception\NoZoneStorageRegisteredException;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @group functionalTest
@@ -61,5 +63,23 @@ final class GetZoneStoragesControllerTest extends WebTestCase
 
         $list = $crawler->filter('body > div.container > div.row > article > ul.w100')->children('li.li-unstyled');
         self::assertCount(2, $list);
+    }
+
+    public function testGetTaxesFailWithNoTaxRegisteredException(): void
+    {
+        // Arrange
+        $client = self::createClient();
+
+        // Act
+        $client->request(Request::METHOD_GET, self::GET_ZONE_STORAGES_URI);
+
+        // Assert
+        self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
+        self::assertResponseRedirects('/admin/configure');
+
+        $admin = $client->followRedirect();
+        $flash = $admin->filter('body > div.container')->children('div.flash.flash-error')->text();
+
+        self::assertSame(NoZoneStorageRegisteredException::MESSAGE, $flash);
     }
 }
