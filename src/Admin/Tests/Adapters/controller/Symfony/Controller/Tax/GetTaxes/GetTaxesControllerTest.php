@@ -18,6 +18,9 @@ use Admin\Tests\DataBuilder\TaxDataBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @group functionalTest
+ */
 final class GetTaxesControllerTest extends WebTestCase
 {
     private const GET_TAXES_URI = '/admin/taxes';

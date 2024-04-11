@@ -20,6 +20,9 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * @group functionalTest
+ */
 final class GetCompanyControllerTest extends WebTestCase
 {
     private const GET_COMPANY_URI = '/admin/company';

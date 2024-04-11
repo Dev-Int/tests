@@ -21,6 +21,9 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * @group functionalTest
+ */
 final class CreateTaxControllerTest extends WebTestCase
 {
     private const CREATE_TAX_URI = '/admin/taxes/create';

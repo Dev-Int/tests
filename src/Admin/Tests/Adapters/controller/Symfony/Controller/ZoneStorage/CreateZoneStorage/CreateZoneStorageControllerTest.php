@@ -24,6 +24,9 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * @group functionalTest
+ */
 final class CreateZoneStorageControllerTest extends WebTestCase
 {
     private const CREATE_ZONE_STORAGE_URI = '/admin/zone_storages/create';

@@ -19,6 +19,9 @@ use Admin\UseCases\Tax\CreateTax\CreateTax;
 use Admin\UseCases\Tax\CreateTax\CreateTaxRequest;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @group unitTest
+ */
 final class CreateTaxTest extends TestCase
 {
     public function testCreateTaxWithSuccess(): void

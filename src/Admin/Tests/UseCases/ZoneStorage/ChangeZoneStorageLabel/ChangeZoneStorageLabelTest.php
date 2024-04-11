@@ -24,6 +24,9 @@ use PHPUnit\Framework\TestCase;
 
 use function PHPUnit\Framework\exactly;
 
+/**
+ * @group unitTest
+ */
 final class ChangeZoneStorageLabelTest extends TestCase
 {
     public function testChangeZoneStorageLabelWillSucceed(): void

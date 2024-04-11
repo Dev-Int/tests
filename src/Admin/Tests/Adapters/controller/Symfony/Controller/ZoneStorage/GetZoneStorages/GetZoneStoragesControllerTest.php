@@ -20,6 +20,9 @@ use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @group functionalTest
+ */
 final class GetZoneStoragesControllerTest extends WebTestCase
 {
     private const GET_ZONE_STORAGES_URI = '/admin/zone_storages';

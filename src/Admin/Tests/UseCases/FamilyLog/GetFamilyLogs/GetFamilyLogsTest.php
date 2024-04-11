@@ -20,6 +20,9 @@ use Admin\UseCases\FamilyLog\GetFamilyLogs\GetFamilyLogs;
 use Admin\UseCases\Gateway\FamilyLogRepository;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @group unitTest
+ */
 final class GetFamilyLogsTest extends TestCase
 {
     public function testGetFamilyLogsWithSuccess(): void

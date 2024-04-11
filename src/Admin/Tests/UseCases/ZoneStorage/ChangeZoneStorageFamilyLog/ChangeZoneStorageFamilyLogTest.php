@@ -21,6 +21,9 @@ use Admin\UseCases\ZoneStorage\ChangeZoneStorageFamilyLog\ChangeZoneStorageFamil
 use Admin\UseCases\ZoneStorage\ChangeZoneStorageFamilyLog\ChangeZoneStorageFamilyLogRequest;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @group unitTest
+ */
 final class ChangeZoneStorageFamilyLogTest extends TestCase
 {
     public function testChangeZoneStorageFamilyLogWillSucceed(): void

@@ -24,6 +24,9 @@ use PHPUnit\Framework\TestCase;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
 
+/**
+ * @group unitTest
+ */
 final class CreateZoneStorageTest extends TestCase
 {
     public function testCreateZoneStorageSucceed(): void

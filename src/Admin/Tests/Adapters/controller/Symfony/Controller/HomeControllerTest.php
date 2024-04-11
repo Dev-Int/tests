@@ -26,6 +26,9 @@ use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @group functionalTest
+ */
 final class HomeControllerTest extends WebTestCase
 {
     private const HOME_URI = '/admin/';

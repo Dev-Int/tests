@@ -22,6 +22,9 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * @group functionalTest
+ */
 final class ChangeZoneStorageLabelControllerTest extends WebTestCase
 {
     private const CHANGE_LABEL_URI = '/admin/zone_storages/%s/change-label';
