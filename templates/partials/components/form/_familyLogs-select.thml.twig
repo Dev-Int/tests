@@ -1,18 +1,40 @@
-{% set uuid = null %}
+{% set uuid, key, previousLevel = null, 0, 1 %}
 
-<div>
+<div id="{{ familyLog.vars.id }}">
     {{ form_label(familyLog) }}
     {{ form_errors(familyLog) }}
-    <select name="{{ field_name(familyLog) }}" class="form-control">
-        <option value="">{{ field_label(familyLog) }}</option>
-
+    <ul>
         {% if form.vars.value.parent.uuid is defined %}
             {% set uuid = form.vars.value.parent.uuid %}
         {% else %}
             {% set uuid = familyLog.vars.value %}
         {% endif %}
-        {% for label, value in field_choices(familyLog) %}
-            <option value="{{ value }}"{% if uuid is same as(value) %} selected{% endif %}>{{ label }}</option>
+        {% for levelLabel, value in field_choices(familyLog) %}
+            {% set levelLabel = levelLabel | split('-') %}
+            {% set level, children, label = levelLabel[0], levelLabel[1], levelLabel[2] %}
+            {% if children == 1 and level == 1 and previousLevel != level %}
+                {% for iter in range(1, (previousLevel - level)) %}
+                        </li>
+                    </ul>
+                {% endfor %}
+                <ul>
+            {% else %}
+                </li>
+            {% endif %}
+                <li class="li-unstyled {% if level == 1 %}accordion_parent {% endif %} {% if children == 1 and level > 1 %}accordion_parent {% endif %} {% if level > 1 %}accordion_child {% endif %}">
+                    <input type="radio" name="{{ field_name(familyLog) }}" id="{{ familyLog.vars.id ~ key  }}"
+                        value="{{ value }}"
+                        {% if uuid is same as(value) %} checked{% endif %}
+                    />
+                    <label for="{{ familyLog.vars.id ~ key }}">{{ label }}</label>
+                    {% set key = key + 1 %}
+            {% if children == 1 %}
+                <ul>
+            {% elseif children == 0 %}
+                    </li>
+                </ul>
+            {% endif %}
+            {% set previousLevel = level %}
         {% endfor %}
-    </select>
+    </ul>
 </div>

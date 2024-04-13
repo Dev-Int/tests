@@ -14,10 +14,7 @@ declare(strict_types=1);
 namespace Admin\Adapters\Form\Type\ZoneStorage;
 
 use Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\CreateZoneStorage\CreateZoneStorageDto;
-use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\QueryBuilder;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Admin\Adapters\Form\Type\Components\FamilyLogEntitySelectType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -38,19 +35,9 @@ class ZoneStorageType extends AbstractType
                     'placeholder' => 'Le nom de la zone de stockage',
                 ],
             ])
-            ->add('familyLog', EntityType::class, [
-                'class' => FamilyLog::class,
-                'query_builder' => static function (EntityRepository $repository): QueryBuilder {
-                    return $repository->createQueryBuilder('f')
-                        ->orderBy('f.slug', 'asc')
-                    ;
-                },
-                'choice_label' => 'indentedLabel',
+            ->add('familyLog', FamilyLogEntitySelectType::class, [
                 'required' => true,
                 'label' => 'Famille logistique',
-                'attr' => [
-                    'placeholder' => 'La famille logistique de la zone',
-                ],
             ])
         ;
     }
