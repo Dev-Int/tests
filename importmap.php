@@ -18,6 +18,10 @@ return [
         'path' => './assets/app.js',
         'entrypoint' => true,
     ],
+    'familyLog-select' => [
+        'path' => './assets/familyLog-select.js',
+        'entrypoint' => true,
+    ],
     '@hotwired/stimulus' => [
         'version' => '3.2.2',
     ],

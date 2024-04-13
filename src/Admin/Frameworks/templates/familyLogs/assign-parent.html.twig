@@ -1,5 +1,9 @@
 {% extends 'base.html.twig' %}
 
+{% block importmap %}
+    {{ importmap(['app','familyLog-select']) }}
+{% endblock %}
+
 {% block body %}
     <h1>Assign parent to "{{ familyLog.label }}"</h1>
 

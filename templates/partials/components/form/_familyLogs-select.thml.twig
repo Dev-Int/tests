@@ -21,15 +21,16 @@
             {% else %}
                 </li>
             {% endif %}
-                <li class="li-unstyled {% if level == 1 %}accordion_parent {% endif %} {% if children == 1 and level > 1 %}accordion_parent {% endif %} {% if level > 1 %}accordion_child {% endif %}">
+                <li class="li-unstyled">
                     <input type="radio" name="{{ field_name(familyLog) }}" id="{{ familyLog.vars.id ~ key  }}"
-                        value="{{ value }}"
+                           value="{{ value }}"
+                           class="accordion_input"
                         {% if uuid is same as(value) %} checked{% endif %}
                     />
-                    <label for="{{ familyLog.vars.id ~ key }}">{{ label }}</label>
+                    <label for="{{ familyLog.vars.id ~ key }}"{% if children == 1 %}class="accordion_label" {% endif %}>{{ label }}</label>
                     {% set key = key + 1 %}
             {% if children == 1 %}
-                <ul>
+                <ul class="accordion_child">
             {% elseif children == 0 %}
                     </li>
                 </ul>
@@ -37,4 +38,6 @@
             {% set previousLevel = level %}
         {% endfor %}
     </ul>
+
 </div>
+{{ form_help(familyLog) }}

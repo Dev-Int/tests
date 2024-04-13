@@ -35,6 +35,8 @@ final class FamilyLogEntitySelectType extends EntityType
             },
             'choice_label' => 'levelChildrenLabel',
             'expanded' => true,
+            'help' => '<p>Clic on <i class="fa fa-circle-arrow-down"></i> to see logistic family\'s  children.</p>',
+            'help_html' => true,
         ]);
     }
 
