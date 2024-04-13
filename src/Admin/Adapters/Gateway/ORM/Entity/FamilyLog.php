@@ -134,10 +134,20 @@ class FamilyLog
         return $this;
     }
 
+    public function getLevelChildrenLabel(): string
+    {
+        return sprintf('%d-%d-%s', $this->level, (int) $this->hasChildren(), $this->label);
+    }
+
     public function getIndentedLabel(): string
     {
         $prefix = str_repeat('|- - ', $this->level);
 
         return sprintf('%s %s', $prefix, $this->label);
+    }
+
+    private function hasChildren(): bool
+    {
+        return \count($this->children) > 0;
     }
 }

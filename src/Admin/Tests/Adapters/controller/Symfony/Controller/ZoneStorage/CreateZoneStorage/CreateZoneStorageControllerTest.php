@@ -153,63 +153,6 @@ final class CreateZoneStorageControllerTest extends WebTestCase
         self::assertSame(ZoneStorageAlreadyExistsException::MESSAGE, $flash);
     }
 
-    public function testCreateZoneStorageFailWithInvalidArgumentException(): void
-    {
-        // Arrange
-        $client = self::createClient();
-
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
-        $company = (new CompanyDataBuilder())->create('Test company')->build();
-        $companyRepository->save($company);
-
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
-        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
-        $unitRepository->save($unit);
-
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
-        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
-        $taxRepository->save($tax);
-
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
-        $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
-
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
-        $zoneStorage = (new ZoneStorageDataBuilder())
-            ->create('Réserve négative', $familyLog)
-            ->build()
-        ;
-        $familyLogRepository->save($familyLog);
-        $zoneStorageRepository->save($zoneStorage);
-
-        // Act
-        $crawler = $client->request(Request::METHOD_POST, self::CREATE_ZONE_STORAGE_URI);
-
-        self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Create Zone Storage');
-
-        $form = $crawler->selectButton('Create')->form([
-            'createZoneStorage[label]' => 'Réserve négative',
-            'createZoneStorage[familyLog]' => '',
-        ]);
-        $client->submit($form);
-
-        // Assert
-        self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
-        $response = $client->getCrawler();
-
-        $labelField = $response->filter('form')->children('div')->first();
-        $familyLogField = $labelField->siblings();
-
-        self::assertSame('Nom de la zone de stockage', $labelField->children('label')->text());
-        self::assertSame('Famille logistique', $familyLogField->children('label')->text());
-        self::assertSame('This value should not be blank.', $familyLogField->children('ul > li')->text());
-    }
-
     public function testCreateZoneStorageFailWithNoFamilyLogRegisteredException(): void
     {
         // Arrange

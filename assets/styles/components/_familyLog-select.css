@@ -1,0 +1,28 @@
+/** familyLog select style */
+
+.accordion_child {
+    display: none;
+}
+.accordion_label:after {
+    font-family: FontAwesome;
+    content: '\f0ab';
+    float: right;
+    margin-left: 8px;
+    transition: transform 0.5s ease-in-out;
+}
+
+.accordion_input:checked ~ .accordion_child,
+.accordion_child:has(.accordion_input:checked) {
+    display: block;
+}
+.accordion_input:checked ~ .accordion_label:after,
+.li-unstyled:has(.li-unstyled > .accordion_input:checked) > .accordion_label:after {
+    transition: transform 0.5s ease-in-out;
+    transform: rotate(0.5turn);
+}
+
+i.fa.fa-circle-arrow-down,
+p > .svg-inline--fa {
+    margin-left: calc(var(--form-element-spacing-horizontal) * 0.3);
+    margin-right: calc(var(--form-element-spacing-horizontal) * 0.3);
+}

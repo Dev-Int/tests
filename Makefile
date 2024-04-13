@@ -119,6 +119,7 @@ tc: phpunit.xml clean-db-test ## Launch all tests with coverage
 ## —— Coding standards ✨ ——————————————————————————————————————————————————————
 qa: phpcs stan cs-fixer # lint ## Launch all static analysis tools
 	$(SYMFONY) lint:yaml config
+	$(SYMFONY) lint:twig templates/ src/**/Frameworks/templates/
 	bin/deptrac analyse --config-file=deptrac.yaml
 
 phpcs: ## Run php_codesniffer

@@ -34,6 +34,7 @@ jobs:
             - name: Run coding standards analysis
               run: |
                   php bin/console lint:yaml config
+                  php bin/console lint:twig templates/ src/**/Frameworks/templates/
                   composer run-script phpcs
                   composer run-script phpstan
 
