@@ -102,8 +102,11 @@
         "symfony/polyfill-php81": "*"
     },
     "scripts": {
-        "auto-scripts": [
-        ],
+        "auto-scripts": {
+            "importmap:install": "symfony-cmd",
+            "cache:clear": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+        },
         "tests": "php bin/phpunit",
         "php-cs-fixer": "./bin/php-cs-fixer fix --diff",
         "phpcs": "php ./vendor/bin/phpcs --standard=phpcs.xml.dist -n -p src/",
