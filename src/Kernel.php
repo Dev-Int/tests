@@ -42,10 +42,6 @@ class Kernel extends BaseKernel
             $routes->import($configDir . '/{routes}.php');
         }
 
-        if (false !== ($fileName = (new \ReflectionObject($this))->getFileName())) {
-            $routes->import($fileName, 'annotation');
-        }
-
         // Dynamic module routing configuration
         $routes->import($this->getProjectDir() . '/src/*/Frameworks/config/routes.yaml');
         $routes->import($this->getProjectDir() . '/src/*/Frameworks/config/{routes}/*.yaml');
