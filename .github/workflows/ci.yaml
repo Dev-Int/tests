@@ -33,10 +33,13 @@ jobs:
 
             - name: Run coding standards analysis
               run: |
-                  php bin/console lint:yaml config
-                  php bin/console lint:twig templates/ src/**/Frameworks/templates/
                   composer run-script phpcs
                   composer run-script phpstan
+
+            - name: Run linters
+              run: |
+                  php bin/console lint:yaml config
+                  php bin/console lint:twig templates/ src/**/Frameworks/templates/
 
     test:
         strategy:
@@ -51,7 +54,7 @@ jobs:
                 env:
                     POSTGRES_USER: postgres
                     POSTGRES_PASSWORD: postgres
-                    POSTGRES_DB: app
+                    POSTGRES_DB: app_test
                 ports:
                     - '5432:5432'
                 options: '--health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5'
@@ -77,4 +80,22 @@ jobs:
               run:  |
                   cp phpunit.xml.dist phpunit.xml
                   php bin/console importmap:install
-                  make ta
+                  make clean-db-test
+                  php bin/phpunit --coverage-clover=clover.xml
+              env:
+                  XDEBUG_MODE: coverage
+
+            - name: Generate test coverage badge
+              uses: timkrase/phpunit-coverage-badge@v1.2.1
+              with:
+                  coverage_badge_path: output/coverage.svg
+                  push_badge: false
+
+            - name: Git push to image-data branch
+              uses: peaceiris/actions-gh-pages@v3
+              with:
+                  publish_dir: ./output
+                  publish_branch: image-data
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  user_name: 'github-actions[bot]'
+                  user_email: 'github-actions[bot]@users.noreply.github.com'
