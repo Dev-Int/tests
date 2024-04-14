@@ -129,42 +129,11 @@ cs-fixer: ## Run php-cs-fixer
 	bin/php-cs-fixer fix --diff --verbose
 
 stan: ## Run PHPStan only
-	./vendor/bin/phpstan analyse -c phpstan.neon --memory-limit 1G
-.PHONY: qa phpcs cs-fixer stan
+	php ./vendor/bin/phpstan analyse -c phpstan.neon --memory-limit 1G
 
-#psalm: ## Run psalm only
-#	./vendor/bin/psalm --show-info=false
-#
-#init-psalm: ## Init a new psalm config file for a given level, it must be decremented to have stricter rules
-#	rm ./psalm.xml
-#	./vendor/bin/psalm --init src/ 3
-
-
-## —— Deploy & Prod ————————————————————————————————————————————————————————————
-#deploy: ## Full no-downtime deployment with EasyDeploy
-#	$(SYMFONY) deploy -v
-#
-#env-check: ## Check the main ENV variables of the project
-#	printenv | grep -i app_
-#
-#le-renew: ## Renew Let's Encrypt HTTPS certificates
-#	certbot --apache -d strangebuzz.com -d www.strangebuzz.com
-
-
-## —— Yarn / JavaScript ————————————————————————————————————————————————————————
-client-dev: ## Rebuild assets for the dev env
-	yarn install
-	yarn run encore dev
-
-client-watch: ## Watch files and build assets when needed for the dev env
-	yarn run encore dev --watch
-
-client-build: ## Build assets for production
-	yarn run encore production
-
-client-lint: ## Lints Js files
-	npx eslint assets/js --fix
-.PHONY: client-dev client-watch client-build client-lint
+rector: ## Run rector analysis
+	php ./vendor/bin/rector process src --dry-run
+.PHONY: qa phpcs cs-fixer stan rector
 
 
 ## —— Docker 🐳 ———————————————————————————————————————————————————————————————————

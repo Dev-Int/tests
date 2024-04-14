@@ -30,7 +30,7 @@ final readonly class CreateCompany
     public function execute(CreateCompanyRequest $request): CreateCompanyResponse
     {
         $hasCompany = $this->companyRepository->hasCompany();
-        if ($hasCompany === true) {
+        if ($hasCompany) {
             throw new CompanyAlreadyExistsException($request->name());
         }
 

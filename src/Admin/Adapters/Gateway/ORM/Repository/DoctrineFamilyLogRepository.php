@@ -49,7 +49,7 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
             ->setParameter('label', $label)
         ;
 
-        if ($parent === null) {
+        if (!$parent instanceof FamilyLogDomain) {
             $queryBuilder->andWhere("{$alias}.parent IS NULL");
         } else {
             $parentOrm = $this->find($parent->uuid()->toString());
@@ -97,7 +97,7 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
         $familyLogOrm->fromDomain($familyLog);
 
         $parent = null;
-        if ($familyLog->parent() !== null) {
+        if ($familyLog->parent() instanceof FamilyLogDomain) {
             $parent = $this->find($familyLog->parent()->uuid()->toString());
 
             if (!$parent instanceof FamilyLog) {
@@ -137,7 +137,7 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
             // @codeCoverageIgnoreEnd
         }
 
-        if ($familyLog->parent() !== null) {
+        if ($familyLog->parent() instanceof FamilyLogDomain) {
             $parent = $this->find($familyLog->parent()->uuid()->toString());
 
             if (!$parent instanceof FamilyLog) {

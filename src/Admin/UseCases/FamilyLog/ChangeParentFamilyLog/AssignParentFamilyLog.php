@@ -28,7 +28,7 @@ final readonly class AssignParentFamilyLog
         $familyLog = $this->familyLogRepository->findByUuid(ResourceUuid::fromString($request->uuid()));
 
         $isExists = $this->familyLogRepository->exists($familyLog->label()->toString(), $request->parent());
-        if ($isExists === true) {
+        if ($isExists) {
             throw new FamilyLogAlreadyExistsException($familyLog->label()->toString());
         }
 
