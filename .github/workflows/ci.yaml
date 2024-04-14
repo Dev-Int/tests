@@ -16,6 +16,16 @@ jobs:
                 php-versions: ['8.2', '8.3']
         runs-on: ubuntu-latest
         name: Lint / PHP ${{ matrix.php-versions }}
+        services:
+            postgres:
+                image: 'postgres:16'
+                env:
+                    POSTGRES_USER: postgres
+                    POSTGRES_PASSWORD: postgres
+                    POSTGRES_DB: app
+                ports:
+                    - '5432:5432'
+                options: '--health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5'
         steps:
             - uses: actions/checkout@v2
 
@@ -33,6 +43,8 @@ jobs:
 
             - name: Run coding standards analysis
               run: |
+                  make clean-db
+                  composer run-script schema-validate
                   composer run-script phpcs
                   composer run-script phpstan
                   composer run-script rector

@@ -27,7 +27,7 @@ final class ZoneStorage
     private string $uuid;
     #[ORM\Column(name: 'label', type: 'string', length: 255)]
     private string $label;
-    #[ORM\ManyToOne(targetEntity: FamilyLog::class, inversedBy: 'uuid')]
+    #[ORM\ManyToOne(targetEntity: FamilyLog::class)]
     #[ORM\JoinColumn(name: 'familyLog_id', referencedColumnName: 'uuid')]
     private FamilyLog $familyLog;
     #[ORM\Column(name: 'slug', type: 'string', length: 255)]

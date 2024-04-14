@@ -114,6 +114,7 @@
         "phpcs": "php ./vendor/bin/phpcs --standard=phpcs.xml.dist -n -p src/",
         "phpstan": "php ./vendor/bin/phpstan analyse -c phpstan.neon --memory-limit 1G",
         "rector": "php ./vendor/bin/rector process src --dry-run",
+        "schema-validate": "php bin/console doctrine:schema:validate",
         "post-install-cmd": [
             "@auto-scripts"
         ],
