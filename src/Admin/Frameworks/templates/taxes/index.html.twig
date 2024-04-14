@@ -1,8 +1,12 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}
+    Taxes | {{ parent() }}
+{% endblock %}
+
 {% block body %}
 
-    <h1>Taxes</h1>
+    <h1><i class="fas fa-percent"></i> Taxes</h1>
 
     <div class="row">
         <aside class="col-md-3">
@@ -10,7 +14,7 @@
                 <ul>
                     <li><a href="{{ path('admin_taxes_create') }}" class="w100" role="button">Create Tax</a></li>
                     <li>
-                        {{ include('partials/components/_back-home-button.html.twig') }}
+                        {{ include('@admin/partials/components/_back-admin-button.html.twig') }}
                     </li>
                 </ul>
             </nav>

@@ -1,7 +1,12 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}
+    Update Tax | {{ parent() }}
+{% endblock %}
+
 {% block body %}
-    <h1>Rename Tax "{{ tax.name }}"</h1>
+
+    <h1><i class="fas fa-percent"></i> Rename Tax "{{ tax.name }}"</h1>
 
     {{ form_start(form) }}
     {{ form_errors(form) }}

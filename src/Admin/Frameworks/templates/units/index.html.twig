@@ -1,8 +1,12 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}
+    Units | {{ parent() }}
+{% endblock %}
+
 {% block body %}
 
-    <h1>Units</h1>
+    <h1><i class="fas fa-flask"></i> Units</h1>
 
     <div class="row">
         <aside class="col-md-3">
@@ -10,7 +14,7 @@
                 <ul>
                     <li><a href="{{ path('admin_unit_create') }}" class="w100" role="button">Create Unit</a></li>
                     <li>
-                        {{ include('partials/components/_back-home-button.html.twig') }}
+                        {{ include('@admin/partials/components/_back-admin-button.html.twig') }}
                     </li>
                 </ul>
             </nav>

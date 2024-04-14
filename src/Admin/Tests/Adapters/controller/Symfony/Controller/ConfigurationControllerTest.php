@@ -89,7 +89,7 @@ final class ConfigurationControllerTest extends WebTestCase
         $home = $crawler->selectLink('Retour à l\'accueil')->link(Request::METHOD_GET);
         $client->click($home);
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Application');
+        self::assertSelectorTextContains('h1', 'Welcome to your restaurant inventory management application!');
     }
 
     public function testConfigurePageWithCompany(): void

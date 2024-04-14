@@ -1,11 +1,16 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}
+    Create FamilyLog | {{ parent() }}
+{% endblock %}
+
 {% block importmap %}
     {{ importmap(['app','familyLog-select']) }}
 {% endblock %}
 
 {% block body %}
-    <h1>Create Logistic Family</h1>
+
+    <h1><i class="fas fa-tags"></i> Create Logistic Family</h1>
 
     {{ form_start(form) }}
     {{ form_errors(form) }}

@@ -1,7 +1,12 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}
+    Update FamilyLog | {{ parent() }}
+{% endblock %}
+
 {% block body %}
-    <h1>Change label "{{ form.vars.value.label }}"</h1>
+
+    <h1><i class="fas fa-tags"></i> Change label "{{ form.vars.value.label }}"</h1>
 
     {{ form_start(form) }}
     {{ form_errors(form) }}

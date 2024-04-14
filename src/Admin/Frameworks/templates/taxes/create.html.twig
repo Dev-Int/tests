@@ -1,7 +1,12 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}
+    Create Tax | {{ parent() }}
+{% endblock %}
+
 {% block body %}
-    <h1>Create Tax</h1>
+
+    <h1><i class="fas fa-percent"></i> Create Tax</h1>
 
     {{ form_start(form) }}
     {{ form_errors(form) }}

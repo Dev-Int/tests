@@ -1,11 +1,16 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}
+    Create ZoneStorage | {{ parent() }}
+{% endblock %}
+
 {% block importmap %}
     {{ importmap(['app','familyLog-select']) }}
 {% endblock %}
 
 {% block body %}
-    <h1>Create Zone Storage</h1>
+
+    <h1><i class="fa-solid fa-warehouse"></i> Create Zone Storage</h1>
 
     {{ form_start(form) }}
     {{ form_errors(form) }}

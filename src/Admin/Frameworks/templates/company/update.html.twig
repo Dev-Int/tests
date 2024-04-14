@@ -1,8 +1,12 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}
+    Update Company | {{ parent() }}
+{% endblock %}
+
 {% block body %}
 
-    <h1>Update Company "{{ companyName }}"</h1>
+    <h1><i class="fa-solid fa-building"></i> CUpdate Company "{{ companyName }}"</h1>
 
     {{ form_start(form) }}
     {{ form_errors(form) }}
