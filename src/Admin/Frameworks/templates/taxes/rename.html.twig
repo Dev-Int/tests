@@ -1,5 +1,9 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}
+    Update Tax | {{ parent() }}
+{% endblock %}
+
 {% block body %}
 
     <h1><i class="fas fa-percent"></i> Rename Tax "{{ tax.name }}"</h1>

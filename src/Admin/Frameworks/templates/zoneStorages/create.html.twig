@@ -1,5 +1,9 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}
+    Create ZoneStorage | {{ parent() }}
+{% endblock %}
+
 {% block importmap %}
     {{ importmap(['app','familyLog-select']) }}
 {% endblock %}
