@@ -96,7 +96,7 @@ final class RenameTaxTest extends TestCase
         // Arrange
         $taxRepository = $this->createMock(TaxRepository::class);
         $useCase = new RenameTax($taxRepository);
-        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
+        (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
         $request = $this->createMock(RenameTaxRequest::class);
 
         $request->expects(self::never())->method('name')->willReturn('TVA taux réduit');

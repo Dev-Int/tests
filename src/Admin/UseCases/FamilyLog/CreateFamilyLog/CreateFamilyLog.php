@@ -28,7 +28,7 @@ final readonly class CreateFamilyLog
     public function execute(CreateFamilyLogRequest $request): CreateFamilyLogResponse
     {
         $isExists = $this->familyLogRepository->exists($request->label(), $request->parent());
-        if ($isExists === true) {
+        if ($isExists) {
             throw new FamilyLogAlreadyExistsException($request->label());
         }
 

@@ -32,12 +32,12 @@ final class FamilyLog
         $this->path = $name->slugify();
         $this->slug = $name->slugify();
 
-        if (null !== $parent) {
+        if ($parent instanceof self) {
             $this->parent = $parent;
             $this->parent->addChild($this);
             $this->path = $parent->slug() . ':' . $name->slugify();
 
-            if (null !== $this->parent && null !== $this->parent->parent) {
+            if ($this->parent instanceof self && $this->parent->parent instanceof self) {
                 $this->path = $this->parent->parent->slug() . ':' . $this->parent->slug() . ':' . $name->slugify();
             }
         }

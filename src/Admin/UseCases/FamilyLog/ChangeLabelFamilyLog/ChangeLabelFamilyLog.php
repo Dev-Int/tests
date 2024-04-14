@@ -32,7 +32,7 @@ final readonly class ChangeLabelFamilyLog
             $request->label(),
             $familyLog->parent()
         );
-        if ($isExists === true) {
+        if ($isExists) {
             throw new FamilyLogAlreadyExistsException($request->label());
         }
 

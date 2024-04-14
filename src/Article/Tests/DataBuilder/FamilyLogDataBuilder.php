@@ -19,12 +19,11 @@ use Shared\Entities\VO\NameField;
 final class FamilyLogDataBuilder
 {
     private NameField $name;
-    private ?FamilyLog $parent;
+    private ?FamilyLog $parent = null;
 
     public function __construct(string $name)
     {
         $this->name = NameField::fromString($name);
-        $this->parent = null;
     }
 
     public function withParent(string $parentName): self

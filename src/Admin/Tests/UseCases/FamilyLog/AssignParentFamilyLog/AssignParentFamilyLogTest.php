@@ -177,7 +177,7 @@ final class AssignParentFamilyLogTest extends TestCase
         self::assertSame(2, $response->familyLog->level());
 
         $children = $response->familyLog->children();
-        if ($children !== null && \count($children) > 0) {
+        if ($children !== null && $children !== []) {
             $childrenChild = $children[0];
 
             self::assertSame($familyLog, $childrenChild->parent());
@@ -247,7 +247,7 @@ final class AssignParentFamilyLogTest extends TestCase
         self::assertSame(2, $response->familyLog->level());
 
         $children = $response->familyLog->children();
-        if ($children !== null && \count($children) > 0) {
+        if ($children !== null && $children !== []) {
             $childrenChild = $children[0];
 
             self::assertSame($familyLog, $childrenChild->parent());

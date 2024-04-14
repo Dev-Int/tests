@@ -30,14 +30,14 @@ final class SupplierDataBuilder
     private PhoneField $phone;
     private PhoneField $facsimile;
     private EmailField $email;
-    private string $contact;
+    private string $contact = 'Jules Caesar';
     private PhoneField $gsm;
     private FamilyLog $familyLog;
-    private int $delayDelivery;
+    private int $delayDelivery = 3;
 
     /** @var array<int> */
-    private array $orderDays;
-    private bool $active;
+    private array $orderDays = [1, 4];
+    private bool $active = true;
 
     public function __construct()
     {
@@ -47,12 +47,8 @@ final class SupplierDataBuilder
         $this->phone = PhoneField::fromString('0175000000');
         $this->facsimile = PhoneField::fromString('0175000001');
         $this->email = EmailField::fromString('contact@davigel.fr');
-        $this->contact = 'Jules Caesar';
         $this->gsm = PhoneField::fromString('0900000000');
         $this->familyLog = FamilyLog::create(NameField::fromString('Alimentaire'));
-        $this->delayDelivery = 3;
-        $this->orderDays = [1, 4];
-        $this->active = true;
     }
 
     public function build(): Supplier

@@ -24,7 +24,7 @@ final class FamilyLog
     private ?array $children = null;
     private string $slug;
     private string $path;
-    private int $level;
+    private int $level = 1;
 
     public static function create(ResourceUuid $uuid, NameField $label, ?self $parent = null): self
     {
@@ -38,9 +38,8 @@ final class FamilyLog
     ) {
         $this->path = $label->slugify();
         $this->slug = $label->slugify();
-        $this->level = 1;
 
-        if (null !== $parent && $this->parent !== null) {
+        if ($parent instanceof self && $this->parent instanceof self) {
             $this->assignParent($parent, $label);
         }
     }
@@ -126,7 +125,7 @@ final class FamilyLog
         $this->path = $slug;
         $this->slug = $slug;
 
-        if ($this->parent !== null) {
+        if ($this->parent instanceof self) {
             $this->level = $this->parent->level + 1;
         }
 

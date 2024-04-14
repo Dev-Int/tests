@@ -35,6 +35,7 @@ jobs:
               run: |
                   composer run-script phpcs
                   composer run-script phpstan
+                  composer run-script rector
 
             - name: Run linters
               run: |
