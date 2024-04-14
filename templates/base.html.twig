@@ -30,11 +30,11 @@
 
         {% endblock %}
 
-        <div class="container">
+        <div id="container" class="container">
 
             {% for label, messages in app.flashes %}
                 {% for message in messages %}
-                    <div id="flashes" class="flash flash-{{ label }}">
+                    <div id="flashes" class="flash flash-{{ label }}" role="alert" aria-live="assertive" aria-atomic="true" {{ stimulus_controller('toast') }}>
                         {{ message }}
                     </div>
                 {% endfor %}
