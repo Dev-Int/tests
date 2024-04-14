@@ -2,6 +2,7 @@ Tests
 =====
 
 ![Tests](https://github.com/Dev-Int/tests/workflows/Tests/badge.svg) 
+![Test Coverage](https://raw.githubusercontent.com/Dev-Int/tests/output/coverage.svg) 
 [![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/Dev-Int/tests/blob/master/LICENSE)
 
 This repository comes from ideas coming from [GLSR](https://github.com/Dev-Int/glsr), where, in 2020, I found myself 

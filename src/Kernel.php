@@ -42,7 +42,7 @@ class Kernel extends BaseKernel
             $routes->import($configDir . '/{routes}.php');
         }
 
-        // Dynamic module routing configuration
+        // Dynamic Domains routing configuration
         $routes->import($this->getProjectDir() . '/src/*/Frameworks/config/routes.yaml');
         $routes->import($this->getProjectDir() . '/src/*/Frameworks/config/{routes}/*.yaml');
     }
