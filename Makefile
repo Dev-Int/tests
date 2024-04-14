@@ -117,7 +117,7 @@ tc: phpunit.xml clean-db-test ## Launch all tests with coverage
 
 
 ## —— Coding standards ✨ ——————————————————————————————————————————————————————
-qa: phpcs stan cs-fixer # lint ## Launch all static analysis tools
+qa: schema-validate phpcs stan cs-fixer rector # lint ## Launch all static analysis tools
 	$(SYMFONY) lint:yaml config
 	$(SYMFONY) lint:twig templates/ src/**/Frameworks/templates/
 	bin/deptrac analyse --config-file=deptrac.yaml
@@ -133,7 +133,9 @@ stan: ## Run PHPStan only
 
 rector: ## Run rector analysis
 	php ./vendor/bin/rector process src --dry-run
-.PHONY: qa phpcs cs-fixer stan rector
+schema-validate: ## Run schema validation
+	bin/console doctrine:schema:validate
+.PHONY: qa phpcs cs-fixer stan rector schema-validate
 
 
 ## —— Docker 🐳 ———————————————————————————————————————————————————————————————————
