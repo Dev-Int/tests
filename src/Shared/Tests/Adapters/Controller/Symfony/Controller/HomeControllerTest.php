@@ -33,7 +33,7 @@ final class HomeControllerTest extends WebTestCase
 
         // Assert
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', $siteName);
+        self::assertSelectorTextContains('h1', 'Welcome to your restaurant inventory management application!');
 
         $header = $crawler->filter('body > header > nav')->children('ul');
         self::assertSame($siteName, $header->first()->text());

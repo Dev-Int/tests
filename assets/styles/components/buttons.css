@@ -16,3 +16,12 @@ span > a[role="button"] {
 nav.menu li > a[role="button"] {
     width: 100%;
 }
+
+.bottom-element {
+    bottom: 0;
+    right: var(--block-spacing-horizontal);
+    position: absolute;
+}
+div:has(.bottom-element) {
+    position: relative;
+}

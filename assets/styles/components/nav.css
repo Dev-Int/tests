@@ -8,6 +8,15 @@ body > header {
 header > nav {
     padding: 0 var(--block-spacing-horizontal);
 }
+header > nav .navbar-brand {
+    margin-top: 0;
+}
+header > nav .navbar-brand > a.logo {
+    color: transparent;
+    background-image: url("../../images/featured_work_GLSR.png");
+    background-size: contain;
+    background-position: var(--nav-element-spacing-horizontal) center;
+}
 
 nav li > a[role="button"] {
     text-align: left;

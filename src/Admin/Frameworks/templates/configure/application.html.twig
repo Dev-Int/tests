@@ -10,7 +10,7 @@
 
     <div class="row">
         <aside class="col-md-3">
-            <nav class="menu">
+            <nav id="menu">
                 <ul>
                     <li>
                         <a href="{{ path('admin_unit_create') }}" class="{% if hasUnit %}secondary disable-link {% endif %}w100" role="button">
@@ -22,17 +22,36 @@
                             {% if hasTaxe %}<i class="fa-solid fa-square-check"></i>{% endif%} Create Taxe
                         </a>
                     </li>
-                    <li><a href="#" class="w100" role="button">Create anything else</a></li>
+                    <li>
+                        <a href="#" class="secondary disable-link w100" role="button">
+                            <i class="fa-solid fa-square-check"></i>&nbsp;
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="secondary disable-link w100" role="button">
+                            <i class="fa-solid fa-square-check"></i>&nbsp;
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="secondary disable-link w100" role="button">
+                            <i class="fa-solid fa-square-check"></i>&nbsp;
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="secondary disable-link w100" role="button">
+                            <i class="fa-solid fa-square-check"></i>&nbsp;
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </aside>
         <article class="col-md-9">
-            <p>Here you configure specific items of your application.</p>
-            <p>Select items in order.</p>
+            <p>Here you configure specific items of your application. Select items in order.</p>
+            <p>The main units needed to calculate volumes and amounts are defined here.</p>
             <p></p>
-            <p>Happy configure ;)</p>
+            <p>Happy configure <i class="fa-solid fa-face-smile-wink"></i></p>
 
-            <p>
+            <p class="bottom-element">
                 <a href="{{ path('admin_configure') }}" role="button">
                     <i class="fa-solid fa-angles-left"></i> Retour à la configuration
                 </a>

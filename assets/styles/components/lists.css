@@ -3,3 +3,6 @@ li.li-unstyled {
     list-style: none;
 }
 
+dt {
+    font-weight: calc(var(--font-weight) * 2);
+}

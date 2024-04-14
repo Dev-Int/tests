@@ -1,4 +1,15 @@
 /** Sizing bloc */
+@media (min-width: 1500px) {
+    .container {
+        max-width: 1430px
+    }
+}
+@media (min-width: 1980px) {
+    .container {
+        max-width: 1910px
+    }
+}
+
 .row {
     box-sizing: border-box;
     display: -webkit-box;
