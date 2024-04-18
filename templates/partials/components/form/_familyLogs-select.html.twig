@@ -37,7 +37,13 @@
             {% endif %}
             {% set previousLevel = level %}
         {% endfor %}
+        {% if previousLevel > 1 %}
+            {% for iter in range(1, (previousLevel)) %}
+                    </li>
+                </ul>
+            {% endfor %}
+        {% endif %}
     </ul>
 
+    {{ form_help(familyLog) }}
 </div>
-{{ form_help(familyLog) }}

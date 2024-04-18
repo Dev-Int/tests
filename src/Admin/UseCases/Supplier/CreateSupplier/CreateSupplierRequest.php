@@ -33,7 +33,7 @@ interface CreateSupplierRequest
 
     public function contact(): string;
 
-    public function cellPhone(): string;
+    public function cellphone(): string;
 
     public function familyLog(): FamilyLog;
 

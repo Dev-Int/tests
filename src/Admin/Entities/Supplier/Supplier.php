@@ -31,7 +31,7 @@ final class Supplier
         ResourceUuid $uuid,
         NameField $name,
         string $address,
-        string $zipCode,
+        string $postalCode,
         string $town,
         string $country,
         PhoneField $phone,
@@ -46,7 +46,7 @@ final class Supplier
         return new self(
             $uuid,
             $name,
-            ContactAddress::fromString($address, $zipCode, $town, $country),
+            ContactAddress::fromString($address, $postalCode, $town, $country),
             $phone,
             $email,
             $contact,

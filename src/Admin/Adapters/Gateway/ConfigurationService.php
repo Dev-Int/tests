@@ -72,4 +72,11 @@ final readonly class ConfigurationService
 
         return $hasFamilyLog && $this->isApplicationConfigured();
     }
+
+    public function isZoneStorageConfigured(): bool
+    {
+        $hasZoneStorage = $this->zoneStorageRepository->hasZoneStorage();
+
+        return $hasZoneStorage && $this->isFamilyLogConfigured();
+    }
 }

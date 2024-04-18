@@ -38,7 +38,7 @@ final class CreateSupplierTest extends TestCase
         $request->expects(self::once())->method('phone')->willReturn('+33297000000');
         $request->expects(self::once())->method('email')->willReturn('test@test.fr');
         $request->expects(self::once())->method('contact')->willReturn('Laurent');
-        $request->expects(self::once())->method('cellPhone')->willReturn('+33600000000');
+        $request->expects(self::once())->method('cellphone')->willReturn('+33600000000');
         $request->expects(self::once())->method('familyLog')->willReturn($familyLog);
         $request->expects(self::once())->method('delayDelivery')->willReturn(3);
         $request->expects(self::once())->method('orderDays')->willReturn([1, 4]);
@@ -84,7 +84,7 @@ final class CreateSupplierTest extends TestCase
         $request->expects(self::never())->method('phone')->willReturn('+33297000000');
         $request->expects(self::never())->method('email')->willReturn('test@test.fr');
         $request->expects(self::never())->method('contact')->willReturn('Laurent');
-        $request->expects(self::never())->method('cellPhone')->willReturn('+33600000000');
+        $request->expects(self::never())->method('cellphone')->willReturn('+33600000000');
         $request->expects(self::never())->method('familyLog')->willReturn($familyLog);
         $request->expects(self::never())->method('delayDelivery')->willReturn(3);
         $request->expects(self::never())->method('orderDays')->willReturn([1, 4]);

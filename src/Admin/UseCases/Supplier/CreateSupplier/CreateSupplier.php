@@ -44,7 +44,7 @@ final readonly class CreateSupplier
             PhoneField::fromString($request->phone()),
             EmailField::fromString($request->email()),
             $request->contact(),
-            PhoneField::fromString($request->cellPhone()),
+            PhoneField::fromString($request->cellphone()),
             $request->familyLog(),
             $request->delayDelivery(),
             $request->orderDays()
