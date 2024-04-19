@@ -22,5 +22,5 @@ interface SupplierRepository
 
     public function save(Supplier $supplier): void;
 
-    public function findAllSupplier(): SupplierCollection;
+    public function findAllSuppliers(): SupplierCollection;
 }

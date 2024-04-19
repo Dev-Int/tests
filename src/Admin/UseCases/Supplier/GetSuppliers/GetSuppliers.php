@@ -23,7 +23,7 @@ final readonly class GetSuppliers
 
     public function execute(): GetSuppliersResponse
     {
-        $suppliers = $this->repository->findAllSupplier();
+        $suppliers = $this->repository->findAllSuppliers();
 
         return new GetSuppliersResponse($suppliers);
     }

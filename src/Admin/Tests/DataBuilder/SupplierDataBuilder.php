@@ -49,6 +49,13 @@ final class SupplierDataBuilder implements DataBuilderInterface
         return $this;
     }
 
+    public function withUuid(string $uuid): self
+    {
+        $this->uuid = $uuid;
+
+        return $this;
+    }
+
     public function build(): Supplier
     {
         return Supplier::create(

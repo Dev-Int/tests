@@ -37,7 +37,7 @@ final class GetSuppliersTest extends TestCase
         $suppliers->add($supplier1);
         $suppliers->add($supplier2);
 
-        $supplierRepository->expects(self::once())->method('findAllSupplier')->willReturn($suppliers);
+        $supplierRepository->expects(self::once())->method('findAllSuppliers')->willReturn($suppliers);
 
         $useCase = new GetSuppliers($supplierRepository);
 

@@ -102,7 +102,7 @@ final class CreateSupplierControllerTest extends WebTestCase
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        self::assertResponseRedirects('/admin/configure');
+        self::assertResponseRedirects('/admin/suppliers');
 
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container')->children('div.flash.flash-success')->text();
@@ -192,7 +192,7 @@ final class CreateSupplierControllerTest extends WebTestCase
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        self::assertResponseRedirects('/admin/configure');
+        self::assertResponseRedirects('/admin/suppliers');
 
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container')->children('div.flash.flash-error')->text();
@@ -200,7 +200,7 @@ final class CreateSupplierControllerTest extends WebTestCase
         self::assertEquals(SupplierAlreadyExists::MESSAGE, $flash);
     }
 
-    public function testCreateSupplierFailWithNoTaxRegisteredException(): void
+    public function testCreateSupplierFailWithNoZoneStorageRegisteredException(): void
     {
         // Arrange
         $client = self::createClient();

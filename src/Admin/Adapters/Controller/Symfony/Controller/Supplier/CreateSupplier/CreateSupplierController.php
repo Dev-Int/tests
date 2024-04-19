@@ -75,11 +75,11 @@ final class CreateSupplierController extends AbstractController
             } catch (SupplierAlreadyExists $exception) {
                 $this->addFlash('error', $exception->getMessage());
 
-                return $this->redirectToRoute('admin_configure');
+                return $this->redirectToRoute('admin_suppliers_index');
             }
             $this->addFlash('success', 'Supplier created');
 
-            return $this->redirectToRoute('admin_configure', [], Response::HTTP_FOUND);
+            return $this->redirectToRoute('admin_suppliers_index', [], Response::HTTP_FOUND);
         }
 
         return $this->render('@admin/suppliers/create.html.twig', [

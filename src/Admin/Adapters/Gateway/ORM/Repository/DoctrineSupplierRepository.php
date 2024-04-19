@@ -16,6 +16,7 @@ namespace Admin\Adapters\Gateway\ORM\Repository;
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
 use Admin\Adapters\Gateway\ORM\Entity\Supplier;
 use Admin\Entities\Exception\FamilyLogNotFoundException;
+use Admin\Entities\Exception\NoSupplierRegisteredException;
 use Admin\Entities\Exception\SupplierNotFoundException;
 use Admin\Entities\Supplier\Supplier as SupplierDomain;
 use Admin\Entities\Supplier\SupplierCollection;
@@ -85,8 +86,19 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
         return $supplier->toDomain();
     }
 
-    public function findAllSupplier(): SupplierCollection
+    public function findAllSuppliers(): SupplierCollection
     {
-        return new SupplierCollection();
+        $suppliers = $this->findAll();
+        $collection = new SupplierCollection();
+
+        if ($suppliers === []) {
+            throw new NoSupplierRegisteredException();
+        }
+
+        foreach ($suppliers as $supplier) {
+            $collection->add($supplier->toDomain());
+        }
+
+        return $collection;
     }
 }

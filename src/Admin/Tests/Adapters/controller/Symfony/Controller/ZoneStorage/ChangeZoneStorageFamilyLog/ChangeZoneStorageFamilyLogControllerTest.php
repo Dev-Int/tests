@@ -49,7 +49,7 @@ final class ChangeZoneStorageFamilyLogControllerTest extends WebTestCase
         $familyLogRepository->save($familyLog2);
         $zoneStorage = $zoneStorageBuilder->create('Réserve négative', $familyLog1)->build();
         $zoneStorageRepository->save($zoneStorage);
-        $zoneStorages = $zoneStorageRepository->findAllZone();
+        $zoneStorages = $zoneStorageRepository->findAllZones();
         self::assertCount(1, $zoneStorages);
 
         $familyLogOrm = $familyLogRepository->find($familyLog2->uuid()->toString());
@@ -70,7 +70,7 @@ final class ChangeZoneStorageFamilyLogControllerTest extends WebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/zone_storages');
 
-        $zoneStorages = $zoneStorageRepository->findAllZone();
+        $zoneStorages = $zoneStorageRepository->findAllZones();
         self::assertCount(1, $zoneStorages);
 
         $admin = $client->followRedirect();

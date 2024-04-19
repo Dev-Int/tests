@@ -133,7 +133,7 @@ final class DoctrineZoneStorageRepository extends ServiceEntityRepository implem
         $this->_em->flush();
     }
 
-    public function findAllZone(): ZoneStorageCollection
+    public function findAllZones(): ZoneStorageCollection
     {
         $zoneStorages = $this->findAll();
         $collection = new ZoneStorageCollection();
