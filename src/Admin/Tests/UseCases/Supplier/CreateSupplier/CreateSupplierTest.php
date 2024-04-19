@@ -20,6 +20,9 @@ use Admin\UseCases\Supplier\CreateSupplier\CreateSupplier;
 use Admin\UseCases\Supplier\CreateSupplier\CreateSupplierRequest;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @group unitTest
+ */
 final class CreateSupplierTest extends TestCase
 {
     public function testCreateSupplierSucceed(): void

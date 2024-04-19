@@ -164,7 +164,7 @@ final class CreateSupplierControllerTest extends WebTestCase
 
         /** @var DoctrineSupplierRepository $supplierRepository */
         $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
-        $supplier = (new SupplierDataBuilder())->create('Dev-Int Création', $familyLogOrm)->build();
+        $supplier = (new SupplierDataBuilder())->create('Dev-Int Création', $familyLog)->build();
         $supplierRepository->save($supplier);
 
         // Act

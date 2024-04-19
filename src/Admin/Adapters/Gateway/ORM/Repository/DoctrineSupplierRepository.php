@@ -18,6 +18,7 @@ use Admin\Adapters\Gateway\ORM\Entity\Supplier;
 use Admin\Entities\Exception\FamilyLogNotFoundException;
 use Admin\Entities\Exception\SupplierNotFoundException;
 use Admin\Entities\Supplier\Supplier as SupplierDomain;
+use Admin\Entities\Supplier\SupplierCollection;
 use Admin\UseCases\Gateway\SupplierRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
@@ -82,5 +83,10 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
         }
 
         return $supplier->toDomain();
+    }
+
+    public function findAllSupplier(): SupplierCollection
+    {
+        return new SupplierCollection();
     }
 }

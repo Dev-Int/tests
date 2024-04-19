@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Tests\DataBuilder;
 
-use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
+use Admin\Entities\FamilyLog\FamilyLog;
 use Admin\Entities\Supplier\Supplier;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\EmailField;
@@ -62,7 +62,7 @@ final class SupplierDataBuilder implements DataBuilderInterface
             EmailField::fromString($this->email),
             $this->contact,
             PhoneField::fromString($this->cellphone),
-            $this->familyLog->toDomain(),
+            $this->familyLog,
             $this->delayDelivery,
             $this->orderDays
         );

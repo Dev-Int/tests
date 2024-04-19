@@ -11,16 +11,13 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\UseCases\Gateway;
+namespace Admin\UseCases\Supplier\GetSuppliers;
 
-use Admin\Entities\Supplier\Supplier;
 use Admin\Entities\Supplier\SupplierCollection;
 
-interface SupplierRepository
+final class GetSuppliersResponse
 {
-    public function exists(string $name): bool;
-
-    public function save(Supplier $supplier): void;
-
-    public function findAllSupplier(): SupplierCollection;
+    public function __construct(public SupplierCollection $suppliers)
+    {
+    }
 }
