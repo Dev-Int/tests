@@ -67,8 +67,8 @@ final class Supplier
         private ContactAddress $address,
         private PhoneField $phone,
         private EmailField $email,
-        private readonly string $contact,
-        private readonly PhoneField $cellphone,
+        private string $contact,
+        private PhoneField $cellphone,
         private readonly FamilyLog $familyLog,
         private readonly int $delayDelivery,
         private readonly array $orderDays,
@@ -113,6 +113,12 @@ final class Supplier
     public function email(): EmailField
     {
         return $this->email;
+    }
+
+    public function changeContact(string $contact, PhoneField $cellphone): void
+    {
+        $this->contact = $contact;
+        $this->cellphone = $cellphone;
     }
 
     public function contact(): string

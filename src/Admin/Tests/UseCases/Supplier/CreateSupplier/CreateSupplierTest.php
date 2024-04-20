@@ -63,12 +63,12 @@ final class CreateSupplierTest extends TestCase
         self::assertSame('+33297000000', $supplier->phone()->toNumber());
         self::assertSame('test@test.fr', $supplier->email()->toString());
         self::assertSame('Laurent', $supplier->contact());
-        self::assertSame('dev-int-creation', $supplier->slug());
         self::assertSame('+33600000000', $supplier->cellphone()->toNumber());
         self::assertSame('Surgelé', $supplier->familyLog()->label()->toString());
         self::assertSame(3, $supplier->delayDelivery());
         self::assertSame([1, 4], $supplier->orderDays());
         self::assertTrue($supplier->active());
+        self::assertSame('dev-int-creation', $supplier->slug());
     }
 
     public function testCreateSupplierThrowAlreadyExistsException(): void
