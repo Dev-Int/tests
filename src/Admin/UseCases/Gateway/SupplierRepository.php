@@ -26,6 +26,8 @@ interface SupplierRepository
 
     public function renameSupplier(Supplier $supplier): void;
 
+    public function changeDomiciliation(Supplier $supplier): void;
+
     public function findAllSuppliers(): SupplierCollection;
 
     public function findBySlug(string $slug): Supplier;

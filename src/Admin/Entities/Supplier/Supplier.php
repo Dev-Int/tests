@@ -64,9 +64,9 @@ final class Supplier
     private function __construct(
         private readonly ResourceUuid $uuid,
         private NameField $name,
-        private readonly ContactAddress $address,
-        private readonly PhoneField $phone,
-        private readonly EmailField $email,
+        private ContactAddress $address,
+        private PhoneField $phone,
+        private EmailField $email,
         private readonly string $contact,
         private readonly PhoneField $cellphone,
         private readonly FamilyLog $familyLog,
@@ -91,6 +91,13 @@ final class Supplier
     public function name(): NameField
     {
         return $this->name;
+    }
+
+    public function changeDomiciliation(ContactAddress $address, PhoneField $phone, EmailField $email): void
+    {
+        $this->address = $address;
+        $this->phone = $phone;
+        $this->email = $email;
     }
 
     public function address(): ContactAddress
