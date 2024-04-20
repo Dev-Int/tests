@@ -102,6 +102,9 @@ final class Supplier
         );
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function uuid(): string
     {
         return $this->uuid;

@@ -63,7 +63,7 @@ final class Supplier
      */
     private function __construct(
         private readonly ResourceUuid $uuid,
-        private readonly NameField $name,
+        private NameField $name,
         private readonly ContactAddress $address,
         private readonly PhoneField $phone,
         private readonly EmailField $email,
@@ -80,6 +80,12 @@ final class Supplier
     public function uuid(): ResourceUuid
     {
         return $this->uuid;
+    }
+
+    public function rename(NameField $name): void
+    {
+        $this->name = $name;
+        $this->slug = $name->slugify();
     }
 
     public function name(): NameField

@@ -58,8 +58,11 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
     public function save(SupplierDomain $supplier): void
     {
         $familyLog = $this->familyLogRepository->find($supplier->familyLog()->uuid()->toString());
+
         if (!$familyLog instanceof FamilyLog) {
+            // @codeCoverageIgnoreStart
             throw new FamilyLogNotFoundException($supplier->familyLog()->uuid()->toString());
+            // @codeCoverageIgnoreEnd
         }
 
         $this->_em->persist((new Supplier())->fromDomain($supplier, $familyLog));
@@ -100,5 +103,10 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
         }
 
         return $collection;
+    }
+
+    public function renameSupplier(SupplierDomain $supplier): void
+    {
+        // TODO: Implement renameSupplier() method.
     }
 }

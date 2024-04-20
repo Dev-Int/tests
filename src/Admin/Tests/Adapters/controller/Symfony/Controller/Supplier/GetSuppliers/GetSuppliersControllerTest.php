@@ -22,6 +22,9 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * @group functionalTest
+ */
 final class GetSuppliersControllerTest extends WebTestCase
 {
     private const GET_SUPPLIERS_URI = '/admin/suppliers';

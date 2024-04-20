@@ -35,6 +35,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 use function PHPUnit\Framework\assertInstanceOf;
 
+/**
+ * @group functionalTest
+ */
 final class CreateSupplierControllerTest extends WebTestCase
 {
     private const CREATE_SUPPLIER_URI = '/admin/suppliers/create';
