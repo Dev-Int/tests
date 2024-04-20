@@ -25,7 +25,7 @@
                 <li class="li-unstyled flex-between">
                     {{ supplier.name }}
                     <span>
-                        <a href="#" role="button">Update supplier</a>
+                        <a href="{{ path('admin_suppliers_rename', {'slug': supplier.slug}) }}" role="button">Rename supplier</a>
                         <a href="#" role="button">Update supplier</a>
                     </span>
                 </li>

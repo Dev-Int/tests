@@ -20,6 +20,8 @@ interface SupplierRepository
 {
     public function exists(string $name): bool;
 
+    public function hasSupplier(): bool;
+
     public function save(Supplier $supplier): void;
 
     public function renameSupplier(Supplier $supplier): void;

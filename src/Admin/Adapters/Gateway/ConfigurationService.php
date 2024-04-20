@@ -15,6 +15,7 @@ namespace Admin\Adapters\Gateway;
 
 use Admin\UseCases\Gateway\CompanyRepository;
 use Admin\UseCases\Gateway\FamilyLogRepository;
+use Admin\UseCases\Gateway\SupplierRepository;
 use Admin\UseCases\Gateway\TaxRepository;
 use Admin\UseCases\Gateway\UnitRepository;
 use Admin\UseCases\Gateway\ZoneStorageRepository;
@@ -26,18 +27,16 @@ final readonly class ConfigurationService
         private UnitRepository $unitRepository,
         private TaxRepository $taxRepository,
         private FamilyLogRepository $familyLogRepository,
-        private ZoneStorageRepository $zoneStorageRepository
+        private ZoneStorageRepository $zoneStorageRepository,
+        private SupplierRepository $supplierRepository
     ) {
     }
 
     public function isConfigured(): bool
     {
-        $hasCompany = $this->companyRepository->hasCompany();
-        $hasApplication = $this->unitRepository->hasUnit() && $this->taxRepository->hasTax();
-        $hasFamilyLog = $this->familyLogRepository->hasFamilyLog();
-        $hasZoneStorage = $this->zoneStorageRepository->hasZoneStorage();
+        $hasSupplier = $this->supplierRepository->hasSupplier();
 
-        return $hasCompany && $hasApplication && $hasFamilyLog && $hasZoneStorage;
+        return $this->isZoneStorageConfigured() && $hasSupplier;
     }
 
     public function isCompanyConfigured(): bool

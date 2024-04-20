@@ -98,8 +98,9 @@ final class CreateSupplierControllerTest extends WebTestCase
             'createSupplier[cellphone]' => '+33600000000',
             'createSupplier[familyLog]' => $familyLogOrm->uuid(),
             'createSupplier[delayDelivery]' => 3,
-            'createSupplier[orderDays][1]' => 1,
-            'createSupplier[orderDays][4]' => 4,
+            'createSupplier[orderDays][0]' => 0,
+            'createSupplier[orderDays][3]' => 3,
+            'createSupplier[orderDays][5]' => 5,
         ]);
         $client->submit($form);
 
@@ -125,7 +126,7 @@ final class CreateSupplierControllerTest extends WebTestCase
         self::assertSame('+33600000000', $supplierCreated->cellphone());
         self::assertSame('Surgelé', $supplierCreated->familyLog()->label());
         self::assertSame(3, $supplierCreated->delayDelivery());
-        self::assertSame([1, 4], $supplierCreated->orderDays());
+        self::assertSame([0, 3, 5], $supplierCreated->orderDays());
         self::assertTrue($supplierCreated->active());
         self::assertSame('dev-int-creation', $supplierCreated->slug());
     }

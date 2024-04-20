@@ -48,7 +48,8 @@ final class CreateSupplierDto
         /** @var array<int> */
         #[Assert\NotBlank]
         #[Assert\All([
-            new Assert\Positive(),
+            new Assert\PositiveOrZero(),
+            new Assert\LessThanOrEqual(5),
         ])]
         public array $orderDays = [],
     ) {

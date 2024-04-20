@@ -23,6 +23,8 @@ use Admin\Entities\Supplier\SupplierCollection;
 use Admin\UseCases\Gateway\SupplierRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\UnexpectedResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -55,6 +57,28 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
         return $supplier !== null;
     }
 
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException|UnexpectedResultException
+     */
+    public function hasSupplier(): bool
+    {
+        $alias = self::ALIAS;
+        $count = $this->createQueryBuilder($alias)
+            ->select("COUNT({$alias}.slug)")
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+
+        if (!\is_int($count)) {
+            // @codeCoverageIgnoreStart
+            throw new UnexpectedResultException('Integer expected!');
+            // @codeCoverageIgnoreEnd
+        }
+
+        return $count > 0;
+    }
+
     public function save(SupplierDomain $supplier): void
     {
         $familyLog = $this->familyLogRepository->find($supplier->familyLog()->uuid()->toString());
@@ -67,6 +91,39 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
 
         $this->_em->persist((new Supplier())->fromDomain($supplier, $familyLog));
         $this->_em->flush();
+    }
+
+    public function renameSupplier(SupplierDomain $supplier): void
+    {
+        $supplierToUpdate = $this->find($supplier->uuid()->toString());
+
+        if (!$supplierToUpdate instanceof Supplier) {
+            // @codeCoverageIgnoreStart
+            throw new SupplierNotFoundException($supplier->uuid()->toString());
+            // @codeCoverageIgnoreEnd
+        }
+
+        $supplierToUpdate->setName($supplier->name()->toString())
+            ->setSlug($supplier->slug())
+        ;
+
+        $this->_em->flush();
+    }
+
+    public function findAllSuppliers(): SupplierCollection
+    {
+        $suppliers = $this->findAll();
+        $collection = new SupplierCollection();
+
+        if ($suppliers === []) {
+            throw new NoSupplierRegisteredException();
+        }
+
+        foreach ($suppliers as $supplier) {
+            $collection->add($supplier->toDomain());
+        }
+
+        return $collection;
     }
 
     /**
@@ -89,38 +146,5 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
         }
 
         return $supplier->toDomain();
-    }
-
-    public function findAllSuppliers(): SupplierCollection
-    {
-        $suppliers = $this->findAll();
-        $collection = new SupplierCollection();
-
-        if ($suppliers === []) {
-            throw new NoSupplierRegisteredException();
-        }
-
-        foreach ($suppliers as $supplier) {
-            $collection->add($supplier->toDomain());
-        }
-
-        return $collection;
-    }
-
-    public function renameSupplier(SupplierDomain $supplier): void
-    {
-        $supplierToUpdate = $this->find($supplier->uuid()->toString());
-
-        if (!$supplierToUpdate instanceof Supplier) {
-            // @codeCoverageIgnoreStart
-            throw new SupplierNotFoundException($supplier->uuid()->toString());
-            // @codeCoverageIgnoreEnd
-        }
-
-        $supplierToUpdate->setName($supplier->name()->toString())
-            ->setSlug($supplier->slug())
-        ;
-
-        $this->_em->flush();
     }
 }

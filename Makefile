@@ -117,7 +117,7 @@ tc: phpunit.xml clean-db-test ## Launch all tests with coverage
 
 
 ## —— Coding standards ✨ ——————————————————————————————————————————————————————
-qa: schema-validate phpcs stan cs-fixer rector # lint ## Launch all static analysis tools
+qa: schema-validate cs-fixer phpcs stan rector # lint ## Launch all static analysis tools
 	$(SYMFONY) lint:yaml config
 	$(SYMFONY) lint:twig templates/ src/**/Frameworks/templates/
 	bin/deptrac analyse --config-file=deptrac.yaml
