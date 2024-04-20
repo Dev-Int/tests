@@ -122,9 +122,28 @@ final class Supplier
         return $this->name;
     }
 
+    public function fullAddress(): string
+    {
+        return sprintf("%s\n%s %s, %s", $this->address, $this->postalCode, $this->town, $this->country);
+    }
+
+    public function setAddress(string $address): self
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
     public function address(): string
     {
         return $this->address;
+    }
+
+    public function setPostalCode(string $postalCode): self
+    {
+        $this->postalCode = $postalCode;
+
+        return $this;
     }
 
     public function postalCode(): string
@@ -132,9 +151,23 @@ final class Supplier
         return $this->postalCode;
     }
 
+    public function setTown(string $town): self
+    {
+        $this->town = $town;
+
+        return $this;
+    }
+
     public function town(): string
     {
         return $this->town;
+    }
+
+    public function setCountry(string $country): self
+    {
+        $this->country = $country;
+
+        return $this;
     }
 
     public function country(): string
@@ -142,9 +175,23 @@ final class Supplier
         return $this->country;
     }
 
+    public function setPhone(string $phone): self
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
     public function phone(): string
     {
         return $this->phone;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
     }
 
     public function email(): string

@@ -112,7 +112,23 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
 
     public function changeDomiciliation(SupplierDomain $supplier): void
     {
-        // TODO: Implement changeDomiciliation() method.
+        $supplierToUpdate = $this->find($supplier->uuid()->toString());
+
+        if (!$supplierToUpdate instanceof Supplier) {
+            // @codeCoverageIgnoreStart
+            throw new SupplierNotFoundException($supplier->uuid()->toString());
+            // @codeCoverageIgnoreEnd
+        }
+
+        $supplierToUpdate->setAddress($supplier->address()->address())
+            ->setPostalCode($supplier->address()->postalCode())
+            ->setTown($supplier->address()->town())
+            ->setCountry($supplier->address()->country())
+            ->setPhone($supplier->phone()->toNumber())
+            ->setEmail($supplier->email()->toString())
+        ;
+
+        $this->_em->flush();
     }
 
     public function findAllSuppliers(): SupplierCollection

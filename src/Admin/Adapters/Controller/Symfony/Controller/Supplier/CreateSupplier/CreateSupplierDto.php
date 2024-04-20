@@ -27,18 +27,22 @@ final class CreateSupplierDto
         #[Assert\NotBlank]
         public string $address = '',
         #[Assert\NotBlank]
+        #[Assert\Regex('/\d{5}/')]
+        #[Assert\Type(type: 'numeric')]
         public string $postalCode = '',
         #[Assert\NotBlank]
         public string $town = '',
         #[Assert\NotBlank]
         public string $country = '',
         #[Assert\NotBlank]
+        #[Assert\Regex('/^(?:0|\(?\+33\)?\s?|0033\s?)[1-79](?:[\.\-\s]?\d\d){4}$/')]
         public string $phone = '',
         #[Assert\NotBlank]
         public string $email = '',
         #[Assert\NotBlank]
         public string $contact = '',
         #[Assert\NotBlank]
+        #[Assert\Regex('/^(?:0|\(?\+33\)?\s?|0033\s?)[1-79](?:[\.\-\s]?\d\d){4}$/')]
         public string $cellphone = '',
         #[Assert\NotBlank]
         #[Assert\Valid]
