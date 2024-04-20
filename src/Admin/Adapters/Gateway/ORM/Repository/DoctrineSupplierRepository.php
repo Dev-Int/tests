@@ -133,7 +133,19 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
 
     public function changeContact(SupplierDomain $supplier): void
     {
-        // TODO: Implement changeContact() method.
+        $supplierToUpdate = $this->find($supplier->uuid()->toString());
+
+        if (!$supplierToUpdate instanceof Supplier) {
+            // @codeCoverageIgnoreStart
+            throw new SupplierNotFoundException($supplier->uuid()->toString());
+            // @codeCoverageIgnoreEnd
+        }
+
+        $supplierToUpdate->setContact($supplier->contact())
+            ->setCellphone($supplier->cellphone()->toNumber())
+        ;
+
+        $this->_em->flush();
     }
 
     public function findAllSuppliers(): SupplierCollection

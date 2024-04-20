@@ -27,7 +27,7 @@
                     <span>
                         <a href="{{ path('admin_suppliers_rename', {'slug': supplier.slug}) }}" role="button">Rename</a>
                         <a href="{{ path('admin_supplier_change-domiciliation', {'slug': supplier.slug}) }}" role="button">Change domiciliation</a>
-                        <a href="#" role="button">Change contact</a>
+                        <a href="{{ path('admin_suppliers_change-contact', {'slug': supplier.slug}) }}" role="button">Change contact</a>
                         <a href="#" role="button">Change delivery specification</a>
                     </span>
                 </li>

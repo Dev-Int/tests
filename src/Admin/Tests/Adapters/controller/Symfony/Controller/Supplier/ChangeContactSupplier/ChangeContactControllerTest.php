@@ -11,7 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Tests\Adapters\controller\Symfony\Controller\Supplier\ChangeDomiciliationSupplier;
+namespace Admin\Tests\Adapters\controller\Symfony\Controller\Supplier\ChangeContactSupplier;
 
 use Admin\Adapters\Gateway\ORM\Entity\Supplier;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
@@ -25,11 +25,11 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * @group functionalTest
  */
-final class ChangeDomiciliationSupplierControllerTest extends WebTestCase
+final class ChangeContactControllerTest extends WebTestCase
 {
-    public const CHANGE_DOMICILIATION_SUPPLIER_URI = '/admin/suppliers/%s/change-domiciliation';
+    private const CHANGE_CONTACT_SUPPLIER = '/admin/suppliers/%s/change-contact';
 
-    public function testChangeDomiciliationWillSucceed(): void
+    public function testChangeContactSupplierWillSucceed(): void
     {
         // Arrange
         $client = self::createClient();
@@ -48,22 +48,15 @@ final class ChangeDomiciliationSupplierControllerTest extends WebTestCase
         self::assertCount(1, $suppliers);
 
         // Act
-        $crawler = $client->request(
-            Request::METHOD_GET,
-            sprintf(self::CHANGE_DOMICILIATION_SUPPLIER_URI, 'supplier-1')
-        );
+        $crawler = $client->request(Request::METHOD_GET, sprintf(self::CHANGE_CONTACT_SUPPLIER, $supplier->slug()));
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Change domiciliation "Supplier 1"');
+        self::assertSelectorTextContains('h1', 'Change contact "Supplier 1"');
 
         $form = $crawler->selectButton('Update')->form([
-            'changeDomiciliationSupplier[address]' => '5, rue des Fleurs',
-            'changeDomiciliationSupplier[postalCode]' => '45000',
-            'changeDomiciliationSupplier[town]' => 'Orléans',
-            'changeDomiciliationSupplier[country]' => 'France',
-            'changeDomiciliationSupplier[phone]' => '+33238000000',
-            'changeDomiciliationSupplier[email]' => 'test@test.fr',
-            'changeDomiciliationSupplier[slug]' => 'supplier-1',
+            'changeContactSupplier[contact]' => 'David',
+            'changeContactSupplier[cellphone]' => '+33600000001',
+            'changeContactSupplier[slug]' => 'supplier-1',
         ]);
         $client->submit($form);
 
@@ -78,9 +71,7 @@ final class ChangeDomiciliationSupplierControllerTest extends WebTestCase
 
         /** @var Supplier $supplierUpdated */
         $supplierUpdated = $supplierRepository->findOneBy(['slug' => 'supplier-1']);
-        self::assertSame('Supplier 1', $supplierUpdated->name());
-        self::assertSame("5, rue des Fleurs\n45000 Orléans, France", $supplierUpdated->fullAddress());
-        $suppliers = $supplierRepository->findAllSuppliers();
-        self::assertCount(1, $suppliers);
+        self::assertSame('David', $supplierUpdated->contact());
+        self::assertSame('+33600000001', $supplierUpdated->cellphone());
     }
 }

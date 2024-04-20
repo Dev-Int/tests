@@ -199,9 +199,23 @@ final class Supplier
         return $this->email;
     }
 
+    public function setContact(string $contact): self
+    {
+        $this->contact = $contact;
+
+        return $this;
+    }
+
     public function contact(): string
     {
         return $this->contact;
+    }
+
+    public function setCellphone(string $cellphone): self
+    {
+        $this->cellphone = $cellphone;
+
+        return $this;
     }
 
     public function cellphone(): string
