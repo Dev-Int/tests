@@ -110,6 +110,13 @@ final class Supplier
         return $this->uuid;
     }
 
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
     public function name(): string
     {
         return $this->name;
@@ -178,6 +185,13 @@ final class Supplier
     public function active(): bool
     {
         return $this->active;
+    }
+
+    public function setSlug(string $slug): self
+    {
+        $this->slug = $slug;
+
+        return $this;
     }
 
     public function slug(): string

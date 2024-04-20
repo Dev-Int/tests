@@ -106,7 +106,9 @@ final class DoctrineZoneStorageRepository extends ServiceEntityRepository implem
             // @codeCoverageIgnoreEnd
         }
 
-        $zoneStorageToUpdate->setLabel($zoneStorage->label()->toString())->setSlug($zoneStorage->slug());
+        $zoneStorageToUpdate->setLabel($zoneStorage->label()->toString())
+            ->setSlug($zoneStorage->slug())
+        ;
 
         $this->_em->flush();
     }

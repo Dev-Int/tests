@@ -21,7 +21,7 @@ final class SupplierNotFoundException extends \DomainException implements \JsonS
 
     public const MESSAGE = 'Supplier not found.';
 
-    public function __construct(public readonly string $slug, ?\Throwable $previous = null)
+    public function __construct(public readonly string $identifier, ?\Throwable $previous = null)
     {
         parent::__construct(self::MESSAGE, 0, $previous);
     }
@@ -34,7 +34,7 @@ final class SupplierNotFoundException extends \DomainException implements \JsonS
     public function jsonSerialize(): iterable
     {
         return $this->toJson() + [
-            'slug' => $this->slug,
+            'identifier' => $this->identifier,
         ];
     }
 }

@@ -83,7 +83,9 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
         ;
 
         if (!$supplier instanceof Supplier) {
+            // @codeCoverageIgnoreStart
             throw new SupplierNotFoundException($slug);
+            // @codeCoverageIgnoreEnd
         }
 
         return $supplier->toDomain();
@@ -107,6 +109,18 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
 
     public function renameSupplier(SupplierDomain $supplier): void
     {
-        // TODO: Implement renameSupplier() method.
+        $supplierToUpdate = $this->find($supplier->uuid()->toString());
+
+        if (!$supplierToUpdate instanceof Supplier) {
+            // @codeCoverageIgnoreStart
+            throw new SupplierNotFoundException($supplier->uuid()->toString());
+            // @codeCoverageIgnoreEnd
+        }
+
+        $supplierToUpdate->setName($supplier->name()->toString())
+            ->setSlug($supplier->slug())
+        ;
+
+        $this->_em->flush();
     }
 }
