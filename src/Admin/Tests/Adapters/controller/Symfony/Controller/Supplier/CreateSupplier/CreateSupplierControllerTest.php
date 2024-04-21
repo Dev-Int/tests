@@ -98,9 +98,12 @@ final class CreateSupplierControllerTest extends WebTestCase
             'createSupplier[cellphone]' => '+33600000000',
             'createSupplier[familyLog]' => $familyLogOrm->uuid(),
             'createSupplier[delayDelivery]' => 3,
-            'createSupplier[orderDays][0]' => 0,
-            'createSupplier[orderDays][3]' => 3,
-            'createSupplier[orderDays][5]' => 5,
+            'createSupplier[orderDays][0]' => true,
+            'createSupplier[orderDays][1]' => false,
+            'createSupplier[orderDays][2]' => false,
+            'createSupplier[orderDays][3]' => true,
+            'createSupplier[orderDays][4]' => false,
+            'createSupplier[orderDays][5]' => true,
         ]);
         $client->submit($form);
 
@@ -189,8 +192,12 @@ final class CreateSupplierControllerTest extends WebTestCase
             'createSupplier[cellphone]' => '+33600000000',
             'createSupplier[familyLog]' => $familyLogOrm->uuid(),
             'createSupplier[delayDelivery]' => 3,
-            'createSupplier[orderDays][1]' => 1,
-            'createSupplier[orderDays][4]' => 4,
+            'createSupplier[orderDays][0]' => false,
+            'createSupplier[orderDays][1]' => true,
+            'createSupplier[orderDays][2]' => false,
+            'createSupplier[orderDays][3]' => false,
+            'createSupplier[orderDays][4]' => true,
+            'createSupplier[orderDays][5]' => false,
         ]);
         $client->submit($form);
 

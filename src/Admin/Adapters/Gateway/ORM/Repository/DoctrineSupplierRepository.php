@@ -150,7 +150,26 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
 
     public function changeDeliverySpecification(SupplierDomain $supplier): void
     {
-        // TODO: Implement changeDeliverySpecification() method.
+        $supplierToUpdate = $this->find($supplier->uuid()->toString());
+
+        if (!$supplierToUpdate instanceof Supplier) {
+            // @codeCoverageIgnoreStart
+            throw new SupplierNotFoundException($supplier->uuid()->toString());
+            // @codeCoverageIgnoreEnd
+        }
+        $familyLog = $this->familyLogRepository->find($supplier->familyLog()->uuid()->toString());
+        if (!$familyLog instanceof FamilyLog) {
+            // @codeCoverageIgnoreStart
+            throw new FamilyLogNotFoundException($supplier->familyLog()->uuid()->toString());
+            // @codeCoverageIgnoreEnd
+        }
+
+        $supplierToUpdate->setFamilyLog($familyLog)
+            ->setDelayDelivery($supplier->delayDelivery())
+            ->setOrderDays($supplier->orderDays())
+        ;
+
+        $this->_em->flush();
     }
 
     public function findAllSuppliers(): SupplierCollection

@@ -21,8 +21,9 @@ final readonly class ChangeDeliverySpecificationSupplier
     {
     }
 
-    public function execute(ChangeDeliverySpecificationSupplierRequest $request): ChangeDeliverySpecificationSupplierResponse
-    {
+    public function execute(
+        ChangeDeliverySpecificationSupplierRequest $request
+    ): ChangeDeliverySpecificationSupplierResponse {
         $supplier = $this->supplierRepository->findBySlug($request->slug());
 
         $supplier->changeDeliverySpecification(

@@ -223,14 +223,38 @@ final class Supplier
         return $this->cellphone;
     }
 
+    public function setFamilyLog(FamilyLog $familyLog): self
+    {
+        $this->familyLog = $familyLog;
+
+        return $this;
+    }
+
     public function familyLog(): FamilyLog
     {
         return $this->familyLog;
     }
 
+    public function setDelayDelivery(int $delayDelivery): self
+    {
+        $this->delayDelivery = $delayDelivery;
+
+        return $this;
+    }
+
     public function delayDelivery(): int
     {
         return $this->delayDelivery;
+    }
+
+    /**
+     * @param array<int> $orderDays
+     */
+    public function setOrderDays(array $orderDays): self
+    {
+        $this->orderDays = $orderDays;
+
+        return $this;
     }
 
     /**
