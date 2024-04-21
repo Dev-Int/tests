@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Suppliers | {{ parent() }}
+{% endblock %}
+
+{% block body %}
+
+    <h1><i class="fa-solid fa-truck-ramp-box"></i> Suppliers</h1>
+
+    <div class="row">
+        <aside class="col-md-3">
+            <nav class="menu">
+                <ul>
+                    <li><a href="{{ path('admin_suppliers_create') }}" class="w100" role="button">Create Supplier</a></li>
+                    <li>
+                        {{ include('@admin/partials/components/_back-admin-button.html.twig') }}
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+        <article class="col-md-9">
+            <ul class="w100">
+                {% for supplier in suppliers %}
+                <li class="li-unstyled flex-between">
+                    {{ supplier.name }}
+                    <span>
+                        <a href="{{ path('admin_suppliers_rename', {'slug': supplier.slug}) }}" role="button">Rename</a>
+                        <a href="{{ path('admin_supplier_change-domiciliation', {'slug': supplier.slug}) }}" role="button">Change domiciliation</a>
+                        <a href="{{ path('admin_suppliers_change-contact', {'slug': supplier.slug}) }}" role="button">Change contact</a>
+                        <a href="{{ path('admin_suppliers_change-delivery-specification', {'slug': supplier.slug}) }}" role="button">Change delivery specification</a>
+                    </span>
+                </li>
+                {% endfor %}
+            </ul>
+        </article>
+    </div>
+
+{% endblock %}
+

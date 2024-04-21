@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Change contact Supplier | {{ parent() }}
+{% endblock %}
+
+{% block body %}
+
+    <h1><i class="fa-solid fa-truck-ramp-box"></i> Change contact "{{ supplier.name }}"</h1>
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    {{ form_row(form.contact) }}
+    {{ form_row(form.cellphone) }}
+
+    <div class="grid">
+        <a href="{{ path('admin_suppliers_index') }}" class="secondary" role="button">Annuler</a>
+        <button type="submit">Update</button>
+    </div>
+
+    {{ form_end(form) }}
+
+{% endblock %}
+

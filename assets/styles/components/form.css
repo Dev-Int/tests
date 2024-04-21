@@ -6,3 +6,8 @@ label.required:before {
     content: "*";
     padding-right: calc(var(--block-spacing-horizontal) * .25);
 }
+
+div.grid:has(a[role="button"]),
+div.grid:has(button) {
+    margin-top: var(--block-spacing-vertical);
+}

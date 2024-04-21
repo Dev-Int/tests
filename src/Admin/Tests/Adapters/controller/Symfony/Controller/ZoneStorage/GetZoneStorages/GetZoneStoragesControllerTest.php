@@ -65,7 +65,7 @@ final class GetZoneStoragesControllerTest extends WebTestCase
         self::assertCount(2, $list);
     }
 
-    public function testGetTaxesFailWithNoTaxRegisteredException(): void
+    public function testGetZoneStoragesFailWithNoZoneStorageRegisteredException(): void
     {
         // Arrange
         $client = self::createClient();

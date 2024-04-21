@@ -23,7 +23,7 @@ final readonly class GetZoneStorages
 
     public function execute(): GetZoneStoragesResponse
     {
-        $zoneStorages = $this->repository->findAllZone();
+        $zoneStorages = $this->repository->findAllZones();
 
         return new GetZoneStoragesResponse($zoneStorages);
     }

@@ -37,7 +37,7 @@ final class GetZoneStoragesTest extends TestCase
         $zoneStorages->add($zoneStorage1);
         $zoneStorages->add($zoneStorage2);
 
-        $zoneStorageRepository->expects(self::once())->method('findAllZone')->willReturn($zoneStorages);
+        $zoneStorageRepository->expects(self::once())->method('findAllZones')->willReturn($zoneStorages);
 
         $useCase = new GetZoneStorages($zoneStorageRepository);
 

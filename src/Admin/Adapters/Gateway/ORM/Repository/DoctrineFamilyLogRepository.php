@@ -81,7 +81,7 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
 
         if (!\is_int($count)) {
             // @codeCoverageIgnoreStart
-            throw new UnexpectedResultException();
+            throw new UnexpectedResultException('Integer expected!');
             // @codeCoverageIgnoreEnd
         }
 

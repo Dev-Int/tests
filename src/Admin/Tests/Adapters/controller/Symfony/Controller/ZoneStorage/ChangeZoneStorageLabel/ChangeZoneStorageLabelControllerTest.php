@@ -47,7 +47,7 @@ final class ChangeZoneStorageLabelControllerTest extends WebTestCase
         $familyLogRepository->save($familyLog);
         $zoneStorage = $zoneStorageBuilder->create('Réserve négative', $familyLog)->build();
         $zoneStorageRepository->save($zoneStorage);
-        $zoneStorages = $zoneStorageRepository->findAllZone();
+        $zoneStorages = $zoneStorageRepository->findAllZones();
         self::assertCount(1, $zoneStorages);
 
         // Act
@@ -75,7 +75,7 @@ final class ChangeZoneStorageLabelControllerTest extends WebTestCase
         $zoneStorageUpdated = $zoneStorageRepository->findOneBy(['slug' => 'reserve-positive']);
         self::assertSame('Réserve positive', $zoneStorageUpdated->label());
         self::assertEquals('Surgelé', $zoneStorageUpdated->familyLog()->label());
-        $zoneStorages = $zoneStorageRepository->findAllZone();
+        $zoneStorages = $zoneStorageRepository->findAllZones();
         self::assertCount(1, $zoneStorages);
     }
 }

@@ -37,7 +37,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" role="button" class="{% if hasSupplier %}secondary disable-link {% endif %}w100">
+                        <a href="{{ path('admin_suppliers_create') }}" role="button" class="{% if hasSupplier %}secondary disable-link {% endif %}w100">
                             {% if hasSupplier %}<i class="fa-solid fa-square-check"></i>
                             {% else %}<i class="fa-solid fa-truck-ramp-box"></i>{% endif %} Create Supplier
                         </a>

@@ -57,7 +57,7 @@ final class DoctrineCompanyRepository extends ServiceEntityRepository implements
 
         if (!\is_int($count)) {
             // @codeCoverageIgnoreStart
-            throw new UnexpectedResultException();
+            throw new UnexpectedResultException('Integer expected!');
             // @codeCoverageIgnoreEnd
         }
 

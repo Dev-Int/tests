@@ -52,6 +52,11 @@
     max-width: 100%;
 }
 
+.w50 {
+    min-width: 50%;
+    max-width: 50%;
+}
+
 /** Margin */
 #menu li {
     padding-top: 0;
