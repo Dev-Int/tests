@@ -1,0 +1,55 @@
+<?php
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the Tests package.
+ *
+ * (c) Dev-Int Création <info@developpement-interessant.com>.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Admin\UseCases\Article\CreateArticle;
+
+use Admin\Entities\Article\Article;
+use Admin\Entities\Exception\ArticleAlreadyExistsException;
+use Admin\UseCases\Gateway\ArticleRepository;
+use Shared\Entities\ResourceUuid;
+use Shared\Entities\VO\Amount;
+use Shared\Entities\VO\NameField;
+use Shared\Entities\VO\Packaging;
+
+final readonly class CreateArticle
+{
+    public function __construct(private ArticleRepository $articleRepository)
+    {
+    }
+
+    public function execute(CreateArticleRequest $request): CreateArticleResponse
+    {
+        $isExists = $this->articleRepository->isExists($request->name());
+        if ($isExists) {
+            throw new ArticleAlreadyExistsException();
+        }
+
+        $article = Article::create(
+            ResourceUuid::generate(),
+            NameField::fromString($request->name()),
+            $request->supplier(),
+            Packaging::fromArray($request->packaging()),
+            Amount::fromFloat($request->amount()),
+            $request->tax(),
+            $request->minStock(),
+            $request->zoneStorages(),
+            $request->familyLog(),
+            true,
+            $request->quantity()
+        );
+
+        $this->articleRepository->save($article);
+
+        return new CreateArticleResponse($article);
+    }
+}

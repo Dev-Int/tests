@@ -82,15 +82,13 @@
         "psr-4": {
             "App\\": "src",
             "Shared\\": "src/Shared",
-            "Admin\\": "src/Admin",
-            "Article\\": "src/Article"
+            "Admin\\": "src/Admin"
         }
     },
     "autoload-dev": {
         "psr-4": {
             "App\\Tests\\": "tests/",
             "Admin\\Tests\\": "src/Admin/Tests/",
-            "Article\\Tests\\": "src/Article/Tests/",
             "Shared\\Tests\\": "src/Shared/Tests/"
         }
     },
