@@ -69,9 +69,9 @@ final class Supplier
         private EmailField $email,
         private string $contact,
         private PhoneField $cellphone,
-        private readonly FamilyLog $familyLog,
-        private readonly int $delayDelivery,
-        private readonly array $orderDays,
+        private FamilyLog $familyLog,
+        private int $delayDelivery,
+        private array $orderDays,
         private readonly bool $active
     ) {
         $this->slug = $name->slugify();
@@ -129,6 +129,16 @@ final class Supplier
     public function cellphone(): PhoneField
     {
         return $this->cellphone;
+    }
+
+    /**
+     * @param array<int> $orderDays
+     */
+    public function changeDeliverySpecification(FamilyLog $familyLog, int $delayDelivery, array $orderDays): void
+    {
+        $this->familyLog = $familyLog;
+        $this->delayDelivery = $delayDelivery;
+        $this->orderDays = $orderDays;
     }
 
     public function familyLog(): FamilyLog

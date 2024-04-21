@@ -148,6 +148,11 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
         $this->_em->flush();
     }
 
+    public function changeDeliverySpecification(SupplierDomain $supplier): void
+    {
+        // TODO: Implement changeDeliverySpecification() method.
+    }
+
     public function findAllSuppliers(): SupplierCollection
     {
         $suppliers = $this->findAll();
