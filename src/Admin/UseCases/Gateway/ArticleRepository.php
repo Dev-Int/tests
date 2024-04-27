@@ -25,4 +25,6 @@ interface ArticleRepository
     public function save(Article $article): void;
 
     public function findAllArticles(): ArticleCollection;
+
+    public function findByUuid(string $uuid): Article;
 }

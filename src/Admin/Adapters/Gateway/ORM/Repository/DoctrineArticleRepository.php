@@ -20,6 +20,7 @@ use Admin\Adapters\Gateway\ORM\Entity\Tax;
 use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
 use Admin\Entities\Article\Article as ArticleDomain;
 use Admin\Entities\Article\ArticleCollection;
+use Admin\Entities\Exception\ArticleNotFoundException;
 use Admin\Entities\Exception\FamilyLogNotFoundException;
 use Admin\Entities\Exception\NoArticleRegisteredException;
 use Admin\Entities\Exception\SupplierNotFoundException;
@@ -143,5 +144,15 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         }
 
         return $collection;
+    }
+
+    public function findByUuid(string $uuid): ArticleDomain
+    {
+        $article = $this->find($uuid);
+        if (!$article instanceof Article) {
+            throw new ArticleNotFoundException($uuid);
+        }
+
+        return $article->toDomain();
     }
 }

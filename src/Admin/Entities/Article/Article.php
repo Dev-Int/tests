@@ -66,7 +66,7 @@ final class Article
 
     private function __construct(
         private readonly ResourceUuidInterface $uuid,
-        private readonly NameField $name,
+        private NameField $name,
         private readonly Supplier $supplier,
         private readonly Packaging $packaging,
         private readonly Amount $amount,
@@ -83,6 +83,11 @@ final class Article
     public function uuid(): ResourceUuidInterface
     {
         return $this->uuid;
+    }
+
+    public function rename(NameField $name): void
+    {
+        $this->name = $name;
     }
 
     public function name(): NameField
