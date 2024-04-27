@@ -20,6 +20,8 @@ interface ArticleRepository
 {
     public function isExists(string $name): bool;
 
+    public function hasArticle(): bool;
+
     public function save(Article $article): void;
 
     public function findAllArticles(): ArticleCollection;

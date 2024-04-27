@@ -21,12 +21,16 @@ use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
 use Admin\Entities\Article\Article as ArticleDomain;
 use Admin\Entities\Article\ArticleCollection;
 use Admin\Entities\Exception\FamilyLogNotFoundException;
+use Admin\Entities\Exception\NoArticleRegisteredException;
 use Admin\Entities\Exception\SupplierNotFoundException;
 use Admin\Entities\Exception\TaxNotFoundException;
 use Admin\Entities\Exception\ZoneStorageNotFoundException;
 use Admin\UseCases\Gateway\ArticleRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\UnexpectedResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -57,6 +61,28 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         ;
 
         return $article !== null;
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException|UnexpectedResultException
+     */
+    public function hasArticle(): bool
+    {
+        $alias = self::ALIAS;
+        $count = $this->createQueryBuilder($alias)
+            ->select("COUNT({$alias}.slug)")
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+
+        if (!\is_int($count)) {
+            // @codeCoverageIgnoreStart
+            throw new UnexpectedResultException('Integer expected!');
+            // @codeCoverageIgnoreEnd
+        }
+
+        return $count > 0;
     }
 
     public function save(ArticleDomain $article): void
@@ -105,6 +131,17 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
 
     public function findAllArticles(): ArticleCollection
     {
-        return new ArticleCollection();
+        $articles = $this->findAll();
+        $collection = new ArticleCollection();
+
+        if ($articles === []) {
+            throw new NoArticleRegisteredException();
+        }
+
+        foreach ($articles as $article) {
+            $collection->add($article->toDomain());
+        }
+
+        return $collection;
     }
 }

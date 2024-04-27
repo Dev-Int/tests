@@ -61,6 +61,13 @@ final class ArticleDataBuilder implements DataBuilderInterface
         return $this;
     }
 
+    public function withUuid(string $uuid): self
+    {
+        $this->uuid = $uuid;
+
+        return $this;
+    }
+
     public function build(): Article
     {
         return Article::create(

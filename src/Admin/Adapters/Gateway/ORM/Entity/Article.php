@@ -18,6 +18,10 @@ use Admin\Entities\Article\Article as ArticleDomain;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Shared\Entities\ResourceUuid;
+use Shared\Entities\VO\Amount;
+use Shared\Entities\VO\NameField;
+use Shared\Entities\VO\Packaging;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: DoctrineArticleRepository::class)]
@@ -94,6 +98,26 @@ final class Article
         $this->slug = $article->slug();
 
         return $this;
+    }
+
+    public function toDomain(): ArticleDomain
+    {
+        $zoneStorages = [];
+        foreach ($this->zoneStorages as $zoneStorage) {
+            $zoneStorages[] = $zoneStorage->toDomain();
+        }
+
+        return ArticleDomain::create(
+            ResourceUuid::fromString($this->uuid),
+            NameField::fromString($this->name),
+            $this->supplier->toDomain(),
+            Packaging::fromArray($this->packaging),
+            Amount::fromInt($this->amount),
+            $this->tax->toDomain(),
+            $this->minStock,
+            $zoneStorages,
+            $this->familyLog->toDomain()
+        );
     }
 
     /**

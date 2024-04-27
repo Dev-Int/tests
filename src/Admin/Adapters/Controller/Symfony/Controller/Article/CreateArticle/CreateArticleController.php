@@ -91,11 +91,11 @@ final class CreateArticleController extends AbstractController
             } catch (\DomainException $exception) {
                 $this->addFlash('error', $exception->getMessage());
 
-                return $this->redirectToRoute('admin_configure');
+                return $this->redirectToRoute('admin_articles_index');
             }
             $this->addFlash('success', 'Article created');
 
-            return $this->redirectToRoute('admin_configure');
+            return $this->redirectToRoute('admin_articles_index');
         }
 
         return $this->render('@admin/articles/create.html.twig', [

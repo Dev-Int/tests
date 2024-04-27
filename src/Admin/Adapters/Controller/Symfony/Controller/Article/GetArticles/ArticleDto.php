@@ -11,11 +11,13 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Adapters\Controller\Symfony\Controller\Supplier\GetSuppliers;
+namespace Admin\Adapters\Controller\Symfony\Controller\Article\GetArticles;
 
-final readonly class SupplierDto
+use Admin\Adapters\Controller\Symfony\Controller\Supplier\GetSuppliers\SupplierDto;
+
+final readonly class ArticleDto
 {
-    public function __construct(public string $uuid, public string $name, public string $slug)
+    public function __construct(public string $uuid, public string $name, public SupplierDto $param)
     {
     }
 }
