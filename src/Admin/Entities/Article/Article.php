@@ -37,7 +37,7 @@ final class Article
         Supplier $supplier,
         Packaging $packaging,
         Amount $amount,
-        Tax $taxes,
+        Tax $tax,
         float $minStock,
         array $zoneStorages,
         FamilyLog $familyLog,
@@ -55,7 +55,7 @@ final class Article
             $supplier,
             $packaging,
             $amount,
-            $taxes,
+            $tax,
             $minStock,
             $storages,
             $familyLog,
@@ -69,8 +69,8 @@ final class Article
         private readonly NameField $name,
         private readonly Supplier $supplier,
         private readonly Packaging $packaging,
-        private readonly Amount $price,
-        private readonly Tax $taxes,
+        private readonly Amount $amount,
+        private readonly Tax $tax,
         private readonly float $minStock,
         private readonly ZoneStorageCollection $zoneStorages,
         private readonly FamilyLog $familyLog,
@@ -78,11 +78,6 @@ final class Article
         private readonly bool $active
     ) {
         $this->slug = $name->slugify();
-    }
-
-    public function slug(): string
-    {
-        return $this->slug;
     }
 
     public function uuid(): ResourceUuidInterface
@@ -105,14 +100,14 @@ final class Article
         return $this->packaging;
     }
 
-    public function price(): Amount
+    public function amount(): Amount
     {
-        return $this->price;
+        return $this->amount;
     }
 
-    public function taxes(): Tax
+    public function tax(): Tax
     {
-        return $this->taxes;
+        return $this->tax;
     }
 
     public function minStock(): float
@@ -133,6 +128,11 @@ final class Article
     public function quantity(): ArticleQuantity
     {
         return $this->quantity;
+    }
+
+    public function slug(): string
+    {
+        return $this->slug;
     }
 
     public function active(): bool

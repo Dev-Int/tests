@@ -148,10 +148,10 @@ final class CreateUnitControllerTest extends WebTestCase
         $abbreviationField = $labelField->siblings();
 
         self::assertSame('Intitulé de l\'unité', $labelField->children('label')->text());
-        self::assertSame('This value should not be blank.', $labelField->children('ul > li')->text());
+        self::assertSame('Cette valeur ne doit pas être vide.', $labelField->children('ul > li')->text());
 
         self::assertSame('Abréviation de l\'unité', $abbreviationField->children('label')->text());
-        self::assertSame('This value should not be blank.', $abbreviationField->children('ul > li')->text());
+        self::assertSame('Cette valeur ne doit pas être vide.', $abbreviationField->children('ul > li')->text());
 
         /** @var Unit $unitCreated */
         $unitCreated = $unitRepository->findOneBy(['slug' => 'kilogramme']);

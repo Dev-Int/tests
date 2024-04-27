@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Shared\Tests\Entities\VO;
 
+use Admin\Entities\Exception\InvalidPackageException;
 use PHPUnit\Framework\TestCase;
 use Shared\Entities\VO\Packaging;
 
@@ -36,6 +37,15 @@ final class PackagingTest extends TestCase
         self::assertEquals($expected[0], $packages->parcel());
         self::assertEquals($expected[1], $packages->subPackage());
         self::assertEquals($expected[2], $packages->consumerUnit());
+    }
+
+    public function testDistributeTheSubdivisionFailWithInvalidPackageException(): void
+    {
+        // Arrange && Act && Assert
+        $this->expectException(InvalidPackageException::class);
+        $this->expectExceptionMessage(InvalidPackageException::MESSAGE);
+
+        Packaging::fromArray([null, null, null]);
     }
 
     /**

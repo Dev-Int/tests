@@ -21,16 +21,20 @@ final class ArticleAlreadyExistsException extends \DomainException implements \J
 
     public const MESSAGE = 'Article already exists.';
 
-    public function __construct(?\Throwable $previous = null)
+    public function __construct(private readonly string $name, ?\Throwable $previous = null)
     {
         parent::__construct(self::MESSAGE, 0, $previous);
     }
 
     /**
      * @return iterable<string, array<int, string>|int|string>
+     *
+     * @codeCoverageIgnore
      */
     public function jsonSerialize(): iterable
     {
-        return $this->toJson();
+        return $this->toJson() + [
+            'name' => $this->name,
+        ];
     }
 }

@@ -13,13 +13,13 @@ declare(strict_types=1);
 
 namespace Shared\Entities\Exception;
 
-final class InvalidPhone extends \DomainException implements \JsonSerializable
+final class InvalidEmailException extends \DomainException implements \JsonSerializable
 {
     use ExceptionSerializableTrait;
 
-    public const MESSAGE = 'Le numéro saisie n\'est pas valide.';
+    public const MESSAGE = 'L\'adresse mail saisie n\'est pas valide.';
 
-    public function __construct(private readonly string $phoneNumber, ?\Throwable $previous = null)
+    public function __construct(private readonly string $email, ?\Throwable $previous = null)
     {
         parent::__construct(self::MESSAGE, 400, $previous);
     }
@@ -32,7 +32,7 @@ final class InvalidPhone extends \DomainException implements \JsonSerializable
     public function jsonSerialize(): iterable
     {
         return $this->toJson() + [
-            'phoneNumber' => $this->phoneNumber,
+            'email' => $this->email,
         ];
     }
 }

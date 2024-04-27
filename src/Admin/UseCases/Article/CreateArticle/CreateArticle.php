@@ -31,7 +31,7 @@ final readonly class CreateArticle
     {
         $isExists = $this->articleRepository->isExists($request->name());
         if ($isExists) {
-            throw new ArticleAlreadyExistsException();
+            throw new ArticleAlreadyExistsException($request->name());
         }
 
         $article = Article::create(

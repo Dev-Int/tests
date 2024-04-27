@@ -22,10 +22,10 @@ final class Packaging
     private array $parcel;
 
     /** @var array{string, float}|null */
-    private ?array $consumerUnit;
+    private ?array $subPackage;
 
     /** @var array{string, float}|null */
-    private ?array $subPackage;
+    private ?array $consumerUnit;
 
     /**
      * @param array<array{string, float}|null> $packages
@@ -35,20 +35,10 @@ final class Packaging
         if (null === $packages[0]) {
             throw new InvalidPackageException();
         }
-        $parcel = Storage::fromArray($packages[0])->toArray();
-        $subPackage = null;
-        $consumerUnit = null;
 
-        for ($i = 1; $i < 3; ++$i) {
-            if (null !== $packages[$i]) {
-                if (1 === $i) {
-                    $subPackage = Storage::fromArray($packages[$i])->toArray();
-                }
-                if (2 === $i) {
-                    $consumerUnit = Storage::fromArray($packages[$i])->toArray();
-                }
-            }
-        }
+        $parcel = Storage::fromArray($packages[0])->toArray();
+        $subPackage = $packages[1] !== null ? Storage::fromArray($packages[1])->toArray() : null;
+        $consumerUnit = $packages[2] !== null ? Storage::fromArray($packages[2])->toArray() : null;
 
         return new self($parcel, $subPackage, $consumerUnit);
     }

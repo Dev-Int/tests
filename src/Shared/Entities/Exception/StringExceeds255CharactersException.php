@@ -13,13 +13,13 @@ declare(strict_types=1);
 
 namespace Shared\Entities\Exception;
 
-final class InvalidEmail extends \DomainException implements \JsonSerializable
+final class StringExceeds255CharactersException extends \DomainException implements \JsonSerializable
 {
     use ExceptionSerializableTrait;
 
-    public const MESSAGE = 'L\'adresse mail saisie n\'est pas valide.';
+    public const MESSAGE = 'Le texte saisie ne devrait pas excéder 255 caractères';
 
-    public function __construct(private readonly string $email, ?\Throwable $previous = null)
+    public function __construct(private readonly string $text, ?\Throwable $previous = null)
     {
         parent::__construct(self::MESSAGE, 400, $previous);
     }
@@ -32,7 +32,7 @@ final class InvalidEmail extends \DomainException implements \JsonSerializable
     public function jsonSerialize(): iterable
     {
         return $this->toJson() + [
-            'email' => $this->email,
+            'text' => $this->text,
         ];
     }
 }

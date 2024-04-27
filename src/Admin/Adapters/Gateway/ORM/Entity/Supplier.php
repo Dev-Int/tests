@@ -24,7 +24,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: DoctrineSupplierRepository::class)]
 #[UniqueEntity('name')]
-final class Supplier
+class Supplier
 {
     #[ORM\Id]
     #[ORM\Column(name: 'uuid', type: 'guid')]

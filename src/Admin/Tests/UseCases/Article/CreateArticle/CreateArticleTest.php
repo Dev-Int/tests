@@ -73,10 +73,10 @@ final class CreateArticleTest extends TestCase
         self::assertSame('Jambon Trad 6kg', $article->name()->toString());
         self::assertSame('Supplier 1', $article->supplier()->name()->toString());
         self::assertSame(['colis', 1.0], $article->packaging()->parcel());
-        self::assertSame(25.50, $article->price()->toFloat());
-        self::assertSame(2550, $article->price()->toInt());
-        self::assertSame(0.055, $article->taxes()->rate());
-        self::assertSame('TVA taux réduit', $article->taxes()->name()->toString());
+        self::assertSame(25.50, $article->amount()->toFloat());
+        self::assertSame(2550, $article->amount()->toInt());
+        self::assertSame(0.055, $article->tax()->rate());
+        self::assertSame('TVA taux réduit', $article->tax()->name()->toString());
         self::assertSame(8.000, $article->minStock());
         self::assertSame('reserve-froide', $article->zoneStorages()->current()->slug());
         self::assertSame('Viande', $article->familyLog()->label()->toString());
@@ -103,7 +103,7 @@ final class CreateArticleTest extends TestCase
         $zoneStorage = (new ZoneStorageDataBuilder())->create('Réserve froide', $familyLogParent)->build();
         $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
 
-        $request->expects(self::once())->method('name')->willReturn('Jambon Trad 6kg');
+        $request->expects(self::exactly(2))->method('name')->willReturn('Jambon Trad 6kg');
         $request->expects(self::never())->method('supplier')->willReturn($supplier);
         $request->expects(self::never())->method('packaging')->willReturn([['Colis', 1], null, null]);
         $request->expects(self::never())->method('amount')->willReturn(25.50);

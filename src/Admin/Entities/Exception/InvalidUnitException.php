@@ -28,6 +28,8 @@ final class InvalidUnitException extends \DomainException implements \JsonSerial
 
     /**
      * @return iterable<string, array<int, string>|int|string>
+     *
+     * @codeCoverageIgnore
      */
     public function jsonSerialize(): iterable
     {

@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Shared\Entities\VO;
 
-use Shared\Entities\Exception\InvalidEmail;
+use Shared\Entities\Exception\InvalidEmailException;
 
 final readonly class EmailField
 {
@@ -25,7 +25,7 @@ final readonly class EmailField
     private function __construct(private string $email)
     {
         if (filter_var($email, \FILTER_VALIDATE_EMAIL) === false) {
-            throw new InvalidEmail($this->email);
+            throw new InvalidEmailException($this->email);
         }
     }
 

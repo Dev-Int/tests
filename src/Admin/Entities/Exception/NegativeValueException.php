@@ -28,6 +28,8 @@ final class NegativeValueException extends \DomainException implements \JsonSeri
 
     /**
      * @return iterable<string, array<int, string>|int|string>
+     *
+     * @codeCoverageIgnore
      */
     public function jsonSerialize(): iterable
     {

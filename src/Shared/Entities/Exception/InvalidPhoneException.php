@@ -13,13 +13,13 @@ declare(strict_types=1);
 
 namespace Shared\Entities\Exception;
 
-final class StringExceeds255Characters extends \DomainException
+final class InvalidPhoneException extends \DomainException implements \JsonSerializable
 {
     use ExceptionSerializableTrait;
 
-    public const MESSAGE = 'Le texte saisie ne devrait pas excéder 255 caractères';
+    public const MESSAGE = 'Le numéro saisie n\'est pas valide.';
 
-    public function __construct(private readonly string $text, ?\Throwable $previous = null)
+    public function __construct(private readonly string $phoneNumber, ?\Throwable $previous = null)
     {
         parent::__construct(self::MESSAGE, 400, $previous);
     }
@@ -32,7 +32,7 @@ final class StringExceeds255Characters extends \DomainException
     public function jsonSerialize(): iterable
     {
         return $this->toJson() + [
-            'text' => $this->text,
+            'phoneNumber' => $this->phoneNumber,
         ];
     }
 }

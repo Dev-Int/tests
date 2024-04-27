@@ -11,3 +11,70 @@ div.grid:has(a[role="button"]),
 div.grid:has(button) {
     margin-top: var(--block-spacing-vertical);
 }
+
+/* Input groups */
+.input-group {
+    position: relative;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+    -webkit-box-align: stretch;
+    -ms-flex-align: stretch;
+    align-items: stretch;
+    width: 100%;
+}
+.input-group-append,
+.input-group-prepend {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+}
+.input-group-append {
+    margin-left: calc(var(--border-width) * (-1));
+}
+.input-group-prepend {
+    margin-right: calc(var(--border-width) * (-1));
+}
+.input-group>.input-group-append>.input-group-text,
+.input-group > input:not(:first-child) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+.input-group>.input-group-prepend>.input-group-text,
+.input-group > input:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.input-group-text {
+    display: flex;
+    align-items: center;
+    padding: 0 var(--block-spacing-horizontal);
+    margin-bottom: var(--spacing);
+    font-size: var(--font-size);
+    font-weight: var(--font-weight);
+    color: var(--form-element-color);
+    text-align: center;
+    white-space: nowrap;
+    background-color: var(--form-element-background-color);
+    border: var(--border-width) solid var(--form-element-border-color);
+    border-radius: var(--border-radius);
+}
+
+/* Fieldset */
+fieldset {
+    padding: var(--block-spacing-horizontal);
+    border: var(--border-width) solid var(--form-element-border-color);
+    border-radius: var(--border-radius);
+    outline: 0;
+    background-color: var(--form-element-background-color);
+    box-shadow: none;
+    color: var(--form-element-color);
+    font-weight: var(--font-weight);
+    transition: background-color var(--transition), border-color var(--transition), color var(--transition), box-shadow var(--transition);
+}
+
+fieldset > legend {
+    padding: calc(var(--block-spacing-horizontal) * 0.5);
+}

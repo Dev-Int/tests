@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Shared\Tests\Entities\VO;
 
 use PHPUnit\Framework\TestCase;
-use Shared\Entities\Exception\InvalidPhone;
+use Shared\Entities\Exception\InvalidPhoneException;
 use Shared\Entities\VO\PhoneField;
 
 /**
@@ -34,7 +34,7 @@ final class PhoneFieldTest extends TestCase
     public function testCreateWithStringTooLongThrowADomainException(): void
     {
         // Arrange
-        $this->expectException(InvalidPhone::class);
+        $this->expectException(InvalidPhoneException::class);
 
         // Act & Assert
         PhoneField::fromString('+55$32-55-78-85-62-49-21');

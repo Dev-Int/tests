@@ -78,4 +78,11 @@ final readonly class ConfigurationService
 
         return $hasZoneStorage && $this->isFamilyLogConfigured();
     }
+
+    public function isSupplierConfigured(): bool
+    {
+        $hasSupplier = $this->supplierRepository->hasSupplier();
+
+        return $hasSupplier && $this->isZoneStorageConfigured();
+    }
 }

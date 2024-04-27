@@ -28,6 +28,8 @@ final class InvalidPackageException extends \DomainException implements \JsonSer
 
     /**
      * @return iterable<string, array<int, string>|int|string>
+     *
+     * @codeCoverageIgnore
      */
     public function jsonSerialize(): iterable
     {
