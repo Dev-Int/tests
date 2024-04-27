@@ -19,6 +19,7 @@ use Admin\Adapters\Gateway\ORM\Entity\Supplier;
 use Admin\Adapters\Gateway\ORM\Entity\Tax;
 use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
 use Admin\Entities\Article\Article as ArticleDomain;
+use Admin\Entities\Article\ArticleCollection;
 use Admin\Entities\Exception\FamilyLogNotFoundException;
 use Admin\Entities\Exception\SupplierNotFoundException;
 use Admin\Entities\Exception\TaxNotFoundException;
@@ -100,5 +101,10 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
             $familyLog
         ));
         $this->_em->flush();
+    }
+
+    public function findAllArticles(): ArticleCollection
+    {
+        return new ArticleCollection();
     }
 }

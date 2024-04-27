@@ -11,13 +11,13 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\UseCases\Supplier\GetSuppliers;
+namespace Admin\UseCases\Article\GetArticles;
 
-use Admin\Entities\Supplier\SupplierCollection;
+use Admin\Entities\Article\ArticleCollection;
 
-final readonly class GetSuppliersResponse
+final readonly class GetArticlesResponse
 {
-    public function __construct(public SupplierCollection $suppliers)
+    public function __construct(public ArticleCollection $articles)
     {
     }
 }

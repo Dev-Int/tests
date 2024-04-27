@@ -14,10 +14,13 @@ declare(strict_types=1);
 namespace Admin\UseCases\Gateway;
 
 use Admin\Entities\Article\Article;
+use Admin\Entities\Article\ArticleCollection;
 
 interface ArticleRepository
 {
     public function isExists(string $name): bool;
 
     public function save(Article $article): void;
+
+    public function findAllArticles(): ArticleCollection;
 }
