@@ -147,6 +147,11 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         $this->_em->flush();
     }
 
+    public function reAssignSupplier(ArticleDomain $article): void
+    {
+        // TODO: Implement reAssignSupplier() method.
+    }
+
     public function findAllArticles(): ArticleCollection
     {
         $articles = $this->findAll();

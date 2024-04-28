@@ -136,6 +136,15 @@ final class FamilyLog
         }
     }
 
+    public function isCompatible(self $familyLog): bool
+    {
+        if ($this->isEqual($familyLog)) {
+            return true;
+        }
+
+        return ($familyLog->parent instanceof self) && $familyLog->isChild($this);
+    }
+
     /**
      * @return array<string>|null
      */
@@ -157,9 +166,17 @@ final class FamilyLog
                 if ($child->slug === $this->slug) {
                     return true;
                 }
+                if ($child->children !== null) {
+                    $this->isChild($child);
+                }
             }
         }
 
         return false;
+    }
+
+    private function isEqual(self $familyLog): bool
+    {
+        return $this->slug === $familyLog->slug;
     }
 }

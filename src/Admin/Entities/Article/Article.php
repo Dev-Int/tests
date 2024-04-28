@@ -67,13 +67,13 @@ final class Article
     private function __construct(
         private readonly ResourceUuidInterface $uuid,
         private NameField $name,
-        private readonly Supplier $supplier,
+        private Supplier $supplier,
         private readonly Packaging $packaging,
         private readonly Amount $amount,
         private readonly Tax $tax,
         private readonly float $minStock,
-        private readonly ZoneStorageCollection $zoneStorages,
-        private readonly FamilyLog $familyLog,
+        private ZoneStorageCollection $zoneStorages,
+        private FamilyLog $familyLog,
         private readonly ArticleQuantity $quantity,
         private readonly bool $active
     ) {
@@ -93,6 +93,19 @@ final class Article
     public function name(): NameField
     {
         return $this->name;
+    }
+
+    /**
+     * @param ZoneStorageCollection<ZoneStorage> $zoneStorages
+     */
+    public function reAssignSupplier(
+        Supplier $supplier,
+        FamilyLog $familyLog,
+        ZoneStorageCollection $zoneStorages
+    ): void {
+        $this->supplier = $supplier;
+        $this->familyLog = $familyLog;
+        $this->zoneStorages = $zoneStorages;
     }
 
     public function supplier(): Supplier

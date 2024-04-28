@@ -26,6 +26,8 @@ interface ArticleRepository
 
     public function renameArticle(Article $article): void;
 
+    public function reAssignSupplier(Article $article): void;
+
     public function findAllArticles(): ArticleCollection;
 
     public function findByUuid(string $uuid): Article;
