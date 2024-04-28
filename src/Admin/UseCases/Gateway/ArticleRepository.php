@@ -28,6 +28,8 @@ interface ArticleRepository
 
     public function reAssignSupplier(Article $article): void;
 
+    public function changeStorageInformation(Article $article): void;
+
     public function findAllArticles(): ArticleCollection;
 
     public function findByUuid(string $uuid): Article;

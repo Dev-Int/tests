@@ -51,9 +51,7 @@ final class ReAssignArticleSupplierTest extends TestCase
             ->withParent($surgele)
             ->build()
         ;
-        $supplier1 = (new SupplierDataBuilder())->create('Supplier 1', $frais)
-            ->build()
-        ;
+        $supplier1 = (new SupplierDataBuilder())->create('Supplier 1', $frais)->build();
         $supplier2 = (new SupplierDataBuilder())->create('Supplier 2', $surgele)
             ->withUuid('aa19a993-f828-484c-94e9-44788054412e')
             ->build()
@@ -61,13 +59,10 @@ final class ReAssignArticleSupplierTest extends TestCase
         $storageFrais = (new ZoneStorageDataBuilder())->create('Réserve positive', $frais)->build();
         $storageSurgele = (new ZoneStorageDataBuilder())->create('Réserve négative', $surgele)->build();
         $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
-        $article = (new ArticleDataBuilder())->create(
-            'Jambon Trad 6kg',
-            $supplier1,
-            $tax,
-            [$storageFrais],
-            $fraisViande
-        )->build();
+        $article = (new ArticleDataBuilder())
+            ->create('Jambon Trad 6kg', $supplier1, $tax, [$storageFrais], $fraisViande)
+            ->build()
+        ;
 
         $request->expects(self::exactly(2))->method('supplier')->willReturn($supplier2);
         $request->expects(self::exactly(2))->method('familyLog')->willReturn($surgeleViande);
@@ -87,14 +82,14 @@ final class ReAssignArticleSupplierTest extends TestCase
 
         // Act
         $response = $useCase->execute($request);
-        $article = $response->article;
+        $articleUpdated = $response->article;
 
         // Assert
-        self::assertSame('Supplier 2', $article->supplier()->name()->toString());
-        self::assertCount(1, $article->zoneStorages()->toArray());
-        self::assertSame('reserve-negative', $article->zoneStorages()->current()->slug());
-        self::assertSame('Viande', $article->familyLog()->label()->toString());
-        $parent = $article->familyLog()->parent();
+        self::assertSame('Supplier 2', $articleUpdated->supplier()->name()->toString());
+        self::assertCount(1, $articleUpdated->zoneStorages()->toArray());
+        self::assertSame('reserve-negative', $articleUpdated->zoneStorages()->current()->slug());
+        self::assertSame('Viande', $articleUpdated->familyLog()->label()->toString());
+        $parent = $articleUpdated->familyLog()->parent();
         self::assertInstanceOf(FamilyLog::class, $parent);
         self::assertSame('Surgelé', $parent->label()->toString());
     }
@@ -106,35 +101,34 @@ final class ReAssignArticleSupplierTest extends TestCase
         $useCase = new ReAssignArticleSupplier($articleRepository);
         $request = $this->createMock(ReAssignArticleSupplierRequest::class);
         $frais = (new FamilyLogDataBuilder())->create('Frais')->build();
-        $surgele = (new FamilyLogDataBuilder())->create('Surgelé')
+        $surgele = (new FamilyLogDataBuilder())
+            ->create('Surgelé')
             ->withUuid('1454df78-226c-46ef-9e1f-aaaf93d739c4')
             ->build()
         ;
-        $fraisViande = (new FamilyLogDataBuilder())->create('Viande')
+        $fraisViande = (new FamilyLogDataBuilder())
+            ->create('Viande')
             ->withUuid('46835a0c-3e6c-4a5c-ab80-b1d6d96b05ae')
             ->withParent($frais)
             ->build()
         ;
-        $supplier1 = (new SupplierDataBuilder())->create('Supplier 1', $frais)
-            ->build()
-        ;
-        $supplier2 = (new SupplierDataBuilder())->create('Supplier 2', $surgele)
+        $supplier1 = (new SupplierDataBuilder())->create('Supplier 1', $frais)->build();
+        $supplier2 = (new SupplierDataBuilder())
+            ->create('Supplier 2', $surgele)
             ->withUuid('aa19a993-f828-484c-94e9-44788054412e')
             ->build()
         ;
         $storageFrais = (new ZoneStorageDataBuilder())->create('Réserve positive', $frais)->build();
-        $storageSurgele = (new ZoneStorageDataBuilder())->create('Réserve négative', $surgele)
+        $storageSurgele = (new ZoneStorageDataBuilder())
+            ->create('Réserve négative', $surgele)
             ->withUuid('fd8c9618-9a4f-40d8-a331-480a0448da10')
             ->build()
         ;
         $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
-        $article = (new ArticleDataBuilder())->create(
-            'Jambon Trad 6kg',
-            $supplier1,
-            $tax,
-            [$storageFrais],
-            $fraisViande
-        )->build();
+        $article = (new ArticleDataBuilder())
+            ->create('Jambon Trad 6kg', $supplier1, $tax, [$storageFrais], $fraisViande)
+            ->build()
+        ;
 
         $request->expects(self::once())->method('supplier')->willReturn($supplier2);
         $request->expects(self::exactly(2))->method('familyLog')->willReturn($fraisViande);

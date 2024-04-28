@@ -68,13 +68,13 @@ final class Article
         private readonly ResourceUuidInterface $uuid,
         private NameField $name,
         private Supplier $supplier,
-        private readonly Packaging $packaging,
+        private Packaging $packaging,
         private readonly Amount $amount,
         private readonly Tax $tax,
-        private readonly float $minStock,
+        private float $minStock,
         private ZoneStorageCollection $zoneStorages,
         private FamilyLog $familyLog,
-        private readonly ArticleQuantity $quantity,
+        private ArticleQuantity $quantity,
         private readonly bool $active
     ) {
         $this->slug = $name->slugify();
@@ -111,6 +111,13 @@ final class Article
     public function supplier(): Supplier
     {
         return $this->supplier;
+    }
+
+    public function changeStorageInformation(Packaging $packaging, float $minStock, ArticleQuantity $quantity): void
+    {
+        $this->packaging = $packaging;
+        $this->minStock = $minStock;
+        $this->quantity = $quantity;
     }
 
     public function packaging(): Packaging

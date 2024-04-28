@@ -35,7 +35,8 @@ final class RenameArticleTest extends TestCase
         // Arrange
         $articleRepository = $this->createMock(ArticleRepository::class);
         $familyLogParent = (new FamilyLogDataBuilder())->create('Frais')->build();
-        $familyLog = (new FamilyLogDataBuilder())->create('Viande')
+        $familyLog = (new FamilyLogDataBuilder())
+            ->create('Viande')
             ->withUuid('46835a0c-3e6c-4a5c-ab80-b1d6d96b05ae')
             ->withParent($familyLogParent)
             ->build()
@@ -43,13 +44,10 @@ final class RenameArticleTest extends TestCase
         $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLogParent)->build();
         $zoneStorage = (new ZoneStorageDataBuilder())->create('Réserve froide', $familyLogParent)->build();
         $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
-        $article = (new ArticleDataBuilder())->create(
-            'Jambon Trad 6k',
-            $supplier,
-            $tax,
-            [$zoneStorage],
-            $familyLog
-        )->build();
+        $article = (new ArticleDataBuilder())
+            ->create('Jambon Trad 6k', $supplier, $tax, [$zoneStorage], $familyLog)
+            ->build()
+        ;
         $useCase = new RenameArticle($articleRepository);
         $request = $this->createMock(RenameArticleRequest::class);
 
@@ -85,7 +83,8 @@ final class RenameArticleTest extends TestCase
         // Arrange
         $articleRepository = $this->createMock(ArticleRepository::class);
         $familyLogParent = (new FamilyLogDataBuilder())->create('Frais')->build();
-        $familyLog = (new FamilyLogDataBuilder())->create('Viande')
+        $familyLog = (new FamilyLogDataBuilder())
+            ->create('Viande')
             ->withUuid('46835a0c-3e6c-4a5c-ab80-b1d6d96b05ae')
             ->withParent($familyLogParent)
             ->build()
@@ -93,13 +92,10 @@ final class RenameArticleTest extends TestCase
         $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLogParent)->build();
         $zoneStorage = (new ZoneStorageDataBuilder())->create('Réserve froide', $familyLogParent)->build();
         $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
-        $article = (new ArticleDataBuilder())->create(
-            'Jambon Trad 6k',
-            $supplier,
-            $tax,
-            [$zoneStorage],
-            $familyLog
-        )->build();
+        $article = (new ArticleDataBuilder())
+            ->create('Jambon Trad 6k', $supplier, $tax, [$zoneStorage], $familyLog)
+            ->build()
+        ;
         $useCase = new RenameArticle($articleRepository);
         $request = $this->createMock(RenameArticleRequest::class);
 
@@ -133,7 +129,8 @@ final class RenameArticleTest extends TestCase
         // Arrange
         $articleRepository = $this->createMock(ArticleRepository::class);
         $familyLogParent = (new FamilyLogDataBuilder())->create('Frais')->build();
-        $familyLog = (new FamilyLogDataBuilder())->create('Viande')
+        $familyLog = (new FamilyLogDataBuilder())
+            ->create('Viande')
             ->withUuid('46835a0c-3e6c-4a5c-ab80-b1d6d96b05ae')
             ->withParent($familyLogParent)
             ->build()
@@ -141,13 +138,10 @@ final class RenameArticleTest extends TestCase
         $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLogParent)->build();
         $zoneStorage = (new ZoneStorageDataBuilder())->create('Réserve froide', $familyLogParent)->build();
         $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
-        $article = (new ArticleDataBuilder())->create(
-            'Jambon Trad 6k',
-            $supplier,
-            $tax,
-            [$zoneStorage],
-            $familyLog
-        )->build();
+        $article = (new ArticleDataBuilder())
+            ->create('Jambon Trad 6k', $supplier, $tax, [$zoneStorage], $familyLog)
+            ->build()
+        ;
         $useCase = new RenameArticle($articleRepository);
         $request = $this->createMock(RenameArticleRequest::class);
 

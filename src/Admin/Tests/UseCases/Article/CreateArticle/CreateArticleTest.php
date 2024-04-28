@@ -37,7 +37,8 @@ final class CreateArticleTest extends TestCase
         $useCase = new CreateArticle($articleRepository);
         $request = $this->createMock(CreateArticleRequest::class);
         $familyLogParent = (new FamilyLogDataBuilder())->create('Frais')->build();
-        $familyLog = (new FamilyLogDataBuilder())->create('Viande')
+        $familyLog = (new FamilyLogDataBuilder())
+            ->create('Viande')
             ->withUuid('46835a0c-3e6c-4a5c-ab80-b1d6d96b05ae')
             ->withParent($familyLogParent)
             ->build()
@@ -95,18 +96,21 @@ final class CreateArticleTest extends TestCase
         $useCase = new CreateArticle($articleRepository);
         $request = $this->createMock(CreateArticleRequest::class);
         $frais = (new FamilyLogDataBuilder())->create('Frais')->build();
-        $surgele = (new FamilyLogDataBuilder())->create('Surgelé')
+        $surgele = (new FamilyLogDataBuilder())
+            ->create('Surgelé')
             ->withUuid('aa19a993-f828-484c-94e9-44788054412e')
             ->build()
         ;
-        $fraisViande = (new FamilyLogDataBuilder())->create('Viande')
+        $fraisViande = (new FamilyLogDataBuilder())
+            ->create('Viande')
             ->withUuid('46835a0c-3e6c-4a5c-ab80-b1d6d96b05ae')
             ->withParent($frais)
             ->build()
         ;
         $supplier = (new SupplierDataBuilder())->create('Supplier 1', $frais)->build();
         $storageFrais = (new ZoneStorageDataBuilder())->create('Réserve positive', $frais)->build();
-        $storageSurgele = (new ZoneStorageDataBuilder())->create('Réserve négative', $surgele)
+        $storageSurgele = (new ZoneStorageDataBuilder())
+            ->create('Réserve négative', $surgele)
             ->withUuid('fd8c9618-9a4f-40d8-a331-480a0448da10')
             ->build()
         ;
@@ -145,7 +149,8 @@ final class CreateArticleTest extends TestCase
         $useCase = new CreateArticle($articleRepository);
         $request = $this->createMock(CreateArticleRequest::class);
         $familyLogParent = (new FamilyLogDataBuilder())->create('Frais')->build();
-        $familyLog = (new FamilyLogDataBuilder())->create('Viande')
+        $familyLog = (new FamilyLogDataBuilder())
+            ->create('Viande')
             ->withUuid('46835a0c-3e6c-4a5c-ab80-b1d6d96b05ae')
             ->withParent($familyLogParent)
             ->build()

@@ -186,6 +186,11 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         $this->_em->flush();
     }
 
+    public function changeStorageInformation(ArticleDomain $article): void
+    {
+        // TODO: Implement changeStorageInformation() method.
+    }
+
     public function findAllArticles(): ArticleCollection
     {
         $articles = $this->findAll();
