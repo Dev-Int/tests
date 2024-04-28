@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Admin\Tests\UseCases\Article\CreateArticle;
 
 use Admin\Entities\Exception\ArticleAlreadyExistsException;
+use Admin\Entities\Exception\BadFamilyLogAssignedException;
 use Admin\Entities\FamilyLog\FamilyLog;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\SupplierDataBuilder;
@@ -46,14 +47,14 @@ final class CreateArticleTest extends TestCase
         $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
 
         $request->expects(self::exactly(2))->method('name')->willReturn('Jambon Trad 6kg');
-        $request->expects(self::once())->method('supplier')->willReturn($supplier);
+        $request->expects(self::exactly(2))->method('supplier')->willReturn($supplier);
         $request->expects(self::once())->method('packaging')->willReturn([['Colis', 1], null, null]);
         $request->expects(self::once())->method('amount')->willReturn(25.50);
         $request->expects(self::once())->method('tax')->willReturn($tax);
         $request->expects(self::once())->method('minStock')->willReturn(8.000);
         $request->expects(self::once())->method('quantity')->willReturn(null);
-        $request->expects(self::once())->method('zoneStorages')->willReturn([$zoneStorage]);
-        $request->expects(self::once())->method('familyLog')->willReturn($familyLog);
+        $request->expects(self::exactly(2))->method('zoneStorages')->willReturn([$zoneStorage]);
+        $request->expects(self::exactly(2))->method('familyLog')->willReturn($familyLog);
 
         $articleRepository->expects(self::once())
             ->method('isExists')
@@ -85,6 +86,56 @@ final class CreateArticleTest extends TestCase
         self::assertSame('Frais', $parent->label()->toString());
         self::assertSame(0.0, $article->quantity()->toFloat());
         self::assertTrue($article->active());
+    }
+
+    public function testCreateArticleFailWithBadFamilyLogAssignedException(): void
+    {
+        // Arrange
+        $articleRepository = $this->createMock(ArticleRepository::class);
+        $useCase = new CreateArticle($articleRepository);
+        $request = $this->createMock(CreateArticleRequest::class);
+        $frais = (new FamilyLogDataBuilder())->create('Frais')->build();
+        $surgele = (new FamilyLogDataBuilder())->create('Surgelé')
+            ->withUuid('aa19a993-f828-484c-94e9-44788054412e')
+            ->build()
+        ;
+        $fraisViande = (new FamilyLogDataBuilder())->create('Viande')
+            ->withUuid('46835a0c-3e6c-4a5c-ab80-b1d6d96b05ae')
+            ->withParent($frais)
+            ->build()
+        ;
+        $supplier = (new SupplierDataBuilder())->create('Supplier 1', $frais)->build();
+        $storageFrais = (new ZoneStorageDataBuilder())->create('Réserve positive', $frais)->build();
+        $storageSurgele = (new ZoneStorageDataBuilder())->create('Réserve négative', $surgele)
+            ->withUuid('fd8c9618-9a4f-40d8-a331-480a0448da10')
+            ->build()
+        ;
+        $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
+
+        $request->expects(self::once())->method('name')->willReturn('Jambon Trad 6kg');
+        $request->expects(self::once())->method('supplier')->willReturn($supplier);
+        $request->expects(self::never())->method('packaging')->willReturn([['Colis', 1], null, null]);
+        $request->expects(self::never())->method('amount')->willReturn(25.50);
+        $request->expects(self::never())->method('tax')->willReturn($tax);
+        $request->expects(self::never())->method('minStock')->willReturn(8.000);
+        $request->expects(self::never())->method('quantity')->willReturn(null);
+        $request->expects(self::once())->method('zoneStorages')->willReturn([$storageFrais, $storageSurgele]);
+        $request->expects(self::once())->method('familyLog')->willReturn($fraisViande);
+
+        $articleRepository->expects(self::once())
+            ->method('isExists')
+            ->with('Jambon Trad 6kg')
+            ->willReturn(false)
+        ;
+
+        $articleRepository->expects(self::never())
+            ->method('save')
+        ;
+
+        // Act && Assert
+        $this->expectException(BadFamilyLogAssignedException::class);
+        $this->expectExceptionMessage(BadFamilyLogAssignedException::MESSAGE);
+        $useCase->execute($request);
     }
 
     public function testCreateArticleFailWithAlreadyExistsException(): void

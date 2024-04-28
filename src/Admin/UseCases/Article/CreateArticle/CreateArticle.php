@@ -15,6 +15,9 @@ namespace Admin\UseCases\Article\CreateArticle;
 
 use Admin\Entities\Article\Article;
 use Admin\Entities\Exception\ArticleAlreadyExistsException;
+use Admin\Entities\Exception\BadFamilyLogAssignedException;
+use Admin\Entities\FamilyLog\FamilyLog;
+use Admin\Entities\ZoneStorage\ZoneStorage;
 use Admin\UseCases\Gateway\ArticleRepository;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\Amount;
@@ -33,6 +36,11 @@ final readonly class CreateArticle
         if ($isExists) {
             throw new ArticleAlreadyExistsException($request->name());
         }
+        $this->checkFamilyLogs(
+            $request->supplier()->familyLog(),
+            $request->familyLog(),
+            $request->zoneStorages()
+        );
 
         $article = Article::create(
             ResourceUuid::generate(),
@@ -51,5 +59,27 @@ final readonly class CreateArticle
         $this->articleRepository->save($article);
 
         return new CreateArticleResponse($article);
+    }
+
+    /**
+     * @param array<ZoneStorage> $zoneStorages
+     */
+    private function checkFamilyLogs(
+        FamilyLog $supplierFamilyLog,
+        FamilyLog $familyLog,
+        array $zoneStorages
+    ): void {
+        $checkZoneStorage = true;
+        foreach ($zoneStorages as $zoneStorage) {
+            $checkZoneStorage = $supplierFamilyLog->isCompatible($zoneStorage->familyLog());
+            if ($checkZoneStorage === false) {
+                break;
+            }
+        }
+        $check = $supplierFamilyLog->isCompatible($familyLog);
+
+        if ($check === false || $checkZoneStorage === false) {
+            throw new BadFamilyLogAssignedException($familyLog->label()->toString());
+        }
     }
 }
