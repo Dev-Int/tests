@@ -42,12 +42,10 @@ final class RenameSupplierController extends AbstractController
 
             try {
                 $this->useCase->execute($supplierToUpdate);
-                // @codeCoverageIgnoreStart
             } catch (\DomainException $exception) {
                 $this->addFlash('error', $exception->getMessage());
 
                 return $this->redirectToRoute('admin_suppliers_index');
-                // @codeCoverageIgnoreEnd
             }
             $this->addFlash('success', 'Supplier updated');
 

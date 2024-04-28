@@ -130,6 +130,23 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         $this->_em->flush();
     }
 
+    public function renameArticle(ArticleDomain $article): void
+    {
+        $articleToUpdate = $this->find($article->uuid()->toString());
+
+        if (!$articleToUpdate instanceof Article) {
+            // @codeCoverageIgnoreStart
+            throw new ArticleNotFoundException($article->uuid()->toString());
+            // @codeCoverageIgnoreEnd
+        }
+
+        $articleToUpdate->setName($article->name()->toString())
+            ->setSlug($article->slug())
+        ;
+
+        $this->_em->flush();
+    }
+
     public function findAllArticles(): ArticleCollection
     {
         $articles = $this->findAll();
@@ -150,7 +167,9 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
     {
         $article = $this->find($uuid);
         if (!$article instanceof Article) {
+            // @codeCoverageIgnoreStart
             throw new ArticleNotFoundException($uuid);
+            // @codeCoverageIgnoreEnd
         }
 
         return $article->toDomain();

@@ -68,7 +68,7 @@ final class RenameArticleTest extends TestCase
         ;
 
         $articleRepository->expects(self::once())
-            ->method('save')
+            ->method('renameArticle')
             ->with($article)
         ;
 
@@ -118,7 +118,7 @@ final class RenameArticleTest extends TestCase
         ;
 
         $articleRepository->expects(self::never())
-            ->method('save')
+            ->method('renameArticle')
             ->with($article)
         ;
 
@@ -166,7 +166,7 @@ final class RenameArticleTest extends TestCase
         ;
 
         $articleRepository->expects(self::never())
-            ->method('save')
+            ->method('renameArticle')
             ->with($article)
         ;
 

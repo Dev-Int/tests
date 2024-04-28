@@ -1,23 +1,23 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Rename supplier | {{ parent() }}
+    Rename article | {{ parent() }}
 {% endblock %}
 
 {% block body %}
 
-    <h1><i class="fa-solid fa-truck-ramp-box"></i> Rename "{{ supplier.name }}"</h1>
+    <h1><i class="fa-solid"></i> Rename "{{ article.name }}"</h1>
 
     {{ form_start(form) }}
     {{ form_errors(form) }}
 
     {{ form_row(form.name) }}
 
-    <div class="grid">
-        <a href="{{ path('admin_suppliers_index') }}" class="secondary" role="button">Annuler</a>
+    <div class="grid"><a href="{{ path('admin_articles_index') }}" class="secondary" role="button">Annuler</a>
         <button type="submit">Rename</button>
     </div>
 
     {{ form_end(form) }}
 
 {% endblock %}
+

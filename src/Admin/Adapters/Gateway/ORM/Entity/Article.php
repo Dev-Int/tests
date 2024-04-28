@@ -128,6 +128,13 @@ final class Article
         return $this->uuid;
     }
 
+    public function setName(string $toString): self
+    {
+        $this->name = $toString;
+
+        return $this;
+    }
+
     public function name(): string
     {
         return $this->name;
@@ -182,6 +189,13 @@ final class Article
     public function slug(): string
     {
         return $this->slug;
+    }
+
+    public function setSlug(string $slug): self
+    {
+        $this->slug = $slug;
+
+        return $this;
     }
 
     public function active(): bool

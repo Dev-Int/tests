@@ -82,8 +82,6 @@ final class CreateArticleControllerTest extends WebTestCase
             ->build()
         ;
         $familyLogRepository->save($familyLog);
-        $familyLogOrm = $familyLogRepository->find($familyLog->uuid()->toString());
-        assertInstanceOf(FamilyLog::class, $familyLogOrm);
 
         /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
         $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);

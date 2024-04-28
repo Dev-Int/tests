@@ -34,7 +34,7 @@ final readonly class RenameArticle
 
         $article->rename(NameField::fromString($request->name()));
 
-        $this->articleRepository->save($article);
+        $this->articleRepository->renameArticle($article);
 
         return new RenameArticleResponse($article);
     }
