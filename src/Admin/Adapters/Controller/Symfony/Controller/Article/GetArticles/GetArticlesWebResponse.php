@@ -31,7 +31,8 @@ final class GetArticlesWebResponse
                     $article->supplier()->uuid()->toString(),
                     $article->supplier()->name()->toString(),
                     $article->supplier()->slug()
-                )
+                ),
+                $article->slug()
             );
         }
     }

@@ -20,3 +20,14 @@
         {{- block('form_widget_simple') -}}
     {%- endif -%}
 {%- endblock money_widget %}
+
+
+{%- block form_errors -%}
+    {%- if errors|length > 0 -%}
+    <ul>
+        {%- for error in errors -%}
+            <li class="form-error">{{ error.message }}</li>
+        {%- endfor -%}
+    </ul>
+    {%- endif -%}
+{%- endblock form_errors -%}

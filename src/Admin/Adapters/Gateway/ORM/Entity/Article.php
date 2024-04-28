@@ -140,6 +140,13 @@ final class Article
         return $this->name;
     }
 
+    public function setSupplier(Supplier $supplier): self
+    {
+        $this->supplier = $supplier;
+
+        return $this;
+    }
+
     public function supplier(): Supplier
     {
         return $this->supplier;
@@ -169,11 +176,28 @@ final class Article
     }
 
     /**
+     * @param ArrayCollection<ZoneStorage> $zoneStorages
+     */
+    public function setZoneStorages(ArrayCollection $zoneStorages): self
+    {
+        $this->zoneStorages = $zoneStorages;
+
+        return $this;
+    }
+
+    /**
      * @return array<ZoneStorage>|Collection<ZoneStorage>
      */
     public function zoneStorages(): array|Collection
     {
         return $this->zoneStorages;
+    }
+
+    public function setFamilyLog(FamilyLog $familyLog): self
+    {
+        $this->familyLog = $familyLog;
+
+        return $this;
     }
 
     public function familyLog(): FamilyLog

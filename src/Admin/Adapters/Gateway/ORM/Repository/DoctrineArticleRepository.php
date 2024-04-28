@@ -149,7 +149,41 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
 
     public function reAssignSupplier(ArticleDomain $article): void
     {
-        // TODO: Implement reAssignSupplier() method.
+        $articleToUpdate = $this->find($article->uuid()->toString());
+        if (!$articleToUpdate instanceof Article) {
+            // @codeCoverageIgnoreStart
+            throw new ArticleNotFoundException($article->name()->toString());
+            // @codeCoverageIgnoreEnd
+        }
+        $supplierOrm = $this->supplierRepository->find($article->supplier()->uuid()->toString());
+        if (!$supplierOrm instanceof Supplier) {
+            // @codeCoverageIgnoreStart
+            throw new SupplierNotFoundException($article->supplier()->slug());
+            // @codeCoverageIgnoreEnd
+        }
+        $familyLogOrm = $this->familyLogRepository->find($article->familyLog()->uuid()->toString());
+        if (!$familyLogOrm instanceof FamilyLog) {
+            // @codeCoverageIgnoreStart
+            throw new FamilyLogNotFoundException($article->familyLog()->slug());
+            // @codeCoverageIgnoreEnd
+        }
+        $zoneStorages = new ArrayCollection();
+        foreach ($article->zoneStorages() as $zoneStorage) {
+            $zoneStorageOrm = $this->zoneStorageRepository->find($zoneStorage->uuid()->toString());
+            if (!$zoneStorageOrm instanceof ZoneStorage) {
+                // @codeCoverageIgnoreStart
+                throw new ZoneStorageNotFoundException($zoneStorage->slug());
+                // @codeCoverageIgnoreEnd
+            }
+            $zoneStorages->add($zoneStorageOrm);
+        }
+
+        $articleToUpdate->setSupplier($supplierOrm)
+            ->setFamilyLog($familyLogOrm)
+            ->setZoneStorages($zoneStorages)
+        ;
+
+        $this->_em->flush();
     }
 
     public function findAllArticles(): ArticleCollection

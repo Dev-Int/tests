@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    ReAssign supplier Article | {{ parent() }}
+{% endblock %}
+
+{% block importmap %}
+    {{ importmap(['app','familyLog-select']) }}
+{% endblock %}
+
+{% block body %}
+
+    <h1><i class="fa-solid fa-plate-wheat"></i> Re-assign supplier to "{{ article.name }}"</h1>
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    {{ form_row(form.supplier) }}
+
+    <div class="grid">
+        {{ form_row(form.zoneStorages) }}
+        {{ include('partials/components/form/_familyLogs-select.html.twig', {familyLog: form.familyLog}) }}
+    </div>
+
+    <div class="grid">
+        <a href="{{ path('admin_suppliers_index') }}" class="secondary" role="button">Annuler</a>
+        <button type="submit">Re-assign supplier</button>
+    </div>
+
+    {{ form_end(form) }}
+
+{% endblock %}
+

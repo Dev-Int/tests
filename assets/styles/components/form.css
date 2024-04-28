@@ -12,6 +12,26 @@ div.grid:has(button) {
     margin-top: var(--block-spacing-vertical);
 }
 
+.form-error {
+    color: var(--color-error);
+    background-color: var(--color-error-bg);
+    font-style: italic;
+    font-size: calc(var(--font-size) * 0.8);
+    list-style: none;
+    border-radius: var(--border-radius);
+    padding: var(--form-element-spacing-vertical) var(--form-element-spacing-horizontal);
+}
+ul:has(.form-error) {
+    padding-left: 0;
+    padding-inline-start: 0;
+}
+
+.help-text > p {
+    color: var(--muted-color);
+    font-size: calc(var(--font-size) * 0.8);
+    font-style: italic;
+}
+
 /* Input groups */
 .input-group {
     position: relative;
@@ -78,3 +98,5 @@ fieldset {
 fieldset > legend {
     padding: calc(var(--block-spacing-horizontal) * 0.5);
 }
+
+
