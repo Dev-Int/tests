@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block body %}
-    <h1><i class="fas fa-tags"></i> Assign parent to "{{ familyLog.label }}"</h1>
+    <h1><twig:Icon:Entities:FamilyLog /> Assign parent to "{{ familyLog.label }}"</h1>
 
     {{ form_start(form) }}
     {{ form_errors(form) }}
@@ -19,8 +19,8 @@
 
 
     <div class="grid">
-        <a role="button" href="{{ path('admin_family_logs_index') }}" class="secondary">Annuler</a>
-        <button type="submit">Assign</button>
+        <twig:Form:Button:Cancel href="{{ path('admin_family_logs_index') }}" label="Annuler" />
+        <twig:Form:Button:Submit label="Assign" />
     </div>
 
     {{ form_end(form) }}

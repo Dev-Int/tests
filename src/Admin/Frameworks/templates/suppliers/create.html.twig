@@ -10,7 +10,7 @@
 
 {% block body %}
 
-    <h1><i class="fa-solid fa-truck-ramp-box"></i> Create Supplier</h1>
+    <h1><twig:Icon:Entities:Supplier /> Create Supplier</h1>
 
     {{ form_start(form) }}
     {{ form_errors(form) }}
@@ -40,8 +40,8 @@
     </div>
 
     <div class="grid">
-        <a href="{{ path('admin_suppliers_index') }}" class="secondary" role="button">Annuler</a>
-        <button type="submit">Create</button>
+        <twig:Form:Button:Cancel href="{{ path('admin_suppliers_index') }}" label="Annuler" />
+        <twig:Form:Button:Submit label="Create" />
     </div>
 
     {{ form_end(form) }}

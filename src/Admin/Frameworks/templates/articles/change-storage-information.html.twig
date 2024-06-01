@@ -6,7 +6,7 @@
 
 {% block body %}
 
-    <h1><i class="fa-solid fa-plate-wheat"></i> Change storage information to "{{ article.name }}"</h1>
+    <h1><twig:Icon:Entities:Article /> Change storage information to "{{ article.name }}"</h1>
 
     {{ form_start(form) }}
     {{ form_errors(form) }}
@@ -16,8 +16,8 @@
     {{ form_row(form.minStock) }}
 
     <div class="grid">
-        <a href="{{ path('admin_articles_index') }}" class="secondary" role="button">Annuler</a>
-        <button type="submit">Update</button>
+        <twig:Form:Button:Cancel href="{{ path('admin_articles_index') }}" label="Annuler" />
+        <twig:Form:Button:Submit label="Update" />
     </div>
 
     {{ form_end(form) }}

@@ -6,16 +6,14 @@
 
 {% block body %}
 
-    <h1><i class="fas fa-flask"></i> Units</h1>
+    <h1><twig:Icon:Entities:Unit /> Units</h1>
 
     <div class="row">
         <aside class="col-md-3">
             <nav class="menu">
                 <ul>
-                    <li><a href="{{ path('admin_unit_create') }}" class="w100" role="button">Create Unit</a></li>
-                    <li>
-                        {{ include('@admin/partials/components/_back-admin-button.html.twig') }}
-                    </li>
+                    <li><twig:Button:CreateEntity href="{{ path('admin_unit_create') }}" class="w100" label="Create Unit" /></li>
+                    <li><twig:Button:BackTo href="{{ path('admin_index') }}" label="Retour à l'administration" /></li>
                 </ul>
             </nav>
         </aside>
@@ -25,7 +23,7 @@
                 <li class="li-unstyled flex-between">
                     {{ unit.label }} {{ unit.abbreviation }}
                     <span>
-                        <a href="{{ path('admin_units_change-label', {unit: unit.uuid}) }}" role="button">Change label</a>
+                        <twig:Button:UpdateEntity href="{{ path('admin_units_change-label', {unit: unit.uuid}) }}" label="Change label" />
                     </span>
                 </li>
                 {% endfor %}

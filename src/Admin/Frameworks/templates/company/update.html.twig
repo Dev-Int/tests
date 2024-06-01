@@ -6,7 +6,7 @@
 
 {% block body %}
 
-    <h1><i class="fa-solid fa-building"></i> CUpdate Company "{{ companyName }}"</h1>
+    <h1><twig:Icon:Entities:Company /> CUpdate Company "{{ companyName }}"</h1>
 
     {{ form_start(form) }}
     {{ form_errors(form) }}
@@ -24,8 +24,8 @@
     {{ form_row(form.contact) }}
 
     <div class="grid">
-        <a role="button" href="{{ path('admin_company_index') }}" class="secondary">Annuler</a>
-        <button type="submit">Update</button>
+        <twig:Form:Button:Cancel href="{{ path('admin_company_index') }}" label="Annuler" />
+        <twig:Form:Button:Submit label="Update" />
     </div>
 
     {{ form_end(form) }}

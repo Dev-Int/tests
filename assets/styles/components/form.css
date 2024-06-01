@@ -26,10 +26,13 @@ ul:has(.form-error) {
     padding-inline-start: 0;
 }
 
-.help-text > p {
-    color: var(--muted-color);
-    font-size: calc(var(--font-size) * 0.8);
-    font-style: italic;
+.help-text {
+    margin-top: var(--form-element-spacing-vertical);
+    & > p {
+        color: var(--muted-color);
+        font-size: calc(var(--font-size) * 0.8);
+        font-style: italic;
+    }
 }
 
 /* Input groups */

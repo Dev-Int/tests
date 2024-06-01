@@ -6,7 +6,7 @@
 
 {% block body %}
 
-    <h1><i class="fas fa-flask"></i> Change label "{{ unit.label }}"</h1>
+    <h1><twig:Icon:Entities:Unit /> Change label "{{ unit.label }}"</h1>
 
     {{ form_start(form) }}
     {{ form_errors(form) }}
@@ -15,8 +15,8 @@
     {{ form_row(form.abbreviation) }}
 
     <div class="grid">
-        <a href="{{ path('admin_units_index') }}" class="secondary" role="button">Annuler</a>
-        <button type="submit">Change label</button>
+        <twig:Form:Button:Cancel href="{{ path('admin_units_index') }}" label="Annuler" />
+        <twig:Form:Button:Submit label="Change label" />
     </div>
 
     {{ form_end(form) }}

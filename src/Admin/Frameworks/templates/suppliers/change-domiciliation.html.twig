@@ -6,7 +6,7 @@
 
 {% block body %}
 
-    <h1><i class="fa-solid fa-truck-ramp-box"></i> Change domiciliation "{{ supplier.name }}"</h1>
+    <h1><twig:Icon:Entities:Supplier /> Change domiciliation "{{ supplier.name }}"</h1>
 
     {{ form_start(form) }}
     {{ form_errors(form) }}
@@ -23,8 +23,8 @@
     </div>
 
     <div class="grid">
-        <a href="{{ path('admin_suppliers_index') }}" class="secondary" role="button">Annuler</a>
-        <button type="submit">Update</button>
+        <twig:Form:Button:Cancel href="{{ path('admin_suppliers_index') }}" label="Annuler" />
+        <twig:Form:Button:Submit label="Update" />
     </div>
 
     {{ form_end(form) }}

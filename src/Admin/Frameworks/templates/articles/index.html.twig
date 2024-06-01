@@ -6,16 +6,14 @@
 
 {% block body %}
 
-    <h1><i class="fa-solid fa-plate-wheat"></i> Articles</h1>
+    <h1><twig:Icon:Entities:Article /> Articles</h1>
 
     <div class="row">
         <aside class="col-md-3">
             <nav class="menu">
                 <ul>
-                    <li><a href="{{ path('admin_article_create') }}" class="w100" role="button">Create Article</a></li>
-                    <li>
-                        {{ include('@admin/partials/components/_back-admin-button.html.twig') }}
-                    </li>
+                    <li><twig:Button:CreateEntity href="{{ path('admin_article_create') }}" label="Create Article" class="w100" /></li>
+                    <li><twig:Button:BackTo href="{{ path('admin_index') }}" label="Retour à l'administration" /></li>
                 </ul>
             </nav>
         </aside>
@@ -25,10 +23,10 @@
                 <li class="li-unstyled flex-between">
                     {{ article.name }}
                     <span>
-                        <a href="{{ path('admin_articles_rename', {'article': article.uuid}) }}" role="button">Rename</a>
-                        <a href="{{ path('admin_articles_reassign-supplier', {'article': article.uuid}) }}" role="button">Re-assign Supplier</a>
-                        <a href="{{ path('admin_articles_change-storage-information', {'article': article.uuid}) }}" role="button">Change storage information</a>
-                        <a href="{{ path('admin_articles_change_financial-information', {'article': article.uuid}) }}" role="button">Change financial information</a>
+                        <twig:Button:UpdateEntity href="{{ path('admin_articles_rename', {'article': article.uuid}) }}" label="Rename" />
+                        <twig:Button:UpdateEntity href="{{ path('admin_articles_reassign-supplier', {'article': article.uuid}) }}" label="Supplier" />
+                        <twig:Button:UpdateEntity href="{{ path('admin_articles_change-storage-information', {'article': article.uuid}) }}" label="Storage information" />
+                        <twig:Button:UpdateEntity href="{{ path('admin_articles_change_financial-information', {'article': article.uuid}) }}" label="Financial information" />
                     </span>
                 </li>
                 {%  endfor %}

@@ -10,7 +10,7 @@
 
 {% block body %}
 
-    <h1><i class="fa-solid fa-warehouse"></i> Change FamilyLog "{{ zoneStorage.label }}"</h1>
+    <h1><twig:Icon:Entities:ZoneStorage /> Change FamilyLog "{{ zoneStorage.label }}"</h1>
 
     {{ form_start(form) }}
     {{ form_errors(form) }}
@@ -18,8 +18,8 @@
     {{ include('partials/components/form/_familyLogs-select.html.twig', {familyLog: form.familyLog}) }}
 
     <div class="grid">
-        <a role="button" href="{{ path('admin_zone_storages_index') }}" class="secondary">Annuler</a>
-        <button type="submit">Change FamilyLog</button>
+        <twig:Form:Button:Cancel href="{{ path('admin_zone_storages_index') }}" label="Annuler" />
+        <twig:Form:Button:Submit label="Change FamilyLog" />
     </div>
 
     {{ form_end(form) }}

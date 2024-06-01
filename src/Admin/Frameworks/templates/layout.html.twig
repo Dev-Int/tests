@@ -14,37 +14,37 @@
                 <ul>
                     <li>
                         <a href="{{ path('admin_company_index') }}" role="button" class="w100">
-                            <i class="fa-solid fa-building"></i> Company
+                            <twig:Icon:Entities:Company /> Company
                         </a>
                     </li>
                     <li>
                         <a href="{{ path('admin_units_index') }}" role="button" class="w100">
-                            <i class="fa-solid fa-flask"></i> Units
+                            <twig:Icon:Entities:Unit /> Units
                         </a>
                     </li>
                     <li>
                         <a href="{{ path('admin_taxes_index') }}" role="button" class="w100">
-                            <i class="fas fa-percent"></i> Taxes
+                            <twig:Icon:Entities:Taxe /> Taxes
                         </a>
                     </li>
                     <li>
                         <a href="{{ path('admin_family_logs_index') }}" role="button" class="w100">
-                            <i class="fa-solid fa-tags"></i> Logistic families
+                            <twig:Icon:Entities:FamilyLog /> Logistic families
                         </a>
                     </li>
                     <li>
                         <a href="{{ path('admin_zone_storages_index') }}" role="button" class="w100">
-                            <i class="fa-solid fa-warehouse"></i> Storage areas
+                            <twig:Icon:Entities:ZoneStorage /> Storage areas
                         </a>
                     </li>
                     <li>
                         <a href="{{ path('admin_suppliers_index') }}" role="button" class="w100">
-                            <i class="fa-solid fa-truck-ramp-box"></i> Suppliers
+                            <twig:Icon:Entities:Supplier /> Suppliers
                         </a>
                     </li>
                     <li>
                         <a href="{{ path('admin_articles_index') }}" role="button" class="w100">
-                            <i class="fa-solid fa-plate-wheat"></i> Articles
+                            <twig:Icon:Entities:Article /> Articles
                         </a>
                     </li>
                 </ul>
@@ -56,7 +56,9 @@
             <p></p>
             <p>Happy use <i class="fa-solid fa-face-smile-wink"></i></p>
 
-            <p class="bottom-element">{{ include('partials/components/_back-home-button.html.twig') }}</p>
+            <p class="bottom-element">
+                <twig:Button:BackTo  href="{{ path('home') }}" label="Retour à l'accueil" />
+            </p>
         </article>
     </div>
 

@@ -13,9 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller;
 
-use Admin\UseCases\Gateway\CompanyRepository;
-use Admin\UseCases\Gateway\TaxRepository;
-use Admin\UseCases\Gateway\UnitRepository;
+use Admin\Adapters\Gateway\ConfigurationService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -24,23 +22,25 @@ use Symfony\Component\Routing\Attribute\Route;
 #[AsController]
 final class ApplicationConfigureController extends AbstractController
 {
-    public function __construct(
-        private readonly CompanyRepository $companyRepository,
-        private readonly UnitRepository $unitRepository,
-        private readonly TaxRepository $taxRepository
-    ) {
+    public function __construct(private readonly ConfigurationService $configurationService)
+    {
     }
 
     #[Route(path: '/configure/application', name: 'admin_configure_application')]
     public function __invoke(): Response
     {
-        $hasBefore = $this->companyRepository->hasCompany();
+        $hasBefore = $this->configurationService->isCompanyConfigured();
         if ($hasBefore === false) {
             return $this->redirectToRoute('admin_configure');
         }
 
-        $hasUnit = $this->unitRepository->hasUnit();
-        $hasTax = $this->taxRepository->hasTax();
+        $hasUnit = $this->configurationService->isUnitConfigured();
+        $hasTax = $this->configurationService->isTaxConfigured();
+
+        if ($this->configurationService->isConfigured()) {
+            $hasUnit = false;
+            $hasTax = false;
+        }
 
         return $this->render('@admin/configure/application.html.twig', [
             'hasUnit' => $hasUnit,
