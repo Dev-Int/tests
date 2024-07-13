@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Form\Type\Components;
 
-use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
+use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;

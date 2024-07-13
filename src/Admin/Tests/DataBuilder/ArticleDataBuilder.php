@@ -17,6 +17,7 @@ use Admin\Entities\Article\Article;
 use Admin\Entities\FamilyLog\FamilyLog;
 use Admin\Entities\Supplier\Supplier;
 use Admin\Entities\Tax\Tax;
+use Admin\Entities\Unit\Unit;
 use Admin\Entities\ZoneStorage\ZoneStorage;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\Amount;
@@ -32,9 +33,9 @@ final class ArticleDataBuilder implements DataBuilderInterface
     private Supplier $supplier;
 
     /**
-     * @var array<array{string, float}|null>
+     * @var array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null}
      */
-    private array $packaging = [['Colis', 1], null, null];
+    private array $packaging;
     private int $amount = 685;
     private Tax $tax;
     private float $minStock = 8.5;
@@ -47,16 +48,24 @@ final class ArticleDataBuilder implements DataBuilderInterface
     private float $quantity = 12.500;
 
     /**
-     * @param array<ZoneStorage> $zoneStorages
+     * @param array<ZoneStorage>                                                          $zoneStorages
+     * @param array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null} $packaging
      */
-    public function create(string $name, Supplier $supplier, Tax $tax, array $zoneStorages, FamilyLog $familyLog): self
-    {
+    public function create(
+        string $name,
+        Supplier $supplier,
+        Tax $tax,
+        array $zoneStorages,
+        FamilyLog $familyLog,
+        array $packaging
+    ): self {
         $this->uuid = self::UUID_VALID;
         $this->name = $name;
         $this->supplier = $supplier;
         $this->tax = $tax;
         $this->zoneStorages = $zoneStorages;
         $this->familyLog = $familyLog;
+        $this->packaging = $packaging;
 
         return $this;
     }

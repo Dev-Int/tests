@@ -11,7 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Adapters\Gateway\ORM\Entity;
+namespace Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
 
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
 use Admin\Entities\FamilyLog\FamilyLog as FamilyLogDomain;
@@ -59,12 +59,17 @@ class FamilyLog
         return $this;
     }
 
-    public function toDomain(): FamilyLogDomain
+    public function toDomain(?self $parent = null): FamilyLogDomain
     {
-        return FamilyLogDomain::create(
+        $parentDomain = $parent?->toDomain($parent->parent);
+
+        return FamilyLogDomain::createFromExistingEntity(
             ResourceUuid::fromString($this->uuid),
             NameField::fromString($this->label),
-            $this->parent?->toDomain()
+            $this->slug,
+            $this->path,
+            $this->level,
+            $parentDomain
         );
     }
 
@@ -100,6 +105,18 @@ class FamilyLog
         return $this;
     }
 
+    public function level(): int
+    {
+        return $this->level;
+    }
+
+    public function setLevel(int $level): self
+    {
+        $this->level = $level;
+
+        return $this;
+    }
+
     public function parent(): ?self
     {
         return $this->parent;
@@ -110,6 +127,12 @@ class FamilyLog
         $this->parent = $parent;
 
         return $this;
+    }
+
+    public function addChild(self $child): void
+    {
+        $this->children[] = $child;
+        $this->parent = $child->parent();
     }
 
     /**
@@ -144,6 +167,41 @@ class FamilyLog
         $prefix = str_repeat('|- - ', $this->level);
 
         return sprintf('%s %s', $prefix, $this->label);
+    }
+
+    public function isCompatible(self $familyLog): bool
+    {
+        if ($this->isEqual($familyLog)) {
+            return true;
+        }
+
+        return ($familyLog->parent instanceof self) && $familyLog->isDescendantOf($this);
+    }
+
+    private function isEqual(self $familyLog): bool
+    {
+        return $this->slug === $familyLog->slug;
+    }
+
+    private function isDescendantOf(self $parent): bool
+    {
+        if ($parent->hasChildren()) {
+            /** @var FamilyLog $child */
+            foreach ($parent->children()->toArray() as $child) {
+                if ($child->slug === $this->slug) {
+                    return true;
+                }
+
+                if ($child->hasChildren()) {
+                    $isDescendant = $this->isDescendantOf($child);
+                    if ($isDescendant) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     private function hasChildren(): bool

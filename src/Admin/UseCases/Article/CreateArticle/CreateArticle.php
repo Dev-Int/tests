@@ -71,7 +71,7 @@ final readonly class CreateArticle
     ): void {
         $checkZoneStorage = true;
         foreach ($zoneStorages as $zoneStorage) {
-            $checkZoneStorage = $supplierFamilyLog->isCompatible($zoneStorage->familyLog());
+            $checkZoneStorage = $zoneStorage->familyLog()->isCompatible($familyLog);
             if ($checkZoneStorage === false) {
                 break;
             }

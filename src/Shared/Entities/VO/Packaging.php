@@ -14,28 +14,15 @@ declare(strict_types=1);
 namespace Shared\Entities\VO;
 
 use Admin\Entities\Article\VO\Storage;
-use Admin\Entities\Exception\InvalidPackageException;
+use Admin\Entities\Unit\Unit;
 
-final class Packaging
+final readonly class Packaging
 {
-    /** @var array{string, float} */
-    private array $parcel;
-
-    /** @var array{string, float}|null */
-    private ?array $subPackage;
-
-    /** @var array{string, float}|null */
-    private ?array $consumerUnit;
-
     /**
-     * @param array<array{string, float}|null> $packages
+     * @param array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null} $packages
      */
     public static function fromArray(array $packages): self
     {
-        if (null === $packages[0]) {
-            throw new InvalidPackageException();
-        }
-
         $parcel = Storage::fromArray($packages[0])->toArray();
         $subPackage = $packages[1] !== null ? Storage::fromArray($packages[1])->toArray() : null;
         $consumerUnit = $packages[2] !== null ? Storage::fromArray($packages[2])->toArray() : null;
@@ -44,19 +31,19 @@ final class Packaging
     }
 
     /**
-     * @param array{string, float}      $parcel
-     * @param array{string, float}|null $subPackage
-     * @param array{string, float}|null $consumerUnit
+     * @param array{Unit, float}      $parcel
+     * @param array{Unit, float}|null $subPackage
+     * @param array{Unit, float}|null $consumerUnit
      */
-    public function __construct(array $parcel, ?array $subPackage = null, ?array $consumerUnit = null)
-    {
-        $this->parcel = $parcel;
-        $this->subPackage = $subPackage;
-        $this->consumerUnit = $consumerUnit;
+    public function __construct(
+        private array $parcel,
+        private ?array $subPackage = null,
+        private ?array $consumerUnit = null
+    ) {
     }
 
     /**
-     * @return array{string, float}
+     * @return array{Unit, float}
      */
     public function parcel(): array
     {
@@ -64,7 +51,7 @@ final class Packaging
     }
 
     /**
-     * @return array{string, float}|null
+     * @return array{Unit, float}|null
      */
     public function subPackage(): ?array
     {
@@ -72,7 +59,7 @@ final class Packaging
     }
 
     /**
-     * @return array{string, float}|null
+     * @return array{Unit, float}|null
      */
     public function consumerUnit(): ?array
     {

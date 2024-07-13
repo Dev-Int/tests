@@ -18,6 +18,7 @@ use Admin\Tests\DataBuilder\ArticleDataBuilder;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\SupplierDataBuilder;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
+use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
 use Admin\UseCases\Article\GetArticles\GetArticles;
 use Admin\UseCases\Gateway\ArticleRepository;
@@ -38,13 +39,28 @@ final class GetArticlesTest extends TestCase
         $familyLog = (new FamilyLogDataBuilder())->create('Frais')->build();
         $zoneStorage = (new ZoneStorageDataBuilder())->create('Réserve positive', $familyLog)->build();
         $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLog)->build();
+        $unit = (new UnitDataBuilder())->create('Colis', 'cls')->build();
         $articleDataBuilder = new ArticleDataBuilder();
         $article1 = $articleDataBuilder
-            ->create('Jambon Trad 6kg', $supplier, $tax, [$zoneStorage], $familyLog)
+            ->create(
+                'Jambon Trad 6kg',
+                $supplier,
+                $tax,
+                [$zoneStorage],
+                $familyLog,
+                [[$unit, 1.0], null, null]
+            )
             ->build()
         ;
         $article2 = $articleDataBuilder
-            ->create('Lait x6 litres', $supplier, $tax, [$zoneStorage], $familyLog)
+            ->create(
+                'Lait x6 litres',
+                $supplier,
+                $tax,
+                [$zoneStorage],
+                $familyLog,
+                [[$unit, 1.0], null, null]
+            )
             ->build()
         ;
         $articles = new ArticleCollection();

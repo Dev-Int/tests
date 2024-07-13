@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\controller\Symfony\Controller\FamilyLog\AssignParentFamilyLog;
 
-use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
+use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;

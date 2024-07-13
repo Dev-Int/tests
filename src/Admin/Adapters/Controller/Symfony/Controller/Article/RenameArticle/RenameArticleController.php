@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\Adapters\Controller\Symfony\Controller\Article\RenameArticle;
 
 use Admin\Adapters\Form\Type\Article\RenameArticleType;
-use Admin\Adapters\Gateway\ORM\Entity\Article;
+use Admin\Adapters\Gateway\ORM\Entity\Article\Article;
 use Admin\UseCases\Article\RenameArticle\RenameArticle;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;

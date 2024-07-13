@@ -13,8 +13,9 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\controller\Symfony\Controller\Article\CreateArticle;
 
-use Admin\Adapters\Gateway\ORM\Entity\Article;
-use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
+use Admin\Adapters\Gateway\ORM\Entity\Article\Article;
+use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
+use Admin\Adapters\Gateway\ORM\Entity\Unit;
 use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineArticleRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineCompanyRepository;
@@ -52,17 +53,36 @@ final class CreateArticleControllerTest extends WebTestCase
 
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
-        $company = (new CompanyDataBuilder())->create('Test company')->build();
-        $companyRepository->save($company);
 
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+
+        /** @var DoctrineTaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+
+        /** @var DoctrineFamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+
+        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+
+        /** @var DoctrineSupplierRepository $supplierRepository */
+        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
+
+        /** @var DoctrineArticleRepository $articleRepository */
+        $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
+
+        $company = (new CompanyDataBuilder())->create('Test company')->build();
+        $companyRepository->save($company);
+
         $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
-        $piece = (new UnitDataBuilder())->create('Pièce', 'kg')
+        $piece = (new UnitDataBuilder())
+            ->create('Pièce', 'kg')
             ->withUuid('eca51cd2-4189-4a55-be7e-a6928cf1b5a8')
             ->build()
         ;
-        $kilogramme = (new UnitDataBuilder())->create('Kilogramme', 'kg')
+        $kilogramme = (new UnitDataBuilder())
+            ->create('Kilogramme', 'kg')
             ->withUuid('f016bde4-f36e-468b-bac0-af2b76a9d496')
             ->build()
         ;
@@ -70,31 +90,29 @@ final class CreateArticleControllerTest extends WebTestCase
         $unitRepository->save($piece);
         $unitRepository->save($kilogramme);
 
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
         $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
         $taxRepository->save($tax);
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
-        $familyLog = (new FamilyLogDataBuilder())->create('Frais')
-            ->withUuid('99282a8d-f344-456c-bbd3-37fe89f3876c')
+        $familyLog0 = (new FamilyLogDataBuilder())->create('Alimentaire')->build();
+        $familyLog1 = (new FamilyLogDataBuilder())->create('Frais')
+            ->withUuid('f016bde4-f36e-468b-bac0-af2b76a9d496')
+            ->withParent($familyLog0)
             ->build()
         ;
-        $familyLogRepository->save($familyLog);
+        $familyLog2 = (new FamilyLogDataBuilder())->create('Viande')
+            ->withUuid('4fb3318a-fdbd-4c8f-9937-4f5cb59e8352')
+            ->withParent($familyLog1)
+            ->build()
+        ;
+        $familyLogRepository->save($familyLog0);
+        $familyLogRepository->save($familyLog1);
+        $familyLogRepository->save($familyLog2);
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
-        $zoneStorage = (new ZoneStorageDataBuilder())->create('Réserve froide', $familyLog)->build();
+        $zoneStorage = (new ZoneStorageDataBuilder())->create('Réserve froide', $familyLog1)->build();
         $zoneStorageRepository->save($zoneStorage);
 
-        /** @var DoctrineSupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
-        $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLog)->build();
+        $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLog0)->build();
         $supplierRepository->save($supplier);
-
-        /** @var DoctrineArticleRepository $articleRepository */
-        $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
 
         // Act
         $crawler = $client->request(Request::METHOD_GET, self::CREATE_ARTICLE_URI);
@@ -115,7 +133,7 @@ final class CreateArticleControllerTest extends WebTestCase
             'createArticle[tax]' => $tax->uuid()->toString(),
             'createArticle[minStock]' => 8.8,
             'createArticle[zoneStorages]' => [$zoneStorage->uuid()->toString()],
-            'createArticle[familyLog]' => $familyLog->uuid()->toString(),
+            'createArticle[familyLog]' => $familyLog2->uuid()->toString(),
             'createArticle[quantity]' => 12.500,
         ]);
         $client->submit($form);
@@ -133,7 +151,19 @@ final class CreateArticleControllerTest extends WebTestCase
         self::assertInstanceOf(Article::class, $articleCreated);
         self::assertSame('Jambon Trad 6kg', $articleCreated->name());
         self::assertSame('Supplier 1', $articleCreated->supplier()->name());
-        self::assertSame([['colis', 1.0], ['pièce', 2.0], ['kilogramme', 6.800]], $articleCreated->packaging());
+        self::assertSame('Alimentaire', $articleCreated->supplier()->familyLog()->label());
+        $colisOrm = $unitRepository->findOneBy(['slug' => $colis->slug()]);
+        self::assertInstanceOf(Unit::class, $colisOrm);
+        $pieceOrm = $unitRepository->findOneBy(['slug' => $piece->slug()]);
+        self::assertInstanceOf(Unit::class, $pieceOrm);
+        $kilogrammeOrm = $unitRepository->findOneBy(['slug' => $kilogramme->slug()]);
+        self::assertInstanceOf(Unit::class, $kilogrammeOrm);
+        self::assertSame($colisOrm, $articleCreated->packaging()->parcelUnit());
+        self::assertSame(1.0, $articleCreated->packaging()->parcelQuantity());
+        self::assertSame($pieceOrm, $articleCreated->packaging()->subPackageUnit());
+        self::assertSame(2.0, $articleCreated->packaging()->subPackageQuantity());
+        self::assertSame($kilogrammeOrm, $articleCreated->packaging()->consumeUnitUnit());
+        self::assertSame(6.800, $articleCreated->packaging()->consumeUnitQuantity());
         self::assertSame(600, $articleCreated->amount());
         self::assertSame(0.055, $articleCreated->tax()->rate());
         self::assertSame('TVA taux réduit', $articleCreated->tax()->name());
@@ -142,7 +172,8 @@ final class CreateArticleControllerTest extends WebTestCase
         $firstZoneStorage = $zoneStorages[0];
         self::assertInstanceOf(ZoneStorage::class, $firstZoneStorage);
         self::assertSame('Réserve froide', $firstZoneStorage->label());
-        self::assertSame('Frais', $articleCreated->familyLog()->label());
+        self::assertSame('Frais', $firstZoneStorage->familyLog()->label());
+        self::assertSame('Viande', $articleCreated->familyLog()->label());
         self::assertSame(12.500, $articleCreated->quantity());
         self::assertSame('jambon-trad-6kg', $articleCreated->slug());
         self::assertTrue($articleCreated->active());
@@ -205,7 +236,8 @@ final class CreateArticleControllerTest extends WebTestCase
             $supplier,
             $tax,
             [$zoneStorage],
-            $familyLog
+            $familyLog,
+            [[$colis, 1.0], null, null]
         )->build();
         $articleRepository->save($article);
 

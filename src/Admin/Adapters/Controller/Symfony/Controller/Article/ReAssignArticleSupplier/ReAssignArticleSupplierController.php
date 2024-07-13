@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\Adapters\Controller\Symfony\Controller\Article\ReAssignArticleSupplier;
 
 use Admin\Adapters\Form\Type\Article\ReAssignSupplierType;
-use Admin\Adapters\Gateway\ORM\Entity\Article;
+use Admin\Adapters\Gateway\ORM\Entity\Article\Article;
 use Admin\UseCases\Article\ReAssignSupplier\ReAssignArticleSupplier;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

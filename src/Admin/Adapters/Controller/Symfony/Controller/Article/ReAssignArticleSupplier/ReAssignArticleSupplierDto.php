@@ -13,14 +13,14 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\Article\ReAssignArticleSupplier;
 
-use Admin\Adapters\Controller\Symfony\Controller\Article\Validator\CompatibleFamilyLogs;
-use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
+use Admin\Adapters\Controller\Symfony\Controller\Article\Validator\CompatibleReassignFamilyLogs;
+use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Admin\Adapters\Gateway\ORM\Entity\Supplier;
 use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[CompatibleFamilyLogs]
+#[CompatibleReassignFamilyLogs]
 final class ReAssignArticleSupplierDto
 {
     /**

@@ -17,12 +17,14 @@ use Admin\Adapters\Gateway\ORM\Repository\DoctrineArticleRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineSupplierRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineTaxRepository;
+use Admin\Adapters\Gateway\ORM\Repository\DoctrineUnitRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineZoneStorageRepository;
 use Admin\Entities\Exception\NoArticleRegisteredException;
 use Admin\Tests\DataBuilder\ArticleDataBuilder;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\SupplierDataBuilder;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
+use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -42,6 +44,11 @@ final class GetArticlesControllerTest extends WebTestCase
 
         /** @var DoctrineArticleRepository $articleRepository */
         $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
+
+        /** @var DoctrineUnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
+        $unitRepository->save($colis);
 
         /** @var DoctrineTaxRepository $taxRepository */
         $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
@@ -68,11 +75,25 @@ final class GetArticlesControllerTest extends WebTestCase
 
         $articleDataBuilder = new ArticleDataBuilder();
         $article1 = $articleDataBuilder
-            ->create('Jambon Trad 6kg', $supplier, $tax, [$zoneStorage], $familyLog)
+            ->create(
+                'Jambon Trad 6kg',
+                $supplier,
+                $tax,
+                [$zoneStorage],
+                $familyLog,
+                [[$colis, 1.0], null, null]
+            )
             ->build()
         ;
         $article2 = $articleDataBuilder
-            ->create('Jambon Trad 6kg', $supplier, $tax, [$zoneStorage], $familyLog)
+            ->create(
+                'Jambon Trad 6kg',
+                $supplier,
+                $tax,
+                [$zoneStorage],
+                $familyLog,
+                [[$colis, 1.0], null, null]
+            )
             ->withUuid('99282a8d-f344-456c-bbd3-37fe89f3876c')
             ->build()
         ;

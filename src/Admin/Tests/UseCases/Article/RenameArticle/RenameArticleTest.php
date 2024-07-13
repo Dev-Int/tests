@@ -19,6 +19,7 @@ use Admin\Tests\DataBuilder\ArticleDataBuilder;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\SupplierDataBuilder;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
+use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
 use Admin\UseCases\Article\RenameArticle\RenameArticle;
 use Admin\UseCases\Article\RenameArticle\RenameArticleRequest;
@@ -44,8 +45,16 @@ final class RenameArticleTest extends TestCase
         $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLogParent)->build();
         $zoneStorage = (new ZoneStorageDataBuilder())->create('Réserve froide', $familyLogParent)->build();
         $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
+        $unit = (new UnitDataBuilder())->create('Colis', 'cls')->build();
         $article = (new ArticleDataBuilder())
-            ->create('Jambon Trad 6k', $supplier, $tax, [$zoneStorage], $familyLog)
+            ->create(
+                'Jambon Trad 6k',
+                $supplier,
+                $tax,
+                [$zoneStorage],
+                $familyLog,
+                [[$unit, 1.0], null, null]
+            )
             ->build()
         ;
         $useCase = new RenameArticle($articleRepository);
@@ -92,8 +101,16 @@ final class RenameArticleTest extends TestCase
         $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLogParent)->build();
         $zoneStorage = (new ZoneStorageDataBuilder())->create('Réserve froide', $familyLogParent)->build();
         $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
+        $unit = (new UnitDataBuilder())->create('Colis', 'cls')->build();
         $article = (new ArticleDataBuilder())
-            ->create('Jambon Trad 6k', $supplier, $tax, [$zoneStorage], $familyLog)
+            ->create(
+                'Jambon Trad 6k',
+                $supplier,
+                $tax,
+                [$zoneStorage],
+                $familyLog,
+                [[$unit, 1.0], null, null]
+            )
             ->build()
         ;
         $useCase = new RenameArticle($articleRepository);
@@ -138,8 +155,16 @@ final class RenameArticleTest extends TestCase
         $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLogParent)->build();
         $zoneStorage = (new ZoneStorageDataBuilder())->create('Réserve froide', $familyLogParent)->build();
         $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
+        $unit = (new UnitDataBuilder())->create('Colis', 'cls')->build();
         $article = (new ArticleDataBuilder())
-            ->create('Jambon Trad 6k', $supplier, $tax, [$zoneStorage], $familyLog)
+            ->create(
+                'Jambon Trad 6k',
+                $supplier,
+                $tax,
+                [$zoneStorage],
+                $familyLog,
+                [[$unit, 1.0], null, null]
+            )
             ->build()
         ;
         $useCase = new RenameArticle($articleRepository);

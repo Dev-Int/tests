@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\FamilyLog\GetFamilyLogs;
 
-use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
+use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Admin\UseCases\FamilyLog\GetFamilyLogs\GetFamilyLogsResponse;
 
 final class GetFamilyLogsWebResponse

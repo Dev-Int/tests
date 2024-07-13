@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\Tests\Entities\Article\VO;
 
 use Admin\Entities\Article\VO\Storage;
-use Admin\Entities\Exception\InvalidUnitException;
+use Admin\Tests\DataBuilder\UnitDataBuilder;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -24,21 +24,15 @@ final class StorageTest extends TestCase
 {
     public function testInstantiateStorage(): void
     {
-        // Arrange & Act
-        $storage = Storage::fromArray(['Colis', 1]);
+        // Arrange
+        $unit = (new UnitDataBuilder())->create('Colis', 'cls')->build();
+
+        // Act
+        $storage = Storage::fromArray([$unit, 1.0]);
 
         // Assert
-        self::assertSame(['colis', 1.0], $storage->toArray());
-        self::assertSame('colis', $storage->unit());
+        self::assertSame([$unit, 1.0], $storage->toArray());
+        self::assertSame('colis', $storage->unit()->slug());
         self::assertSame(1.0, $storage->quantity());
-    }
-
-    public function testInstantiateStorageFailWithInvalidUnitException(): void
-    {
-        // Arrange && Act && Assert
-        $this->expectException(InvalidUnitException::class);
-        $this->expectExceptionMessage(InvalidUnitException::MESSAGE);
-
-        Storage::fromArray(['Bad unit', 1]);
     }
 }

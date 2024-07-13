@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Admin\Entities\Article\VO;
 
 use Admin\Entities\Exception\InvalidUnitException;
+use Admin\Entities\Unit\Unit;
 
 final class Storage
 {
@@ -29,11 +30,8 @@ final class Storage
         'portion',
     ];
 
-    private string $unit;
-    private float $quantity;
-
     /**
-     * @param array{string, float} $storage
+     * @param array{Unit, float} $storage
      */
     public static function fromArray(array $storage): self
     {
@@ -43,13 +41,11 @@ final class Storage
         return new self($unit, $quantity);
     }
 
-    private function __construct(string $unit, float $quantity)
+    private function __construct(private readonly Unit $unit, private readonly float $quantity)
     {
-        $this->unit = $unit;
-        $this->quantity = $quantity;
     }
 
-    public function unit(): string
+    public function unit(): Unit
     {
         return $this->unit;
     }
@@ -60,20 +56,20 @@ final class Storage
     }
 
     /**
-     * @return array{string, float}
+     * @return array{Unit, float}
      */
     public function toArray(): array
     {
         return [$this->unit, $this->quantity];
     }
 
-    private static function isValidUnit(string $unit): string
+    private static function isValidUnit(Unit $unit): Unit
     {
-        if (!\in_array(strtolower($unit), self::UNITS, true)) {
-            throw new InvalidUnitException($unit);
+        if (!\in_array(strtolower($unit->label()->toString()), self::UNITS, true)) {
+            throw new InvalidUnitException($unit->label()->toString());
         }
 
-        return strtolower($unit);
+        return $unit;
     }
 
     private static function isValidQuantity(float $quantity): float

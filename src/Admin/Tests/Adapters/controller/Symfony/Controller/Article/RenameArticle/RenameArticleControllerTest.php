@@ -13,17 +13,19 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\controller\Symfony\Controller\Article\RenameArticle;
 
-use Admin\Adapters\Gateway\ORM\Entity\Article;
+use Admin\Adapters\Gateway\ORM\Entity\Article\Article;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineArticleRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineSupplierRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineTaxRepository;
+use Admin\Adapters\Gateway\ORM\Repository\DoctrineUnitRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineZoneStorageRepository;
 use Admin\Entities\Exception\ArticleAlreadyExistsException;
 use Admin\Tests\DataBuilder\ArticleDataBuilder;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\SupplierDataBuilder;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
+use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,6 +42,11 @@ final class RenameArticleControllerTest extends WebTestCase
     {
         // Arrange
         $client = self::createClient();
+
+        /** @var DoctrineUnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
+        $unitRepository->save($colis);
 
         /** @var DoctrineTaxRepository $taxRepository */
         $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
@@ -71,7 +78,8 @@ final class RenameArticleControllerTest extends WebTestCase
             $supplier,
             $tax,
             [$zoneStorage],
-            $familyLog
+            $familyLog,
+            [[$colis, 1.0], null, null]
         )->build();
         $articleRepository->save($article);
 
@@ -106,6 +114,11 @@ final class RenameArticleControllerTest extends WebTestCase
         // Arrange
         $client = self::createClient();
 
+        /** @var DoctrineUnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
+        $unitRepository->save($colis);
+
         /** @var DoctrineTaxRepository $taxRepository */
         $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
         $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
@@ -136,7 +149,8 @@ final class RenameArticleControllerTest extends WebTestCase
             $supplier,
             $tax,
             [$zoneStorage],
-            $familyLog
+            $familyLog,
+            [[$colis, 1.0], null, null]
         )->build();
         $articleRepository->save($article1);
         $article2 = (new ArticleDataBuilder())->create(
@@ -144,7 +158,8 @@ final class RenameArticleControllerTest extends WebTestCase
             $supplier,
             $tax,
             [$zoneStorage],
-            $familyLog
+            $familyLog,
+            [[$colis, 1.0], null, null]
         )
             ->withUuid('f016bde4-f36e-468b-bac0-af2b76a9d496')
             ->build()

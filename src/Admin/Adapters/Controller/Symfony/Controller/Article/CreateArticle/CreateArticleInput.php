@@ -13,7 +13,8 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\Article\CreateArticle;
 
-use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
+use Admin\Adapters\Controller\Symfony\Controller\Article\Validator\CompatibleFamilyLogs;
+use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Admin\Adapters\Gateway\ORM\Entity\Supplier;
 use Admin\Adapters\Gateway\ORM\Entity\Tax;
 use Admin\Adapters\Gateway\ORM\Entity\Unit;
@@ -22,11 +23,16 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 
+#[CompatibleFamilyLogs]
 final class CreateArticleInput
 {
     /**
-     * @param array{parcel: array{unit: Unit, quantity: string}, subPackage: array{unit: Unit|null, quantity: string|null}, consumeUnit: array{unit: Unit|null, quantity: string|null}} $packaging
-     * @param Collection<ZoneStorage>                                                                                                                                                   $zoneStorages
+     * @param array{
+     *     parcel: array{unit: Unit, quantity: string},
+     *     subPackage: array{unit: Unit|null, quantity: string|null},
+     *     consumeUnit: array{unit: Unit|null, quantity: string|null}
+     *     } $packaging
+     * @param Collection<ZoneStorage> $zoneStorages
      */
     public function __construct(
         #[Assert\NotBlank]

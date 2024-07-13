@@ -17,7 +17,11 @@ use Admin\Adapters\Form\Type\Article\CreateArticleType;
 use Admin\Adapters\Gateway\ConfigurationService;
 use Admin\Adapters\Gateway\ORM\Entity\Unit;
 use Admin\Entities\Exception\NoSupplierRegisteredException;
+use Admin\Entities\Unit\Unit as UnitDomain;
 use Admin\UseCases\Article\CreateArticle\CreateArticle;
+use Admin\UseCases\Gateway\FamilyLogRepository;
+use Admin\UseCases\Gateway\SupplierRepository;
+use Admin\UseCases\Gateway\ZoneStorageRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,7 +33,10 @@ final class CreateArticleController extends AbstractController
 {
     public function __construct(
         private readonly CreateArticle $useCase,
-        private readonly ConfigurationService $configurationService
+        private readonly ConfigurationService $configurationService,
+        private readonly SupplierRepository $supplierRepository,
+        private readonly FamilyLogRepository $familyLogRepository,
+        private readonly ZoneStorageRepository $zoneStorageRepository
     ) {
     }
 
@@ -41,7 +48,7 @@ final class CreateArticleController extends AbstractController
 
             return $this->redirectToRoute('admin_configure');
         }
-        $form = $this->createForm(CreateArticleType::class);
+        $form = $this->createForm(CreateArticleType::class, new CreateArticleInput());
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -53,6 +60,7 @@ final class CreateArticleController extends AbstractController
                 throw new \InvalidArgumentException('Supplier expected!');
                 // @codeCoverageIgnoreEnd
             }
+            $supplier = $this->supplierRepository->findBySlug($article->supplier->slug());
             if ($article->packaging === null) {
                 // @codeCoverageIgnoreStart
                 throw new \InvalidArgumentException('Array expected!');
@@ -68,23 +76,25 @@ final class CreateArticleController extends AbstractController
                 throw new \InvalidArgumentException('FamilyLog expected!');
                 // @codeCoverageIgnoreEnd
             }
+            $familyLog = $this->familyLogRepository->findBySlug($article->familyLog->slug());
             $zoneStorages = [];
-            foreach ($article->zoneStorages as $zoneStorage) {
-                $zoneStorages[] = $zoneStorage->toDomain();
+            foreach ($article->zoneStorages as $zoneStorageOrm) {
+                $zoneStorage = $this->zoneStorageRepository->findBySlug($zoneStorageOrm->slug());
+                $zoneStorages[] = $zoneStorage;
             }
-            $packaging = $this->getPackaging($article->packaging);
+            $packaging = $this->getPackagingDomain($article->packaging);
 
             try {
                 $this->useCase->execute(
                     new CreateArticleApiRequest(
                         $article->name,
-                        $article->supplier->toDomain(),
+                        $supplier,
                         $packaging,
                         $article->amount,
                         $article->tax->toDomain(),
                         $article->minStock,
                         $zoneStorages,
-                        $article->familyLog->toDomain(),
+                        $familyLog,
                         $article->quantity ?? 0.0
                     )
                 );
@@ -106,21 +116,21 @@ final class CreateArticleController extends AbstractController
     /**
      * @param array{parcel: array{unit: Unit, quantity: string}, subPackage: array{unit: Unit|null, quantity: string|null}, consumeUnit: array{unit: Unit|null, quantity: string|null}} $packaging
      *
-     * @return array{array{string, float}, array{string, float}|null, array{string, float}|null}
+     * @return array{array{UnitDomain, float}, array{UnitDomain, float}|null, array{UnitDomain, float}|null}
      */
-    private function getPackaging(array $packaging): array
+    private function getPackagingDomain(array $packaging): array
     {
         $parcel = $packaging['parcel'];
-        $parcelRequest = [$parcel['unit']->label(), (float) $parcel['quantity']];
+        $parcelRequest = [$parcel['unit']->toDomain(), (float) $parcel['quantity']];
         $subPackage = $packaging['subPackage'];
         $subPackageRequest = null;
         if ($subPackage['unit'] !== null && $subPackage['quantity'] !== null) {
-            $subPackageRequest = [$subPackage['unit']->label(), (float) $subPackage['quantity']];
+            $subPackageRequest = [$subPackage['unit']->toDomain(), (float) $subPackage['quantity']];
         }
         $consumeUnit = $packaging['consumeUnit'];
         $consumeUnitRequest = null;
         if ($consumeUnit['unit'] !== null && $subPackage['quantity'] !== null) {
-            $consumeUnitRequest = [$consumeUnit['unit']->label(), (float) $consumeUnit['quantity']];
+            $consumeUnitRequest = [$consumeUnit['unit']->toDomain(), (float) $consumeUnit['quantity']];
         }
 
         return [$parcelRequest, $subPackageRequest, $consumeUnitRequest];

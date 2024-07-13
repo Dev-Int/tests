@@ -16,6 +16,7 @@ namespace Admin\UseCases\Article\CreateArticle;
 use Admin\Entities\FamilyLog\FamilyLog;
 use Admin\Entities\Supplier\Supplier;
 use Admin\Entities\Tax\Tax;
+use Admin\Entities\Unit\Unit;
 use Admin\Entities\ZoneStorage\ZoneStorage;
 
 interface CreateArticleRequest
@@ -25,7 +26,7 @@ interface CreateArticleRequest
     public function supplier(): Supplier;
 
     /**
-     * @return array<array{string, float}|null>
+     * @return array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null}
      */
     public function packaging(): array;
 

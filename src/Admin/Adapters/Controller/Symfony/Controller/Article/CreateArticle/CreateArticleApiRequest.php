@@ -16,14 +16,15 @@ namespace Admin\Adapters\Controller\Symfony\Controller\Article\CreateArticle;
 use Admin\Entities\FamilyLog\FamilyLog;
 use Admin\Entities\Supplier\Supplier;
 use Admin\Entities\Tax\Tax;
+use Admin\Entities\Unit\Unit;
 use Admin\Entities\ZoneStorage\ZoneStorage;
 use Admin\UseCases\Article\CreateArticle\CreateArticleRequest;
 
 final class CreateArticleApiRequest implements CreateArticleRequest
 {
     /**
-     * @param array<ZoneStorage>               $zoneStorages
-     * @param array<array{string, float}|null> $packaging
+     * @param array<ZoneStorage>                                                          $zoneStorages
+     * @param array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null} $packaging
      */
     public function __construct(
         public string $name,

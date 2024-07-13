@@ -13,10 +13,12 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Article\ChangeStorageInformation;
 
+use Admin\Entities\Unit\Unit;
+
 interface ChangeArticleStorageInformationRequest
 {
     /**
-     * @return array<array{string, float}|null>
+     * @return array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null}
      */
     public function packaging(): array;
 

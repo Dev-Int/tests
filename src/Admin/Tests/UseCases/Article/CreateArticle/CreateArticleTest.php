@@ -19,6 +19,7 @@ use Admin\Entities\FamilyLog\FamilyLog;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\SupplierDataBuilder;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
+use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
 use Admin\UseCases\Article\CreateArticle\CreateArticle;
 use Admin\UseCases\Article\CreateArticle\CreateArticleRequest;
@@ -36,20 +37,26 @@ final class CreateArticleTest extends TestCase
         $articleRepository = $this->createMock(ArticleRepository::class);
         $useCase = new CreateArticle($articleRepository);
         $request = $this->createMock(CreateArticleRequest::class);
-        $familyLogParent = (new FamilyLogDataBuilder())->create('Frais')->build();
+        $familyLogGrandParent = (new FamilyLogDataBuilder())->create('Alimentaire')->build();
+        $familyLogParent = (new FamilyLogDataBuilder())->create('Frais')
+            ->withUuid('b99a4348-8f8b-42b1-acde-89a77b3e026d')
+            ->withParent($familyLogGrandParent)
+            ->build()
+        ;
         $familyLog = (new FamilyLogDataBuilder())
             ->create('Viande')
             ->withUuid('46835a0c-3e6c-4a5c-ab80-b1d6d96b05ae')
             ->withParent($familyLogParent)
             ->build()
         ;
-        $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLogParent)->build();
+        $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLogGrandParent)->build();
         $zoneStorage = (new ZoneStorageDataBuilder())->create('Réserve froide', $familyLogParent)->build();
         $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
+        $unit = (new UnitDataBuilder())->create('Colis', 'cls')->build();
 
         $request->expects(self::exactly(2))->method('name')->willReturn('Jambon Trad 6kg');
         $request->expects(self::exactly(2))->method('supplier')->willReturn($supplier);
-        $request->expects(self::once())->method('packaging')->willReturn([['Colis', 1], null, null]);
+        $request->expects(self::once())->method('packaging')->willReturn([[$unit, 1.0], null, null]);
         $request->expects(self::once())->method('amount')->willReturn(25.50);
         $request->expects(self::once())->method('tax')->willReturn($tax);
         $request->expects(self::once())->method('minStock')->willReturn(8.000);
@@ -74,7 +81,7 @@ final class CreateArticleTest extends TestCase
         // Assert
         self::assertSame('Jambon Trad 6kg', $article->name()->toString());
         self::assertSame('Supplier 1', $article->supplier()->name()->toString());
-        self::assertSame(['colis', 1.0], $article->packaging()->parcel());
+        self::assertSame([$unit, 1.0], $article->packaging()->parcel());
         self::assertSame(25.50, $article->amount()->toFloat());
         self::assertSame(2550, $article->amount()->toInt());
         self::assertSame(0.055, $article->tax()->rate());
@@ -115,10 +122,11 @@ final class CreateArticleTest extends TestCase
             ->build()
         ;
         $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
+        $unit = (new UnitDataBuilder())->create('Colis', 'cls')->build();
 
         $request->expects(self::once())->method('name')->willReturn('Jambon Trad 6kg');
         $request->expects(self::once())->method('supplier')->willReturn($supplier);
-        $request->expects(self::never())->method('packaging')->willReturn([['Colis', 1], null, null]);
+        $request->expects(self::never())->method('packaging')->willReturn([[$unit, 1.0], null, null]);
         $request->expects(self::never())->method('amount')->willReturn(25.50);
         $request->expects(self::never())->method('tax')->willReturn($tax);
         $request->expects(self::never())->method('minStock')->willReturn(8.000);
@@ -158,10 +166,11 @@ final class CreateArticleTest extends TestCase
         $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLogParent)->build();
         $zoneStorage = (new ZoneStorageDataBuilder())->create('Réserve froide', $familyLogParent)->build();
         $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
+        $unit = (new UnitDataBuilder())->create('Colis', 'cls')->build();
 
         $request->expects(self::exactly(2))->method('name')->willReturn('Jambon Trad 6kg');
         $request->expects(self::never())->method('supplier')->willReturn($supplier);
-        $request->expects(self::never())->method('packaging')->willReturn([['Colis', 1], null, null]);
+        $request->expects(self::never())->method('packaging')->willReturn([[$unit, 1.0], null, null]);
         $request->expects(self::never())->method('amount')->willReturn(25.50);
         $request->expects(self::never())->method('tax')->willReturn($tax);
         $request->expects(self::never())->method('minStock')->willReturn(8.000);

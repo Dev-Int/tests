@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\Adapters\Controller\Symfony\Controller\FamilyLog\AssignParentFamilyLog;
 
 use Admin\Adapters\Form\Type\FamilyLog\AssignParentFamilyLogType;
-use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
+use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Admin\UseCases\FamilyLog\ChangeParentFamilyLog\AssignParentFamilyLog;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;

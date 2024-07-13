@@ -13,10 +13,12 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Gateway\ORM\Repository;
 
-use Admin\Adapters\Gateway\ORM\Entity\Article;
-use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
+use Admin\Adapters\Gateway\ORM\Entity\Article\Article;
+use Admin\Adapters\Gateway\ORM\Entity\Article\Packaging;
+use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Admin\Adapters\Gateway\ORM\Entity\Supplier;
 use Admin\Adapters\Gateway\ORM\Entity\Tax;
+use Admin\Adapters\Gateway\ORM\Entity\Unit;
 use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
 use Admin\Entities\Article\Article as ArticleDomain;
 use Admin\Entities\Article\ArticleCollection;
@@ -25,7 +27,9 @@ use Admin\Entities\Exception\FamilyLogNotFoundException;
 use Admin\Entities\Exception\NoArticleRegisteredException;
 use Admin\Entities\Exception\SupplierNotFoundException;
 use Admin\Entities\Exception\TaxNotFoundException;
+use Admin\Entities\Exception\UnitNotFoundException;
 use Admin\Entities\Exception\ZoneStorageNotFoundException;
+use Admin\Entities\Unit\Unit as UnitDomain;
 use Admin\UseCases\Gateway\ArticleRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -33,6 +37,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\UnexpectedResultException;
 use Doctrine\Persistence\ManagerRegistry;
+use Shared\Entities\VO\Packaging as PackagingDomain;
 
 /**
  * @template-extends ServiceEntityRepository<Article>
@@ -47,10 +52,14 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         private readonly DoctrineTaxRepository $taxRepository,
         private readonly DoctrineZoneStorageRepository $zoneStorageRepository,
         private readonly DoctrineFamilyLogRepository $familyLogRepository,
+        private readonly DoctrineUnitRepository $unitRepository,
     ) {
         parent::__construct($registry, Article::class);
     }
 
+    /**
+     * @throws NonUniqueResultException
+     */
     public function isExists(string $name): bool
     {
         $alias = self::ALIAS;
@@ -120,13 +129,17 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
             // @codeCoverageIgnoreEnd
         }
 
-        $this->_em->persist((new Article())->fromDomain(
+        $articleOrm = Article::fromDomain(
             $article,
             $supplier,
             $tax,
             $zoneStorages,
             $familyLog
-        ));
+        );
+        $packaging = $this->getPackagingFromDomain($article->packaging());
+        $articleOrm->setPackaging($packaging);
+
+        $this->_em->persist($articleOrm);
         $this->_em->flush();
     }
 
@@ -188,7 +201,20 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
 
     public function changeStorageInformation(ArticleDomain $article): void
     {
-        // TODO: Implement changeStorageInformation() method.
+        $articleToUpdate = $this->find($article->uuid()->toString());
+        if (!$articleToUpdate instanceof Article) {
+            // @codeCoverageIgnoreStart
+            throw new ArticleNotFoundException($article->name()->toString());
+            // @codeCoverageIgnoreEnd
+        }
+
+        $packaging = $this->getPackagingFromDomain($article->packaging());
+        $articleToUpdate->setPackaging($packaging)
+            ->setMinStock($article->minStock())
+            ->setQuantity($article->quantity()->toFloat())
+        ;
+
+        $this->_em->flush();
     }
 
     public function findAllArticles(): ArticleCollection
@@ -217,5 +243,44 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         }
 
         return $article->toDomain();
+    }
+
+    private function getPackagingFromDomain(PackagingDomain $packagingDomain): Packaging
+    {
+        [$parcelUnit, $parcelQuantity] = $this->getUnitWithSlug($packagingDomain->parcel());
+        if ($parcelUnit === null || $parcelQuantity === null) {
+            throw new \InvalidArgumentException('Packaging domain must have a parcel');
+        }
+
+        [$subPackageUnit, $subPackageQuantity] = $this->getUnitWithSlug($packagingDomain->subPackage());
+        [$consumeUnitUnit, $consumeUnitQuantity] = $this->getUnitWithSlug($packagingDomain->consumerUnit());
+
+        return new Packaging(
+            $parcelUnit,
+            $parcelQuantity,
+            $subPackageUnit,
+            $subPackageQuantity,
+            $consumeUnitUnit,
+            $consumeUnitQuantity
+        );
+    }
+
+    /**
+     * @param array{UnitDomain, float}|null $package
+     *
+     * @return array{Unit|null, float|null}
+     */
+    private function getUnitWithSlug(?array $package): array
+    {
+        if ($package === null) {
+            return [null, null];
+        }
+
+        $unit = $this->unitRepository->findOneBy(['slug' => $package[0]->slug()]);
+        if (!$unit instanceof Unit) {
+            throw new UnitNotFoundException($package[0]->slug());
+        }
+
+        return [$unit, $package[1]];
     }
 }

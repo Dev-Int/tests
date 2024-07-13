@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Gateway;
 
+use Admin\UseCases\Gateway\ArticleRepository;
 use Admin\UseCases\Gateway\CompanyRepository;
 use Admin\UseCases\Gateway\FamilyLogRepository;
 use Admin\UseCases\Gateway\SupplierRepository;
@@ -28,15 +29,16 @@ final readonly class ConfigurationService
         private TaxRepository $taxRepository,
         private FamilyLogRepository $familyLogRepository,
         private ZoneStorageRepository $zoneStorageRepository,
-        private SupplierRepository $supplierRepository
+        private SupplierRepository $supplierRepository,
+        private ArticleRepository $articleRepository,
     ) {
     }
 
     public function isConfigured(): bool
     {
-        $hasSupplier = $this->supplierRepository->hasSupplier();
+        $hasArticle = $this->articleRepository->hasArticle();
 
-        return $this->isZoneStorageConfigured() && $hasSupplier;
+        return $this->isSupplierConfigured() && $hasArticle;
     }
 
     public function isCompanyConfigured(): bool

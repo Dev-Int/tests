@@ -11,8 +11,12 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Adapters\Gateway\ORM\Entity;
+namespace Admin\Adapters\Gateway\ORM\Entity\Article;
 
+use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
+use Admin\Adapters\Gateway\ORM\Entity\Supplier;
+use Admin\Adapters\Gateway\ORM\Entity\Tax;
+use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineArticleRepository;
 use Admin\Entities\Article\Article as ArticleDomain;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -21,83 +25,71 @@ use Doctrine\ORM\Mapping as ORM;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\Amount;
 use Shared\Entities\VO\NameField;
-use Shared\Entities\VO\Packaging;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: DoctrineArticleRepository::class)]
-#[UniqueEntity('name')]
+#[UniqueEntity(fields: 'name')]
 final class Article
 {
-    #[ORM\Id]
-    #[ORM\Column(name: 'uuid', type: 'guid')]
-    private string $uuid;
-    #[ORM\Column(name: 'name', type: 'string', length: 255)]
-    private string $name;
-    #[ORM\ManyToOne(targetEntity: Supplier::class)]
-    #[ORM\JoinColumn(name: 'supplier_id', referencedColumnName: 'uuid')]
-    private Supplier $supplier;
+    #[ORM\OneToOne(targetEntity: Packaging::class, cascade: ['persist', 'remove'])]
+    private Packaging $packaging;
 
-    /**
-     * @var array<array{string, float}|null>
-     */
-    #[ORM\Column(name: 'packaging', type: 'json')]
-    private array $packaging = [];
-    #[ORM\Column(name: 'amount', type: 'integer')]
-    private int $amount;
-    #[ORM\ManyToOne(targetEntity: Tax::class)]
-    #[ORM\JoinColumn(name: 'tax_id', referencedColumnName: 'uuid')]
-    private Tax $tax;
-    #[ORM\Column(name: 'min_stock', type: 'float')]
-    private float $minStock;
-
-    /**
-     * @var array<ZoneStorage>|Collection<ZoneStorage>
-     */
-    #[ORM\ManyToMany(targetEntity: ZoneStorage::class)]
-    #[ORM\JoinTable(name: 'articles_zone_storages')]
-    #[ORM\JoinColumn(name: 'article_id', referencedColumnName: 'uuid')]
-    #[ORM\InverseJoinColumn(name: 'zone_storage_id', referencedColumnName: 'uuid')]
-    private array|Collection $zoneStorages;
-    #[ORM\ManyToOne(targetEntity: FamilyLog::class)]
-    #[ORM\JoinColumn(name: 'family_log_id', referencedColumnName: 'uuid')]
-    private FamilyLog $familyLog;
-    #[ORM\Column(name: 'quantity', type: 'float', scale: 3)]
-    private float $quantity;
-    #[ORM\Column(name: 'slug', type: 'string')]
-    private string $slug;
-    #[ORM\Column(name: 'active', type: 'boolean')]
-    private bool $active;
-
-    public function __construct()
-    {
-        $this->zoneStorages = new ArrayCollection();
-    }
-
-    public function fromDomain(
+    public static function fromDomain(
         ArticleDomain $article,
         Supplier $supplier,
         Tax $tax,
         Collection $zoneStorages,
         FamilyLog $familyLog
     ): self {
-        $this->uuid = $article->uuid()->toString();
-        $this->name = $article->name()->toString();
-        $this->supplier = $supplier;
-        $this->packaging = [
-            $article->packaging()->parcel(),
-            $article->packaging()->subPackage(),
-            $article->packaging()->consumerUnit(),
-        ];
-        $this->amount = $article->amount()->toInt();
-        $this->tax = $tax;
-        $this->minStock = $article->minStock();
-        $this->zoneStorages = $zoneStorages;
-        $this->familyLog = $familyLog;
-        $this->quantity = $article->quantity()->toFloat();
-        $this->active = $article->active();
-        $this->slug = $article->slug();
+        return new self(
+            $article->uuid()->toString(),
+            $article->name()->toString(),
+            $supplier,
+            $article->amount()->toInt(),
+            $tax,
+            $article->minStock(),
+            $zoneStorages,
+            $familyLog,
+            $article->quantity()->toFloat(),
+            $article->slug(),
+            $article->active(),
+        );
+    }
 
-        return $this;
+    /**
+     * @param array<ZoneStorage>|Collection<ZoneStorage> $zoneStorages
+     */
+    public function __construct(
+        #[ORM\Id]
+        #[ORM\Column(name: 'uuid', type: 'guid')]
+        private readonly string $uuid,
+        #[ORM\Column(name: 'name', type: 'string', length: 255)]
+        private string $name,
+        #[ORM\ManyToOne(targetEntity: Supplier::class)]
+        #[ORM\JoinColumn(name: 'supplier_id', referencedColumnName: 'uuid')]
+        private Supplier $supplier,
+        #[ORM\Column(name: 'amount', type: 'integer')]
+        private readonly int $amount,
+        #[ORM\ManyToOne(targetEntity: Tax::class)]
+        #[ORM\JoinColumn(name: 'tax_id', referencedColumnName: 'uuid')]
+        private readonly Tax $tax,
+        #[ORM\Column(name: 'min_stock', type: 'float')]
+        private float $minStock,
+        #[ORM\ManyToMany(targetEntity: ZoneStorage::class)]
+        #[ORM\JoinTable(name: 'articles_zone_storages')]
+        #[ORM\JoinColumn(name: 'article_id', referencedColumnName: 'uuid')]
+        #[ORM\InverseJoinColumn(name: 'zone_storage_id', referencedColumnName: 'uuid')]
+        private array|Collection $zoneStorages,
+        #[ORM\ManyToOne(targetEntity: FamilyLog::class)]
+        #[ORM\JoinColumn(name: 'family_log_id', referencedColumnName: 'uuid')]
+        private FamilyLog $familyLog,
+        #[ORM\Column(name: 'quantity', type: 'float', scale: 3)]
+        private float $quantity,
+        #[ORM\Column(name: 'slug', type: 'string')]
+        private string $slug,
+        #[ORM\Column(name: 'active', type: 'boolean')]
+        private readonly bool $active
+    ) {
     }
 
     public function toDomain(): ArticleDomain
@@ -111,7 +103,7 @@ final class Article
             ResourceUuid::fromString($this->uuid),
             NameField::fromString($this->name),
             $this->supplier->toDomain(),
-            Packaging::fromArray($this->packaging),
+            $this->packaging->toDomain(),
             Amount::fromInt($this->amount),
             $this->tax->toDomain(),
             $this->minStock,
@@ -152,10 +144,14 @@ final class Article
         return $this->supplier;
     }
 
-    /**
-     * @return array<array{string, float}|null>
-     */
-    public function packaging(): array
+    public function setPackaging(Packaging $packaging): self
+    {
+        $this->packaging = $packaging;
+
+        return $this;
+    }
+
+    public function packaging(): Packaging
     {
         return $this->packaging;
     }
@@ -168,6 +164,13 @@ final class Article
     public function tax(): Tax
     {
         return $this->tax;
+    }
+
+    public function setMinStock(float $minStock): self
+    {
+        $this->minStock = $minStock;
+
+        return $this;
     }
 
     public function minStock(): float
@@ -208,6 +211,13 @@ final class Article
     public function quantity(): float
     {
         return $this->quantity;
+    }
+
+    public function setQuantity(float $quantity): self
+    {
+        $this->quantity = $quantity;
+
+        return $this;
     }
 
     public function slug(): string

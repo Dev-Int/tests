@@ -57,10 +57,9 @@ final class AssignParentFamilyLogTest extends TestCase
             ->willReturn(false)
         ;
 
-        $familyLogAssigned = $familyLogBuilder->create('Viande')->withParent($parent)->build();
         $repository->expects(self::once())
             ->method('assignParent')
-            ->with($familyLogAssigned)
+            ->with($familyLog)
         ;
 
         // Act
@@ -103,10 +102,9 @@ final class AssignParentFamilyLogTest extends TestCase
             ->willReturn(false)
         ;
 
-        $familyLogAssigned = $familyLogBuilder->create('Viande')->withParent($otherParent)->build();
         $repository->expects(self::once())
             ->method('assignParent')
-            ->with($familyLogAssigned)
+            ->with($familyLog)
         ;
 
         // Act
@@ -115,6 +113,7 @@ final class AssignParentFamilyLogTest extends TestCase
         // Assert
         self::assertSame($otherParent, $response->familyLog->parent());
         self::assertSame('Viande', $response->familyLog->label()->toString());
+        self::assertEmpty($parent->children());
         // @todo à faire évoluer après l'implémentation des articles
         self::assertSame('frais-viande', $response->familyLog->slug());
         self::assertSame('frais-viande', $response->familyLog->path());
@@ -154,15 +153,9 @@ final class AssignParentFamilyLogTest extends TestCase
             ->willReturn(false)
         ;
 
-        $familyLogAssigned = $familyLogBuilder->create('Viande')->withParent($parent)->build();
-        $familyLogBuilder->create('Poulet')
-            ->withParent($familyLogAssigned)
-            ->withUuid('7e2a8ea8-71e6-449d-90eb-8a18d7ab8ced')
-            ->build()
-        ;
         $repository->expects(self::once())
             ->method('assignParent')
-            ->with($familyLogAssigned)
+            ->with($familyLog, FamilyLogDataBuilder::VALID_UUID)
         ;
 
         // Act
@@ -177,14 +170,13 @@ final class AssignParentFamilyLogTest extends TestCase
         self::assertSame(2, $response->familyLog->level());
 
         $children = $response->familyLog->children();
-        if ($children !== null && $children !== []) {
-            $childrenChild = $children[0];
+        self::assertNotEmpty($children);
+        $childrenChild = $children[0];
 
-            self::assertSame($familyLog, $childrenChild->parent());
-            self::assertSame('surgele-viande-poulet', $childrenChild->slug());
-            self::assertSame('surgele-viande-poulet', $childrenChild->path());
-            self::assertSame(3, $childrenChild->level());
-        }
+        self::assertSame($familyLog, $childrenChild->parent());
+        self::assertSame('surgele-viande-poulet', $childrenChild->slug());
+        self::assertSame('surgele-viande-poulet', $childrenChild->path());
+        self::assertSame(3, $childrenChild->level());
     }
 
     public function testAssignParentFamilyLogSucceedWithParentWithChildren(): void
@@ -224,15 +216,9 @@ final class AssignParentFamilyLogTest extends TestCase
             ->willReturn(false)
         ;
 
-        $familyLogAssigned = $familyLogBuilder->create('Viande')->withParent($otherParent)->build();
-        $familyLogBuilder->create('Poulet')
-            ->withParent($familyLogAssigned)
-            ->withUuid('7e2a8ea8-71e6-449d-90eb-8a18d7ab8ced')
-            ->build()
-        ;
         $repository->expects(self::once())
             ->method('assignParent')
-            ->with($familyLogAssigned)
+            ->with($familyLog)
         ;
 
         // Act
@@ -245,16 +231,16 @@ final class AssignParentFamilyLogTest extends TestCase
         self::assertSame('frais-viande', $response->familyLog->slug());
         self::assertSame('frais-viande', $response->familyLog->path());
         self::assertSame(2, $response->familyLog->level());
+        self::assertEmpty($parent->children());
 
         $children = $response->familyLog->children();
-        if ($children !== null && $children !== []) {
-            $childrenChild = $children[0];
+        self::assertNotEmpty($children);
+        $childrenChild = $children[0];
 
-            self::assertSame($familyLog, $childrenChild->parent());
-            self::assertSame('frais-viande-poulet', $childrenChild->slug());
-            self::assertSame('frais-viande-poulet', $childrenChild->path());
-            self::assertSame(3, $childrenChild->level());
-        }
+        self::assertSame($familyLog, $childrenChild->parent());
+        self::assertSame('frais-viande-poulet', $childrenChild->slug());
+        self::assertSame('frais-viande-poulet', $childrenChild->path());
+        self::assertSame(3, $childrenChild->level());
     }
 
     public function testAssignParentFamilyLogFailWithFamilyLogAlreadyExists(): void
@@ -286,10 +272,9 @@ final class AssignParentFamilyLogTest extends TestCase
             ->willReturn(true)
         ;
 
-        $familyLogAssigned = $familyLogBuilder->create('Viande')->withParent($parent)->build();
         $repository->expects(self::never())
             ->method('assignParent')
-            ->with($familyLogAssigned)
+            ->with($familyLog)
         ;
 
         // Act && Assert

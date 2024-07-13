@@ -19,6 +19,7 @@ use Admin\Tests\DataBuilder\ArticleDataBuilder;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\SupplierDataBuilder;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
+use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
 use Admin\UseCases\Article\ReAssignSupplier\ReAssignArticleSupplier;
 use Admin\UseCases\Article\ReAssignSupplier\ReAssignArticleSupplierRequest;
@@ -59,8 +60,16 @@ final class ReAssignArticleSupplierTest extends TestCase
         $storageFrais = (new ZoneStorageDataBuilder())->create('Réserve positive', $frais)->build();
         $storageSurgele = (new ZoneStorageDataBuilder())->create('Réserve négative', $surgele)->build();
         $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
+        $unit = (new UnitDataBuilder())->create('Colis', 'cls')->build();
         $article = (new ArticleDataBuilder())
-            ->create('Jambon Trad 6kg', $supplier1, $tax, [$storageFrais], $fraisViande)
+            ->create(
+                'Jambon Trad 6kg',
+                $supplier1,
+                $tax,
+                [$storageFrais],
+                $fraisViande,
+                [[$unit, 1.0], null, null]
+            )
             ->build()
         ;
 
@@ -125,8 +134,16 @@ final class ReAssignArticleSupplierTest extends TestCase
             ->build()
         ;
         $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
+        $unit = (new UnitDataBuilder())->create('Colis', 'cls')->build();
         $article = (new ArticleDataBuilder())
-            ->create('Jambon Trad 6kg', $supplier1, $tax, [$storageFrais], $fraisViande)
+            ->create(
+                'Jambon Trad 6kg',
+                $supplier1,
+                $tax,
+                [$storageFrais],
+                $fraisViande,
+                [[$unit, 1.0], null, null]
+            )
             ->build()
         ;
 

@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Entities\FamilyLog;
 
+use Admin\Entities\Exception\IsAlreadyChildException;
 use Admin\Entities\FamilyLog\FamilyLog;
 use PHPUnit\Framework\TestCase;
 use Shared\Entities\ResourceUuid;
@@ -40,59 +41,61 @@ final class FamilyLogTest extends TestCase
         // Assert
         self::assertSame('alimentaire-surgele-viande', $familyLog->path());
         self::assertSame('Viande', $familyLog->label()->toString());
+        self::assertNotEmpty($parent->children());
+        $child = $parent->children()[0];
+        self::assertSame('Viande', $child->label()->toString());
     }
 
-    public function testGetSmallTreeFamilyLog(): void
+    public function testFamilyLogAddChildFailCauseAlreadyExists(): void
     {
-        // Arrange && Act
-        $alimentaire = FamilyLog::create(
+        // Arrange
+        $parent = FamilyLog::create(
             ResourceUuid::generate(),
             NameField::fromString('Alimentaire')
         );
-
-        // Assert
-        self::assertSame(
-            [
-                'Alimentaire' => [],
-            ],
-            $alimentaire->parseTree()
-        );
-    }
-
-    public function testGetTreeFamilyLog(): void
-    {
-        // Arrange && Act
-        $alimentaire = FamilyLog::create(
-            ResourceUuid::generate(),
-            NameField::fromString('Alimentaire')
-        );
-        $surgele = FamilyLog::create(
+        FamilyLog::create(
             ResourceUuid::generate(),
             NameField::fromString('Surgelé'),
-            $alimentaire
+            $parent
         );
-        FamilyLog::create(
+        $fresh = FamilyLog::create(
             ResourceUuid::generate(),
             NameField::fromString('Frais'),
-            $alimentaire
-        );
-        FamilyLog::create(
-            ResourceUuid::generate(),
-            NameField::fromString('Viande'),
-            $surgele
+            $parent
         );
 
-        // Assert
-        self::assertSame(
-            [
-                'Alimentaire' => [
-                    'Surgelé' => [
-                        'Viande',
-                    ],
-                    'Frais',
-                ],
-            ],
-            $alimentaire->parseTree()
+        // Act && Assert
+        $this->expectException(IsAlreadyChildException::class);
+        $parent->addChild($fresh);
+    }
+
+    public function testAssignParentFamilyLog(): void
+    {
+        // Arrange
+        $grandParent = FamilyLog::create(
+            ResourceUuid::generate(),
+            NameField::fromString('Alimentaire')
         );
+        $parent = FamilyLog::create(
+            ResourceUuid::generate(),
+            NameField::fromString('Surgelé'),
+            $grandParent
+        );
+        $familyLog = FamilyLog::create(
+            ResourceUuid::generate(),
+            NameField::fromString('Viande')
+        );
+
+        // Act
+        $familyLog->assignParent($parent);
+
+        // Assert
+        self::assertSame(3, $familyLog->level());
+        self::assertSame(2, $parent->level());
+        self::assertSame(1, $grandParent->level());
+        self::assertSame($parent, $familyLog->parent());
+        self::assertSame($grandParent, $parent->parent());
+        self::assertSame([$familyLog], $parent->children());
+        self::assertTrue($grandParent->isCompatible($familyLog));
     }
 }
