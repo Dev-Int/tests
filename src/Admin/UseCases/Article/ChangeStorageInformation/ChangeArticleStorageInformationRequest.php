@@ -24,7 +24,5 @@ interface ChangeArticleStorageInformationRequest
 
     public function minStock(): float;
 
-    public function quantity(): float;
-
     public function uuid(): string;
 }

@@ -154,7 +154,7 @@ down: ## Stop the docker hub
 logs: ## Show live logs
 	@$(DOCKER_COMP) logs --tail=0 --follow
 sh: ## Connect to the PHP FPM container
-	@$(PHP_CONT) sh
+	@$(PHP_CONT) bash
 .PHONY: dist_file sh
 
 

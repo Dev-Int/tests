@@ -1,0 +1,122 @@
+<?php
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the Tests package.
+ *
+ * (c) Dev-Int Création <info@developpement-interessant.com>.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Admin\Adapters\Controller\Symfony\Controller\Article\ChangeArticleStorageInformation;
+
+use Admin\Adapters\Form\Type\Article\ChangeStorageInformationType;
+use Admin\Adapters\Gateway\ORM\Entity\Article\Article;
+use Admin\Adapters\Gateway\ORM\Entity\ReadModel\Packaging;
+use Admin\Adapters\Gateway\ORM\Entity\ReadModel\Storage;
+use Admin\Adapters\Gateway\ORM\Entity\Unit;
+use Admin\Entities\Exception\ArticleNotFoundException;
+use Admin\Entities\Unit\Unit as UnitDomain;
+use Admin\UseCases\Article\ChangeStorageInformation\ChangeArticleStorageInformation;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\Routing\Attribute\Route;
+
+#[AsController]
+final class ChangeArticleStorageInformationController extends AbstractController
+{
+    public function __construct(private readonly ChangeArticleStorageInformation $useCase)
+    {
+    }
+
+    #[Route(
+        path: 'articles/{slug}/change-article-storage-information',
+        name: 'admin_articles_change-storage-information',
+        methods: ['GET', 'POST']
+    )]
+    public function __invoke(Request $request, Article $article): Response
+    {
+        $form = $this->createForm(
+            ChangeStorageInformationType::class,
+            new ChangeArticleStorageInformationInput(
+                packaging: new Packaging(
+                    new Storage(
+                        $article->packaging()->parcelUnit(),
+                        $article->packaging()->parcelQuantity()
+                    ),
+                    new Storage(
+                        $article->packaging()->subPackageUnit(),
+                        $article->packaging()->subPackageQuantity()
+                    ),
+                    new Storage(
+                        $article->packaging()->consumeUnitUnit(),
+                        $article->packaging()->consumeUnitQuantity()
+                    ),
+                ),
+                minStock: $article->minStock(),
+                uuid: $article->uuid()
+            )
+        );
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var ChangeArticleStorageInformationInput $articleToUpdate */
+            $articleToUpdate = $form->getData();
+
+            $packaging = $this->getPackagingDomain($articleToUpdate->packaging);
+
+            try {
+                $this->useCase->execute(new ChangeArticleStorageInformationApiRequest(
+                    packaging: $packaging,
+                    minStock: $articleToUpdate->minStock,
+                    uuid: $article->uuid()
+                ));
+            } catch (ArticleNotFoundException $exception) {
+                $this->addFlash('error', $exception->getMessage());
+
+                return $this->render('@admin/articles/change-storage-information.html.twig', [
+                    'form' => $form,
+                    'article' => $article,
+                ]);
+            }
+            $this->addFlash('success', 'Article updated');
+
+            return $this->redirectToRoute('admin_articles_index');
+        }
+
+        return $this->render('@admin/articles/change-storage-information.html.twig', [
+            'form' => $form,
+            'article' => $article,
+        ]);
+    }
+
+    /**
+     * @return array{array{UnitDomain, float}, array{UnitDomain, float}|null, array{UnitDomain, float}|null}
+     */
+    private function getPackagingDomain(Packaging $packaging): array
+    {
+        $parcel = $packaging->parcel;
+        if (!$parcel?->unit instanceof Unit || $parcel->quantity === null) {
+            throw new \InvalidArgumentException('parcel should have unit and quantity');
+        }
+
+        /** @var array{UnitDomain, float} $parcelRequest */
+        $parcelRequest = [$parcel->unit->toDomain(), $parcel->quantity];
+        $subPackage = $packaging->subPackage;
+        $subPackageRequest = null;
+        if ($subPackage?->unit instanceof Unit && $subPackage->quantity !== null) {
+            $subPackageRequest = [$subPackage->unit->toDomain(), $subPackage->quantity];
+        }
+        $consumeUnit = $packaging->consumeUnit;
+        $consumeUnitRequest = null;
+        if ($consumeUnit?->unit instanceof Unit && $consumeUnit->quantity !== null) {
+            $consumeUnitRequest = [$consumeUnit->unit->toDomain(), $consumeUnit->quantity];
+        }
+
+        return [$parcelRequest, $subPackageRequest, $consumeUnitRequest];
+    }
+}

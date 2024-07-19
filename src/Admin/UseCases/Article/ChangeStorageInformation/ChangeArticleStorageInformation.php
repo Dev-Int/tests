@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Article\ChangeStorageInformation;
 
-use Admin\Entities\Article\VO\ArticleQuantity;
 use Admin\UseCases\Gateway\ArticleRepository;
 use Shared\Entities\VO\Packaging;
 
@@ -29,8 +28,7 @@ final readonly class ChangeArticleStorageInformation
 
         $article->changeStorageInformation(
             Packaging::fromArray($request->packaging()),
-            $request->minStock(),
-            ArticleQuantity::fromFloat($request->quantity())
+            $request->minStock()
         );
 
         $this->articleRepository->changeStorageInformation($article);

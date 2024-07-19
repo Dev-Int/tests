@@ -63,7 +63,6 @@ final class ChangeArticleStorageInformationTest extends TestCase
 
         $request->expects(self::once())->method('packaging')->willReturn([[$colis, 1], null, [$kilogramme, 6.000]]);
         $request->expects(self::once())->method('minStock')->willReturn(12.000);
-        $request->expects(self::once())->method('quantity')->willReturn(25.0);
         $request->expects(self::once())->method('uuid')->willReturn($article->uuid()->toString());
 
         $articleRepository->expects(self::once())
@@ -88,6 +87,6 @@ final class ChangeArticleStorageInformationTest extends TestCase
         self::assertSame($kilogramme, $articleUpdated->packaging()->consumerUnit()[0]);
         self::assertSame(6.000, $articleUpdated->packaging()->consumerUnit()[1]);
         self::assertSame(12.000, $articleUpdated->minStock());
-        self::assertSame(25.0, $articleUpdated->quantity()->toFloat());
+        self::assertSame(12.5, $articleUpdated->quantity()->toFloat());
     }
 }

@@ -13,11 +13,14 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Form\Type\Article;
 
+use Admin\Adapters\Gateway\ORM\Entity\ReadModel\Storage;
 use Admin\Adapters\Gateway\ORM\Entity\Unit;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class StorageType extends AbstractType
 {
@@ -25,17 +28,32 @@ final class StorageType extends AbstractType
     {
         $builder
             ->add('unit', EntityType::class, [
-                'label' => false,
+                'label' => 'unit',
                 'class' => Unit::class,
                 'choice_label' => 'label',
                 'placeholder' => 'Choice an Unit',
+                'empty_data' => null,
             ])
             ->add('quantity', NumberType::class, [
-                'label' => false,
+                'label' => 'quantity',
                 'html5' => true,
                 'input' => 'string',
                 'scale' => 3,
+                'empty_data' => 0,
             ])
         ;
+        $builder->get('quantity')->addModelTransformer(
+            new CallbackTransformer(
+                static fn (?float $floatAsString): string => $floatAsString !== null ? (string) $floatAsString : '0',
+                static fn (?string $stringAsFloat): ?float => $stringAsFloat !== null ? (float) $stringAsFloat : null
+            )
+        );
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => Storage::class,
+        ]);
     }
 }

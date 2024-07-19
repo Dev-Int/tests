@@ -13,8 +13,12 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Form\Type\Article;
 
+use Admin\Adapters\Gateway\ORM\Entity\ReadModel\Packaging;
+use Admin\Adapters\Gateway\ORM\Entity\ReadModel\Storage;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class PackagingType extends AbstractType
 {
@@ -34,6 +38,67 @@ final class PackagingType extends AbstractType
                 'required' => false,
             ])
         ;
+        $builder->get('parcel')->addModelTransformer(
+            new CallbackTransformer(
+                static function (?Storage $storage): ?Storage {
+                    if (!$storage instanceof Storage) {
+                        return null;
+                    }
+
+                    return $storage;
+                },
+                static function (?Storage $storage): ?Storage {
+                    if (!$storage instanceof Storage) {
+                        return null;
+                    }
+
+                    return $storage;
+                }
+            )
+        );
+        $builder->get('subPackage')->addModelTransformer(
+            new CallbackTransformer(
+                static function (?Storage $storage): ?Storage {
+                    if (!$storage instanceof Storage) {
+                        return null;
+                    }
+
+                    return $storage;
+                },
+                static function (?Storage $storage): ?Storage {
+                    if (!$storage instanceof Storage) {
+                        return null;
+                    }
+
+                    return $storage;
+                }
+            )
+        );
+        $builder->get('consumeUnit')->addModelTransformer(
+            new CallbackTransformer(
+                static function (?Storage $storage): ?Storage {
+                    if (!$storage instanceof Storage) {
+                        return null;
+                    }
+
+                    return $storage;
+                },
+                static function (?Storage $storage): ?Storage {
+                    if (!$storage instanceof Storage) {
+                        return null;
+                    }
+
+                    return $storage;
+                }
+            )
+        );
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => Packaging::class,
+        ]);
     }
 
     public function getBlockPrefix(): string

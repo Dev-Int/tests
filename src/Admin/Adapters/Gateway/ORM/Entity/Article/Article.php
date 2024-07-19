@@ -31,7 +31,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[UniqueEntity(fields: 'name')]
 final class Article
 {
-    #[ORM\OneToOne(targetEntity: Packaging::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'article', targetEntity: Packaging::class, cascade: ['persist', 'remove'])]
     private Packaging $packaging;
 
     public static function fromDomain(

@@ -113,11 +113,10 @@ final class Article
         return $this->supplier;
     }
 
-    public function changeStorageInformation(Packaging $packaging, float $minStock, ArticleQuantity $quantity): void
+    public function changeStorageInformation(Packaging $packaging, float $minStock): void
     {
         $this->packaging = $packaging;
         $this->minStock = $minStock;
-        $this->quantity = $quantity;
     }
 
     public function packaging(): Packaging

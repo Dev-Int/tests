@@ -15,11 +15,14 @@ namespace Admin\Adapters\Form\Type\Article;
 
 use Admin\Adapters\Controller\Symfony\Controller\Article\CreateArticle\CreateArticleInput;
 use Admin\Adapters\Form\Type\Components\FamilyLogEntitySelectType;
+use Admin\Adapters\Gateway\ORM\Entity\ReadModel\Packaging;
+use Admin\Adapters\Gateway\ORM\Entity\ReadModel\Storage;
 use Admin\Adapters\Gateway\ORM\Entity\Supplier;
 use Admin\Adapters\Gateway\ORM\Entity\Tax;
 use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -84,6 +87,41 @@ final class CreateArticleType extends AbstractType
                 'required' => false,
                 'scale' => 3,
             ])
+            ->get('packaging')->addModelTransformer(
+                new CallbackTransformer(
+                    static function (?Packaging $packagingAsArray): ?array {
+                        if (!$packagingAsArray instanceof Packaging) {
+                            return null;
+                        }
+
+                        return [
+                            'parcel' => $packagingAsArray->parcel,
+                            'subPackage' => $packagingAsArray->subPackage,
+                            'consumeUnit' => $packagingAsArray->consumeUnit,
+                        ];
+                    },
+                    static function (?Packaging $packagingAsArray): ?Packaging {
+                        if (!$packagingAsArray instanceof Packaging) {
+                            return null;
+                        }
+
+                        return new Packaging(
+                            parcel: new Storage(
+                                $packagingAsArray->parcel?->unit,
+                                $packagingAsArray->parcel?->quantity
+                            ),
+                            subPackage: new Storage(
+                                $packagingAsArray->subPackage?->unit,
+                                $packagingAsArray->subPackage?->quantity
+                            ),
+                            consumeUnit: new Storage(
+                                $packagingAsArray->consumeUnit?->unit,
+                                $packagingAsArray->consumeUnit?->quantity
+                            )
+                        );
+                    }
+                )
+            )
         ;
     }
 

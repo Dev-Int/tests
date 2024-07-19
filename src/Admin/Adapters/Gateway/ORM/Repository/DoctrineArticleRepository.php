@@ -25,6 +25,7 @@ use Admin\Entities\Article\ArticleCollection;
 use Admin\Entities\Exception\ArticleNotFoundException;
 use Admin\Entities\Exception\FamilyLogNotFoundException;
 use Admin\Entities\Exception\NoArticleRegisteredException;
+use Admin\Entities\Exception\PackagingNotFoundException;
 use Admin\Entities\Exception\SupplierNotFoundException;
 use Admin\Entities\Exception\TaxNotFoundException;
 use Admin\Entities\Exception\UnitNotFoundException;
@@ -48,6 +49,7 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
 
     public function __construct(
         ManagerRegistry $registry,
+        private readonly DoctrinePackagingRepository $packagingRepository,
         private readonly DoctrineSupplierRepository $supplierRepository,
         private readonly DoctrineTaxRepository $taxRepository,
         private readonly DoctrineZoneStorageRepository $zoneStorageRepository,
@@ -136,7 +138,7 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
             $zoneStorages,
             $familyLog
         );
-        $packaging = $this->getPackagingFromDomain($article->packaging());
+        $packaging = $this->getPackagingFromDomain($article->packaging(), $articleOrm);
         $articleOrm->setPackaging($packaging);
 
         $this->_em->persist($articleOrm);
@@ -208,11 +210,8 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
             // @codeCoverageIgnoreEnd
         }
 
-        $packaging = $this->getPackagingFromDomain($article->packaging());
-        $articleToUpdate->setPackaging($packaging)
-            ->setMinStock($article->minStock())
-            ->setQuantity($article->quantity()->toFloat())
-        ;
+        $articleToUpdate = $this->updateArticlePackaging($article->packaging(), $articleToUpdate);
+        $articleToUpdate->setMinStock($article->minStock());
 
         $this->_em->flush();
     }
@@ -245,7 +244,30 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         return $article->toDomain();
     }
 
-    private function getPackagingFromDomain(PackagingDomain $packagingDomain): Packaging
+    public function updateArticlePackaging(
+        PackagingDomain $packagingDomain,
+        Article $articleToUpdate,
+    ): Article {
+        $packaging = $this->getPackagingFromDomain($packagingDomain, $articleToUpdate);
+        $packagingToUpdate = $this->packagingRepository->find($articleToUpdate->packaging()->id());
+        if (!$packagingToUpdate instanceof Packaging) {
+            throw new PackagingNotFoundException($articleToUpdate->packaging()->id());
+        }
+
+        $packagingToUpdate
+            ->setParcelUnit($packaging->parcelUnit())
+            ->setParcelQuantity($packaging->parcelQuantity())
+            ->setSubPackageUnit($packaging->subPackageUnit())
+            ->setSubPackageQuantity($packaging->subPackageQuantity())
+            ->setConsumeUnitUnit($packaging->consumeUnitUnit())
+            ->setConsumeUnitQuantity($packaging->consumeUnitQuantity())
+        ;
+        $articleToUpdate->setPackaging($packagingToUpdate);
+
+        return $articleToUpdate;
+    }
+
+    private function getPackagingFromDomain(PackagingDomain $packagingDomain, Article $article): Packaging
     {
         [$parcelUnit, $parcelQuantity] = $this->getUnitWithSlug($packagingDomain->parcel());
         if ($parcelUnit === null || $parcelQuantity === null) {
@@ -256,6 +278,7 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         [$consumeUnitUnit, $consumeUnitQuantity] = $this->getUnitWithSlug($packagingDomain->consumerUnit());
 
         return new Packaging(
+            $article,
             $parcelUnit,
             $parcelQuantity,
             $subPackageUnit,

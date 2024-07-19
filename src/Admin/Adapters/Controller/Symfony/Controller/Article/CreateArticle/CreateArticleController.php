@@ -15,6 +15,7 @@ namespace Admin\Adapters\Controller\Symfony\Controller\Article\CreateArticle;
 
 use Admin\Adapters\Form\Type\Article\CreateArticleType;
 use Admin\Adapters\Gateway\ConfigurationService;
+use Admin\Adapters\Gateway\ORM\Entity\ReadModel\Packaging;
 use Admin\Adapters\Gateway\ORM\Entity\Unit;
 use Admin\Entities\Exception\NoSupplierRegisteredException;
 use Admin\Entities\Unit\Unit as UnitDomain;
@@ -114,23 +115,26 @@ final class CreateArticleController extends AbstractController
     }
 
     /**
-     * @param array{parcel: array{unit: Unit, quantity: string}, subPackage: array{unit: Unit|null, quantity: string|null}, consumeUnit: array{unit: Unit|null, quantity: string|null}} $packaging
-     *
      * @return array{array{UnitDomain, float}, array{UnitDomain, float}|null, array{UnitDomain, float}|null}
      */
-    private function getPackagingDomain(array $packaging): array
+    private function getPackagingDomain(Packaging $packaging): array
     {
-        $parcel = $packaging['parcel'];
-        $parcelRequest = [$parcel['unit']->toDomain(), (float) $parcel['quantity']];
-        $subPackage = $packaging['subPackage'];
-        $subPackageRequest = null;
-        if ($subPackage['unit'] !== null && $subPackage['quantity'] !== null) {
-            $subPackageRequest = [$subPackage['unit']->toDomain(), (float) $subPackage['quantity']];
+        $parcel = $packaging->parcel;
+        if (!$parcel?->unit instanceof Unit || $parcel->quantity === null) {
+            throw new \InvalidArgumentException('parcel should have unit and quantity');
         }
-        $consumeUnit = $packaging['consumeUnit'];
+
+        /** @var array{UnitDomain, float} $parcelRequest */
+        $parcelRequest = [$parcel->unit->toDomain(), $parcel->quantity];
+        $subPackage = $packaging->subPackage;
+        $subPackageRequest = null;
+        if ($subPackage?->unit instanceof Unit && $subPackage->quantity !== null) {
+            $subPackageRequest = [$subPackage->unit->toDomain(), $subPackage->quantity];
+        }
+        $consumeUnit = $packaging->consumeUnit;
         $consumeUnitRequest = null;
-        if ($consumeUnit['unit'] !== null && $subPackage['quantity'] !== null) {
-            $consumeUnitRequest = [$consumeUnit['unit']->toDomain(), (float) $consumeUnit['quantity']];
+        if ($consumeUnit?->unit instanceof Unit && $consumeUnit->quantity !== null) {
+            $consumeUnitRequest = [$consumeUnit->unit->toDomain(), $consumeUnit->quantity];
         }
 
         return [$parcelRequest, $subPackageRequest, $consumeUnitRequest];
