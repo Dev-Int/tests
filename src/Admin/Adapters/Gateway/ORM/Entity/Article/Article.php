@@ -69,10 +69,10 @@ final class Article
         #[ORM\JoinColumn(name: 'supplier_id', referencedColumnName: 'uuid')]
         private Supplier $supplier,
         #[ORM\Column(name: 'amount', type: 'integer')]
-        private readonly int $amount,
+        private int $amount,
         #[ORM\ManyToOne(targetEntity: Tax::class)]
         #[ORM\JoinColumn(name: 'tax_id', referencedColumnName: 'uuid')]
-        private readonly Tax $tax,
+        private Tax $tax,
         #[ORM\Column(name: 'min_stock', type: 'float')]
         private float $minStock,
         #[ORM\ManyToMany(targetEntity: ZoneStorage::class)]
@@ -156,9 +156,23 @@ final class Article
         return $this->packaging;
     }
 
+    public function setAmount(int $amount): self
+    {
+        $this->amount = $amount;
+
+        return $this;
+    }
+
     public function amount(): int
     {
         return $this->amount;
+    }
+
+    public function setTax(Tax $tax): self
+    {
+        $this->tax = $tax;
+
+        return $this;
     }
 
     public function tax(): Tax

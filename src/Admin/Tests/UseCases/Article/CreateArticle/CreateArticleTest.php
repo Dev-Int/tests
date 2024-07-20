@@ -57,7 +57,7 @@ final class CreateArticleTest extends TestCase
         $request->expects(self::exactly(2))->method('name')->willReturn('Jambon Trad 6kg');
         $request->expects(self::exactly(2))->method('supplier')->willReturn($supplier);
         $request->expects(self::once())->method('packaging')->willReturn([[$unit, 1.0], null, null]);
-        $request->expects(self::once())->method('amount')->willReturn(25.50);
+        $request->expects(self::once())->method('amount')->willReturn(2550);
         $request->expects(self::once())->method('tax')->willReturn($tax);
         $request->expects(self::once())->method('minStock')->willReturn(8.000);
         $request->expects(self::once())->method('quantity')->willReturn(null);
@@ -127,7 +127,7 @@ final class CreateArticleTest extends TestCase
         $request->expects(self::once())->method('name')->willReturn('Jambon Trad 6kg');
         $request->expects(self::once())->method('supplier')->willReturn($supplier);
         $request->expects(self::never())->method('packaging')->willReturn([[$unit, 1.0], null, null]);
-        $request->expects(self::never())->method('amount')->willReturn(25.50);
+        $request->expects(self::never())->method('amount')->willReturn(2550);
         $request->expects(self::never())->method('tax')->willReturn($tax);
         $request->expects(self::never())->method('minStock')->willReturn(8.000);
         $request->expects(self::never())->method('quantity')->willReturn(null);
@@ -171,7 +171,7 @@ final class CreateArticleTest extends TestCase
         $request->expects(self::exactly(2))->method('name')->willReturn('Jambon Trad 6kg');
         $request->expects(self::never())->method('supplier')->willReturn($supplier);
         $request->expects(self::never())->method('packaging')->willReturn([[$unit, 1.0], null, null]);
-        $request->expects(self::never())->method('amount')->willReturn(25.50);
+        $request->expects(self::never())->method('amount')->willReturn(2550);
         $request->expects(self::never())->method('tax')->willReturn($tax);
         $request->expects(self::never())->method('minStock')->willReturn(8.000);
         $request->expects(self::never())->method('quantity')->willReturn(null);

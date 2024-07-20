@@ -30,7 +30,7 @@ final class CreateArticleApiRequest implements CreateArticleRequest
         public string $name,
         public Supplier $supplier,
         public array $packaging,
-        public float $amount,
+        public int $amount,
         public Tax $tax,
         public float $minStock,
         public array $zoneStorages,
@@ -54,7 +54,7 @@ final class CreateArticleApiRequest implements CreateArticleRequest
         return $this->packaging;
     }
 
-    public function amount(): float
+    public function amount(): int
     {
         return $this->amount;
     }

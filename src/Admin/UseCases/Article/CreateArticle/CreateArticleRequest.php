@@ -30,7 +30,7 @@ interface CreateArticleRequest
      */
     public function packaging(): array;
 
-    public function amount(): float;
+    public function amount(): int;
 
     public function tax(): Tax;
 

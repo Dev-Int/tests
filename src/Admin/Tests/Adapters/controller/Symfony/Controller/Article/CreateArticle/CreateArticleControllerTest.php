@@ -164,7 +164,7 @@ final class CreateArticleControllerTest extends WebTestCase
         self::assertSame(2.0, $articleCreated->packaging()->subPackageQuantity());
         self::assertSame($kilogrammeOrm, $articleCreated->packaging()->consumeUnitUnit());
         self::assertSame(6.800, $articleCreated->packaging()->consumeUnitQuantity());
-        self::assertSame(600, $articleCreated->amount());
+        self::assertSame(682, $articleCreated->amount());
         self::assertSame(0.055, $articleCreated->tax()->rate());
         self::assertSame('TVA taux réduit', $articleCreated->tax()->name());
         self::assertSame(8.8, $articleCreated->minStock());
@@ -186,11 +186,28 @@ final class CreateArticleControllerTest extends WebTestCase
 
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
-        $company = (new CompanyDataBuilder())->create('Test company')->build();
-        $companyRepository->save($company);
 
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+
+        /** @var DoctrineTaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+
+        /** @var DoctrineFamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+
+        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+
+        /** @var DoctrineSupplierRepository $supplierRepository */
+        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
+
+        /** @var DoctrineArticleRepository $articleRepository */
+        $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
+
+        $company = (new CompanyDataBuilder())->create('Test company')->build();
+        $companyRepository->save($company);
+
         $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
         $piece = (new UnitDataBuilder())->create('Pièce', 'kg')
             ->withUuid('eca51cd2-4189-4a55-be7e-a6928cf1b5a8')
@@ -204,13 +221,9 @@ final class CreateArticleControllerTest extends WebTestCase
         $unitRepository->save($piece);
         $unitRepository->save($kilogramme);
 
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
         $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
         $taxRepository->save($tax);
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
         $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')
             ->withUuid('99282a8d-f344-456c-bbd3-37fe89f3876c')
             ->build()
@@ -219,18 +232,12 @@ final class CreateArticleControllerTest extends WebTestCase
         $familyLogOrm = $familyLogRepository->find($familyLog->uuid()->toString());
         assertInstanceOf(FamilyLog::class, $familyLogOrm);
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
         $zoneStorage = (new ZoneStorageDataBuilder())->create('Reserve froide', $familyLog)->build();
         $zoneStorageRepository->save($zoneStorage);
 
-        /** @var DoctrineSupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
         $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLog)->build();
         $supplierRepository->save($supplier);
 
-        /** @var DoctrineArticleRepository $articleRepository */
-        $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
         $article = (new ArticleDataBuilder())->create(
             'Jambon Trad 6kg',
             $supplier,
@@ -282,11 +289,22 @@ final class CreateArticleControllerTest extends WebTestCase
 
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
-        $company = (new CompanyDataBuilder())->create('Test company')->build();
-        $companyRepository->save($company);
 
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+
+        /** @var DoctrineTaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+
+        /** @var DoctrineFamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+
+        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+
+        $company = (new CompanyDataBuilder())->create('Test company')->build();
+        $companyRepository->save($company);
+
         $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
         $piece = (new UnitDataBuilder())->create('Pièce', 'kg')
             ->withUuid('eca51cd2-4189-4a55-be7e-a6928cf1b5a8')
@@ -300,13 +318,9 @@ final class CreateArticleControllerTest extends WebTestCase
         $unitRepository->save($piece);
         $unitRepository->save($kilogramme);
 
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
         $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
         $taxRepository->save($tax);
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
         $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')
             ->withUuid('99282a8d-f344-456c-bbd3-37fe89f3876c')
             ->build()
@@ -315,8 +329,6 @@ final class CreateArticleControllerTest extends WebTestCase
         $familyLogOrm = $familyLogRepository->find($familyLog->uuid()->toString());
         assertInstanceOf(FamilyLog::class, $familyLogOrm);
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
         $zoneStorage = (new ZoneStorageDataBuilder())->create('Reserve froide', $familyLog)->build();
         $zoneStorageRepository->save($zoneStorage);
 

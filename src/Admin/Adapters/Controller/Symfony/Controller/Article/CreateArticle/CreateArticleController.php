@@ -91,7 +91,7 @@ final class CreateArticleController extends AbstractController
                         $article->name,
                         $supplier,
                         $packaging,
-                        $article->amount,
+                        $article->amount ?? 0,
                         $article->tax->toDomain(),
                         $article->minStock,
                         $zoneStorages,

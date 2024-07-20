@@ -45,16 +45,28 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
 
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
-        $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
-        $unitRepository->save($colis);
 
         /** @var DoctrineTaxRepository $taxRepository */
         $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
-        $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
-        $taxRepository->save($tax);
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+
+        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+
+        /** @var DoctrineSupplierRepository $supplierRepository */
+        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
+
+        /** @var DoctrineArticleRepository $articleRepository */
+        $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
+
+        $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
+        $unitRepository->save($colis);
+
+        $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
+        $taxRepository->save($tax);
+
         $surgele = (new FamilyLogDataBuilder())->create('Surgelé')->build();
         $frais = (new FamilyLogDataBuilder())
             ->create('Frais')
@@ -64,8 +76,6 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
         $familyLogRepository->save($surgele);
         $familyLogRepository->save($frais);
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
         $storageSurgele = (new ZoneStorageDataBuilder())->create('Réserve négative', $surgele)->build();
         $storageFrais = (new ZoneStorageDataBuilder())
             ->create('Réserve positive', $frais)
@@ -75,8 +85,6 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
         $zoneStorageRepository->save($storageFrais);
         $zoneStorageRepository->save($storageSurgele);
 
-        /** @var DoctrineSupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
         $supplierSurgele = (new SupplierDataBuilder())->create('Supplier Surgelé', $surgele)->build();
         $supplierFrais = (new SupplierDataBuilder())
             ->create('Supplier Frais', $frais)
@@ -86,8 +94,6 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
         $supplierRepository->save($supplierSurgele);
         $supplierRepository->save($supplierFrais);
 
-        /** @var DoctrineArticleRepository $articleRepository */
-        $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
         $article = (new ArticleDataBuilder())
             ->create(
                 'Jambon Trad 6kg',
@@ -144,16 +150,28 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
 
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
-        $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
-        $unitRepository->save($colis);
 
         /** @var DoctrineTaxRepository $taxRepository */
         $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
-        $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
-        $taxRepository->save($tax);
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+
+        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+
+        /** @var DoctrineSupplierRepository $supplierRepository */
+        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
+
+        /** @var DoctrineArticleRepository $articleRepository */
+        $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
+
+        $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
+        $unitRepository->save($colis);
+
+        $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
+        $taxRepository->save($tax);
+
         $surgele = (new FamilyLogDataBuilder())->create('Surgelé')->build();
         $frais = (new FamilyLogDataBuilder())->create('Frais')
             ->withUuid('99282a8d-f344-456c-bbd3-37fe89f3876c')
@@ -162,8 +180,6 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
         $familyLogRepository->save($surgele);
         $familyLogRepository->save($frais);
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
         $storageSurgele = (new ZoneStorageDataBuilder())->create('Réserve négative', $surgele)->build();
         $storageFrais = (new ZoneStorageDataBuilder())->create('Réserve positive', $frais)
             ->withUuid('fc568244-6722-4f05-b35a-6cef0009a358')
@@ -172,8 +188,6 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
         $zoneStorageRepository->save($storageFrais);
         $zoneStorageRepository->save($storageSurgele);
 
-        /** @var DoctrineSupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
         $supplierSurgele = (new SupplierDataBuilder())->create('Supplier Surgelé', $surgele)->build();
         $supplierFrais = (new SupplierDataBuilder())->create('Supplier Frais', $frais)
             ->withUuid('9cd88f13-d774-4503-9545-5db3c907be6b')
@@ -182,8 +196,6 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
         $supplierRepository->save($supplierSurgele);
         $supplierRepository->save($supplierFrais);
 
-        /** @var DoctrineArticleRepository $articleRepository */
-        $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
         $article = (new ArticleDataBuilder())->create(
             'Jambon Trad 6kg',
             $supplierFrais,
@@ -237,16 +249,28 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
 
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
-        $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
-        $unitRepository->save($colis);
 
         /** @var DoctrineTaxRepository $taxRepository */
         $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
-        $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
-        $taxRepository->save($tax);
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+
+        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+
+        /** @var DoctrineSupplierRepository $supplierRepository */
+        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
+
+        /** @var DoctrineArticleRepository $articleRepository */
+        $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
+
+        $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
+        $unitRepository->save($colis);
+
+        $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
+        $taxRepository->save($tax);
+
         $surgele = (new FamilyLogDataBuilder())->create('Surgelé')->build();
         $frais = (new FamilyLogDataBuilder())->create('Frais')
             ->withUuid('99282a8d-f344-456c-bbd3-37fe89f3876c')
@@ -255,8 +279,6 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
         $familyLogRepository->save($surgele);
         $familyLogRepository->save($frais);
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
         $storageSurgele = (new ZoneStorageDataBuilder())->create('Réserve négative', $surgele)->build();
         $storageFrais = (new ZoneStorageDataBuilder())->create('Réserve positive', $frais)
             ->withUuid('fc568244-6722-4f05-b35a-6cef0009a358')
@@ -265,8 +287,6 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
         $zoneStorageRepository->save($storageFrais);
         $zoneStorageRepository->save($storageSurgele);
 
-        /** @var DoctrineSupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
         $supplierSurgele = (new SupplierDataBuilder())->create('Supplier Surgelé', $surgele)->build();
         $supplierFrais = (new SupplierDataBuilder())->create('Supplier Frais', $frais)
             ->withUuid('9cd88f13-d774-4503-9545-5db3c907be6b')
@@ -275,8 +295,6 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
         $supplierRepository->save($supplierSurgele);
         $supplierRepository->save($supplierFrais);
 
-        /** @var DoctrineArticleRepository $articleRepository */
-        $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
         $article = (new ArticleDataBuilder())->create(
             'Jambon Trad 6kg',
             $supplierFrais,

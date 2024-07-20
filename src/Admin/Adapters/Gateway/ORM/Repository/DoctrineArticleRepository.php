@@ -218,7 +218,24 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
 
     public function changeFinancialInformation(ArticleDomain $article): void
     {
-        // TODO: Implement changeFinancialInformation() method.
+        $articleToUpdate = $this->find($article->uuid()->toString());
+        if (!$articleToUpdate instanceof Article) {
+            throw new ArticleNotFoundException($article->name()->toString());
+        }
+
+        $tax = $this->taxRepository->find($article->tax()->uuid()->toString());
+        if (!$tax instanceof Tax) {
+            // @codeCoverageIgnoreStart
+            throw new TaxNotFoundException($article->tax()->uuid()->toString());
+            // @codeCoverageIgnoreEnd
+        }
+
+        $articleToUpdate
+            ->setAmount($article->amount()->toInt())
+            ->setTax($tax)
+        ;
+
+        $this->_em->flush();
     }
 
     public function findAllArticles(): ArticleCollection

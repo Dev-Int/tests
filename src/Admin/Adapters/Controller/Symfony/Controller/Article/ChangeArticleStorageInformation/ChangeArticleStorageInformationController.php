@@ -62,6 +62,7 @@ final class ChangeArticleStorageInformationController extends AbstractController
                 uuid: $article->uuid()
             )
         );
+
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var ChangeArticleStorageInformationInput $articleToUpdate */

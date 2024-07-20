@@ -11,15 +11,15 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Tests\Adapters\controller\Symfony\Controller\Article\GetArticles;
+namespace Admin\Tests\Adapters\controller\Symfony\Controller\Article\ChangeFinancialInformation;
 
+use Admin\Adapters\Gateway\ORM\Entity\Article\Article;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineArticleRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineSupplierRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineTaxRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineUnitRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineZoneStorageRepository;
-use Admin\Entities\Exception\NoArticleRegisteredException;
 use Admin\Tests\DataBuilder\ArticleDataBuilder;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\SupplierDataBuilder;
@@ -30,14 +30,11 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * @group functionalTest
- */
-final class GetArticlesControllerTest extends WebTestCase
+final class ChangeFinancialInformationControllerTest extends WebTestCase
 {
-    private const GET_ARTICLES_URI = '/admin/articles';
+    public const CHANGE_ARTICLE_FINANCIAL_INFORMATION_URI = '/admin/articles/%s/change-financial-information';
 
-    public function testGetArticlesWillSucceed(): void
+    public function testChangeFinancialInformationWillSucceed(): void
     {
         // Arrange
         $client = self::createClient();
@@ -63,74 +60,69 @@ final class GetArticlesControllerTest extends WebTestCase
         $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
         $unitRepository->save($colis);
 
-        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
-        $taxRepository->save($tax);
-
-        $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
-        $familyLogRepository->save($familyLog);
-
-        $zoneStorage = (new ZoneStorageDataBuilder())
-            ->create('Réserve négative', $familyLog)
+        $tax20 = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
+        $tax55 = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)
+            ->withUuid('69da1c23-304b-47d8-be43-8e41f7bdfa75')
             ->build()
         ;
-        $zoneStorageRepository->save($zoneStorage);
+        $taxRepository->save($tax20);
+        $taxRepository->save($tax55);
 
-        $supplier = (new SupplierDataBuilder())->create('supplier 1', $familyLog)->build();
-        $supplierRepository->save($supplier);
-
-        $articleDataBuilder = new ArticleDataBuilder();
-        $article1 = $articleDataBuilder
-            ->create(
-                'Jambon Trad 6kg',
-                $supplier,
-                $tax,
-                [$zoneStorage],
-                $familyLog,
-                [[$colis, 1.0], null, null]
-            )
-            ->build()
-        ;
-        $article2 = $articleDataBuilder
-            ->create(
-                'Jambon Trad 6kg',
-                $supplier,
-                $tax,
-                [$zoneStorage],
-                $familyLog,
-                [[$colis, 1.0], null, null]
-            )
+        $surgele = (new FamilyLogDataBuilder())->create('Surgelé')->build();
+        $frais = (new FamilyLogDataBuilder())
+            ->create('Frais')
             ->withUuid('99282a8d-f344-456c-bbd3-37fe89f3876c')
             ->build()
         ;
-        $articleRepository->save($article1);
-        $articleRepository->save($article2);
+        $familyLogRepository->save($surgele);
+        $familyLogRepository->save($frais);
+
+        $storageSurgele = (new ZoneStorageDataBuilder())->create('Réserve négative', $surgele)->build();
+        $zoneStorageRepository->save($storageSurgele);
+
+        $supplierSurgele = (new SupplierDataBuilder())->create('Supplier Surgelé', $frais)->build();
+        $supplierRepository->save($supplierSurgele);
+
+        $article = (new ArticleDataBuilder())
+            ->create(
+                'Jambon Trad 6kg',
+                $supplierSurgele,
+                $tax20,
+                [$storageSurgele],
+                $frais,
+                [[$colis, 1.0], null, null]
+            )
+            ->build()
+        ;
+        $articleRepository->save($article);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::GET_ARTICLES_URI);
+        $crawler = $client->request(
+            Request::METHOD_GET,
+            sprintf(self::CHANGE_ARTICLE_FINANCIAL_INFORMATION_URI, $article->slug())
+        );
 
-        // Assert
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Articles');
+        self::assertSelectorTextContains('h1', 'Change financial information to "Jambon Trad 6kg"');
 
-        $list = $crawler->filter('body > div.container > div.row > article > ul.w100')->children('li.li-unstyled');
-        self::assertCount(2, $list);
-    }
-
-    public function testGetArticlesFailWithNoArticleRegisteredException(): void
-    {
-        // Arrange
-        $client = self::createClient();
-
-        // Act
-        $client->request(Request::METHOD_GET, self::GET_ARTICLES_URI);
+        $form = $crawler->selectButton('Update')->form([
+            'changeArticleFinancialInformation[amount]' => 7.25,
+            'changeArticleFinancialInformation[tax]' => $tax55->uuid()->toString(),
+        ]);
+        $client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        self::assertResponseRedirects('/admin/configure');
+        self::assertResponseRedirects('/admin/articles');
 
         $admin = $client->followRedirect();
-        $flash = $admin->filter('body > div.container')->children('div.flash.flash-error')->text();
+        $flash = $admin->filter('body > div.container')->children('div.flash.flash-success')->text();
 
-        self::assertSame(NoArticleRegisteredException::MESSAGE, $flash);
+        self::assertEquals('Article updated', $flash);
+
+        $articleUpdated = $articleRepository->findOneBy(['slug' => 'jambon-trad-6kg']);
+        self::assertInstanceOf(Article::class, $articleUpdated);
+        self::assertSame(725, $articleUpdated->amount());
+        self::assertSame(0.055, $articleUpdated->tax()->rate());
     }
 }

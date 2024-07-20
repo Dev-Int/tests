@@ -28,6 +28,7 @@
                         <a href="{{ path('admin_articles_rename', {'slug': article.slug}) }}" role="button">Rename</a>
                         <a href="{{ path('admin_articles_reassign-supplier', {'slug': article.slug}) }}" role="button">Re-assign Supplier</a>
                         <a href="{{ path('admin_articles_change-storage-information', {'slug': article.slug}) }}" role="button">Change storage information</a>
+                        <a href="{{ path('admin_articles_change_financial-information', {'slug': article.slug}) }}" role="button">Change financial information</a>
                     </span>
                 </li>
                 {%  endfor %}

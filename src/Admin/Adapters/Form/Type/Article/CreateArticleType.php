@@ -52,6 +52,8 @@ final class CreateArticleType extends AbstractType
             ->add('amount', MoneyType::class, [
                 'html5' => false,
                 'currency' => 'EUR',
+                'divisor' => 100,
+                'input' => 'integer',
                 'scale' => 2,
                 'required' => true,
                 'empty_data' => 0.00,
