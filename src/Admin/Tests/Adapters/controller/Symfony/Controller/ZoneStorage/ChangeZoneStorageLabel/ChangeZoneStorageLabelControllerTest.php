@@ -51,7 +51,10 @@ final class ChangeZoneStorageLabelControllerTest extends WebTestCase
         self::assertCount(1, $zoneStorages);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, sprintf(self::CHANGE_LABEL_URI, 'reserve-negative'));
+        $crawler = $client->request(
+            Request::METHOD_GET,
+            sprintf(self::CHANGE_LABEL_URI, $zoneStorage->uuid()->toString())
+        );
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', 'Change label "Réserve négative"');

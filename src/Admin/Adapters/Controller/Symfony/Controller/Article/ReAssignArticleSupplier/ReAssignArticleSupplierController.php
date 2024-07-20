@@ -31,8 +31,9 @@ final class ReAssignArticleSupplierController extends AbstractController
     }
 
     #[Route(
-        path: 'articles/{slug}/reassign-supplier',
+        path: 'articles/{article}/reassign-supplier',
         name: 'admin_articles_reassign-supplier',
+        requirements: ['article' => '^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$'],
         methods: ['GET', 'POST']
     )]
     public function __invoke(Request $request, Article $article): Response

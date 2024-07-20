@@ -15,7 +15,7 @@ namespace Admin\Adapters\Controller\Symfony\Controller\Unit\GetUnits;
 
 final class UnitDto
 {
-    public function __construct(public string $label, public string $abbreviation, public string $slug)
+    public function __construct(public string $label, public string $abbreviation, public string $uuid)
     {
     }
 }

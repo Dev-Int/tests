@@ -17,7 +17,11 @@ use Admin\Adapters\Controller\Symfony\Controller\Supplier\GetSuppliers\SupplierD
 
 final readonly class ArticleDto
 {
-    public function __construct(public string $uuid, public string $name, public SupplierDto $supplier, public string $slug)
-    {
+    public function __construct(
+        public string $uuid,
+        public string $name,
+        public SupplierDto $supplier,
+        public string $slug
+    ) {
     }
 }

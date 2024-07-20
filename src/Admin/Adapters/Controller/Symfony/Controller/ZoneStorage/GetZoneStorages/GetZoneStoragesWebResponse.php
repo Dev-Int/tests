@@ -24,7 +24,7 @@ final class GetZoneStoragesWebResponse
     {
         foreach ($response->zoneStorages as $zoneStorage) {
             $this->zoneStorages[] = new ZoneStorageDto(
-                $zoneStorage->slug(),
+                $zoneStorage->uuid()->toString(),
                 $zoneStorage->label()->toString(),
                 $zoneStorage->familyLog()->label()->toString()
             );

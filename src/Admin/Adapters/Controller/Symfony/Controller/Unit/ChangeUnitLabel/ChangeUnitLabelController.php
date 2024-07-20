@@ -29,7 +29,12 @@ final class ChangeUnitLabelController extends AbstractController
     {
     }
 
-    #[Route(path: 'units/{slug}/change-label', name: 'admin_units_change-label', methods: ['GET', 'POST'])]
+    #[Route(
+        path: 'units/{unit}/change-label',
+        name: 'admin_units_change-label',
+        requirements: ['unit' => '^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$'],
+        methods: ['GET', 'POST']
+    )]
     public function __invoke(Request $request, Unit $unit): Response
     {
         $unitToUpdate = new ChangeUnitLabelApiRequest($unit->label(), $unit->abbreviation(), $unit->slug());

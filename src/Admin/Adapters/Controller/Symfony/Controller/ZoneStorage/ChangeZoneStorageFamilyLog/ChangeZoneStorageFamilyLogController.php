@@ -34,8 +34,9 @@ final class ChangeZoneStorageFamilyLogController extends AbstractController
     }
 
     #[Route(
-        path: 'zone_storages/{slug}/change-family_log',
+        path: 'zone_storages/{zoneStorage}/change-family_log',
         name: 'admin_zone_storages_change-family_log',
+        requirements: ['zoneStorage' => '^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$'],
         methods: ['GET', 'POST']
     )]
     public function __invoke(Request $request, ZoneStorage $zoneStorage): Response

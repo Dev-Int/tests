@@ -29,7 +29,12 @@ final class RenameArticleController extends AbstractController
     {
     }
 
-    #[Route(path: 'articles/{slug}/rename', name: 'admin_articles_rename', methods: ['GET', 'POST'])]
+    #[Route(
+        path: 'articles/{article}/rename',
+        name: 'admin_articles_rename',
+        requirements: ['article' => '^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$'],
+        methods: ['GET', 'POST']
+    )]
     public function __invoke(Request $request, Article $article): Response
     {
         $form = $this->createForm(

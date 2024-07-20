@@ -50,7 +50,7 @@ final class ChangeDomiciliationSupplierControllerTest extends WebTestCase
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            sprintf(self::CHANGE_DOMICILIATION_SUPPLIER_URI, 'supplier-1')
+            sprintf(self::CHANGE_DOMICILIATION_SUPPLIER_URI, $supplier->uuid()->toString())
         );
 
         self::assertResponseIsSuccessful();

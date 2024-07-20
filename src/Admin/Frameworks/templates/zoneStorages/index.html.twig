@@ -25,8 +25,8 @@
                 <li class="li-unstyled flex-between">
                     {{ zone.label }}&nbsp;
                     <span>
-                        <a href="{{ path('admin_zone_storages_change-label', {slug: zone.slug}) }}" role="button">Change label</a>
-                        <a href="{{ path('admin_zone_storages_change-family_log', {slug: zone.slug}) }}" role="button">Change familyLog</a>
+                        <a href="{{ path('admin_zone_storages_change-label', {zoneStorage: zone.uuid}) }}" role="button">Change label</a>
+                        <a href="{{ path('admin_zone_storages_change-family_log', {zoneStorage: zone.uuid}) }}" role="button">Change familyLog</a>
                     </span>
                 </li>
                 {% endfor %}

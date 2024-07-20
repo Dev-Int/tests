@@ -30,9 +30,9 @@ final class RevaluateTaxController extends AbstractController
     }
 
     #[Route(
-        path: 'taxes/{uuid}/revaluate',
+        path: 'taxes/{tax}/revaluate',
         name: 'admin_taxes_revaluate',
-        requirements: ['uuid' => '^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$'],
+        requirements: ['tax' => '^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$'],
         methods: ['GET', 'POST']
     )]
     public function __invoke(Request $request, Tax $tax): Response

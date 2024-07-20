@@ -25,10 +25,10 @@
                     <li class="li-unstyled flex-between">
                         {{ family.path }}&nbsp;
                         <span>
-                            <a href="{{ path('admin_family_logs_change-label', {uuid: family.uuid}) }}" role="button">
+                            <a href="{{ path('admin_family_logs_change-label', {familyLog: family.uuid}) }}" role="button">
                                 Change label
                             </a>&nbsp;
-                            <a href="{{ path('admin_family_logs_assign-parent', {uuid: family.uuid}) }}" role="button">
+                            <a href="{{ path('admin_family_logs_assign-parent', {familyLog: family.uuid}) }}" role="button">
                                 Assign parent
                             </a>
                         </span>

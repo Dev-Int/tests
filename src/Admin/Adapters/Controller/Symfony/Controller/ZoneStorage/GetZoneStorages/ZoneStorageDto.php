@@ -15,7 +15,7 @@ namespace Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\GetZoneStorag
 
 final readonly class ZoneStorageDto
 {
-    public function __construct(public string $slug, public string $label, public string $familyLogLabel)
+    public function __construct(public string $uuid, public string $label, public string $familyLogLabel)
     {
     }
 }

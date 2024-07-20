@@ -41,7 +41,10 @@ final class RevaluateTaxControllerTest extends WebTestCase
         self::assertCount(1, $taxes);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, sprintf(self::REEVALUATE_TAX_URI, TaxDataBuilder::UUID_VALID));
+        $crawler = $client->request(
+            Request::METHOD_GET,
+            sprintf(self::REEVALUATE_TAX_URI, TaxDataBuilder::UUID_VALID)
+        );
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', 'Revaluate Tax');
@@ -88,7 +91,10 @@ final class RevaluateTaxControllerTest extends WebTestCase
         self::assertCount(2, $taxes);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, sprintf(self::REEVALUATE_TAX_URI, TaxDataBuilder::UUID_VALID));
+        $crawler = $client->request(
+            Request::METHOD_GET,
+            sprintf(self::REEVALUATE_TAX_URI, TaxDataBuilder::UUID_VALID)
+        );
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', 'Revaluate Tax');
@@ -128,7 +134,10 @@ final class RevaluateTaxControllerTest extends WebTestCase
         $taxRepository->save($tax);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, sprintf(self::REEVALUATE_TAX_URI, TaxDataBuilder::UUID_VALID));
+        $crawler = $client->request(
+            Request::METHOD_GET,
+            sprintf(self::REEVALUATE_TAX_URI, TaxDataBuilder::UUID_VALID)
+        );
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', 'Revaluate Tax');

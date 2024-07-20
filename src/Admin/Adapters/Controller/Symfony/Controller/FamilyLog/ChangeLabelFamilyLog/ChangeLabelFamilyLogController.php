@@ -29,7 +29,12 @@ final class ChangeLabelFamilyLogController extends AbstractController
     {
     }
 
-    #[Route(path: 'family_logs/{uuid}/change-label', name: 'admin_family_logs_change-label', methods: ['GET', 'POST'])]
+    #[Route(
+        path: 'family_logs/{familyLog}/change-label',
+        name: 'admin_family_logs_change-label',
+        requirements: ['familyLog' => '^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$'],
+        methods: ['GET', 'POST']
+    )]
     public function __invoke(Request $request, FamilyLog $familyLog): Response
     {
         $form = $this->createForm(

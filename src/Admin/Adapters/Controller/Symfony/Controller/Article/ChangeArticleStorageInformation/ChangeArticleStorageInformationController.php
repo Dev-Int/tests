@@ -35,8 +35,9 @@ final class ChangeArticleStorageInformationController extends AbstractController
     }
 
     #[Route(
-        path: 'articles/{slug}/change-article-storage-information',
+        path: 'articles/{article}/change-article-storage-information',
         name: 'admin_articles_change-storage-information',
+        requirements: ['article' => '^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$'],
         methods: ['GET', 'POST']
     )]
     public function __invoke(Request $request, Article $article): Response
