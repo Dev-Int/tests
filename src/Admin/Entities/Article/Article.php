@@ -69,8 +69,8 @@ final class Article
         private NameField $name,
         private Supplier $supplier,
         private Packaging $packaging,
-        private readonly Amount $amount,
-        private readonly Tax $tax,
+        private Amount $amount,
+        private Tax $tax,
         private float $minStock,
         private ZoneStorageCollection $zoneStorages,
         private FamilyLog $familyLog,
@@ -132,6 +132,12 @@ final class Article
     public function tax(): Tax
     {
         return $this->tax;
+    }
+
+    public function changeFinancialInformation(Amount $amount, Tax $tax): void
+    {
+        $this->amount = $amount;
+        $this->tax = $tax;
     }
 
     public function minStock(): float

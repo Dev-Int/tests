@@ -30,6 +30,8 @@ interface ArticleRepository
 
     public function changeStorageInformation(Article $article): void;
 
+    public function changeFinancialInformation(Article $article): void;
+
     public function findAllArticles(): ArticleCollection;
 
     public function findByUuid(string $uuid): Article;
