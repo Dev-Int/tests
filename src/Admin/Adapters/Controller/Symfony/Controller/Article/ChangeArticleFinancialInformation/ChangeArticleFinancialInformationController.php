@@ -31,8 +31,9 @@ final class ChangeArticleFinancialInformationController extends AbstractControll
     }
 
     #[Route(
-        path: 'articles/{slug}/change-financial-information',
+        path: 'articles/{article}/change-financial-information',
         name: 'admin_articles_change_financial-information',
+        requirements: ['article' => '^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$'],
         methods: [Request::METHOD_GET, Request::METHOD_POST],
     )]
     public function __invoke(Request $request, Article $article): Response

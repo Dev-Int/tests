@@ -55,7 +55,7 @@ final class ChangeDeliverySpecificationSupplierControllerTest extends WebTestCas
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            sprintf(self::CHANGE_DELIVERY_SPECIFICATION_SUPPLIER_URI, 'supplier-1')
+            sprintf(self::CHANGE_DELIVERY_SPECIFICATION_SUPPLIER_URI, $supplier->uuid()->toString())
         );
 
         self::assertResponseIsSuccessful();

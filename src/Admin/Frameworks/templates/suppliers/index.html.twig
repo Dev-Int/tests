@@ -25,10 +25,10 @@
                 <li class="li-unstyled flex-between">
                     {{ supplier.name }}
                     <span>
-                        <a href="{{ path('admin_suppliers_rename', {'slug': supplier.slug}) }}" role="button">Rename</a>
-                        <a href="{{ path('admin_supplier_change-domiciliation', {'slug': supplier.slug}) }}" role="button">Change domiciliation</a>
-                        <a href="{{ path('admin_suppliers_change-contact', {'slug': supplier.slug}) }}" role="button">Change contact</a>
-                        <a href="{{ path('admin_suppliers_change-delivery-specification', {'slug': supplier.slug}) }}" role="button">Change delivery specification</a>
+                        <a href="{{ path('admin_suppliers_rename', {'supplier': supplier.uuid}) }}" role="button">Rename</a>
+                        <a href="{{ path('admin_supplier_change-domiciliation', {'supplier': supplier.uuid}) }}" role="button">Change domiciliation</a>
+                        <a href="{{ path('admin_suppliers_change-contact', {'supplier': supplier.uuid}) }}" role="button">Change contact</a>
+                        <a href="{{ path('admin_suppliers_change-delivery-specification', {'supplier': supplier.uuid}) }}" role="button">Change delivery specification</a>
                     </span>
                 </li>
                 {% endfor %}

@@ -30,8 +30,9 @@ final class ChangeDomiciliationSupplierController extends AbstractController
     }
 
     #[Route(
-        path: 'suppliers/{slug}/change-domiciliation',
+        path: 'suppliers/{supplier}/change-domiciliation',
         name: 'admin_supplier_change-domiciliation',
+        requirements: ['supplier' => '^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$'],
         methods: ['GET', 'POST']
     )]
     public function __invoke(Request $request, Supplier $supplier): Response

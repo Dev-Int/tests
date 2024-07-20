@@ -48,7 +48,10 @@ final class ChangeContactControllerTest extends WebTestCase
         self::assertCount(1, $suppliers);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, sprintf(self::CHANGE_CONTACT_SUPPLIER, $supplier->slug()));
+        $crawler = $client->request(
+            Request::METHOD_GET,
+            sprintf(self::CHANGE_CONTACT_SUPPLIER, $supplier->uuid()->toString())
+        );
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', 'Change contact "Supplier 1"');

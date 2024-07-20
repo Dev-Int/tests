@@ -49,7 +49,10 @@ final class RenameSupplierControllerTest extends WebTestCase
         self::assertCount(1, $suppliers);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, sprintf(self::RENAME_SUPPLIER_URI, 'supplier-1'));
+        $crawler = $client->request(
+            Request::METHOD_GET,
+            sprintf(self::RENAME_SUPPLIER_URI, $supplier->uuid()->toString())
+        );
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', 'Rename "Supplier 1"');
@@ -98,7 +101,10 @@ final class RenameSupplierControllerTest extends WebTestCase
         $supplierRepository->save($supplier2);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, sprintf(self::RENAME_SUPPLIER_URI, 'supplier-1'));
+        $crawler = $client->request(
+            Request::METHOD_GET,
+            sprintf(self::RENAME_SUPPLIER_URI, $supplier1->uuid()->toString())
+        );
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', 'Rename "Supplier 1"');

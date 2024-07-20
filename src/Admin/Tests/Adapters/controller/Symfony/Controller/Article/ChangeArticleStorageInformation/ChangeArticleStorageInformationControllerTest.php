@@ -110,7 +110,7 @@ class ChangeArticleStorageInformationControllerTest extends WebTestCase
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            sprintf(self::CHANGE_ARTICLE_STORAGE_INFORMATION_URI, $article->slug())
+            sprintf(self::CHANGE_ARTICLE_STORAGE_INFORMATION_URI, $article->uuid()->toString())
         );
 
         self::assertResponseIsSuccessful();

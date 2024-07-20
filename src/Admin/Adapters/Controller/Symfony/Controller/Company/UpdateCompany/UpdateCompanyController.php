@@ -29,7 +29,11 @@ final class UpdateCompanyController extends AbstractController
     {
     }
 
-    #[Route(path: '/company/{slug}/update', name: 'admin_company_update', methods: ['GET', 'POST'])]
+    #[Route(
+        path: '/company/{company}/update',
+        name: 'admin_company_update',
+        methods: ['GET', 'POST']
+    )]
     public function __invoke(Request $request, Company $company): Response
     {
         $companyToUpdate = new UpdateCompanyApiRequest(

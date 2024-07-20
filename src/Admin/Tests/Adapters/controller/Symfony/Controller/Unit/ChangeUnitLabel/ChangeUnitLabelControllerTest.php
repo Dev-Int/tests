@@ -40,7 +40,7 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
         self::assertCount(1, $units);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, sprintf(self::CHANGE_LABEL_URI, $unit->slug()));
+        $crawler = $client->request(Request::METHOD_GET, sprintf(self::CHANGE_LABEL_URI, $unit->uuid()->toString()));
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', 'Change label "Kilogramme"');
@@ -82,7 +82,10 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
         self::assertCount(1, $units);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, sprintf(self::CHANGE_LABEL_URI, $unit->slug()));
+        $crawler = $client->request(
+            Request::METHOD_GET,
+            sprintf(self::CHANGE_LABEL_URI, $unit->uuid()->toString())
+        );
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', 'Change label "Kilogramme"');
@@ -130,7 +133,10 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
         self::assertCount(2, $units);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, sprintf(self::CHANGE_LABEL_URI, $unit1->slug()));
+        $crawler = $client->request(
+            Request::METHOD_GET,
+            sprintf(self::CHANGE_LABEL_URI, $unit1->uuid()->toString())
+        );
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', 'Change label "Kilogramme"');
@@ -166,7 +172,10 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
         $unitRepository->save($unit);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, sprintf(self::CHANGE_LABEL_URI, $unit->slug()));
+        $crawler = $client->request(
+            Request::METHOD_GET,
+            sprintf(self::CHANGE_LABEL_URI, $unit->uuid()->toString())
+        );
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', 'Change label "Kilogramme"');

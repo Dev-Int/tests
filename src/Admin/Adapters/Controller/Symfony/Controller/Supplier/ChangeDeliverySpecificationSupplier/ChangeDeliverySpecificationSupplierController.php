@@ -30,8 +30,9 @@ final class ChangeDeliverySpecificationSupplierController extends AbstractContro
     }
 
     #[Route(
-        path: 'suppliers/{slug}/change-delivery-specification',
+        path: 'suppliers/{supplier}/change-delivery-specification',
         name: 'admin_suppliers_change-delivery-specification',
+        requirements: ['supplier' => '^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$'],
         methods: ['GET', 'POST']
     )]
     public function __invoke(Request $request, Supplier $supplier): Response

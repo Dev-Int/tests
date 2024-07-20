@@ -27,7 +27,12 @@ final class RenameSupplierController extends AbstractController
     {
     }
 
-    #[Route(path: 'suppliers/{slug}/rename', name: 'admin_suppliers_rename', methods: ['GET', 'POST'])]
+    #[Route(
+        path: 'suppliers/{supplier}/rename',
+        name: 'admin_suppliers_rename',
+        requirements: ['supplier' => '^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$'],
+        methods: ['GET', 'POST']
+    )]
     public function __invoke(Request $request, Supplier $supplier): Response
     {
         $form = $this->createForm(

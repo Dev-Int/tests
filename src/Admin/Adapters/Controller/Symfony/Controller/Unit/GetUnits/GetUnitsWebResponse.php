@@ -26,7 +26,7 @@ final class GetUnitsWebResponse
             $this->units[] = new UnitDto(
                 $unit->label()->toString(),
                 $unit->abbreviation(),
-                $unit->slug()
+                $unit->uuid()->toString()
             );
         }
     }

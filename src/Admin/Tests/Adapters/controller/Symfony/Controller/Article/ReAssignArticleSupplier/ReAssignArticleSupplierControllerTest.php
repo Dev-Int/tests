@@ -110,7 +110,7 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            sprintf(self::REASSIGN_ARTICLE_SUPPLIER_URI, $article->slug())
+            sprintf(self::REASSIGN_ARTICLE_SUPPLIER_URI, $article->uuid()->toString())
         );
 
         self::assertResponseIsSuccessful();
@@ -209,7 +209,7 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            sprintf(self::REASSIGN_ARTICLE_SUPPLIER_URI, $article->slug())
+            sprintf(self::REASSIGN_ARTICLE_SUPPLIER_URI, $article->uuid()->toString())
         );
 
         self::assertResponseIsSuccessful();
@@ -308,7 +308,7 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            sprintf(self::REASSIGN_ARTICLE_SUPPLIER_URI, $article->slug())
+            sprintf(self::REASSIGN_ARTICLE_SUPPLIER_URI, $article->uuid()->toString())
         );
 
         self::assertResponseIsSuccessful();

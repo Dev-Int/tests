@@ -90,7 +90,10 @@ final class RenameArticleControllerTest extends WebTestCase
         $articleRepository->save($article);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, sprintf(self::RENAME_ARTICLE_URI, $article->slug()));
+        $crawler = $client->request(
+            Request::METHOD_GET,
+            sprintf(self::RENAME_ARTICLE_URI, $article->uuid()->toString())
+        );
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', 'Rename "Jambon Trad 6kg"');
@@ -179,7 +182,10 @@ final class RenameArticleControllerTest extends WebTestCase
         $articleRepository->save($article2);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, sprintf(self::RENAME_ARTICLE_URI, $article1->slug()));
+        $crawler = $client->request(
+            Request::METHOD_GET,
+            sprintf(self::RENAME_ARTICLE_URI, $article1->uuid()->toString())
+        );
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', 'Rename "Jambon Trad 6kg"');

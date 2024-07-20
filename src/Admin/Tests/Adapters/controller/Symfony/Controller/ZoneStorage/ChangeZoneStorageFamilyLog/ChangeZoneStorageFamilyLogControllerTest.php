@@ -55,7 +55,10 @@ final class ChangeZoneStorageFamilyLogControllerTest extends WebTestCase
         $familyLogOrm = $familyLogRepository->find($familyLog2->uuid()->toString());
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, sprintf(self::CHANGE_FAMILY_LOG_URI, 'reserve-negative'));
+        $crawler = $client->request(
+            Request::METHOD_GET,
+            sprintf(self::CHANGE_FAMILY_LOG_URI, $zoneStorage->uuid()->toString())
+        );
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', 'Change FamilyLog "Réserve négative"');
