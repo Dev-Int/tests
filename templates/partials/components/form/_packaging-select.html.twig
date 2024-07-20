@@ -1,0 +1,12 @@
+<div id="{{ packaging.vars.id }}">
+    <fieldset>
+        <legend>{{ form_label(packaging) }}</legend>
+        {{ form_errors(packaging) }}
+
+        <div class="grid">
+            {% for child in packaging.children %}
+                {{ include('partials/components/form/_storage.html.twig', { storage: child}) }}
+            {% endfor %}
+        </div>
+    </fieldset>
+</div>

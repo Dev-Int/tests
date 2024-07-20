@@ -1,0 +1,28 @@
+{% set uuid = null %}
+<div>
+    {% if storage.unit.vars.value is defined and storage.unit.vars.value != null %}
+        {% set uuid = storage.unit.vars.value %}
+    {% endif %}
+
+    <select name="{{ field_name(storage) }}[unit]" id="{{ storage.vars.id }}_unit">
+        {% if storage.unit is defined %}
+            <option value="" {% if uuid is null %}selected{% endif %}>Choice an Unit</option>
+            {% for label, value in field_choices(storage.unit) %}
+                <option value="{{ value }}" {% if uuid is same as(value) %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        {% endif %}
+    </select>
+
+    <div>
+        <input
+            type="number"
+            id="{{ storage.vars.id }}_quantity"
+            name="{{ field_name(storage) }}[quantity]"
+            {% if required is defined %}required="required"{% endif%}
+            step="any"
+            value="{% if storage.quantity.vars.value is defined and storage.quantity.vars.value != null %}{{ storage.quantity.vars.value }}{% endif %}"
+        >
+        {{ form_errors(storage.quantity) }}
+    </div>
+
+</div>

@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Gateway\ORM\Repository;
 
-use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
+use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Admin\Entities\Exception\FamilyLogNotFoundException;
 use Admin\Entities\Exception\NoFamilyLogRegisteredException;
 use Admin\Entities\FamilyLog\FamilyLog as FamilyLogDomain;
@@ -93,8 +93,7 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
      */
     public function save(FamilyLogDomain $familyLog): void
     {
-        $familyLogOrm = new FamilyLog();
-        $familyLogOrm->fromDomain($familyLog);
+        $familyLogOrm = (new FamilyLog())->fromDomain($familyLog);
 
         $parent = null;
         if ($familyLog->parent() instanceof FamilyLogDomain) {
@@ -155,6 +154,9 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
         $this->_em->flush();
     }
 
+    /**
+     * @throws NonUniqueResultException
+     */
     public function findByUuid(ResourceUuid $uuid): FamilyLogDomain
     {
         $alias = self::ALIAS;
@@ -171,7 +173,7 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
             // @codeCoverageIgnoreEnd
         }
 
-        return $familyLog->toDomain();
+        return $familyLog->toDomain($familyLog->parent());
     }
 
     /**
@@ -193,7 +195,7 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
             // @codeCoverageIgnoreEnd
         }
 
-        return $familyLog->toDomain();
+        return $familyLog->toDomain($familyLog->parent());
     }
 
     public function findFamilyLogsOrderingBySlug(): FamilyLogCollection

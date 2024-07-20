@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Shared\Entities\VO;
 
-use Shared\Entities\Exception\InvalidPhone;
+use Shared\Entities\Exception\InvalidPhoneException;
 
 final class PhoneField
 {
@@ -26,13 +26,15 @@ final class PhoneField
     {
         $phoneSanitized = filter_var($phoneNumber, \FILTER_SANITIZE_NUMBER_INT);
         if ($phoneSanitized === false) {
-            throw new InvalidPhone($phoneNumber);
+            // @codeCoverageIgnoreStart
+            throw new InvalidPhoneException($phoneNumber);
+            // @codeCoverageIgnoreEnd
         }
 
         $phoneToCheck = str_replace('-', '', $phoneSanitized);
 
         if (preg_match('/^(\+\d{2}|0)([12345679]\d{8})$/', $phoneToCheck) !== 1) {
-            throw new InvalidPhone($phoneNumber);
+            throw new InvalidPhoneException($phoneNumber);
         }
 
         $this->phoneNumber = $phoneSanitized;

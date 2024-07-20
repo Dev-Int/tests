@@ -20,7 +20,7 @@ use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
 
 #[ORM\Entity(repositoryClass: DoctrineTaxRepository::class)]
-final class Tax
+class Tax
 {
     #[ORM\Id]
     #[ORM\Column(name: 'uuid', type: 'guid')]

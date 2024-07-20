@@ -32,7 +32,7 @@ class TaxType extends AbstractType
             ->add('rate', PercentType::class, [
                 'label' => 'Taux de la taxe',
                 'empty_data' => 0.0,
-                'html5' => true,
+                'html5' => false,
                 'scale' => 2,
             ])
         ;

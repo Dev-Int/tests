@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Entities\FamilyLog;
 
+use Admin\Entities\Exception\IsAlreadyChildException;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
 
@@ -31,16 +32,31 @@ final class FamilyLog
         return new self($uuid, $label, $parent);
     }
 
+    public static function createFromExistingEntity(
+        ResourceUuid $uuid,
+        NameField $label,
+        string $slug,
+        string $path,
+        int $level,
+        ?self $parent = null
+    ): self {
+        return new self($uuid, $label, $parent, $slug, $path, $level);
+    }
+
     private function __construct(
         private readonly ResourceUuid $uuid,
         private NameField $label,
-        private ?self $parent = null
+        private ?self $parent = null,
+        ?string $slug = null,
+        ?string $path = null,
+        ?int $level = 1
     ) {
-        $this->path = $label->slugify();
-        $this->slug = $label->slugify();
+        $this->path = $path ?? $label->slugify();
+        $this->slug = $slug ?? $label->slugify();
+        $this->level = $level ?? 1;
 
-        if ($parent instanceof self && $this->parent instanceof self) {
-            $this->assignParent($parent, $label);
+        if ($parent instanceof self) {
+            $this->assignParent($parent);
         }
     }
 
@@ -87,79 +103,99 @@ final class FamilyLog
         return $this->level;
     }
 
-    /**
-     * @return array<string, array<int|string, array<string>|string>>
-     */
-    public function parseTree(): array
+    public function assignParent(self $parent): void
     {
-        $arrayChildren = [];
-        if (null === $this->children) {
-            return [$this->label->toString() => $arrayChildren];
-        }
-
-        foreach ($this->children as $child) {
-            if (null !== $this->getChildrenLabel($child)) {
-                $arrayChildren[$child->label->toString()] = $this->getChildrenLabel($child);
-            } else {
-                $arrayChildren[] = $child->label->toString();
-            }
-        }
-
-        return [$this->label->toString() => $arrayChildren];
-    }
-
-    public function addChild(self $child): void
-    {
-        $this->children[] = $child;
-    }
-
-    public function assignParent(self $parent, NameField $label): void
-    {
-        $this->parent = $parent;
-
-        if ($this->isChild($parent) === false) {
-            $this->parent->addChild($this);
-        }
-
-        $slug = $parent->slug() . '-' . $label->slugify();
+        $slug = $parent->slug() . '-' . $this->label->slugify();
         $this->path = $slug;
         $this->slug = $slug;
+        $this->level = $parent->level + 1;
 
-        if ($this->parent instanceof self) {
-            $this->level = $this->parent->level + 1;
+        if ($this->parent instanceof self && $this->parent->uuid() !== $parent->uuid()) {
+            $this->parent->removeChild($this);
+        }
+
+        if ($this->isChildOf($parent) === false) {
+            $parent->addChild($this);
         }
 
         if ($this->children !== null) {
             foreach ($this->children as $child) {
-                $child->assignParent($this, $child->label);
+                $child->assignParent($this);
             }
         }
     }
 
-    /**
-     * @return array<string>|null
-     */
-    private function getChildrenLabel(self $familyLog): ?array
+    public function addChild(self $child): void
     {
-        if (null !== $familyLog->children) {
-            return array_map(static function (FamilyLog $child) {
-                return $child->label->toString();
-            }, $familyLog->children);
-        }
-
-        return null;
-    }
-
-    private function isChild(self $parent): bool
-    {
-        if ($parent->children !== null) {
-            foreach ($parent->children as $child) {
-                if ($child->slug === $this->slug) {
-                    return true;
+        if ($this->children !== null) {
+            foreach ($this->children as $item) {
+                if ($item->slug === $child->slug) {
+                    throw new IsAlreadyChildException($child->slug, $this->slug);
                 }
             }
         }
 
+        $this->children[] = $child;
+        $child->parent = $this;
+    }
+
+    public function isCompatible(self $familyLog): bool
+    {
+        if ($this->isEqual($familyLog)) {
+            return true;
+        }
+
+        return ($familyLog->parent instanceof self) && $familyLog->isFamilyMember($this);
+    }
+
+    private function isEqual(self $parent): bool
+    {
+        return $this->slug === $parent->slug;
+    }
+
+    private function isFamilyMember(self $parent): bool
+    {
+        if ($this->parent instanceof self) {
+            if ($parent->slug === $this->parent->slug) {
+                return true;
+            }
+
+            if ($this->parent->parent instanceof self) {
+                return $this->parent->isFamilyMember($parent);
+            }
+        }
+
         return false;
+    }
+
+    private function isChildOf(self $parent): bool
+    {
+        if ($parent->children() === null) {
+            return false;
+        }
+
+        foreach ($parent->children() as $child) {
+            if ($child->slug === $this->slug) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function removeChild(self $childToRemove): void
+    {
+        if ($this->children === null) {
+            return;
+        }
+
+        foreach ($this->children as $child) {
+            if ($child->slug === $childToRemove->slug) {
+                $key = array_search($child, $this->children, true);
+                if ($key !== false) {
+                    unset($this->children[$key]);
+                }
+            }
+        }
     }
 }

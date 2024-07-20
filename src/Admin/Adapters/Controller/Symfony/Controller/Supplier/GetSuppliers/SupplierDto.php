@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\Supplier\GetSuppliers;
 
-final class SupplierDto
+final readonly class SupplierDto
 {
     public function __construct(public string $uuid, public string $name, public string $slug)
     {

@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Shared\Tests\Entities\VO;
 
 use PHPUnit\Framework\TestCase;
-use Shared\Entities\Exception\InvalidEmail;
+use Shared\Entities\Exception\InvalidEmailException;
 use Shared\Entities\VO\EmailField;
 
 /**
@@ -34,7 +34,7 @@ final class EmailFieldTest extends TestCase
     public function testCreateWithInvalidEmailThrowsADomainException(): void
     {
         // Arrange
-        $this->expectException(InvalidEmail::class);
+        $this->expectException(InvalidEmailException::class);
 
         // Act & Assert
         EmailField::fromString('invalid.email.fr');

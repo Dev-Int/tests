@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Shared\Entities\VO;
 
 use Cocur\Slugify\Slugify;
-use Shared\Entities\Exception\StringExceeds255Characters;
+use Shared\Entities\Exception\StringExceeds255CharactersException;
 
 final class NameField
 {
@@ -26,7 +26,7 @@ final class NameField
     private function __construct(private readonly string $name)
     {
         if (\strlen($name) > 255) {
-            throw new StringExceeds255Characters($this->name);
+            throw new StringExceeds255CharactersException($this->name);
         }
     }
 

@@ -159,7 +159,7 @@ final class CreateTaxControllerTest extends WebTestCase
         $nameField = $response->filter('form')->children('div')->first();
 
         self::assertSame('Nom de la taxe', $nameField->children('label')->text());
-        self::assertSame('This value should not be blank.', $nameField->children('ul > li')->text());
+        self::assertSame('Cette valeur ne doit pas être vide.', $nameField->children('ul > li')->text());
     }
 
     public function testCreateTaxFailWithRateTooLargeException(): void

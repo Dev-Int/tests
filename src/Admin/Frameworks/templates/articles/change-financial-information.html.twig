@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Change financial information Article | {{ parent() }}
+{% endblock %}
+
+{% block body %}
+
+    <h1><i class="fa-solid fa-plate-wheat"></i> Change financial information to "{{ article.name }}"</h1>
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    {{ form_row(form.amount) }}
+    {{ form_row(form.tax) }}
+
+    <div class="grid">
+        <a href="{{ path('admin_articles_index') }}" class="secondary" role="button">Annuler</a>
+        <button type="submit">Update</button>
+    </div>
+
+    {{ form_end(form) }}
+
+{% endblock %}
+

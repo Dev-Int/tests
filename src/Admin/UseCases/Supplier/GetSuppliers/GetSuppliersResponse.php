@@ -15,7 +15,7 @@ namespace Admin\UseCases\Supplier\GetSuppliers;
 
 use Admin\Entities\Supplier\SupplierCollection;
 
-final class GetSuppliersResponse
+final readonly class GetSuppliersResponse
 {
     public function __construct(public SupplierCollection $suppliers)
     {

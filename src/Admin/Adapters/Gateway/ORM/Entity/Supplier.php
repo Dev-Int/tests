@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Gateway\ORM\Entity;
 
+use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineSupplierRepository;
 use Admin\Entities\Supplier\Supplier as SupplierDomain;
 use Doctrine\ORM\Mapping as ORM;
@@ -24,7 +25,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: DoctrineSupplierRepository::class)]
 #[UniqueEntity('name')]
-final class Supplier
+class Supplier
 {
     #[ORM\Id]
     #[ORM\Column(name: 'uuid', type: 'guid')]
@@ -95,7 +96,7 @@ final class Supplier
             EmailField::fromString($this->email),
             $this->contact,
             PhoneField::fromString($this->cellphone),
-            $this->familyLog->toDomain(),
+            $this->familyLog->toDomain($this->familyLog->parent()),
             $this->delayDelivery,
             $this->orderDays,
             $this->active

@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Gateway\ORM\Repository;
 
-use Admin\Adapters\Gateway\ORM\Entity\FamilyLog;
+use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
 use Admin\Entities\Exception\FamilyLogNotFoundException;
 use Admin\Entities\Exception\NoZoneStorageRegisteredException;

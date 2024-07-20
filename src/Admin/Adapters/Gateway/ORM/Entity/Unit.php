@@ -20,7 +20,7 @@ use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
 
 #[ORM\Entity(repositoryClass: DoctrineUnitRepository::class)]
-final class Unit
+class Unit
 {
     #[ORM\Id]
     #[ORM\Column(name: 'uuid', type: 'guid')]

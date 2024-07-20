@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Shared\Tests\Entities\VO;
 
 use PHPUnit\Framework\TestCase;
-use Shared\Entities\Exception\StringExceeds255Characters;
+use Shared\Entities\Exception\StringExceeds255CharactersException;
 use Shared\Entities\VO\NameField;
 
 /**
@@ -25,7 +25,7 @@ final class NameFieldTest extends TestCase
     public function testCreateWithNameTooLongThrowsADomainException(): void
     {
         // Arrange
-        $this->expectException(StringExceeds255Characters::class);
+        $this->expectException(StringExceeds255CharactersException::class);
 
         // Act & Assert
         NameField::fromString(str_repeat('a', 256));

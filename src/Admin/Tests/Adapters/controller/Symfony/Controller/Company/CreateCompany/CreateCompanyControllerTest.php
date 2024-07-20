@@ -148,6 +148,6 @@ final class CreateCompanyControllerTest extends WebTestCase
         $phoneField = $groupField->children('div')->first();
 
         self::assertSame('Téléphone', $phoneField->children('label')->text());
-        self::assertSame('This value is not valid.', $phoneField->children('ul > li')->text());
+        self::assertSame('Cette valeur n\'est pas valide.', $phoneField->children('ul > li')->text());
     }
 }

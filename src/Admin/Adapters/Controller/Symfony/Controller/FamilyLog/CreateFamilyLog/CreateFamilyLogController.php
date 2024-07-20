@@ -42,7 +42,7 @@ final class CreateFamilyLogController extends AbstractController
             return $this->redirectToRoute('admin_configure');
         }
 
-        $form = $this->createForm(CreateFamilyLogType::class);
+        $form = $this->createForm(CreateFamilyLogType::class, new CreateFamilyLogApiRequest());
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

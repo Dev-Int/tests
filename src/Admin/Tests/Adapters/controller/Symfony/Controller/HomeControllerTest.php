@@ -13,12 +13,14 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\controller\Symfony\Controller;
 
+use Admin\Adapters\Gateway\ORM\Repository\DoctrineArticleRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineCompanyRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineSupplierRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineTaxRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineUnitRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineZoneStorageRepository;
+use Admin\Tests\DataBuilder\ArticleDataBuilder;
 use Admin\Tests\DataBuilder\CompanyDataBuilder;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\SupplierDataBuilder;
@@ -58,6 +60,9 @@ final class HomeControllerTest extends WebTestCase
         /** @var DoctrineSupplierRepository $supplierRepository */
         $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
 
+        /** @var DoctrineArticleRepository $articleRepository */
+        $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
+
         $company = (new CompanyDataBuilder())->create('TestCompany')->build();
         $companyRepository->save($company);
 
@@ -78,6 +83,19 @@ final class HomeControllerTest extends WebTestCase
 
         $supplier = (new SupplierDataBuilder())->create('supplier 1', $familyLog)->build();
         $supplierRepository->save($supplier);
+
+        $article = (new ArticleDataBuilder())
+            ->create(
+                'article 1',
+                $supplier,
+                $tax,
+                [$zoneStorage],
+                $familyLog,
+                [[$unit, 1.0], null, null]
+            )
+            ->build()
+        ;
+        $articleRepository->save($article);
 
         // Act
         $crawler = $client->request(Request::METHOD_GET, self::HOME_URI);

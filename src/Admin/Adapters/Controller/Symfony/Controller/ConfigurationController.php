@@ -14,8 +14,10 @@ declare(strict_types=1);
 namespace Admin\Adapters\Controller\Symfony\Controller;
 
 use Admin\Adapters\Gateway\ConfigurationService;
+use Admin\UseCases\Gateway\ArticleRepository;
 use Admin\UseCases\Gateway\CompanyRepository;
 use Admin\UseCases\Gateway\FamilyLogRepository;
+use Admin\UseCases\Gateway\SupplierRepository;
 use Admin\UseCases\Gateway\ZoneStorageRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,7 +31,9 @@ final class ConfigurationController extends AbstractController
         private readonly CompanyRepository $companyRepository,
         private readonly ConfigurationService $configurationService,
         private readonly FamilyLogRepository $familyLogRepository,
-        private readonly ZoneStorageRepository $zoneStorageRepository
+        private readonly ZoneStorageRepository $zoneStorageRepository,
+        private readonly SupplierRepository $supplierRepository,
+        private readonly ArticleRepository $articleRepository
     ) {
     }
 
@@ -40,14 +44,16 @@ final class ConfigurationController extends AbstractController
         $hasApplication = $this->configurationService->isApplicationConfigured();
         $hasFamilyLog = $this->familyLogRepository->hasFamilyLog();
         $hasZoneStorage = $this->zoneStorageRepository->hasZoneStorage();
+        $hasSupplier = $this->supplierRepository->hasSupplier();
+        $hasArticle = $this->articleRepository->hasArticle();
 
         return $this->render('@admin/configuration.html.twig', [
             'hasCompany' => $hasCompany,
             'hasApplication' => $hasApplication,
             'hasStorage' => $hasZoneStorage,
             'hasFamilyLog' => $hasFamilyLog,
-            'hasSupplier' => false,
-            'hasArticle' => false,
+            'hasSupplier' => $hasSupplier,
+            'hasArticle' => $hasArticle,
         ]);
     }
 }

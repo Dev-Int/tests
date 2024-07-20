@@ -32,7 +32,7 @@ final readonly class AssignParentFamilyLog
             throw new FamilyLogAlreadyExistsException($familyLog->label()->toString());
         }
 
-        $familyLog->assignParent($request->parent(), $familyLog->label());
+        $familyLog->assignParent($request->parent());
 
         $this->familyLogRepository->assignParent($familyLog, $request->uuid());
 
