@@ -12,17 +12,10 @@
 
     <h1><twig:Icon:Entities:ZoneStorage /> Change FamilyLog "{{ zoneStorage.label }}"</h1>
 
-    {{ form_start(form) }}
-    {{ form_errors(form) }}
+    <turbo-frame id="zone_{{ zoneStorage.uuid }}">
+        <h2>Change familyLog "{{ zoneStorage.label }}"</h2>
 
-    {{ include('partials/components/form/_familyLogs-select.html.twig', {familyLog: form.familyLog}) }}
-
-    <div class="grid">
-        <twig:Form:Button:Cancel href="{{ path('admin_zone_storages_index') }}" label="Annuler" />
-        <twig:Form:Button:Submit label="Change FamilyLog" />
-    </div>
-
-    {{ form_end(form) }}
-
+        <twig:Form:ZoneStorage:ChangeFamilyLogForm form="{{ form }}" />
+    </turbo-frame>
 {% endblock %}
 

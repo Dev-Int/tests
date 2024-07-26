@@ -4,6 +4,10 @@
     ZoneStorages | {{ parent() }}
 {% endblock %}
 
+{% block importmap %}
+    {{ importmap(['app','familyLog-select']) }}
+{% endblock %}
+
 {% block body %}
 
     <h1><twig:Icon:Entities:ZoneStorage /> Storage Zones</h1>
@@ -20,13 +24,17 @@
         <article class="col-md-9">
             <ul class="w100">
                 {% for zone in zoneStorages %}
-                <li class="li-unstyled flex-between">
-                    {{ zone.label }}&nbsp;
-                    <span>
-                        <twig:Button:UpdateEntity href="{{ path('admin_zone_storages_change-label', {zoneStorage: zone.uuid}) }}" label="Change label" />
-                        <twig:Button:UpdateEntity href="{{ path('admin_zone_storages_change-family_log', {zoneStorage: zone.uuid}) }}" label="Change familyLog" />
+                    <turbo-frame id="zone_{{ zone.uuid }}">
+                        <li class="li-unstyled flex-between">
+                            {{ zone.label }}&nbsp;
+                            <span>
+                        <twig:Button:UpdateEntity
+                            href="{{ path('admin_zone_storages_change-label', {zoneStorage: zone.uuid}) }}" label="Change label"/>
+                        <twig:Button:UpdateEntity
+                            href="{{ path('admin_zone_storages_change-family_log', {zoneStorage: zone.uuid}) }}" label="Change familyLog"/>
                     </span>
-                </li>
+                        </li>
+                    </turbo-frame>
                 {% endfor %}
             </ul>
         </article>

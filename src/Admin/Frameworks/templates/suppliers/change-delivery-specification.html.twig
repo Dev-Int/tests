@@ -12,23 +12,11 @@
 
     <h1><twig:Icon:Entities:Supplier /> Change delivery specification "{{ supplier.name }}"</h1>
 
-    {{ form_start(form) }}
-    {{ form_errors(form) }}
+    <turbo-frame id="supplier_{{ supplier.uuid }}">
+        <h2>Change delivery specification "{{ supplier.name }}"</h2>
 
-    <div class="grid">
-        {{ include('partials/components/form/_familyLogs-select.html.twig', {familyLog: form.familyLog}) }}
-        <div>
-            {{ form_row(form.delayDelivery, {'attr': {'class': 'w50'}}) }}
-            {{ form_row(form.orderDays) }}
-        </div>
-    </div>
-
-    <div class="grid">
-        <twig:Form:Button:Cancel href="{{ path('admin_suppliers_index') }}" label="Annuler" />
-        <twig:Form:Button:Submit label="Update" />
-    </div>
-
-    {{ form_end(form) }}
+        <twig:Form:Supplier:ChangeDeliverySpecificationForm form="{{ form }}" />
+    </turbo-frame>
 
 {% endblock %}
 

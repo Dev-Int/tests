@@ -50,7 +50,7 @@ final class GetTaxesControllerTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', 'Taxes');
 
-        $list = $crawler->filter('body > div.container > div.row > article > ul.w100')->children('li.li-unstyled');
+        $list = $crawler->filter('body > div.container > div.row > article > ul.w100 > turbo-frame')->children('li.li-unstyled');
 
         self::assertCount(2, $list);
     }

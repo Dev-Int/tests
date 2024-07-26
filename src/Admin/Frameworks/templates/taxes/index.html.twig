@@ -20,13 +20,15 @@
         <article class="col-md-9">
             <ul class="w100">
                 {%  for tax in taxes %}
-                <li class="li-unstyled flex-between">
-                    {{ tax.name }} {{ tax.rate }}
-                    <span>
-                        <twig:Button:UpdateEntity href="{{ path('admin_taxes_rename', {'tax': tax.uuid}) }}" label="Rename tax" />
-                        <twig:Button:UpdateEntity href="{{ path('admin_taxes_revaluate', {'tax': tax.uuid}) }}" label="Reevaluate tax" />
-                    </span>
-                </li>
+                    <turbo-frame id="tax_{{ tax.uuid }}">
+                        <li class="li-unstyled flex-between">
+                            {{ tax.name }} {{ tax.rate }}
+                            <span>
+                                <twig:Button:UpdateEntity href="{{ path('admin_taxes_rename', {'tax': tax.uuid}) }}" label="Rename tax" />
+                                <twig:Button:UpdateEntity href="{{ path('admin_taxes_revaluate', {'tax': tax.uuid}) }}" label="Revaluate tax" />
+                            </span>
+                        </li>
+                    </turbo-frame>
                 {% endfor %}
             </ul>
         </article>

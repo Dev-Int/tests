@@ -47,7 +47,13 @@ final class ChangeDomiciliationSupplierController extends AbstractController
                 $supplier->phone(),
                 $supplier->email(),
                 $supplier->slug()
-            )
+            ),
+            [
+                'action' => $this->generateUrl(
+                    'admin_supplier_change-domiciliation',
+                    ['supplier' => $supplier->uuid()]
+                ),
+            ]
         );
 
         $form->handleRequest($request);

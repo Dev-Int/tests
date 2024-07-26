@@ -20,12 +20,14 @@
         <article class="col-md-9">
             <ul class="w100">
                 {% for unit in units %}
-                <li class="li-unstyled flex-between">
-                    {{ unit.label }} {{ unit.abbreviation }}
-                    <span>
-                        <twig:Button:UpdateEntity href="{{ path('admin_units_change-label', {unit: unit.uuid}) }}" label="Change label" />
-                    </span>
-                </li>
+                    <turbo-frame id="unit_{{ unit.uuid }}">
+                        <li class="li-unstyled flex-between">
+                            {{ unit.label }} {{ unit.abbreviation }}
+                            <span>
+                                <twig:Button:UpdateEntity href="{{ path('admin_units_change-label', {unit: unit.uuid}) }}" label="Change label"/>
+                            </span>
+                        </li>
+                    </turbo-frame>
                 {% endfor %}
             </ul>
         </article>

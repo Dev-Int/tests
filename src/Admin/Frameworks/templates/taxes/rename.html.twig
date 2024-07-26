@@ -8,18 +8,11 @@
 
     <h1><twig:Icon:Entities:Taxe /> Rename Tax "{{ tax.name }}"</h1>
 
-    {{ form_start(form) }}
-    {{ form_errors(form) }}
+    <turbo-frame id="tax_{{ tax.uuid }}">
+        <h2>Rename Tax "{{ tax.name }}"</h2>
 
-    {{ form_row(form.name) }}
-    {{  form_row(form.uuid) }}
-
-    <div class="grid">
-        <twig:Form:Button:Cancel href="{{ path('admin_taxes_index') }}" label="Annuler" />
-        <twig:Form:Button:Submit label="Rename" />
-    </div>
-
-    {{ form_end(form) }}
+        <twig:Form:Taxes:RenameForm form="{{ form }}" />
+    </turbo-frame>
 
 {% endblock %}
 

@@ -8,18 +8,10 @@
 
     <h1><twig:Icon:Entities:Article /> Change storage information to "{{ article.name }}"</h1>
 
-    {{ form_start(form) }}
-    {{ form_errors(form) }}
+    <turbo-frame id="article_{{ article.uuid }}">
+        <h2>Change storage information to "{{ article.name }}"</h2>
 
-    {{ include('partials/components/form/_packaging-select.html.twig', {packaging: form.packaging}) }}
-
-    {{ form_row(form.minStock) }}
-
-    <div class="grid">
-        <twig:Form:Button:Cancel href="{{ path('admin_articles_index') }}" label="Annuler" />
-        <twig:Form:Button:Submit label="Update" />
-    </div>
-
-    {{ form_end(form) }}
+        <twig:Form:Article:ChangeStorageInformationForm form="{{ form }}" />
+    </turbo-frame>
 
 {% endblock %}

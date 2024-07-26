@@ -13,6 +13,13 @@ span > a[role="button"] {
     padding: calc(var(--form-element-spacing-vertical) * 0.2) calc(var(--form-element-spacing-horizontal) * 0.2);
 }
 
+turbo-frame .grid > a[role="button"] {
+    margin: 0 0 var(--spacing);
+    padding: calc(var(--form-element-spacing-vertical)) calc(var(--form-element-spacing-horizontal) * 0.2);
+    display: block;
+    width: 100%;
+}
+
 nav.menu li > a[role="button"] {
     width: 100%;
 }

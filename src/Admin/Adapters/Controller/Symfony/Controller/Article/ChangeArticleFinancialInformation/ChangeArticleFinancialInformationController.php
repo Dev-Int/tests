@@ -44,7 +44,13 @@ final class ChangeArticleFinancialInformationController extends AbstractControll
                 $article->amount(),
                 $article->tax(),
                 $article->uuid()
-            )
+            ),
+            [
+                'action' => $this->generateUrl(
+                    'admin_articles_change_financial-information',
+                    ['article' => $article->uuid()]
+                ),
+            ]
         );
 
         $form->handleRequest($request);

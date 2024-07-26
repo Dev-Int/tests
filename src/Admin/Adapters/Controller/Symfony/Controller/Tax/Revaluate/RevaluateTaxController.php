@@ -38,7 +38,9 @@ final class RevaluateTaxController extends AbstractController
     public function __invoke(Request $request, Tax $tax): Response
     {
         $taxToRevaluate = new RevaluateTaxApiRequest($tax->rate(), $tax->uuid());
-        $form = $this->createForm(RevaluateTaxType::class, $taxToRevaluate);
+        $form = $this->createForm(RevaluateTaxType::class, $taxToRevaluate, [
+            'action' => $this->generateUrl('admin_taxes_revaluate', ['tax' => $tax->uuid()]),
+        ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

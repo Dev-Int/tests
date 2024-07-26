@@ -191,7 +191,7 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
         $response = $client->getCrawler();
 
-        $labelField = $response->filter('form')->children('div')->first();
+        $labelField = $response->filter('form')->children('div > div')->first();
         $abbreviationField = $labelField->siblings();
 
         self::assertSame('Intitulé de l\'unité', $labelField->children('label')->text());

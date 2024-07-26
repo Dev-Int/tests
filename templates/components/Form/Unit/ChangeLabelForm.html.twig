@@ -1,0 +1,18 @@
+<div>
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    <div class="grid">
+        {{ form_row(form.label) }}
+        {{ form_row(form.abbreviation) }}
+    </div>
+
+    <div class="grid">
+        <twig:Form:Button:Cancel href="{{ path('admin_units_index') }}" label="Annuler" />
+        <twig:Form:Button:Submit label="Change label" />
+    </div>
+
+    {{ form_end(form) }}
+
+</div>

@@ -4,6 +4,10 @@
     FamilyLogs | {{ parent() }}
 {% endblock %}
 
+{% block importmap %}
+    {{ importmap(['app','familyLog-select']) }}
+{% endblock %}
+
 {% block body %}
 
     <h1><twig:Icon:Entities:FamilyLog /> Logistics Families</h1>
@@ -20,13 +24,15 @@
         <article class="col-md-9">
             <ul class="w100">
                 {% for family in familyLogs %}
-                    <li class="li-unstyled flex-between">
-                        {{ family.path }}&nbsp;
-                        <span>
-                            <twig:Button:UpdateEntity href="{{ path('admin_family_logs_change-label', {familyLog: family.uuid}) }}" label="Change label" />
-                            <twig:Button:UpdateEntity href="{{ path('admin_family_logs_assign-parent', {familyLog: family.uuid}) }}" label="Assign parent" />
-                        </span>
-                    </li>
+                    <turbo-frame id="familyLog_{{ family.uuid }}">
+                        <li class="li-unstyled flex-between">
+                            {{ family.path }}&nbsp;
+                            <span>
+                                <twig:Button:UpdateEntity href="{{ path('admin_family_logs_change-label', {familyLog: family.uuid}) }}" label="Change label" />
+                                <twig:Button:UpdateEntity href="{{ path('admin_family_logs_assign-parent', {familyLog: family.uuid}) }}" label="Assign parent" />
+                            </span>
+                        </li>
+                    </turbo-frame>
                 {% endfor %}
             </ul>
         </article>

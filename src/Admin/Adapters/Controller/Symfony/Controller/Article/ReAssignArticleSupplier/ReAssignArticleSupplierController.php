@@ -49,7 +49,13 @@ final class ReAssignArticleSupplierController extends AbstractController
                 $article->familyLog(),
                 $zoneStorages,
                 $article->uuid()
-            )
+            ),
+            [
+                'action' => $this->generateUrl(
+                    'admin_articles_reassign-supplier',
+                    ['article' => $article->uuid()]
+                ),
+            ]
         );
 
         $form->handleRequest($request);

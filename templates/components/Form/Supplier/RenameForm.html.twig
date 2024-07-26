@@ -1,0 +1,15 @@
+<div>
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    {{ form_row(form.name) }}
+
+    <div class="grid">
+        <twig:Form:Button:Cancel href="{{ path('admin_suppliers_index') }}" label="Annuler" />
+        <twig:Form:Button:Submit label="Rename" />
+    </div>
+
+    {{ form_end(form) }}
+
+</div>

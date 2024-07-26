@@ -1,0 +1,16 @@
+<div>
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    {{ form_row(form.amount) }}
+    {{ form_row(form.tax) }}
+
+    <div class="grid">
+        <twig:Form:Button:Cancel href="{{ path('admin_articles_index') }}" label="Annuler" />
+        <twig:Form:Button:Submit label="Update" />
+    </div>
+
+    {{ form_end(form) }}
+
+</div>

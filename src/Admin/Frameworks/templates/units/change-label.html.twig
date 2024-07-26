@@ -8,18 +8,11 @@
 
     <h1><twig:Icon:Entities:Unit /> Change label "{{ unit.label }}"</h1>
 
-    {{ form_start(form) }}
-    {{ form_errors(form) }}
+    <turbo-frame id="unit_{{ unit.uuid }}">
+        <h2>Change label {{ unit.slug }}</h2>
 
-    {{ form_row(form.label) }}
-    {{ form_row(form.abbreviation) }}
-
-    <div class="grid">
-        <twig:Form:Button:Cancel href="{{ path('admin_units_index') }}" label="Annuler" />
-        <twig:Form:Button:Submit label="Change label" />
-    </div>
-
-    {{ form_end(form) }}
+        <twig:Form:Unit:ChangeLabelForm form="{{ form }}" />
+    </turbo-frame>
 
 {% endblock %}
 

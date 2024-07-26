@@ -38,7 +38,9 @@ final class ChangeUnitLabelController extends AbstractController
     public function __invoke(Request $request, Unit $unit): Response
     {
         $unitToUpdate = new ChangeUnitLabelApiRequest($unit->label(), $unit->abbreviation(), $unit->slug());
-        $form = $this->createForm(ChangeLabelUnitType::class, $unitToUpdate);
+        $form = $this->createForm(ChangeLabelUnitType::class, $unitToUpdate, [
+            'action' => $this->generateUrl('admin_units_change-label', ['unit' => $unit->uuid()]),
+        ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

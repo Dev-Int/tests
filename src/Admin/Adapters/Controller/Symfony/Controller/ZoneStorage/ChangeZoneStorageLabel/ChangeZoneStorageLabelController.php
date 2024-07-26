@@ -39,7 +39,13 @@ final class ChangeZoneStorageLabelController extends AbstractController
     {
         $form = $this->createForm(
             ChangeLabelZoneStorageType::class,
-            new ChangeZoneStorageLabelApiRequest($zoneStorage->label(), $zoneStorage->slug())
+            new ChangeZoneStorageLabelApiRequest($zoneStorage->label(), $zoneStorage->slug()),
+            [
+                'action' => $this->generateUrl(
+                    'admin_zone_storages_change-label',
+                    ['zoneStorage' => $zoneStorage->uuid()]
+                ),
+            ]
         );
 
         $form->handleRequest($request);

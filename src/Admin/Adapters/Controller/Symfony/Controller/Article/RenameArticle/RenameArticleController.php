@@ -39,7 +39,10 @@ final class RenameArticleController extends AbstractController
     {
         $form = $this->createForm(
             RenameArticleType::class,
-            new RenameArticleApiRequest($article->name(), $article->uuid())
+            new RenameArticleApiRequest($article->name(), $article->uuid()),
+            [
+                'action' => $this->generateUrl('admin_articles_rename', ['article' => $article->uuid()]),
+            ]
         );
 
         $form->handleRequest($request);

@@ -8,18 +8,11 @@
 
     <h1><twig:Icon:Entities:Article /> Change financial information to "{{ article.name }}"</h1>
 
-    {{ form_start(form) }}
-    {{ form_errors(form) }}
+    <turbo-frame id="article_{{ article.uuid }}">
+        <h2>Change financial information to "{{ article.name }}"</h2>
 
-    {{ form_row(form.amount) }}
-    {{ form_row(form.tax) }}
-
-    <div class="grid">
-        <twig:Form:Button:Cancel href="{{ path('admin_articles_index') }}" label="Annuler" />
-        <twig:Form:Button:Submit label="Update" />
-    </div>
-
-    {{ form_end(form) }}
+        <twig:Form:Article:ChangeFinancialInformationForm form="{{ form }}" />
+    </turbo-frame>
 
 {% endblock %}
 

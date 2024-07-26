@@ -12,22 +12,11 @@
 
     <h1><twig:Icon:Entities:Article /> Re-assign supplier to "{{ article.name }}"</h1>
 
-    {{ form_start(form) }}
-    {{ form_errors(form) }}
+    <turbo-frame id="article_{{ article.uuid }}">
+        <h2>Re-assign supplier to "{{ article.name }}"</h2>
 
-    {{ form_row(form.supplier) }}
-
-    <div class="grid">
-        {{ form_row(form.zoneStorages) }}
-        {{ include('partials/components/form/_familyLogs-select.html.twig', {familyLog: form.familyLog}) }}
-    </div>
-
-    <div class="grid">
-        <twig:Form:Button:Cancel href="{{ path('admin_articles_index') }}" label="Annuler" />
-        <twig:Form:Button:Submit label="Re-assign supplier" />
-    </div>
-
-    {{ form_end(form) }}
+        <twig:Form:Article:ReassignSupplierForm form="{{ form }}" />
+    </turbo-frame>
 
 {% endblock %}
 

@@ -44,7 +44,13 @@ final class ChangeDeliverySpecificationSupplierController extends AbstractContro
                 $supplier->delayDelivery(),
                 $supplier->orderDays(),
                 $supplier->slug()
-            )
+            ),
+            [
+                'action' => $this->generateUrl(
+                    'admin_suppliers_change-delivery-specification',
+                    ['supplier' => $supplier->uuid()]
+                ),
+            ]
         );
 
         $form->handleRequest($request);

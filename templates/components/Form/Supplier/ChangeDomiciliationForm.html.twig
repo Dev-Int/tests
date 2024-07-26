@@ -1,0 +1,24 @@
+<div>
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    {{ form_row(form.address) }}
+    <div class="grid">
+        {{ form_row(form.postalCode) }}
+        {{ form_row(form.town) }}
+        {{ form_row(form.country) }}
+    </div>
+    <div class="grid">
+        {{ form_row(form.phone) }}
+        {{ form_row(form.email) }}
+    </div>
+
+    <div class="grid">
+        <twig:Form:Button:Cancel href="{{ path('admin_suppliers_index') }}" label="Annuler" />
+        <twig:Form:Button:Submit label="Update" />
+    </div>
+
+    {{ form_end(form) }}
+
+</div>

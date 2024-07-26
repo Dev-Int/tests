@@ -61,7 +61,13 @@ final class ChangeArticleStorageInformationController extends AbstractController
                 ),
                 minStock: $article->minStock(),
                 uuid: $article->uuid()
-            )
+            ),
+            [
+                'action' => $this->generateUrl(
+                    'admin_articles_change-storage-information',
+                    ['article' => $article->uuid()]
+                ),
+            ]
         );
 
         $form->handleRequest($request);

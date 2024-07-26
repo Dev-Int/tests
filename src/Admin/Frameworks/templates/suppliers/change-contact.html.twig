@@ -8,18 +8,11 @@
 
     <h1><twig:Icon:Entities:Supplier /> Change contact "{{ supplier.name }}"</h1>
 
-    {{ form_start(form) }}
-    {{ form_errors(form) }}
+    <turbo-frame id="supplier_{{ supplier.uuid }}">
+        <h2>Change Contact "{{ supplier.name }}"</h2>
 
-    {{ form_row(form.contact) }}
-    {{ form_row(form.cellphone) }}
-
-    <div class="grid">
-        <twig:Form:Button:Cancel href="{{ path('admin_suppliers_index') }}" label="Annuler" />
-        <twig:Form:Button:Submit label="Update" />
-    </div>
-
-    {{ form_end(form) }}
+        <twig:Form:Supplier:ChangeContactForm form="{{ form }}" />
+    </turbo-frame>
 
 {% endblock %}
 
