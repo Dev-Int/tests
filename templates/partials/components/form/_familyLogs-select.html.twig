@@ -1,3 +1,7 @@
+{% block importmap %}
+    {{ importmap(['app','familyLog-select']) }}
+{% endblock %}
+
 {% set uuid, key, previousLevel = null, 0, 1 %}
 
 <div id="{{ familyLog.vars.id }}" aria-describedby="{{ familyLog.vars.id }}_help">

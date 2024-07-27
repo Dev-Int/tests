@@ -21,9 +21,9 @@ final readonly class GetArticles
     {
     }
 
-    public function execute(): GetArticlesResponse
+    public function execute(GetArticlesRequest $request): GetArticlesResponse
     {
-        $articles = $this->articleRepository->findAllArticles();
+        $articles = $this->articleRepository->findAllArticlesPaginated($request->page(), $request->itemsPerPage());
 
         return new GetArticlesResponse($articles);
     }

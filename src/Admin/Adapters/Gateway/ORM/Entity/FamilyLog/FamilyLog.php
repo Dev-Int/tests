@@ -37,7 +37,7 @@ class FamilyLog
     private int $level;
     #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children')]
     #[ORM\JoinColumn(name: 'parent_uuid', referencedColumnName: 'uuid', onDelete: 'CASCADE')]
-    private ?FamilyLog $parent;
+    private ?FamilyLog $parent = null;
 
     /** @var Collection<FamilyLog> */
     #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class)]

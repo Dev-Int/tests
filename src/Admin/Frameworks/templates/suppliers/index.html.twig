@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block importmap %}
-    {{ importmap(['app','familyLog-select']) }}
+    {{ importmap(['app','pagination']) }}
 {% endblock %}
 
 {% block body %}
@@ -22,21 +22,25 @@
             </nav>
         </aside>
         <article class="col-md-9">
-            <ul class="w100">
-                {% for supplier in suppliers %}
-                    <turbo-frame id="supplier_{{ supplier.uuid }}">
-                        <li class="li-unstyled flex-between">
-                            {{ supplier.name }}
-                            <span>
-                        <twig:Button:UpdateEntity href="{{ path('admin_suppliers_rename', {'supplier': supplier.uuid}) }}" label="Rename"/>
-                        <twig:Button:UpdateEntity href="{{ path('admin_supplier_change-domiciliation', {'supplier': supplier.uuid}) }}" label="Change domiciliation"/>
-                        <twig:Button:UpdateEntity href="{{ path('admin_suppliers_change-contact', {'supplier': supplier.uuid}) }}" label="Change contact"/>
-                        <twig:Button:UpdateEntity href="{{ path('admin_suppliers_change-delivery-specification', {'supplier': supplier.uuid}) }}" label="Change delivery specification"/>
-                    </span>
-                        </li>
-                    </turbo-frame>
-                {% endfor %}
-            </ul>
+            <turbo-frame id="supplier_paginated">
+                <ul class="w100">
+                    {% for supplier in suppliers %}
+                        <turbo-frame id="supplier_{{ supplier.uuid }}">
+                            <li class="li-unstyled flex-between">
+                                {{ supplier.name }}
+                                <span>
+                            <twig:Button:UpdateEntity href="{{ path('admin_suppliers_rename', {'supplier': supplier.uuid}) }}" label="Rename"/>
+                            <twig:Button:UpdateEntity href="{{ path('admin_supplier_change-domiciliation', {'supplier': supplier.uuid}) }}" label="Change domiciliation"/>
+                            <twig:Button:UpdateEntity href="{{ path('admin_suppliers_change-contact', {'supplier': supplier.uuid}) }}" label="Change contact"/>
+                            <twig:Button:UpdateEntity href="{{ path('admin_suppliers_change-delivery-specification', {'supplier': supplier.uuid}) }}" label="Change delivery specification"/>
+                        </span>
+                            </li>
+                        </turbo-frame>
+                    {% endfor %}
+                </ul>
+
+                <twig:Pagination page="{{ pagination.page }}" itemsPerPage="{{ pagination.itemsPerPage }}" totalPages="{{ pagination.totalPages }}" />
+            </turbo-frame>
         </article>
     </div>
 

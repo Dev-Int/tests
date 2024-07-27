@@ -41,7 +41,7 @@ final class FamilyLogDataBuilder implements DataBuilderInterface
         return $this;
     }
 
-    public function withParent(FamilyLog $parent): self
+    public function withParent(?FamilyLog $parent = null): self
     {
         $this->parent = $parent;
 

@@ -21,7 +21,7 @@ use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
 
 #[ORM\Entity(repositoryClass: DoctrineZoneStorageRepository::class)]
-final class ZoneStorage
+class ZoneStorage
 {
     #[ORM\Id]
     #[ORM\Column(name: 'uuid', type: 'guid')]

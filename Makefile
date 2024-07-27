@@ -130,12 +130,14 @@ cs-fixer: ## Run php-cs-fixer
 
 stan: ## Run PHPStan only
 	php ./vendor/bin/phpstan analyse -c phpstan.neon --memory-limit 1G
+stan-baseline: ## Run phpstan baseline
+	php ./vendor/bin/phpstan analyse -c phpstan.neon --generate-baseline --memory-limit 1G
 
 rector: ## Run rector analysis
 	php ./vendor/bin/rector process src --dry-run
 schema-validate: ## Run schema validation
 	bin/console doctrine:schema:validate
-.PHONY: qa phpcs cs-fixer stan rector schema-validate
+.PHONY: qa phpcs cs-fixer stan stan-baseline rector schema-validate
 
 
 ## —— Docker 🐳 ———————————————————————————————————————————————————————————————————

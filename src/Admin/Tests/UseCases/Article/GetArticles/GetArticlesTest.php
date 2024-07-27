@@ -21,6 +21,7 @@ use Admin\Tests\DataBuilder\TaxDataBuilder;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
 use Admin\UseCases\Article\GetArticles\GetArticles;
+use Admin\UseCases\Article\GetArticles\GetArticlesRequest;
 use Admin\UseCases\Gateway\ArticleRepository;
 use PHPUnit\Framework\TestCase;
 
@@ -34,6 +35,7 @@ final class GetArticlesTest extends TestCase
         // Arrange
         $articleRepository = $this->createMock(ArticleRepository::class);
         $useCase = new GetArticles($articleRepository);
+        $request = $this->createMock(GetArticlesRequest::class);
 
         $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
         $familyLog = (new FamilyLogDataBuilder())->create('Frais')->build();
@@ -63,14 +65,21 @@ final class GetArticlesTest extends TestCase
             )
             ->build()
         ;
-        $articles = new ArticleCollection();
+        $articles = new ArticleCollection(totalItems: 2);
         $articles->add($article1);
         $articles->add($article2);
 
-        $articleRepository->expects(self::once())->method('findAllArticles')->willReturn($articles);
+        $request->expects(self::once())->method('page')->willReturn(1);
+        $request->expects(self::once())->method('itemsPerPage')->willReturn(10);
+
+        $articleRepository->expects(self::once())
+            ->method('findAllArticlesPaginated')
+            ->with(1, 10)
+            ->willReturn($articles)
+        ;
 
         // Act
-        $response = $useCase->execute();
+        $response = $useCase->execute($request);
         $getArticles = $response->articles;
 
         // Assert

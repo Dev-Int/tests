@@ -20,10 +20,11 @@ final class GetArticlesWebResponse
 {
     /** @var array<ArticleDto> */
     private array $articles = [];
+    private int $totalItems;
 
-    public function __construct(GetArticlesResponse $articles)
+    public function __construct(GetArticlesResponse $response)
     {
-        foreach ($articles->articles as $article) {
+        foreach ($response->articles as $article) {
             $this->articles[] = new ArticleDto(
                 $article->uuid()->toString(),
                 $article->name()->toString(),
@@ -35,6 +36,8 @@ final class GetArticlesWebResponse
                 $article->slug()
             );
         }
+
+        $this->totalItems = $response->articles->count();
     }
 
     /**
@@ -43,5 +46,10 @@ final class GetArticlesWebResponse
     public function articles(): array
     {
         return $this->articles;
+    }
+
+    public function totalItems(): int
+    {
+        return $this->totalItems;
     }
 }

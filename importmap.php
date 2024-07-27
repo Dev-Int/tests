@@ -20,6 +20,10 @@ return [
         'path' => './assets/familyLog-select.js',
         'entrypoint' => true,
     ],
+    'pagination' => [
+        'path' => './assets/pagination.js',
+        'entrypoint' => true,
+    ],
     '@hotwired/stimulus' => [
         'version' => '3.2.2',
     ],

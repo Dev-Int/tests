@@ -77,6 +77,27 @@ final class ArticleDataBuilder implements DataBuilderInterface
         return $this;
     }
 
+    public function withAmount(int $amount): self
+    {
+        $this->amount = $amount;
+
+        return $this;
+    }
+
+    public function withMinStock(float $minStock): self
+    {
+        $this->minStock = $minStock;
+
+        return $this;
+    }
+
+    public function withQuantity(float $quantity): self
+    {
+        $this->quantity = $quantity;
+
+        return $this;
+    }
+
     public function build(): Article
     {
         return Article::create(

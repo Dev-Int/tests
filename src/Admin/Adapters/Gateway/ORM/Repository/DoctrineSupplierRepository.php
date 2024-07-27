@@ -24,6 +24,7 @@ use Admin\UseCases\Gateway\SupplierRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\ORM\UnexpectedResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -175,12 +176,35 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
     public function findAllSuppliers(): SupplierCollection
     {
         $suppliers = $this->findAll();
-        $collection = new SupplierCollection();
+        $collection = new SupplierCollection(\count($suppliers));
 
         if ($suppliers === []) {
             throw new NoSupplierRegisteredException();
         }
 
+        foreach ($suppliers as $supplier) {
+            $collection->add($supplier->toDomain());
+        }
+
+        return $collection;
+    }
+
+    public function findAllSuppliersPaginated(int $page, int $itemPerPage): SupplierCollection
+    {
+        $alias = self::ALIAS;
+        $query = $this->createQueryBuilder($alias)
+            ->setFirstResult(($page - 1) * $itemPerPage)
+            ->setMaxResults($itemPerPage)
+        ;
+
+        $suppliers = new Paginator($query, fetchJoinCollection: true);
+        if ($suppliers->count() === 0) {
+            throw new NoSupplierRegisteredException();
+        }
+
+        $collection = new SupplierCollection($suppliers->count());
+
+        /** @var Supplier $supplier */
         foreach ($suppliers as $supplier) {
             $collection->add($supplier->toDomain());
         }

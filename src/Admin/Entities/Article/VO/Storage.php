@@ -20,7 +20,7 @@ final class Storage
 {
     public const UNITS = [
         'bouteille',
-        'boite',
+        'boîte',
         'carton',
         'colis',
         'kilogramme',

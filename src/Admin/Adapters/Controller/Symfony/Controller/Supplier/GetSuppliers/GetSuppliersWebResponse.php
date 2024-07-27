@@ -19,16 +19,19 @@ final class GetSuppliersWebResponse
 {
     /** @var array<SupplierDto> */
     private array $suppliers = [];
+    private int $totalItems;
 
-    public function __construct(GetSuppliersResponse $suppliers)
+    public function __construct(GetSuppliersResponse $response)
     {
-        foreach ($suppliers->suppliers as $supplier) {
+        foreach ($response->suppliers as $supplier) {
             $this->suppliers[] = new SupplierDto(
                 $supplier->uuid()->toString(),
                 $supplier->name()->toString(),
                 $supplier->slug()
             );
         }
+
+        $this->totalItems = $response->suppliers->count();
     }
 
     /**
@@ -37,5 +40,10 @@ final class GetSuppliersWebResponse
     public function suppliers(): array
     {
         return $this->suppliers;
+    }
+
+    public function totalItems(): int
+    {
+        return $this->totalItems;
     }
 }

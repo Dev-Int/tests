@@ -32,7 +32,7 @@ interface ArticleRepository
 
     public function changeFinancialInformation(Article $article): void;
 
-    public function findAllArticles(): ArticleCollection;
+    public function findAllArticlesPaginated(int $page, int $itemPerPage): ArticleCollection;
 
     public function findByUuid(string $uuid): Article;
 }

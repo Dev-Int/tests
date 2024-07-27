@@ -36,6 +36,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\ORM\UnexpectedResultException;
 use Doctrine\Persistence\ManagerRegistry;
 use Shared\Entities\VO\Packaging as PackagingDomain;
@@ -238,15 +239,22 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         $this->_em->flush();
     }
 
-    public function findAllArticles(): ArticleCollection
+    public function findAllArticlesPaginated(int $page, int $itemPerPage): ArticleCollection
     {
-        $articles = $this->findAll();
-        $collection = new ArticleCollection();
+        $alias = self::ALIAS;
+        $query = $this->createQueryBuilder($alias)
+            ->setFirstResult(($page - 1) * $itemPerPage)
+            ->setMaxResults($itemPerPage)
+        ;
 
-        if ($articles === []) {
+        $articles = new Paginator($query, fetchJoinCollection: true);
+        if ($articles->count() === 0) {
             throw new NoArticleRegisteredException();
         }
 
+        $collection = new ArticleCollection($articles->count());
+
+        /** @var Article $article */
         foreach ($articles as $article) {
             $collection->add($article->toDomain());
         }
