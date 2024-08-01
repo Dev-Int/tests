@@ -15,6 +15,7 @@ namespace App\Twig\Components\Form\Unit;
 
 use Admin\Adapters\Controller\Symfony\Controller\Unit\ChangeUnitLabel\ChangeUnitLabelApiRequest;
 use Admin\Adapters\Form\Type\Unit\ChangeLabelUnitType;
+use Admin\Adapters\Gateway\ORM\Entity\Unit;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -30,6 +31,9 @@ final class ChangeLabelForm extends AbstractController
 
     #[LiveProp]
     public ChangeUnitLabelApiRequest $initialFormData;
+
+    #[LiveProp]
+    public Unit $unit;
 
     protected function instantiateForm(): FormInterface
     {

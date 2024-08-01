@@ -9,10 +9,7 @@
     <h1><twig:Icon:Entities:Taxe /> Revaluate Tax "{{ tax.name }}"</h1>
 
     <turbo-frame id="tax_{{ tax.uuid }}">
-        <h2>Revaluate Tax "{{ tax.name }}"</h2>
-
-        <twig:Form:Taxes:RevaluateForm form="{{ form }}" />
+        <twig:Form:Taxes:RevaluateForm form="{{ form }}" tax="{{ tax }}" />
     </turbo-frame>
 
 {% endblock %}
-

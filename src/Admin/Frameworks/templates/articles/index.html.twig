@@ -12,22 +12,26 @@
 
     <h1><twig:Icon:Entities:Article /> Articles</h1>
 
-    <div class="row">
-        <aside class="col-md-3">
-            <nav class="menu">
-                <ul>
-                    <li><twig:Button:CreateEntity href="{{ path('admin_article_create') }}" label="Create Article" class="w100" /></li>
-                    <li><twig:Button:BackTo href="{{ path('admin_index') }}" label="Retour à l'administration" /></li>
-                </ul>
-            </nav>
-        </aside>
-        <article class="col-md-9">
+    <main>
+        <article>
+            <div>
+                <turbo-frame id="article_create" class="flex-between">
+                    <span></span>
+                    <twig:Button:CreateEntity href="{{ path('admin_article_create') }}" label="Create Article" />
+                </turbo-frame>
+            </div>
             <turbo-frame id="article_paginated">
-                <ul class="w100">
+                <ul class="table">
+                    <li class="li-unstyled flex-between head">
+                        <span>Name</span>
+                        <span>Supplier</span>
+                        <span>Action</span>
+                    </li>
                     {% for article in articles %}
                         <turbo-frame id="article_{{ article.uuid }}">
                             <li class="li-unstyled flex-between">
-                                {{ article.name }}
+                                <span>{{ article.name }}</span>
+                                <span>{{ article.supplier.name }}</span>
                                 <span>
                                     <twig:Button:UpdateEntity href="{{ path('admin_articles_rename', {'article': article.uuid}) }}" class="btn-small" label="Rename"/>
                                     <twig:Button:UpdateEntity href="{{ path('admin_articles_reassign-supplier', {'article': article.uuid}) }}" class="btn-small" label="Supplier"/>
@@ -41,7 +45,8 @@
 
                 <twig:Pagination page="{{ pagination.page }}" itemsPerPage="{{ pagination.itemsPerPage }}" totalPages="{{ pagination.totalPages }}" />
             </turbo-frame>
+            <twig:Button:BackTo href="{{ path('admin_index') }}" label="Retour à l'administration" />
         </article>
-    </div>
+    </main>
 
 {% endblock %}

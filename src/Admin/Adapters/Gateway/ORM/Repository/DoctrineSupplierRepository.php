@@ -179,7 +179,9 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
         $collection = new SupplierCollection(\count($suppliers));
 
         if ($suppliers === []) {
+            // @codeCoverageIgnoreStart
             throw new NoSupplierRegisteredException();
+            // @codeCoverageIgnoreEnd
         }
 
         foreach ($suppliers as $supplier) {

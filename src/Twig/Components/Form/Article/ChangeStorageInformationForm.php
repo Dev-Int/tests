@@ -15,6 +15,7 @@ namespace App\Twig\Components\Form\Article;
 
 use Admin\Adapters\Controller\Symfony\Controller\Article\ChangeArticleStorageInformation\ChangeArticleStorageInformationApiRequest;
 use Admin\Adapters\Form\Type\Article\ChangeStorageInformationType;
+use Admin\Adapters\Gateway\ORM\Entity\Article\Article;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -30,6 +31,9 @@ final class ChangeStorageInformationForm extends AbstractController
 
     #[LiveProp]
     public ChangeArticleStorageInformationApiRequest $initialFormData;
+
+    #[LiveProp]
+    public Article $article;
 
     protected function instantiateForm(): FormInterface
     {

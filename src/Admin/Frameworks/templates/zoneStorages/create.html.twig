@@ -12,18 +12,8 @@
 
     <h1><twig:Icon:Entities:ZoneStorage /> Create Zone Storage</h1>
 
-    {{ form_start(form) }}
-    {{ form_errors(form) }}
-
-    {{ form_row(form.label) }}
-
-    {{ include('partials/components/form/_familyLogs-select.html.twig', {familyLog: form.familyLog}) }}
-
-    <div class="grid">
-        <twig:Form:Button:Cancel href="{{ path('admin_zone_storages_index') }}" label="Annuler" />
-        <twig:Form:Button:Submit label="Create" />
-    </div>
-
-    {{ form_end(form) }}
+    <turbo-frame id="zoneStorage_create">
+        <twig:Form:ZoneStorage:CreateForm form="{{ form }}" />
+    </turbo-frame>
 
 {% endblock %}

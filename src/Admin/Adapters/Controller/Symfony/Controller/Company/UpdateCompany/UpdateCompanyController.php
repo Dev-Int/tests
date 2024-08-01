@@ -46,7 +46,10 @@ final class UpdateCompanyController extends AbstractController
             $company->email(),
             $company->contact()
         );
-        $form = $this->createForm(CompanyUpdateType::class, $companyToUpdate);
+        $form = $this->createForm(CompanyUpdateType::class, $companyToUpdate, [
+            'action' => $this->generateUrl('admin_company_update', ['company' => $company->slug()]),
+            'attr' => ['data-turbo-frame' => '_top'],
+        ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

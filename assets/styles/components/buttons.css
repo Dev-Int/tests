@@ -1,4 +1,14 @@
 /** Buttons */
+.header-list-button {
+    position: relative;
+    min-height: var(--typography-spacing-vertical);
+
+    & a[role=button] {
+        position: absolute;
+        right: var(--nav-element-spacing-horizontal);
+    }
+}
+
 a[role="button"] {
     margin-bottom: var(--spacing);
 }
@@ -20,6 +30,12 @@ turbo-frame .grid > a[role="button"] {
     width: 100%;
 }
 
+.btn-small {
+    margin: 0;
+    padding: calc(var(--form-element-spacing-vertical) * 0.2) calc(var(--form-element-spacing-horizontal) * 0.2);
+    font-size: calc(var(--font-size) * .8);
+}
+
 nav.menu li > a[role="button"] {
     width: 100%;
 }
@@ -31,10 +47,4 @@ nav.menu li > a[role="button"] {
 }
 div:has(.bottom-element) {
     position: relative;
-}
-
-.btn-small {
-    margin: 0;
-    padding: calc(var(--form-element-spacing-vertical) * 0.2) calc(var(--form-element-spacing-horizontal) * 0.2);
-    font-size: calc(var(--font-size) * .8);
 }

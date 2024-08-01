@@ -8,30 +8,35 @@
 
     <h1><twig:Icon:Entities:Taxe /> Taxes</h1>
 
-    <div class="row">
-        <aside class="col-md-3">
-            <nav class="menu">
-                <ul>
-                    <li><twig:Button:CreateEntity href="{{ path('admin_taxes_create') }}" class="w100" label="Create Tax" /></li>
-                    <li><twig:Button:BackTo href="{{ path('admin_index') }}" label="Retour à l'administration" /></li>
-                </ul>
-            </nav>
-        </aside>
-        <article class="col-md-9">
-            <ul class="w100">
+    <main>
+        <article>
+            <div>
+                <turbo-frame id="tax_create" class="flex-between">
+                    <span></span>
+                    <twig:Button:CreateEntity href="{{ path('admin_taxes_create') }}" label="Create Tax" />
+                </turbo-frame>
+            </div>
+            <ul class="table">
+                <li class="li-unstyled flex-between head">
+                    <span>Name</span>
+                    <span>Rate</span>
+                    <span>Action</span>
+                </li>
                 {%  for tax in taxes %}
                     <turbo-frame id="tax_{{ tax.uuid }}">
                         <li class="li-unstyled flex-between">
-                            {{ tax.name }} {{ tax.rate }}
+                            <span>{{ tax.name }}</span>
+                            <span>{{ tax.rate }}</span>
                             <span>
-                                <twig:Button:UpdateEntity href="{{ path('admin_taxes_rename', {'tax': tax.uuid}) }}" label="Rename tax" />
-                                <twig:Button:UpdateEntity href="{{ path('admin_taxes_revaluate', {'tax': tax.uuid}) }}" label="Revaluate tax" />
+                                <twig:Button:UpdateEntity href="{{ path('admin_taxes_rename', {'tax': tax.uuid}) }}" class="btn-small" label="Rename tax" />
+                                <twig:Button:UpdateEntity href="{{ path('admin_taxes_revaluate', {'tax': tax.uuid}) }}" class="btn-small" label="Revaluate tax" />
                             </span>
                         </li>
                     </turbo-frame>
                 {% endfor %}
             </ul>
+            <twig:Button:BackTo href="{{ path('admin_index') }}" label="Retour à l'administration" />
         </article>
-    </div>
+    </main>
 
 {% endblock %}

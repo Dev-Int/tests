@@ -8,17 +8,8 @@
 
     <h1><twig:Icon:Entities:Taxe /> Create Tax</h1>
 
-    {{ form_start(form) }}
-    {{ form_errors(form) }}
-
-    {{ form_row(form.name) }}
-    {{ form_row(form.rate) }}
-
-    <div class="grid">
-        <twig:Form:Button:Cancel href="{{ path('admin_taxes_index') }}" label="Annuler" />
-        <twig:Form:Button:Submit label="Create" />
-    </div>
-
-    {{ form_end(form) }}
+    <turbo-frame id="tax_create">
+        <twig:Form:Taxes:CreateForm form="{{ form }}" />
+    </turbo-frame>
 
 {% endblock %}

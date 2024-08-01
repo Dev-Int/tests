@@ -28,12 +28,18 @@ class TaxType extends AbstractType
             ->add('name', TextType::class, [
                 'label' => 'Nom de la taxe',
                 'empty_data' => '',
+                'attr' => [
+                    'autofocus' => true,
+                ],
             ])
             ->add('rate', PercentType::class, [
                 'label' => 'Taux de la taxe',
                 'empty_data' => 0.0,
                 'html5' => false,
                 'scale' => 2,
+                'attr' => [
+                    'autofocus' => true,
+                ],
             ])
         ;
     }

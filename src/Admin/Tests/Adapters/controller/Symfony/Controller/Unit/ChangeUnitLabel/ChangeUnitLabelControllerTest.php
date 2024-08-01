@@ -57,7 +57,7 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
         self::assertResponseRedirects('/admin/units');
 
         $admin = $client->followRedirect();
-        $flash = $admin->filter('body > div.container')->children('div.flash.flash-success')->text();
+        $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertSame('Unit updated', $flash);
 
@@ -102,7 +102,7 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
         self::assertResponseRedirects('/admin/units');
 
         $admin = $client->followRedirect();
-        $flash = $admin->filter('body > div.container')->children('div.flash.flash-success')->text();
+        $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertSame('Unit updated', $flash);
 
@@ -153,7 +153,7 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
         self::assertResponseRedirects('/admin/units');
 
         $admin = $client->followRedirect();
-        $flash = $admin->filter('body > div.container')->children('div.flash.flash-error')->text();
+        $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame('Unit already exists.', $flash);
 
@@ -191,7 +191,7 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
         $response = $client->getCrawler();
 
-        $labelField = $response->filter('form')->children('div > div')->first();
+        $labelField = $response->filter('form')->children('div')->first();
         $abbreviationField = $labelField->siblings();
 
         self::assertSame('Intitulé de l\'unité', $labelField->children('label')->text());

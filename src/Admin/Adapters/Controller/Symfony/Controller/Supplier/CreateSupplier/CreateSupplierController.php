@@ -42,7 +42,10 @@ final class CreateSupplierController extends AbstractController
             return $this->redirectToRoute('admin_configure');
         }
 
-        $form = $this->createForm(SupplierType::class);
+        $form = $this->createForm(SupplierType::class, new CreateSupplierDto(), [
+            'action' => $this->generateUrl('admin_suppliers_create'),
+            'attr' => ['data-turbo-frame' => '_top'],
+        ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

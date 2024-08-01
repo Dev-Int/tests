@@ -15,6 +15,7 @@ namespace App\Twig\Components\Form\Supplier;
 
 use Admin\Adapters\Controller\Symfony\Controller\Supplier\ChangeDeliverySpecificationSupplier\ChangeDeliverySpecificationSupplierApiRequest;
 use Admin\Adapters\Form\Type\Supplier\ChangeDeliverySpecificationSupplierType;
+use Admin\Adapters\Gateway\ORM\Entity\Supplier;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
@@ -28,6 +29,9 @@ final class ChangeDeliverySpecificationForm extends AbstractController
 
     #[LiveProp]
     public ChangeDeliverySpecificationSupplierApiRequest $initialFormData;
+
+    #[LiveProp]
+    public Supplier $supplier;
 
     protected function instantiateForm(): FormInterface
     {

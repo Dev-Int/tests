@@ -12,9 +12,7 @@
     <h1><twig:Icon:Entities:FamilyLog /> Assign parent to "{{ familyLog.label }}"</h1>
 
     <turbo-frame id="familyLog_{{ familyLog.uuid }}">
-        <h2>Assign parent to "{{ familyLog.label }}"</h2>
-
-        <twig:Form:FamilyLog:AssignParentForm form="{{ form }}" />
+        <twig:Form:FamilyLog:AssignParentForm form="{{ form }}" familyLog="{{ familyLog }}" />
     </turbo-frame>
 {% endblock %}
 

@@ -28,6 +28,9 @@ final class ChangeStorageInformationType extends AbstractType
             ->add('packaging', PackagingType::class, [
                 'label' => 'Packaging de l\'article',
                 'required' => true,
+                'attr' => [
+                    'autofocus' => true,
+                ],
             ])
             ->add('minStock', NumberType::class, [
                 'label' => 'Stock minimum',

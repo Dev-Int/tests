@@ -13,9 +13,7 @@
     <h1><twig:Icon:Entities:Supplier /> Change delivery specification "{{ supplier.name }}"</h1>
 
     <turbo-frame id="supplier_{{ supplier.uuid }}">
-        <h2>Change delivery specification "{{ supplier.name }}"</h2>
-
-        <twig:Form:Supplier:ChangeDeliverySpecificationForm form="{{ form }}" />
+        <twig:Form:Supplier:ChangeDeliverySpecificationForm form="{{ form }}" supplier="{{ supplier }}" />
     </turbo-frame>
 
 {% endblock %}

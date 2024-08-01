@@ -33,6 +33,9 @@ final class ReAssignSupplierType extends AbstractType
                 'choice_label' => 'name',
                 'required' => true,
                 'placeholder' => 'Choice a supplier',
+                'attr' => [
+                    'autofocus' => true,
+                ],
             ])
             ->add('familyLog', FamilyLogEntitySelectType::class, [
                 'label' => 'Famille logistique',

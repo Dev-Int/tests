@@ -55,6 +55,7 @@ final class ReAssignArticleSupplierController extends AbstractController
                     'admin_articles_reassign-supplier',
                     ['article' => $article->uuid()]
                 ),
+                'attr' => ['data-turbo-frame' => '_top'],
             ]
         );
 

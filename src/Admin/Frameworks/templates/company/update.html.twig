@@ -8,26 +8,8 @@
 
     <h1><twig:Icon:Entities:Company /> CUpdate Company "{{ companyName }}"</h1>
 
-    {{ form_start(form) }}
-    {{ form_errors(form) }}
-
-    {{ form_row(form.address) }}
-    <div class="grid">
-        {{ form_row(form.postalCode) }}
-        {{ form_row(form.town) }}
-    </div>
-    {{ form_row(form.country) }}
-    <div class="grid">
-        {{ form_row(form.phone) }}
-        {{ form_row(form.email) }}
-    </div>
-    {{ form_row(form.contact) }}
-
-    <div class="grid">
-        <twig:Form:Button:Cancel href="{{ path('admin_company_index') }}" label="Annuler" />
-        <twig:Form:Button:Submit label="Update" />
-    </div>
-
-    {{ form_end(form) }}
+    <turbo-frame id="company_update">
+        <twig:Form:Company:UpdateForm form="{{ form }}" companyName="{{ companyName }}"/>
+    </turbo-frame>
 
 {% endblock %}

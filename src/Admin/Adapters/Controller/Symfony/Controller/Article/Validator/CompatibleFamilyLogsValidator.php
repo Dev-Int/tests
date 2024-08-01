@@ -36,11 +36,15 @@ final class CompatibleFamilyLogsValidator extends ConstraintValidator
         }
 
         if (!$value->supplier instanceof Supplier) {
+            // @codeCoverageIgnoreEnd
             throw new UnexpectedValueException($value, Supplier::class);
+            // @codeCoverageIgnoreEnd
         }
         $supplierFamilyLog = $value->supplier->familyLog()->toDomain($value->supplier->familyLog()->parent());
         if (!$value->familyLog instanceof FamilyLog) {
+            // @codeCoverageIgnoreEnd
             throw new UnexpectedValueException($value, FamilyLog::class);
+            // @codeCoverageIgnoreEnd
         }
         $familyLog = $value->familyLog->toDomain($value->familyLog->parent());
         $checkFamilyLog = $supplierFamilyLog->isCompatible($familyLog);

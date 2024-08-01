@@ -15,8 +15,10 @@ namespace App\Twig\Components\Form\FamilyLog;
 
 use Admin\Adapters\Controller\Symfony\Controller\FamilyLog\ChangeLabelFamilyLog\ChangeLabelFamilyLogApiRequest;
 use Admin\Adapters\Form\Type\FamilyLog\AssignParentFamilyLogType;
+use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
+use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
@@ -25,7 +27,11 @@ final class ChangeLabelForm extends AbstractController
     use ComponentWithFormTrait;
     use DefaultActionTrait;
 
+    #[LiveProp]
     public ChangeLabelFamilyLogApiRequest $initialFormData;
+
+    #[LiveProp]
+    public FamilyLog $familyLog;
 
     protected function instantiateForm(): FormInterface
     {

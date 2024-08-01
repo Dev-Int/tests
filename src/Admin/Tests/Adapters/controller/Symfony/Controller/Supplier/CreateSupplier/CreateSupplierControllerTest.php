@@ -112,7 +112,7 @@ final class CreateSupplierControllerTest extends WebTestCase
         self::assertResponseRedirects('/admin/suppliers');
 
         $admin = $client->followRedirect();
-        $flash = $admin->filter('body > div.container')->children('div.flash.flash-success')->text();
+        $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertEquals('Supplier created', $flash);
 
@@ -206,7 +206,7 @@ final class CreateSupplierControllerTest extends WebTestCase
         self::assertResponseRedirects('/admin/suppliers');
 
         $admin = $client->followRedirect();
-        $flash = $admin->filter('body > div.container')->children('div.flash.flash-error')->text();
+        $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertEquals(SupplierAlreadyExists::MESSAGE, $flash);
     }
@@ -247,7 +247,7 @@ final class CreateSupplierControllerTest extends WebTestCase
         self::assertResponseRedirects('/admin/configure');
 
         $admin = $client->followRedirect();
-        $flash = $admin->filter('body > div.container')->children('div.flash.flash-error')->text();
+        $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertEquals(NoZoneStorageRegisteredException::MESSAGE, $flash);
     }

@@ -15,6 +15,7 @@ namespace App\Twig\Components\Form\ZoneStorage;
 
 use Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\ChangeZoneStorageLabel\ChangeZoneStorageLabelApiRequest;
 use Admin\Adapters\Form\Type\ZoneStorage\ChangeLabelZoneStorageType;
+use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -30,6 +31,9 @@ final class ChangeLabelForm extends AbstractController
 
     #[LiveProp]
     public ChangeZoneStorageLabelApiRequest $initialFormData;
+
+    #[LiveProp]
+    public ZoneStorage $zoneStorage;
 
     protected function instantiateForm(): FormInterface
     {

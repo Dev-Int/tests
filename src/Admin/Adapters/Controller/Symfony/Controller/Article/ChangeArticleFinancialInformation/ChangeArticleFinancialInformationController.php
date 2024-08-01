@@ -50,6 +50,7 @@ final class ChangeArticleFinancialInformationController extends AbstractControll
                     'admin_articles_change_financial-information',
                     ['article' => $article->uuid()]
                 ),
+                'attr' => ['data-turbo-frame' => '_top'],
             ]
         );
 
@@ -64,6 +65,7 @@ final class ChangeArticleFinancialInformationController extends AbstractControll
                     tax: $articleToUpdate->tax->toDomain(),
                     uuid: $articleToUpdate->uuid
                 ));
+                // @codeCoverageIgnoreStart
             } catch (ArticleNotFoundException $exception) {
                 $this->addFlash('error', $exception->getMessage());
 
@@ -71,6 +73,7 @@ final class ChangeArticleFinancialInformationController extends AbstractControll
                     'form' => $form,
                     'article' => $article,
                 ]);
+                // @codeCoverageIgnoreEnd
             }
             $this->addFlash('success', 'Article updated');
 

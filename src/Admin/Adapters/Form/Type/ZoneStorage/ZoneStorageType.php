@@ -33,6 +33,7 @@ class ZoneStorageType extends AbstractType
                 'label' => 'Nom de la zone de stockage',
                 'attr' => [
                     'placeholder' => 'Le nom de la zone de stockage',
+                    'autofocus' => true,
                 ],
             ])
             ->add('familyLog', FamilyLogEntitySelectType::class, [

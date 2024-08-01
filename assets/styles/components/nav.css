@@ -2,8 +2,13 @@
  * Navs
  */
 
-body > header {
-    padding: 0;
+body {
+    header {
+        padding: 0;
+        margin-bottom: var(--typography-spacing-vertical);
+        border-bottom: solid 1px var(--form-element-border-color);
+        box-shadow: var(--box-shadow);
+    }
 }
 header > nav {
     padding: 0 var(--block-spacing-horizontal);

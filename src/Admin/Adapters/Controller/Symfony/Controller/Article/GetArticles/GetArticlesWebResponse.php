@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Admin\Adapters\Controller\Symfony\Controller\Article\GetArticles;
 
 use Admin\Adapters\Controller\Symfony\Controller\Supplier\GetSuppliers\SupplierDto;
+use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Admin\UseCases\Article\GetArticles\GetArticlesResponse;
 
 final class GetArticlesWebResponse
@@ -31,6 +32,7 @@ final class GetArticlesWebResponse
                 new SupplierDto(
                     $article->supplier()->uuid()->toString(),
                     $article->supplier()->name()->toString(),
+                    (new FamilyLog())->fromDomain($article->supplier()->familyLog()),
                     $article->supplier()->slug()
                 ),
                 $article->slug()

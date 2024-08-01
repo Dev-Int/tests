@@ -30,6 +30,9 @@ final class ChangeDomiciliationSupplierType extends AbstractType
                 'label' => 'Adresse de l\'entreprise',
                 'required' => true,
                 'empty_data' => '',
+                'attr' => [
+                    'autofocus' => true,
+                ],
             ])
             ->add('postalCode', TextType::class, [
                 'label' => 'Code postal',

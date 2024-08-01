@@ -15,6 +15,7 @@ namespace App\Twig\Components\Form\Taxes;
 
 use Admin\Adapters\Controller\Symfony\Controller\Tax\Revaluate\RevaluateTaxApiRequest;
 use Admin\Adapters\Form\Type\Tax\RevaluateTaxType;
+use Admin\Adapters\Gateway\ORM\Entity\Tax;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -27,6 +28,9 @@ final class RevaluateForm extends AbstractController
 {
     use ComponentWithFormTrait;
     use DefaultActionTrait;
+
+    #[LiveProp]
+    public Tax $tax;
 
     #[LiveProp]
     public RevaluateTaxApiRequest $initialFormData;

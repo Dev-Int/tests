@@ -13,9 +13,7 @@
     <h1><twig:Icon:Entities:Article /> Re-assign supplier to "{{ article.name }}"</h1>
 
     <turbo-frame id="article_{{ article.uuid }}">
-        <h2>Re-assign supplier to "{{ article.name }}"</h2>
-
-        <twig:Form:Article:ReassignSupplierForm form="{{ form }}" />
+        <twig:Form:Article:ReassignSupplierForm form="{{ form }}" article="{{ article }}" />
     </turbo-frame>
 
 {% endblock %}

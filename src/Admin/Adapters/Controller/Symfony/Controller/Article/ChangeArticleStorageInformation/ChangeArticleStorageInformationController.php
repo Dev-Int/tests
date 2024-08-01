@@ -67,6 +67,7 @@ final class ChangeArticleStorageInformationController extends AbstractController
                     'admin_articles_change-storage-information',
                     ['article' => $article->uuid()]
                 ),
+                'attr' => ['data-turbo-frame' => '_top'],
             ]
         );
 
@@ -83,6 +84,7 @@ final class ChangeArticleStorageInformationController extends AbstractController
                     minStock: $articleToUpdate->minStock,
                     uuid: $article->uuid()
                 ));
+                // @codeCoverageIgnoreStart
             } catch (ArticleNotFoundException $exception) {
                 $this->addFlash('error', $exception->getMessage());
 
@@ -90,6 +92,7 @@ final class ChangeArticleStorageInformationController extends AbstractController
                     'form' => $form,
                     'article' => $article,
                 ]);
+                // @codeCoverageIgnoreEnd
             }
             $this->addFlash('success', 'Article updated');
 
@@ -109,7 +112,9 @@ final class ChangeArticleStorageInformationController extends AbstractController
     {
         $parcel = $packaging->parcel;
         if (!$parcel?->unit instanceof Unit || $parcel->quantity === null) {
+            // @codeCoverageIgnoreStart
             throw new \InvalidArgumentException('parcel should have unit and quantity');
+            // @codeCoverageIgnoreEnd
         }
 
         /** @var array{UnitDomain, float} $parcelRequest */

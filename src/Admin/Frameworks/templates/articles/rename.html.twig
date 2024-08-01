@@ -9,9 +9,7 @@
     <h1><twig:Icon:Entities:Article /> Rename "{{ article.name }}"</h1>
 
     <turbo-frame id="article_{{ article.uuid }}">
-        <h2>Rename "{{ article.name }}"</h2>
-
-        <twig:Form:Article:RenameForm form="{{ form }}" />
+        <twig:Form:Article:RenameForm form="{{ form }}" article="{{ article }}" />
     </turbo-frame>
 
 {% endblock %}

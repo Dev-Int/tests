@@ -104,7 +104,11 @@ fieldset {
 
 
 turbo-frame  {
-    & h2 {
+    & > div {
+        flex: 1;
+    }
+
+    & h3 {
         margin-bottom: var(--spacing);
     }
     & form {

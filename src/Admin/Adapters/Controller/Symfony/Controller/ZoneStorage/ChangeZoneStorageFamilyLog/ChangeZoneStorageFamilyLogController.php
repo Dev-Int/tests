@@ -56,6 +56,7 @@ final class ChangeZoneStorageFamilyLogController extends AbstractController
                     'admin_zone_storages_change-family_log',
                     ['zoneStorage' => $zoneStorage->uuid()]
                 ),
+                'attr' => ['data-turbo-frame' => '_top'],
             ]
         );
 

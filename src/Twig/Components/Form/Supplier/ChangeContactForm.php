@@ -15,6 +15,7 @@ namespace App\Twig\Components\Form\Supplier;
 
 use Admin\Adapters\Controller\Symfony\Controller\Supplier\ChangeContactSupplier\ChangeContactSupplierApiRequest;
 use Admin\Adapters\Form\Type\Supplier\ChangeContactType;
+use Admin\Adapters\Gateway\ORM\Entity\Supplier;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -30,6 +31,9 @@ final class ChangeContactForm extends AbstractController
 
     #[LiveProp]
     public ChangeContactSupplierApiRequest $initialFormData;
+
+    #[LiveProp]
+    public Supplier $supplier;
 
     protected function instantiateForm(): FormInterface
     {

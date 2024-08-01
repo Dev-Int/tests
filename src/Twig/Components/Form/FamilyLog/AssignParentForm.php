@@ -18,6 +18,7 @@ use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
+use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
@@ -28,7 +29,11 @@ final class AssignParentForm extends AbstractController
     use DefaultActionTrait;
 
     /** @var array{parent: FamilyLog, uuid: string} */
+    #[LiveProp]
     public array $initialFormData;
+
+    #[LiveProp]
+    public FamilyLog $familyLog;
 
     protected function instantiateForm(): FormInterface
     {

@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\Supplier\GetSuppliers;
 
+use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Admin\UseCases\Supplier\GetSuppliers\GetSuppliersResponse;
 
 final class GetSuppliersWebResponse
@@ -27,6 +28,7 @@ final class GetSuppliersWebResponse
             $this->suppliers[] = new SupplierDto(
                 $supplier->uuid()->toString(),
                 $supplier->name()->toString(),
+                (new FamilyLog())->fromDomain($supplier->familyLog()),
                 $supplier->slug()
             );
         }

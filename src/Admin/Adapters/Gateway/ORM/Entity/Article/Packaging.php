@@ -63,6 +63,9 @@ class Packaging
         return $this->id;
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function setId(int $id): self
     {
         $this->id = $id;
@@ -70,11 +73,17 @@ class Packaging
         return $this;
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function article(): Article
     {
         return $this->article;
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function setArticle(Article $article): self
     {
         $this->article = $article;

@@ -40,6 +40,7 @@ final class RevaluateTaxController extends AbstractController
         $taxToRevaluate = new RevaluateTaxApiRequest($tax->rate(), $tax->uuid());
         $form = $this->createForm(RevaluateTaxType::class, $taxToRevaluate, [
             'action' => $this->generateUrl('admin_taxes_revaluate', ['tax' => $tax->uuid()]),
+            'attr' => ['data-turbo-frame' => '_top'],
         ]);
 
         $form->handleRequest($request);

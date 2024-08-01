@@ -33,6 +33,7 @@ use Admin\Tests\DataBuilder\SupplierDataBuilder;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
+use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -49,6 +50,7 @@ final class CreateArticleControllerTest extends WebTestCase
     public function testCreateArticleWillSucceed(): void
     {
         // Arrange
+        $faker = Factory::create('fr_FR');
         $client = self::createClient();
 
         /** @var DoctrineCompanyRepository $companyRepository */
@@ -78,12 +80,12 @@ final class CreateArticleControllerTest extends WebTestCase
         $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
         $piece = (new UnitDataBuilder())
             ->create('Pièce', 'kg')
-            ->withUuid('eca51cd2-4189-4a55-be7e-a6928cf1b5a8')
+            ->withUuid($faker->uuid())
             ->build()
         ;
         $kilogramme = (new UnitDataBuilder())
             ->create('Kilogramme', 'kg')
-            ->withUuid('f016bde4-f36e-468b-bac0-af2b76a9d496')
+            ->withUuid($faker->uuid())
             ->build()
         ;
         $unitRepository->save($colis);
@@ -95,12 +97,12 @@ final class CreateArticleControllerTest extends WebTestCase
 
         $familyLog0 = (new FamilyLogDataBuilder())->create('Alimentaire')->build();
         $familyLog1 = (new FamilyLogDataBuilder())->create('Frais')
-            ->withUuid('f016bde4-f36e-468b-bac0-af2b76a9d496')
+            ->withUuid($faker->uuid())
             ->withParent($familyLog0)
             ->build()
         ;
         $familyLog2 = (new FamilyLogDataBuilder())->create('Viande')
-            ->withUuid('4fb3318a-fdbd-4c8f-9937-4f5cb59e8352')
+            ->withUuid($faker->uuid())
             ->withParent($familyLog1)
             ->build()
         ;
@@ -143,7 +145,7 @@ final class CreateArticleControllerTest extends WebTestCase
         self::assertResponseRedirects('/admin/articles');
 
         $admin = $client->followRedirect();
-        $flash = $admin->filter('body > div.container')->children('div.flash.flash-success')->text();
+        $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertEquals('Article created', $flash);
 
@@ -182,6 +184,7 @@ final class CreateArticleControllerTest extends WebTestCase
     public function testCreateArticleFailWithAlreadyExistsException(): void
     {
         // Arrange
+        $faker = Factory::create('fr_FR');
         $client = self::createClient();
 
         /** @var DoctrineCompanyRepository $companyRepository */
@@ -210,11 +213,11 @@ final class CreateArticleControllerTest extends WebTestCase
 
         $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
         $piece = (new UnitDataBuilder())->create('Pièce', 'kg')
-            ->withUuid('eca51cd2-4189-4a55-be7e-a6928cf1b5a8')
+            ->withUuid($faker->uuid())
             ->build()
         ;
         $kilogramme = (new UnitDataBuilder())->create('Kilogramme', 'kg')
-            ->withUuid('f016bde4-f36e-468b-bac0-af2b76a9d496')
+            ->withUuid($faker->uuid())
             ->build()
         ;
         $unitRepository->save($colis);
@@ -225,7 +228,7 @@ final class CreateArticleControllerTest extends WebTestCase
         $taxRepository->save($tax);
 
         $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')
-            ->withUuid('99282a8d-f344-456c-bbd3-37fe89f3876c')
+            ->withUuid($faker->uuid())
             ->build()
         ;
         $familyLogRepository->save($familyLog);
@@ -277,7 +280,7 @@ final class CreateArticleControllerTest extends WebTestCase
         self::assertResponseRedirects('/admin/articles');
 
         $admin = $client->followRedirect();
-        $flash = $admin->filter('body > div.container')->children('div.flash.flash-error')->text();
+        $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertEquals(ArticleAlreadyExistsException::MESSAGE, $flash);
     }
@@ -285,6 +288,7 @@ final class CreateArticleControllerTest extends WebTestCase
     public function testCreateArticleFailWithNoSupplierRegisteredException(): void
     {
         // Arrange
+        $faker = Factory::create('fr_FR');
         $client = self::createClient();
 
         /** @var DoctrineCompanyRepository $companyRepository */
@@ -307,11 +311,11 @@ final class CreateArticleControllerTest extends WebTestCase
 
         $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
         $piece = (new UnitDataBuilder())->create('Pièce', 'kg')
-            ->withUuid('eca51cd2-4189-4a55-be7e-a6928cf1b5a8')
+            ->withUuid($faker->uuid())
             ->build()
         ;
         $kilogramme = (new UnitDataBuilder())->create('Kilogramme', 'kg')
-            ->withUuid('f016bde4-f36e-468b-bac0-af2b76a9d496')
+            ->withUuid($faker->uuid())
             ->build()
         ;
         $unitRepository->save($colis);
@@ -322,7 +326,7 @@ final class CreateArticleControllerTest extends WebTestCase
         $taxRepository->save($tax);
 
         $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')
-            ->withUuid('99282a8d-f344-456c-bbd3-37fe89f3876c')
+            ->withUuid($faker->uuid())
             ->build()
         ;
         $familyLogRepository->save($familyLog);
@@ -340,8 +344,213 @@ final class CreateArticleControllerTest extends WebTestCase
         self::assertResponseRedirects('/admin/configure');
 
         $admin = $client->followRedirect();
-        $flash = $admin->filter('body > div.container')->children('div.flash.flash-error')->text();
+        $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertEquals(NoSupplierRegisteredException::MESSAGE, $flash);
+    }
+
+    public function testCreateArticleFailWithInvalidFamilyLogAgainstSupplier(): void
+    {
+        // Arrange
+        $faker = Factory::create('fr_FR');
+        $client = self::createClient();
+
+        /** @var DoctrineCompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+
+        /** @var DoctrineUnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+
+        /** @var DoctrineTaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+
+        /** @var DoctrineFamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+
+        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+
+        /** @var DoctrineSupplierRepository $supplierRepository */
+        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
+
+        $company = (new CompanyDataBuilder())->create('Test company')->build();
+        $companyRepository->save($company);
+
+        $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
+        $piece = (new UnitDataBuilder())
+            ->create('Pièce', 'kg')
+            ->withUuid($faker->uuid())
+            ->build()
+        ;
+        $kilogramme = (new UnitDataBuilder())
+            ->create('Kilogramme', 'kg')
+            ->withUuid($faker->uuid())
+            ->build()
+        ;
+        $unitRepository->save($colis);
+        $unitRepository->save($piece);
+        $unitRepository->save($kilogramme);
+
+        $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
+        $taxRepository->save($tax);
+
+        $familyLog0 = (new FamilyLogDataBuilder())->create('Alimentaire')->build();
+        $familyLog1 = (new FamilyLogDataBuilder())->create('Frais')
+            ->withUuid($faker->uuid())
+            ->withParent($familyLog0)
+            ->build()
+        ;
+        $familyLog2 = (new FamilyLogDataBuilder())->create('Viande')
+            ->withUuid($faker->uuid())
+            ->build()
+        ;
+        $familyLogRepository->save($familyLog0);
+        $familyLogRepository->save($familyLog1);
+        $familyLogRepository->save($familyLog2);
+
+        $zoneStorage = (new ZoneStorageDataBuilder())->create('Réserve froide', $familyLog1)->build();
+        $zoneStorageRepository->save($zoneStorage);
+
+        $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLog0)->build();
+        $supplierRepository->save($supplier);
+
+        // Act
+        $crawler = $client->request(Request::METHOD_GET, self::CREATE_ARTICLE_URI);
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('h1', 'Create Article');
+
+        $form = $crawler->selectButton('Create')->form([
+            'createArticle[name]' => 'Jambon Trad 6kg',
+            'createArticle[supplier]' => $supplier->uuid()->toString(),
+            'createArticle[packaging][parcel][unit]' => $colis->uuid()->toString(),
+            'createArticle[packaging][parcel][quantity]' => 1,
+            'createArticle[packaging][subPackage][unit]' => $piece->uuid()->toString(),
+            'createArticle[packaging][subPackage][quantity]' => 2,
+            'createArticle[packaging][consumeUnit][unit]' => $kilogramme->uuid()->toString(),
+            'createArticle[packaging][consumeUnit][quantity]' => 6.800,
+            'createArticle[amount]' => 6.82,
+            'createArticle[tax]' => $tax->uuid()->toString(),
+            'createArticle[minStock]' => 8.8,
+            'createArticle[zoneStorages]' => [$zoneStorage->uuid()->toString()],
+            'createArticle[familyLog]' => $familyLog2->uuid()->toString(),
+            'createArticle[quantity]' => 12.500,
+        ]);
+        $client->submit($form);
+
+        // Assert
+        self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response = $client->getCrawler();
+
+        $zoneStorageField = $response->filter('form')->children('div')->eq(4)->children('div');
+        $familyLogField = $zoneStorageField->siblings();
+
+        self::assertSame('Famille logistique', $familyLogField->children('label')->text());
+        self::assertSame(
+            'The familyLog logistic family "Viande" is not compatible with the supplier logistic family: "Alimentaire"',
+            $familyLogField->children('ul > li')->text()
+        );
+    }
+
+    public function testCreateArticleFailWithInvalidZoneStorageAgainstSupplier(): void
+    {
+        // Arrange
+        $faker = Factory::create('fr_FR');
+        $client = self::createClient();
+
+        /** @var DoctrineCompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+
+        /** @var DoctrineUnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+
+        /** @var DoctrineTaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+
+        /** @var DoctrineFamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+
+        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+
+        /** @var DoctrineSupplierRepository $supplierRepository */
+        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
+
+        $company = (new CompanyDataBuilder())->create('Test company')->build();
+        $companyRepository->save($company);
+
+        $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
+        $piece = (new UnitDataBuilder())
+            ->create('Pièce', 'kg')
+            ->withUuid($faker->uuid())
+            ->build()
+        ;
+        $kilogramme = (new UnitDataBuilder())
+            ->create('Kilogramme', 'kg')
+            ->withUuid($faker->uuid())
+            ->build()
+        ;
+        $unitRepository->save($colis);
+        $unitRepository->save($piece);
+        $unitRepository->save($kilogramme);
+
+        $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
+        $taxRepository->save($tax);
+
+        $familyLog0 = (new FamilyLogDataBuilder())->create('Alimentaire')->build();
+        $familyLog1 = (new FamilyLogDataBuilder())->create('Frais')
+            ->withUuid($faker->uuid())
+            ->withParent($familyLog0)
+            ->build()
+        ;
+        $familyLog2 = (new FamilyLogDataBuilder())->create('Viande')
+            ->withUuid($faker->uuid())
+            ->build()
+        ;
+        $familyLogRepository->save($familyLog0);
+        $familyLogRepository->save($familyLog1);
+        $familyLogRepository->save($familyLog2);
+
+        $zoneStorage = (new ZoneStorageDataBuilder())->create('Réserve froide', $familyLog2)->build();
+        $zoneStorageRepository->save($zoneStorage);
+
+        $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLog0)->build();
+        $supplierRepository->save($supplier);
+
+        // Act
+        $crawler = $client->request(Request::METHOD_GET, self::CREATE_ARTICLE_URI);
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('h1', 'Create Article');
+
+        $form = $crawler->selectButton('Create')->form([
+            'createArticle[name]' => 'Jambon Trad 6kg',
+            'createArticle[supplier]' => $supplier->uuid()->toString(),
+            'createArticle[packaging][parcel][unit]' => $colis->uuid()->toString(),
+            'createArticle[packaging][parcel][quantity]' => 1,
+            'createArticle[packaging][subPackage][unit]' => $piece->uuid()->toString(),
+            'createArticle[packaging][subPackage][quantity]' => 2,
+            'createArticle[packaging][consumeUnit][unit]' => $kilogramme->uuid()->toString(),
+            'createArticle[packaging][consumeUnit][quantity]' => 6.800,
+            'createArticle[amount]' => 6.82,
+            'createArticle[tax]' => $tax->uuid()->toString(),
+            'createArticle[minStock]' => 8.8,
+            'createArticle[zoneStorages]' => [$zoneStorage->uuid()->toString()],
+            'createArticle[familyLog]' => $familyLog1->uuid()->toString(),
+            'createArticle[quantity]' => 12.500,
+        ]);
+        $client->submit($form);
+
+        // Assert
+        self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response = $client->getCrawler();
+
+        $zoneStorageField = $response->filter('form')->children('div')->eq(4)->children('div');
+
+        self::assertSame('Zone de stockage', $zoneStorageField->children('label')->text());
+        self::assertSame(
+            'The zoneStorages logistic family "Frais" is not compatible with the supplier logistic family: "Viande"',
+            $zoneStorageField->children('ul > li')->text()
+        );
     }
 }

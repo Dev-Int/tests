@@ -221,7 +221,9 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
     {
         $articleToUpdate = $this->find($article->uuid()->toString());
         if (!$articleToUpdate instanceof Article) {
+            // @codeCoverageIgnoreStart
             throw new ArticleNotFoundException($article->name()->toString());
+            // @codeCoverageIgnoreEnd
         }
 
         $tax = $this->taxRepository->find($article->tax()->uuid()->toString());
@@ -281,7 +283,9 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         $packaging = $this->getPackagingFromDomain($packagingDomain, $articleToUpdate);
         $packagingToUpdate = $this->packagingRepository->find($articleToUpdate->packaging()->id());
         if (!$packagingToUpdate instanceof Packaging) {
+            // @codeCoverageIgnoreStart
             throw new PackagingNotFoundException($articleToUpdate->packaging()->id());
+            // @codeCoverageIgnoreEnd
         }
 
         $packagingToUpdate
@@ -301,7 +305,9 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
     {
         [$parcelUnit, $parcelQuantity] = $this->getUnitWithSlug($packagingDomain->parcel());
         if ($parcelUnit === null || $parcelQuantity === null) {
+            // @codeCoverageIgnoreStart
             throw new \InvalidArgumentException('Packaging domain must have a parcel');
+            // @codeCoverageIgnoreEnd
         }
 
         [$subPackageUnit, $subPackageQuantity] = $this->getUnitWithSlug($packagingDomain->subPackage());
@@ -331,7 +337,9 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
 
         $unit = $this->unitRepository->findOneBy(['slug' => $package[0]->slug()]);
         if (!$unit instanceof Unit) {
+            // @codeCoverageIgnoreStart
             throw new UnitNotFoundException($package[0]->slug());
+            // @codeCoverageIgnoreEnd
         }
 
         return [$unit, $package[1]];

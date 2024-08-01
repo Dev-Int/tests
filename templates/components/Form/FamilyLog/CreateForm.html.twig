@@ -1,0 +1,19 @@
+<div class="flex-1">
+
+    <h3>Create FamilyLog</h3>
+
+    {{ form_start(form) }}
+   {{ form_errors(form) }}
+
+   {{ form_row(form.label) }}
+
+   {{ include('partials/components/form/_familyLogs-select.html.twig', {familyLog: form.parent}) }}
+
+   <div class="grid">
+       <twig:Form:Button:Cancel href="{{ path('admin_family_logs_index') }}" label="Annuler" />
+       <twig:Form:Button:Submit label="Create" />
+   </div>
+
+   {{ form_end(form) }}
+
+</div>

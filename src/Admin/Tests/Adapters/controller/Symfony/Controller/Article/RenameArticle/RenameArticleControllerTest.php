@@ -109,7 +109,7 @@ final class RenameArticleControllerTest extends WebTestCase
         self::assertResponseRedirects('/admin/articles');
 
         $admin = $client->followRedirect();
-        $flash = $admin->filter('body > div.container')->children('div.flash.flash-success')->text();
+        $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertEquals('Article updated', $flash);
 
@@ -201,7 +201,7 @@ final class RenameArticleControllerTest extends WebTestCase
         self::assertResponseRedirects('/admin/articles');
 
         $admin = $client->followRedirect();
-        $flash = $admin->filter('body > div.container')->children('div.flash.flash-error')->text();
+        $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertEquals(ArticleAlreadyExistsException::MESSAGE, $flash);
     }

@@ -9,9 +9,7 @@
     <h1><twig:Icon:Entities:FamilyLog /> Change label "{{ familyLog.label }}"</h1>
 
     <turbo-frame id="familyLog_{{ familyLog.uuid }}">
-        <h2>Change label "{{ familyLog.label }}"</h2>
-
-        <twig:Form:FamilyLog:ChangeLabelForm form="{{ form }}" />
+        <twig:Form:FamilyLog:ChangeLabelForm form="{{ form }}" familyLog="{{ familyLog }}" />
     </turbo-frame>
 
 {% endblock %}

@@ -15,6 +15,7 @@ namespace App\Twig\Components\Form\Supplier;
 
 use Admin\Adapters\Controller\Symfony\Controller\Supplier\RenameSupplier\RenameSupplierApiRequest;
 use Admin\Adapters\Form\Type\Supplier\RenameSupplierType;
+use Admin\Adapters\Gateway\ORM\Entity\Supplier;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -30,6 +31,9 @@ final class RenameForm extends AbstractController
 
     #[LiveProp]
     public RenameSupplierApiRequest $initialFormData;
+
+    #[LiveProp]
+    public Supplier $supplier;
 
     protected function instantiateForm(): FormInterface
     {

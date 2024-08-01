@@ -227,13 +227,6 @@ final class Article
         return $this->quantity;
     }
 
-    public function setQuantity(float $quantity): self
-    {
-        $this->quantity = $quantity;
-
-        return $this;
-    }
-
     public function slug(): string
     {
         return $this->slug;

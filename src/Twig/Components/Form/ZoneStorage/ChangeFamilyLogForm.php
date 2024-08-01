@@ -15,6 +15,7 @@ namespace App\Twig\Components\Form\ZoneStorage;
 
 use Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\ChangeZoneStorageFamilyLog\ChangeZoneStorageFamilyLogApiRequest;
 use Admin\Adapters\Form\Type\ZoneStorage\ChangeZoneStorageFamilyLogType;
+use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -30,6 +31,9 @@ final class ChangeFamilyLogForm extends AbstractController
 
     #[LiveProp]
     public ChangeZoneStorageFamilyLogApiRequest $initialFormData;
+
+    #[LiveProp]
+    public ZoneStorage $zoneStorage;
 
     protected function instantiateForm(): FormInterface
     {

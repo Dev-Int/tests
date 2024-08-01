@@ -49,7 +49,10 @@ final class CreateArticleController extends AbstractController
 
             return $this->redirectToRoute('admin_configure');
         }
-        $form = $this->createForm(CreateArticleType::class, new CreateArticleInput());
+        $form = $this->createForm(CreateArticleType::class, new CreateArticleInput(), [
+            'action' => $this->generateUrl('admin_article_create'),
+            'attr' => ['data-turbo-frame' => '_top'],
+        ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -121,7 +124,9 @@ final class CreateArticleController extends AbstractController
     {
         $parcel = $packaging->parcel;
         if (!$parcel?->unit instanceof Unit || $parcel->quantity === null) {
+            // @codeCoverageIgnoreStart
             throw new \InvalidArgumentException('parcel should have unit and quantity');
+            // @codeCoverageIgnoreEnd
         }
 
         /** @var array{UnitDomain, float} $parcelRequest */

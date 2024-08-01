@@ -26,6 +26,9 @@ final class AssignParentFamilyLogType extends AbstractType
             ->add('parent', FamilyLogEntitySelectType::class, [
                 'required' => false,
                 'label' => 'Famille logistique parente',
+                'attr' => [
+                    'autofocus' => true,
+                ],
             ])
             ->add('uuid', HiddenType::class)
         ;

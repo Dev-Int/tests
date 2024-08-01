@@ -13,9 +13,7 @@
     <h1><twig:Icon:Entities:ZoneStorage /> Change FamilyLog "{{ zoneStorage.label }}"</h1>
 
     <turbo-frame id="zone_{{ zoneStorage.uuid }}">
-        <h2>Change familyLog "{{ zoneStorage.label }}"</h2>
-
-        <twig:Form:ZoneStorage:ChangeFamilyLogForm form="{{ form }}" />
+        <twig:Form:ZoneStorage:ChangeFamilyLogForm form="{{ form }}" zoneStorage="{{ zoneStorage }}" />
     </turbo-frame>
 {% endblock %}
 

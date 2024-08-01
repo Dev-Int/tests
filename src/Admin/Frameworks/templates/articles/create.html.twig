@@ -12,34 +12,8 @@
 
     <h1><twig:Icon:Entities:Article /> Create Article</h1>
 
-    {{ form_start(form) }}
-    {{ form_errors(form) }}
-
-    {{ form_row(form.name) }}
-    {{ form_row(form.supplier) }}
-
-    {{ include('partials/components/form/_packaging-select.html.twig', {packaging: form.packaging}) }}
-
-    <div class="grid">
-        {{ form_row(form.amount) }}
-        {{ form_row(form.tax) }}
-    </div>
-
-    <div class="grid">
-        {{ form_row(form.zoneStorages) }}
-        {{ include('partials/components/form/_familyLogs-select.html.twig', {familyLog: form.familyLog}) }}
-    </div>
-
-    <div class="grid">
-        {{ form_row(form.minStock) }}
-        {{ form_row(form.quantity) }}
-    </div>
-
-    <div class="grid">
-        <twig:Form:Button:Cancel href="{{ path('admin_articles_index') }}" label="Annuler" />
-        <twig:Form:Button:Submit label="Create" />
-    </div>
-
-    {{ form_end(form) }}
+    <turbo-frame id="article_create">
+        <twig:Form:Article:CreateForm form="{{ form }}" />
+    </turbo-frame>
 
 {% endblock %}

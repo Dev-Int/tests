@@ -15,6 +15,7 @@ namespace App\Twig\Components\Form\Article;
 
 use Admin\Adapters\Controller\Symfony\Controller\Article\ReAssignArticleSupplier\ReAssignArticleSupplierApiRequest;
 use Admin\Adapters\Form\Type\Article\ReAssignSupplierType;
+use Admin\Adapters\Gateway\ORM\Entity\Article\Article;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -30,6 +31,9 @@ final class ReassignSupplierForm extends AbstractController
 
     #[LiveProp]
     public ReAssignArticleSupplierApiRequest $initialFormData;
+
+    #[LiveProp]
+    public Article $article;
 
     protected function instantiateForm(): FormInterface
     {

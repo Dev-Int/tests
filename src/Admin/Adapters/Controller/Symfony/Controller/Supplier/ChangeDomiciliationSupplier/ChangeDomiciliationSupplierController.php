@@ -53,6 +53,7 @@ final class ChangeDomiciliationSupplierController extends AbstractController
                     'admin_supplier_change-domiciliation',
                     ['supplier' => $supplier->uuid()]
                 ),
+                'attr' => ['data-turbo-frame' => '_top'],
             ]
         );
 

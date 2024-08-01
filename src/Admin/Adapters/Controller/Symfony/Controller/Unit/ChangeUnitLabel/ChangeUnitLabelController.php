@@ -40,6 +40,7 @@ final class ChangeUnitLabelController extends AbstractController
         $unitToUpdate = new ChangeUnitLabelApiRequest($unit->label(), $unit->abbreviation(), $unit->slug());
         $form = $this->createForm(ChangeLabelUnitType::class, $unitToUpdate, [
             'action' => $this->generateUrl('admin_units_change-label', ['unit' => $unit->uuid()]),
+            'attr' => ['data-turbo-frame' => '_top'],
         ]);
 
         $form->handleRequest($request);

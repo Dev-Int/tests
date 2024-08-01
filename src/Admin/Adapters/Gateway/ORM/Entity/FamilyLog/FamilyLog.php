@@ -105,18 +105,6 @@ class FamilyLog
         return $this;
     }
 
-    public function level(): int
-    {
-        return $this->level;
-    }
-
-    public function setLevel(int $level): self
-    {
-        $this->level = $level;
-
-        return $this;
-    }
-
     public function parent(): ?self
     {
         return $this->parent;
@@ -127,12 +115,6 @@ class FamilyLog
         $this->parent = $parent;
 
         return $this;
-    }
-
-    public function addChild(self $child): void
-    {
-        $this->children[] = $child;
-        $this->parent = $child->parent();
     }
 
     /**
@@ -183,6 +165,9 @@ class FamilyLog
         return $this->slug === $familyLog->slug;
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     private function isDescendantOf(self $parent): bool
     {
         if ($parent->hasChildren()) {

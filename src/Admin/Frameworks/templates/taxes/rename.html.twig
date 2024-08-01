@@ -9,10 +9,7 @@
     <h1><twig:Icon:Entities:Taxe /> Rename Tax "{{ tax.name }}"</h1>
 
     <turbo-frame id="tax_{{ tax.uuid }}">
-        <h2>Rename Tax "{{ tax.name }}"</h2>
-
-        <twig:Form:Taxes:RenameForm form="{{ form }}" />
+        <twig:Form:Taxes:RenameForm form="{{ form }}" tax="{{ tax }}" />
     </turbo-frame>
 
 {% endblock %}
-

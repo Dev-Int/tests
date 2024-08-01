@@ -9,9 +9,7 @@
     <h1><twig:Icon:Entities:Unit /> Change label "{{ unit.label }}"</h1>
 
     <turbo-frame id="unit_{{ unit.uuid }}">
-        <h2>Change label {{ unit.slug }}</h2>
-
-        <twig:Form:Unit:ChangeLabelForm form="{{ form }}" />
+        <twig:Form:Unit:ChangeLabelForm form="{{ form }}" unit="{{ unit }}" />
     </turbo-frame>
 
 {% endblock %}

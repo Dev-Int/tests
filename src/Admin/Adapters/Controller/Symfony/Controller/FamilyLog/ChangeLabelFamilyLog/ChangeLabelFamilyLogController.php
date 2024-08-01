@@ -42,6 +42,7 @@ final class ChangeLabelFamilyLogController extends AbstractController
             new ChangeLabelFamilyLogApiRequest($familyLog->uuid(), $familyLog->label()),
             [
                 'action' => $this->generateUrl('admin_family_logs_change-label', ['familyLog' => $familyLog->uuid()]),
+                'attr' => ['data-turbo-frame' => '_top'],
             ]
         );
 

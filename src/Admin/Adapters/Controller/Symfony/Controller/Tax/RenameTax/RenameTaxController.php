@@ -40,6 +40,7 @@ final class RenameTaxController extends AbstractController
         $taxToRename = new RenameTaxApiRequest($tax->name(), $tax->uuid());
         $form = $this->createForm(RenameTaxType::class, $taxToRename, [
             'action' => $this->generateUrl('admin_taxes_rename', ['tax' => $tax->uuid()]),
+            'attr' => ['data-turbo-frame' => '_top'],
         ]);
 
         $form->handleRequest($request);

@@ -42,6 +42,7 @@ final class AssignParentFamilyLogController extends AbstractController
             ['parent' => $familyLog->parent(), 'uuid' => $familyLog->uuid()],
             [
                 'action' => $this->generateUrl('admin_family_logs_assign-parent', ['familyLog' => $familyLog->uuid()]),
+                'attr' => ['data-turbo-frame' => '_top'],
             ]
         );
         $form->handleRequest($request);

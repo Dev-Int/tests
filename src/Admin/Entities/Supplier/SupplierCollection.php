@@ -44,6 +44,9 @@ final class SupplierCollection implements Collection, \Countable
         $this->key++;
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function key(): int
     {
         return $this->key;

@@ -37,9 +37,7 @@
 
             {% for label, messages in app.flashes %}
                 {% for message in messages %}
-                    <div id="flashes" class="flash flash-{{ label }}" role="alert" aria-live="assertive" aria-atomic="true" {{ stimulus_controller('toast') }}>
-                        {{ message }}
-                    </div>
+                    <twig:Flashes label="{{ label }}" message="{{ message }}" />
                 {% endfor %}
             {% endfor %}
 

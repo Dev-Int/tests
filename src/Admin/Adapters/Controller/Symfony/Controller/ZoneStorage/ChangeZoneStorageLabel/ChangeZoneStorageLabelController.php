@@ -45,6 +45,7 @@ final class ChangeZoneStorageLabelController extends AbstractController
                     'admin_zone_storages_change-label',
                     ['zoneStorage' => $zoneStorage->uuid()]
                 ),
+                'attr' => ['data-turbo-frame' => '_top'],
             ]
         );
 

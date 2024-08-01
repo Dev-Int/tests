@@ -9,9 +9,7 @@
     <h1><twig:Icon:Entities:Supplier /> Rename "{{ supplier.name }}"</h1>
 
     <turbo-frame id="supplier_{{ supplier.uuid }}">
-        <h2>Rename "{{ supplier.name }}"</h2>
-
-        <twig:Form:Supplier:RenameForm form="{{ form }}" />
+        <twig:Form:Supplier:RenameForm form="{{ form }}" supplier="{{ supplier }}" />
     </turbo-frame>
 
 {% endblock %}

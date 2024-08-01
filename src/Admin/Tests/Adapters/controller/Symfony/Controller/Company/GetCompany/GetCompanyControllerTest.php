@@ -46,7 +46,7 @@ final class GetCompanyControllerTest extends WebTestCase
         self::assertSelectorTextContains('h1', 'Company');
 
         $firstLine = $crawler
-            ->filter('body > div.container > div.row > article > table > tbody > tr')
+            ->filter('body > div.container > main > article > table > tbody > tr')
             ->children('td')
         ;
         self::assertSame('Name', $firstLine->first()->text());
@@ -66,7 +66,7 @@ final class GetCompanyControllerTest extends WebTestCase
         self::assertResponseRedirects('/admin/configure');
 
         $admin = $client->followRedirect();
-        $flash = $admin->filter('body > div.container')->children('div.flash.flash-error')->text();
+        $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame(NoCompanyRegisteredException::MESSAGE, $flash);
     }

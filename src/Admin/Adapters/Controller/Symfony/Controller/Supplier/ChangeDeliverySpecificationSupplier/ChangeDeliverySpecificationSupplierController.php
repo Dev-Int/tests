@@ -50,6 +50,7 @@ final class ChangeDeliverySpecificationSupplierController extends AbstractContro
                     'admin_suppliers_change-delivery-specification',
                     ['supplier' => $supplier->uuid()]
                 ),
+                'attr' => ['data-turbo-frame' => '_top'],
             ]
         );
 

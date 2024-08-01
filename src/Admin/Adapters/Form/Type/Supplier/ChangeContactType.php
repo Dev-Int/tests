@@ -29,6 +29,9 @@ final class ChangeContactType extends AbstractType
                 'label' => 'Nom du contact',
                 'required' => true,
                 'empty_data' => '',
+                'attr' => [
+                    'autofocus' => true,
+                ],
             ])
             ->add('cellphone', TextType::class, [
                 'label' => 'Téléphone du contact',

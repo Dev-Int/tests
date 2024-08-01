@@ -1,12 +1,12 @@
-<div>
+<div class="flex-1">
+
+    <h3>Change label {{ unit.label }}</h3>
 
     {{ form_start(form) }}
     {{ form_errors(form) }}
 
-    <div class="grid">
-        {{ form_row(form.label) }}
-        {{ form_row(form.abbreviation) }}
-    </div>
+    {{ form_row(form.label) }}
+    {{ form_row(form.abbreviation) }}
 
     <div class="grid">
         <twig:Form:Button:Cancel href="{{ path('admin_units_index') }}" label="Annuler" />

@@ -34,6 +34,9 @@ final class ChangeFinancialInformationType extends AbstractType
                 'scale' => 2,
                 'required' => true,
                 'empty_data' => 0,
+                'attr' => [
+                    'autofocus' => true,
+                ],
             ])
             ->add('tax', EntityType::class, [
                 'label' => 'TVA de l\'article',

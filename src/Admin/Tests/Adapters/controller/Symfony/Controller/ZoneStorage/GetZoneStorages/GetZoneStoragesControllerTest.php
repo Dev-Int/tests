@@ -61,7 +61,9 @@ final class GetZoneStoragesControllerTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', 'Storage Zones');
 
-        $list = $crawler->filter('body > div.container > div.row > article > ul.w100 > turbo-frame')->children('li.li-unstyled');
+        $list = $crawler->filter('body > div.container > main > article > ul.table > turbo-frame')
+            ->children('li.li-unstyled')
+        ;
         self::assertCount(2, $list);
     }
 
@@ -78,7 +80,7 @@ final class GetZoneStoragesControllerTest extends WebTestCase
         self::assertResponseRedirects('/admin/configure');
 
         $admin = $client->followRedirect();
-        $flash = $admin->filter('body > div.container')->children('div.flash.flash-error')->text();
+        $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame(NoZoneStorageRegisteredException::MESSAGE, $flash);
     }
