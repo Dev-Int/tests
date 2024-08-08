@@ -6,19 +6,11 @@
 
 {% block body %}
 
-    <h1><i class="fa-solid fa-warehouse"></i> Change label "{{ zoneStorage.label }}"</h1>
+    <h1><twig:Icon:Entities:ZoneStorage /> Change label "{{ zoneStorage.label }}"</h1>
 
-    {{ form_start(form) }}
-    {{ form_errors(form) }}
-
-    {{ form_row(form.label) }}
-
-    <div class="grid">
-        <a href="{{ path('admin_zone_storages_index') }}" class="secondary" role="button">Annuler</a>
-        <button type="submit">Change label</button>
-    </div>
-
-    {{ form_end(form) }}
+    <turbo-frame id="zone_{{ zoneStorage.uuid }}">
+        <twig:Form:ZoneStorage:ChangeLabelForm form="{{ form }}" zoneStorage="{{ zoneStorage }}" />
+    </turbo-frame>
 
 {% endblock %}
 

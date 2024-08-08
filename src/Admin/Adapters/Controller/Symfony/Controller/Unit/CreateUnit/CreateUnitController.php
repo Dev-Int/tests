@@ -41,7 +41,10 @@ final class CreateUnitController extends AbstractController
             return $this->redirectToRoute('admin_configure');
         }
 
-        $form = $this->createForm(UnitType::class);
+        $form = $this->createForm(UnitType::class, new CreateUnitApiRequest(), [
+            'action' => $this->generateUrl('admin_unit_create'),
+            'attr' => ['data-turbo-frame' => '_top'],
+        ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

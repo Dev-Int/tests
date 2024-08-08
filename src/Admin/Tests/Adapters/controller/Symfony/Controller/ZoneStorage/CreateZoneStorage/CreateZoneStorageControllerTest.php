@@ -86,7 +86,7 @@ final class CreateZoneStorageControllerTest extends WebTestCase
         self::assertResponseRedirects('/admin/zone_storages');
 
         $admin = $client->followRedirect();
-        $flash = $admin->filter('body > div.container')->children('div.flash.flash-success')->text();
+        $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertSame('Zone storage created', $flash);
 
@@ -148,7 +148,7 @@ final class CreateZoneStorageControllerTest extends WebTestCase
         self::assertResponseRedirects('/admin/zone_storages');
 
         $admin = $client->followRedirect();
-        $flash = $admin->filter('body > div.container')->children('div.flash.flash-error')->text();
+        $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame(ZoneStorageAlreadyExistsException::MESSAGE, $flash);
     }
@@ -166,7 +166,7 @@ final class CreateZoneStorageControllerTest extends WebTestCase
 
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         $admin = $client->followRedirect();
-        $flash = $admin->filter('body > div.container')->children('div.flash.flash-error')->text();
+        $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame(NoFamilyLogRegisteredException::MESSAGE, $flash);
     }

@@ -6,32 +6,37 @@
 
 {% block body %}
 
-    <h1><i class="fas fa-flask"></i> Units</h1>
+    <h1><twig:Icon:Entities:Unit /> Units</h1>
 
-    <div class="row">
-        <aside class="col-md-3">
-            <nav class="menu">
-                <ul>
-                    <li><a href="{{ path('admin_unit_create') }}" class="w100" role="button">Create Unit</a></li>
-                    <li>
-                        {{ include('@admin/partials/components/_back-admin-button.html.twig') }}
-                    </li>
-                </ul>
-            </nav>
-        </aside>
-        <article class="col-md-9">
-            <ul class="w100">
-                {% for unit in units %}
-                <li class="li-unstyled flex-between">
-                    {{ unit.label }} {{ unit.abbreviation }}
-                    <span>
-                        <a href="{{ path('admin_units_change-label', {unit: unit.uuid}) }}" role="button">Change label</a>
-                    </span>
+    <main>
+        <article>
+            <div>
+                <turbo-frame id="unit_create" class="flex-between">
+                    <span></span>
+                    <twig:Button:CreateEntity href="{{ path('admin_unit_create') }}" label="Create Unit" />
+                </turbo-frame>
+            </div>
+            <ul class="table">
+                <li class="li-unstyled flex-between head">
+                    <span>Label</span>
+                    <span>Abbreviation</span>
+                    <span>Action</span>
                 </li>
+                {% for unit in units %}
+                    <turbo-frame id="unit_{{ unit.uuid }}">
+                        <li class="li-unstyled flex-between">
+                            <span>{{ unit.label }}</span>
+                            <span>{{ unit.abbreviation }}</span>
+                            <span>
+                                <twig:Button:UpdateEntity href="{{ path('admin_units_change-label', {unit: unit.uuid}) }}" class="btn-small" label="Change label"/>
+                            </span>
+                        </li>
+                    </turbo-frame>
                 {% endfor %}
             </ul>
+            <twig:Button:BackTo href="{{ path('admin_index') }}" label="Retour à l'administration" />
         </article>
-    </div>
+    </main>
 
 {% endblock %}
 

@@ -58,8 +58,9 @@ final class GetFamilyLogsControllerTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', 'Logistics Families');
 
-        $list = $crawler->filter('body > div.container > div.row > article > ul.w100')->children('li.li-unstyled');
-
+        $list = $crawler->filter('body > div.container > main > article > ul.table > turbo-frame')
+            ->children('li.li-unstyled')
+        ;
         self::assertCount(3, $list);
     }
 
@@ -76,7 +77,7 @@ final class GetFamilyLogsControllerTest extends WebTestCase
         self::assertResponseRedirects('/admin/configure');
 
         $admin = $client->followRedirect();
-        $flash = $admin->filter('body > div.container')->children('div.flash.flash-error')->text();
+        $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame(NoFamilyLogRegisteredException::MESSAGE, $flash);
     }

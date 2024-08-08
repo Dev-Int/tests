@@ -16,12 +16,16 @@ namespace Admin\Entities\Supplier;
 use Shared\Entities\Collection;
 use Webmozart\Assert\Assert;
 
-final class SupplierCollection implements Collection
+final class SupplierCollection implements Collection, \Countable
 {
     /** @var array<Supplier>
      */
     private array $suppliers = [];
     private int $key = 0;
+
+    public function __construct(private readonly int $totalItems)
+    {
+    }
 
     public function add(object $item): void
     {
@@ -40,6 +44,9 @@ final class SupplierCollection implements Collection
         $this->key++;
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function key(): int
     {
         return $this->key;
@@ -63,5 +70,10 @@ final class SupplierCollection implements Collection
     public function toArray(): iterable
     {
         return $this->suppliers;
+    }
+
+    public function count(): int
+    {
+        return $this->totalItems;
     }
 }

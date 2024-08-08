@@ -28,6 +28,9 @@ final class RenameArticleType extends AbstractType
             ->add('name', TextType::class, [
                 'label' => 'Nom de l\'article',
                 'required' => true,
+                'attr' => [
+                    'autofocus' => true,
+                ],
             ])
             ->add('uuid', HiddenType::class)
         ;

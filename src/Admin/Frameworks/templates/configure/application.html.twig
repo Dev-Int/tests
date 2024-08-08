@@ -14,32 +14,34 @@
                 <ul>
                     <li>
                         <a href="{{ path('admin_unit_create') }}" class="{% if hasUnit %}secondary disable-link {% endif %}w100" role="button">
-                            {% if hasUnit %}<i class="fa-solid fa-square-check"></i>{% endif%} Create Unit
+                            {% if hasUnit %}<i class="fa-solid fa-square-check"></i>
+                            {% else %}<twig:Icon:Entities:Unit />{% endif%} Create Unit
                         </a>
                     </li>
                     <li>
                         <a href="{{ path('admin_taxes_create') }}" class="{% if hasTaxe %}secondary disable-link {% endif %}w100" role="button">
-                            {% if hasTaxe %}<i class="fa-solid fa-square-check"></i>{% endif%} Create Taxe
+                            {% if hasTaxe %}<i class="fa-solid fa-square-check"></i>
+                            {% else %}<twig:Icon:Entities:Taxe />{% endif%} Create Taxe
                         </a>
                     </li>
                     <li>
                         <a href="#" class="secondary disable-link w100" role="button">
-                            <i class="fa-solid fa-square-check"></i>&nbsp;
+                            <twig:Icon:Check />&nbsp;
                         </a>
                     </li>
                     <li>
                         <a href="#" class="secondary disable-link w100" role="button">
-                            <i class="fa-solid fa-square-check"></i>&nbsp;
+                            <twig:Icon:Check />&nbsp;
                         </a>
                     </li>
                     <li>
                         <a href="#" class="secondary disable-link w100" role="button">
-                            <i class="fa-solid fa-square-check"></i>&nbsp;
+                            <twig:Icon:Check />&nbsp;
                         </a>
                     </li>
                     <li>
                         <a href="#" class="secondary disable-link w100" role="button">
-                            <i class="fa-solid fa-square-check"></i>&nbsp;
+                            <twig:Icon:Check />&nbsp;
                         </a>
                     </li>
                 </ul>

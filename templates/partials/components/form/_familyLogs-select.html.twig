@@ -1,6 +1,10 @@
+{% block importmap %}
+    {{ importmap(['app','familyLog-select']) }}
+{% endblock %}
+
 {% set uuid, key, previousLevel = null, 0, 1 %}
 
-<div id="{{ familyLog.vars.id }}">
+<div id="{{ familyLog.vars.id }}" aria-describedby="{{ familyLog.vars.id }}_help">
     {{ form_label(familyLog) }}
     {{ form_errors(familyLog) }}
     <ul>
@@ -40,7 +44,6 @@
         {% endfor %}
         {% if previousLevel > 1 %}
             {% for iter in range(1, previousLevel) %}
-                    </li>
                 </li>
             {% endfor %}
         {% endif %}

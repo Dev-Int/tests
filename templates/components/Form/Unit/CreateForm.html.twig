@@ -1,0 +1,18 @@
+<div class="flex-1">
+
+    <h3>Create Unit</h3>
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    {{ form_row(form.label) }}
+    {{ form_row(form.abbreviation) }}
+
+    <div class="grid">
+        <twig:Form:Button:Cancel href="{{ path('admin_units_index') }}" label="Annuler" />
+        <twig:Form:Button:Submit label="Create" />
+    </div>
+
+    {{ form_end(form) }}
+
+</div>

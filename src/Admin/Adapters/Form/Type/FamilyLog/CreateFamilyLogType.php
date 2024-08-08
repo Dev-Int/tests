@@ -30,6 +30,7 @@ class CreateFamilyLogType extends AbstractType
                 'label' => 'Nom de la famille logistique',
                 'attr' => [
                     'placeholder' => 'Le nom de la famille logistique',
+                    'autofocus' => true,
                 ],
             ])
             ->add('parent', FamilyLogEntitySelectType::class, [

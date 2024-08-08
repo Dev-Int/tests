@@ -6,19 +6,11 @@
 
 {% block body %}
 
-    <h1><i class="fas fa-tags"></i> Change label "{{ form.vars.value.label }}"</h1>
+    <h1><twig:Icon:Entities:FamilyLog /> Change label "{{ familyLog.label }}"</h1>
 
-    {{ form_start(form) }}
-    {{ form_errors(form) }}
-
-    {{ form_row(form.label) }}
-
-    <div class="grid">
-        <a role="button" href="{{ path('admin_family_logs_index') }}" class="secondary">Annuler</a>
-        <button type="submit">Update</button>
-    </div>
-
-    {{ form_end(form) }}
+    <turbo-frame id="familyLog_{{ familyLog.uuid }}">
+        <twig:Form:FamilyLog:ChangeLabelForm form="{{ form }}" familyLog="{{ familyLog }}" />
+    </turbo-frame>
 
 {% endblock %}
 

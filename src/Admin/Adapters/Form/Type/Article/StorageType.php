@@ -33,6 +33,9 @@ final class StorageType extends AbstractType
                 'choice_label' => 'label',
                 'placeholder' => 'Choice an Unit',
                 'empty_data' => null,
+                'attr' => [
+                    'autofocus' => true,
+                ],
             ])
             ->add('quantity', NumberType::class, [
                 'label' => 'quantity',

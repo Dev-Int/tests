@@ -6,20 +6,10 @@
 
 {% block body %}
 
-    <h1><i class="fas fa-percent"></i> Revaluate Tax "{{ tax.name }}"</h1>
+    <h1><twig:Icon:Entities:Taxe /> Revaluate Tax "{{ tax.name }}"</h1>
 
-    {{ form_start(form) }}
-    {{ form_errors(form) }}
-
-    {{ form_row(form.rate) }}
-    {{  form_row(form.uuid) }}
-
-    <div class="grid">
-        <a href="{{ path('admin_taxes_index') }}" class="secondary" role="button">Annuler</a>
-        <button type="submit">Revaluate</button>
-    </div>
-
-    {{ form_end(form) }}
+    <turbo-frame id="tax_{{ tax.uuid }}">
+        <twig:Form:Taxes:RevaluateForm form="{{ form }}" tax="{{ tax }}" />
+    </turbo-frame>
 
 {% endblock %}
-

@@ -6,32 +6,37 @@
 
 {% block body %}
 
-    <h1><i class="fas fa-percent"></i> Taxes</h1>
+    <h1><twig:Icon:Entities:Taxe /> Taxes</h1>
 
-    <div class="row">
-        <aside class="col-md-3">
-            <nav class="menu">
-                <ul>
-                    <li><a href="{{ path('admin_taxes_create') }}" class="w100" role="button">Create Tax</a></li>
-                    <li>
-                        {{ include('@admin/partials/components/_back-admin-button.html.twig') }}
-                    </li>
-                </ul>
-            </nav>
-        </aside>
-        <article class="col-md-9">
-            <ul class="w100">
-                {%  for tax in taxes %}
-                <li class="li-unstyled flex-between">
-                    {{ tax.name }} {{ tax.rate }}
-                    <span>
-                        <a href="{{ path('admin_taxes_rename', {'tax': tax.uuid}) }}" role="button">Rename tax</a>
-                        <a href="{{ path('admin_taxes_revaluate', {'tax': tax.uuid}) }}" role="button">Reevaluate tax</a>
-                    </span>
+    <main>
+        <article>
+            <div>
+                <turbo-frame id="tax_create" class="flex-between">
+                    <span></span>
+                    <twig:Button:CreateEntity href="{{ path('admin_taxes_create') }}" label="Create Tax" />
+                </turbo-frame>
+            </div>
+            <ul class="table">
+                <li class="li-unstyled flex-between head">
+                    <span>Name</span>
+                    <span>Rate</span>
+                    <span>Action</span>
                 </li>
+                {%  for tax in taxes %}
+                    <turbo-frame id="tax_{{ tax.uuid }}">
+                        <li class="li-unstyled flex-between">
+                            <span>{{ tax.name }}</span>
+                            <span>{{ tax.rate }}</span>
+                            <span>
+                                <twig:Button:UpdateEntity href="{{ path('admin_taxes_rename', {'tax': tax.uuid}) }}" class="btn-small" label="Rename tax" />
+                                <twig:Button:UpdateEntity href="{{ path('admin_taxes_revaluate', {'tax': tax.uuid}) }}" class="btn-small" label="Revaluate tax" />
+                            </span>
+                        </li>
+                    </turbo-frame>
                 {% endfor %}
             </ul>
+            <twig:Button:BackTo href="{{ path('admin_index') }}" label="Retour à l'administration" />
         </article>
-    </div>
+    </main>
 
 {% endblock %}

@@ -26,10 +26,13 @@ ul:has(.form-error) {
     padding-inline-start: 0;
 }
 
-.help-text > p {
-    color: var(--muted-color);
-    font-size: calc(var(--font-size) * 0.8);
-    font-style: italic;
+.help-text {
+    margin-top: var(--form-element-spacing-vertical);
+    & > p {
+        color: var(--muted-color);
+        font-size: calc(var(--font-size) * 0.8);
+        font-style: italic;
+    }
 }
 
 /* Input groups */
@@ -93,10 +96,34 @@ fieldset {
     color: var(--form-element-color);
     font-weight: var(--font-weight);
     transition: background-color var(--transition), border-color var(--transition), color var(--transition), box-shadow var(--transition);
+
+    & > legend {
+        padding: calc(var(--block-spacing-horizontal) * 0.5);
+    }
 }
 
-fieldset > legend {
-    padding: calc(var(--block-spacing-horizontal) * 0.5);
+
+turbo-frame  {
+    & > div {
+        flex: 1;
+    }
+
+    & h3 {
+        margin-bottom: var(--spacing);
+    }
+    & form {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(0%, 1fr));
+        grid-column-gap: var(--grid-spacing-horizontal);
+        grid-row-gap: var(--grid-spacing-vertical);
+        align-items: center;
+
+        &:has(div.grid > div) {
+            display: block;
+        }
+
+        & div.grid:has(a[role="button"]), div.grid:has(button) {
+            margin-top: var(--spacing);
+        }
+    }
 }
-
-

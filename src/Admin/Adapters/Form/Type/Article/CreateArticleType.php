@@ -38,6 +38,9 @@ final class CreateArticleType extends AbstractType
                 'label' => 'Nom de l\'article',
                 'required' => true,
                 'empty_data' => '',
+                'attr' => [
+                    'autofocus' => true,
+                ],
             ])
             ->add('supplier', EntityType::class, [
                 'class' => Supplier::class,
@@ -96,15 +99,19 @@ final class CreateArticleType extends AbstractType
                             return null;
                         }
 
+                        // @codeCoverageIgnoreStart
                         return [
                             'parcel' => $packagingAsArray->parcel,
                             'subPackage' => $packagingAsArray->subPackage,
                             'consumeUnit' => $packagingAsArray->consumeUnit,
                         ];
+                        // @codeCoverageIgnoreEnd
                     },
                     static function (?Packaging $packagingAsArray): ?Packaging {
                         if (!$packagingAsArray instanceof Packaging) {
+                            // @codeCoverageIgnoreStart
                             return null;
+                            // @codeCoverageIgnoreEnd
                         }
 
                         return new Packaging(

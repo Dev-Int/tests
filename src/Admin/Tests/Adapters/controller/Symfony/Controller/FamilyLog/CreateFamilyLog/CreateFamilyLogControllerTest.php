@@ -75,7 +75,7 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         self::assertResponseRedirects('/admin/family_logs');
 
         $admin = $client->followRedirect();
-        $flash = $admin->filter('body > div.container')->children('div.flash.flash-success')->text();
+        $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertSame('FamilyLog created', $flash);
 
@@ -130,7 +130,7 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         self::assertResponseRedirects('/admin/family_logs');
 
         $admin = $client->followRedirect();
-        $flash = $admin->filter('body > div.container')->children('div.flash.flash-success')->text();
+        $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertSame('FamilyLog created', $flash);
 
@@ -193,7 +193,7 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         self::assertResponseRedirects('/admin/family_logs');
 
         $admin = $client->followRedirect();
-        $flash = $admin->filter('body > div.container')->children('div.flash.flash-success')->text();
+        $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertSame('FamilyLog created', $flash);
 
@@ -251,7 +251,7 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         self::assertResponseRedirects('/admin/family_logs');
 
         $admin = $client->followRedirect();
-        $flash = $admin->filter('body > div.container')->children('div.flash.flash-error')->text();
+        $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame(FamilyLogAlreadyExistsException::MESSAGE, $flash);
     }
@@ -279,7 +279,7 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         self::assertResponseRedirects('/admin/configure');
 
         $admin = $client->followRedirect();
-        $flash = $admin->filter('body > div.container')->children('div.flash.flash-error')->text();
+        $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame(NoTaxRegisteredException::MESSAGE, $flash);
     }

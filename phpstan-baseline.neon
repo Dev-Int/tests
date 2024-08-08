@@ -1,0 +1,41 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Call to an undefined method Faker\\\\Generator\\:\\:dairyName\\(\\)\\.$#"
+			count: 1
+			path: src/Admin/Adapters/DataFixtures/ArticleFixtures.php
+
+		-
+			message: "#^Call to an undefined method Faker\\\\Generator\\:\\:fruitName\\(\\)\\.$#"
+			count: 2
+			path: src/Admin/Adapters/DataFixtures/ArticleFixtures.php
+
+		-
+			message: "#^Call to an undefined method Faker\\\\Generator\\:\\:meatName\\(\\)\\.$#"
+			count: 1
+			path: src/Admin/Adapters/DataFixtures/ArticleFixtures.php
+
+		-
+			message: "#^Call to an undefined method Faker\\\\Generator\\:\\:vegetableName\\(\\)\\.$#"
+			count: 2
+			path: src/Admin/Adapters/DataFixtures/ArticleFixtures.php
+
+		-
+			message: "#^Match expression does not handle remaining value\\: string$#"
+			count: 2
+			path: src/Admin/Adapters/DataFixtures/ArticleFixtures.php
+
+		-
+			message: "#^Method Admin\\\\Adapters\\\\DataFixtures\\\\ArticleFixtures\\:\\:getPackaging\\(\\) should return array\\{array\\{Admin\\\\Entities\\\\Unit\\\\Unit, float\\}, array\\{Admin\\\\Entities\\\\Unit\\\\Unit, float\\}\\|null, array\\{Admin\\\\Entities\\\\Unit\\\\Unit, float\\}\\|null\\} but returns array\\<int\\<0, max\\>, array\\{Admin\\\\Entities\\\\Unit\\\\Unit, float\\}\\|null\\>\\.$#"
+			count: 1
+			path: src/Admin/Adapters/DataFixtures/ArticleFixtures.php
+
+		-
+			message: "#^Call to an undefined method Faker\\\\Generator\\:\\:meatName\\(\\)\\.$#"
+			count: 1
+			path: src/Admin/Tests/Adapters/controller/Symfony/Controller/Article/GetArticles/GetArticlesControllerTest.php
+
+		-
+			message: "#^Call to an undefined method Faker\\\\Generator\\:\\:vegetableName\\(\\)\\.$#"
+			count: 1
+			path: src/Admin/Tests/Adapters/controller/Symfony/Controller/Article/GetArticles/GetArticlesControllerTest.php

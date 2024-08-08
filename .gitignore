@@ -18,6 +18,7 @@
 /var/
 /vendor/
 ###< symfony/framework-bundle ###
+
 ###> qossmic/deptrac-shim ###
 /bin/.deptrac/
 .deptrac.cache
@@ -28,6 +29,7 @@
 .phpunit.result.cache
 .phpunit.cache/
 /coverage
+clover.xml
 ###< phpunit/phpunit ###
 
 ###> symfony/asset-mapper ###

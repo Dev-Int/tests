@@ -36,6 +36,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\ORM\UnexpectedResultException;
 use Doctrine\Persistence\ManagerRegistry;
 use Shared\Entities\VO\Packaging as PackagingDomain;
@@ -220,7 +221,9 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
     {
         $articleToUpdate = $this->find($article->uuid()->toString());
         if (!$articleToUpdate instanceof Article) {
+            // @codeCoverageIgnoreStart
             throw new ArticleNotFoundException($article->name()->toString());
+            // @codeCoverageIgnoreEnd
         }
 
         $tax = $this->taxRepository->find($article->tax()->uuid()->toString());
@@ -238,15 +241,22 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         $this->_em->flush();
     }
 
-    public function findAllArticles(): ArticleCollection
+    public function findAllArticlesPaginated(int $page, int $itemPerPage): ArticleCollection
     {
-        $articles = $this->findAll();
-        $collection = new ArticleCollection();
+        $alias = self::ALIAS;
+        $query = $this->createQueryBuilder($alias)
+            ->setFirstResult(($page - 1) * $itemPerPage)
+            ->setMaxResults($itemPerPage)
+        ;
 
-        if ($articles === []) {
+        $articles = new Paginator($query, fetchJoinCollection: true);
+        if ($articles->count() === 0) {
             throw new NoArticleRegisteredException();
         }
 
+        $collection = new ArticleCollection($articles->count());
+
+        /** @var Article $article */
         foreach ($articles as $article) {
             $collection->add($article->toDomain());
         }
@@ -273,7 +283,9 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         $packaging = $this->getPackagingFromDomain($packagingDomain, $articleToUpdate);
         $packagingToUpdate = $this->packagingRepository->find($articleToUpdate->packaging()->id());
         if (!$packagingToUpdate instanceof Packaging) {
+            // @codeCoverageIgnoreStart
             throw new PackagingNotFoundException($articleToUpdate->packaging()->id());
+            // @codeCoverageIgnoreEnd
         }
 
         $packagingToUpdate
@@ -293,7 +305,9 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
     {
         [$parcelUnit, $parcelQuantity] = $this->getUnitWithSlug($packagingDomain->parcel());
         if ($parcelUnit === null || $parcelQuantity === null) {
+            // @codeCoverageIgnoreStart
             throw new \InvalidArgumentException('Packaging domain must have a parcel');
+            // @codeCoverageIgnoreEnd
         }
 
         [$subPackageUnit, $subPackageQuantity] = $this->getUnitWithSlug($packagingDomain->subPackage());
@@ -323,7 +337,9 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
 
         $unit = $this->unitRepository->findOneBy(['slug' => $package[0]->slug()]);
         if (!$unit instanceof Unit) {
+            // @codeCoverageIgnoreStart
             throw new UnitNotFoundException($package[0]->slug());
+            // @codeCoverageIgnoreEnd
         }
 
         return [$unit, $package[1]];

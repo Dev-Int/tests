@@ -13,22 +13,27 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\Supplier\GetSuppliers;
 
+use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Admin\UseCases\Supplier\GetSuppliers\GetSuppliersResponse;
 
 final class GetSuppliersWebResponse
 {
     /** @var array<SupplierDto> */
     private array $suppliers = [];
+    private int $totalItems;
 
-    public function __construct(GetSuppliersResponse $suppliers)
+    public function __construct(GetSuppliersResponse $response)
     {
-        foreach ($suppliers->suppliers as $supplier) {
+        foreach ($response->suppliers as $supplier) {
             $this->suppliers[] = new SupplierDto(
                 $supplier->uuid()->toString(),
                 $supplier->name()->toString(),
+                (new FamilyLog())->fromDomain($supplier->familyLog()),
                 $supplier->slug()
             );
         }
+
+        $this->totalItems = $response->suppliers->count();
     }
 
     /**
@@ -37,5 +42,10 @@ final class GetSuppliersWebResponse
     public function suppliers(): array
     {
         return $this->suppliers;
+    }
+
+    public function totalItems(): int
+    {
+        return $this->totalItems;
     }
 }

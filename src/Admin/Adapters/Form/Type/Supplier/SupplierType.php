@@ -32,6 +32,9 @@ final class SupplierType extends AbstractType
                 'label' => 'Nom de l\'entreprise',
                 'required' => true,
                 'empty_data' => '',
+                'attr' => [
+                    'autofocus' => true,
+                ],
             ])
             ->add('address', TextType::class, [
                 'label' => 'Adresse de l\'entreprise',

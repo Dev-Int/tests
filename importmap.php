@@ -20,6 +20,10 @@ return [
         'path' => './assets/familyLog-select.js',
         'entrypoint' => true,
     ],
+    'pagination' => [
+        'path' => './assets/pagination.js',
+        'entrypoint' => true,
+    ],
     '@hotwired/stimulus' => [
         'version' => '3.2.2',
     ],
@@ -35,5 +39,8 @@ return [
     '@picocss/pico/css/pico.min.css' => [
         'version' => '1.5.11',
         'type' => 'css',
+    ],
+    '@symfony/ux-live-component' => [
+        'path' => './vendor/symfony/ux-live-component/assets/dist/live_controller.js',
     ],
 ];

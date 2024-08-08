@@ -43,7 +43,11 @@ final class ChangeContactSupplierController extends AbstractController
                 $supplier->contact(),
                 $supplier->cellphone(),
                 $supplier->slug()
-            )
+            ),
+            [
+                'action' => $this->generateUrl('admin_suppliers_change-contact', ['supplier' => $supplier->uuid()]),
+                'attr' => ['data-turbo-frame' => '_top'],
+            ]
         );
 
         $form->handleRequest($request);

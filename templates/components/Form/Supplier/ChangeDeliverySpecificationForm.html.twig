@@ -1,0 +1,23 @@
+<div class="flex-1">
+
+    <h3>Change delivery specification "{{ supplier.name }}"</h3>
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    <div class="grid">
+        {{ include('partials/components/form/_familyLogs-select.html.twig', {familyLog: form.familyLog}) }}
+        <div>
+            {{ form_row(form.delayDelivery, {'attr': {'class': 'w50'}}) }}
+            {{ form_row(form.orderDays) }}
+        </div>
+    </div>
+
+    <div class="grid">
+        <twig:Form:Button:Cancel href="{{ path('admin_suppliers_index') }}" label="Annuler" />
+        <twig:Form:Button:Submit label="Update" />
+    </div>
+
+    {{ form_end(form) }}
+
+</div>

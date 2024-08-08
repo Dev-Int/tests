@@ -39,7 +39,11 @@ final class ChangeLabelFamilyLogController extends AbstractController
     {
         $form = $this->createForm(
             ChangeLabelFamilyLogType::class,
-            new ChangeLabelFamilyLogApiRequest($familyLog->uuid(), $familyLog->label())
+            new ChangeLabelFamilyLogApiRequest($familyLog->uuid(), $familyLog->label()),
+            [
+                'action' => $this->generateUrl('admin_family_logs_change-label', ['familyLog' => $familyLog->uuid()]),
+                'attr' => ['data-turbo-frame' => '_top'],
+            ]
         );
 
         $form->handleRequest($request);
@@ -61,6 +65,7 @@ final class ChangeLabelFamilyLogController extends AbstractController
 
         return $this->render('@admin/familyLogs/change-label.html.twig', [
             'form' => $form,
+            'familyLog' => $familyLog,
         ]);
     }
 }

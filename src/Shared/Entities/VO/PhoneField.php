@@ -31,7 +31,7 @@ final class PhoneField
             // @codeCoverageIgnoreEnd
         }
 
-        $phoneToCheck = str_replace('-', '', $phoneSanitized);
+        $phoneToCheck = str_replace('-\s', '', $phoneSanitized);
 
         if (preg_match('/^(\+\d{2}|0)([12345679]\d{8})$/', $phoneToCheck) !== 1) {
             throw new InvalidPhoneException($phoneNumber);

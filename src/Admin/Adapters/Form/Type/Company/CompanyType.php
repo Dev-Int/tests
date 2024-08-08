@@ -31,6 +31,7 @@ class CompanyType extends AbstractType
                 'label' => 'Nom de la société',
                 'attr' => [
                     'placeholder' => 'Le nom de votre société',
+                    'autofocus' => true,
                 ],
             ])
             ->add('address', TextType::class, [

@@ -6,20 +6,10 @@
 
 {% block body %}
 
-    <h1><i class="fa-solid fa-plate-wheat"></i> Change storage information to "{{ article.name }}"</h1>
+    <h1><twig:Icon:Entities:Article /> Change storage information to "{{ article.name }}"</h1>
 
-    {{ form_start(form) }}
-    {{ form_errors(form) }}
-
-    {{ include('partials/components/form/_packaging-select.html.twig', {packaging: form.packaging}) }}
-
-    {{ form_row(form.minStock) }}
-
-    <div class="grid">
-        <a href="{{ path('admin_articles_index') }}" class="secondary" role="button">Annuler</a>
-        <button type="submit">Update</button>
-    </div>
-
-    {{ form_end(form) }}
+    <turbo-frame id="article_{{ article.uuid }}">
+        <twig:Form:Article:ChangeStorageInformationForm form="{{ form }}" article="{{ article }}" />
+    </turbo-frame>
 
 {% endblock %}

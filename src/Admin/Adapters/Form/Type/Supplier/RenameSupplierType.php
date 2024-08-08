@@ -28,6 +28,9 @@ final class RenameSupplierType extends AbstractType
             ->add('name', TextType::class, [
                 'label' => 'Nom de l\'entreprise',
                 'required' => true,
+                'attr' => [
+                    'autofocus' => true,
+                ],
             ])
             ->add('slug', HiddenType::class)
         ;

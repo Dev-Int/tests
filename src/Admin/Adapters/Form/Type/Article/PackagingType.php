@@ -28,6 +28,9 @@ final class PackagingType extends AbstractType
             ->add('parcel', StorageType::class, [
                 'label' => 'Colis',
                 'required' => true,
+                'attr' => [
+                    'autofocus' => true,
+                ],
             ])
             ->add('subPackage', StorageType::class, [
                 'label' => 'Sous-colis',
@@ -49,7 +52,9 @@ final class PackagingType extends AbstractType
                 },
                 static function (?Storage $storage): ?Storage {
                     if (!$storage instanceof Storage) {
+                        // @codeCoverageIgnoreStart
                         return null;
+                        // @codeCoverageIgnoreEnd
                     }
 
                     return $storage;
@@ -67,7 +72,9 @@ final class PackagingType extends AbstractType
                 },
                 static function (?Storage $storage): ?Storage {
                     if (!$storage instanceof Storage) {
+                        // @codeCoverageIgnoreStart
                         return null;
+                        // @codeCoverageIgnoreEnd
                     }
 
                     return $storage;
@@ -85,7 +92,9 @@ final class PackagingType extends AbstractType
                 },
                 static function (?Storage $storage): ?Storage {
                     if (!$storage instanceof Storage) {
+                        // @codeCoverageIgnoreStart
                         return null;
+                        // @codeCoverageIgnoreEnd
                     }
 
                     return $storage;

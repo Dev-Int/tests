@@ -14,38 +14,38 @@
                 <ul>
                     <li>
                         <a href="{{ path('admin_company_create') }}" role="button" class="{% if hasCompany %}secondary disable-link {% endif %}w100">
-                            {% if hasCompany %}<i class="fa-solid fa-square-check"></i>
-                            {% else %}<i class="fa-solid fa-building"></i>{% endif%} Create Company
+                            {% if hasCompany %}<twig:Icon:Check />
+                            {% else %}<twig:Icon:Entities:Company />{% endif%} Create Company
                         </a>
                     </li>
                     <li>
                         <a href="{{ path('admin_configure_application') }}" role="button" class="{% if hasApplication %}secondary disable-link {% endif %}w100">
-                            {% if hasApplication %}<i class="fa-solid fa-square-check"></i>
+                            {% if hasApplication %}<twig:Icon:Check />
                             {% else %}<i class="fa-solid fa-cogs"></i>{% endif%} Configure application
                         </a>
                     </li>
                     <li>
                         <a href="{{ path('admin_family_logs_create') }}" role="button" class="{% if hasFamilyLog %}secondary disable-link {% endif %}w100">
-                            {% if hasFamilyLog %}<i class="fa-solid fa-square-check"></i>
-                            {% else %}<i class="fa-solid fa-tags"></i>{% endif %} Create Logistic family
+                            {% if hasFamilyLog %}<twig:Icon:Check />
+                            {% else %}<twig:Icon:Entities:FamilyLog />{% endif %} Create Logistic family
                         </a>
                     </li>
                     <li>
                         <a href="{{ path('admin_zone_storages_create') }}" role="button" class="{% if hasStorage %}secondary disable-link {% endif %}w100">
-                            {% if hasStorage %}<i class="fa-solid fa-square-check"></i>
-                            {% else %}<i class="fa-solid fa-warehouse"></i>{% endif %} Create Storage area
+                            {% if hasStorage %}<twig:Icon:Check />
+                            {% else %}<twig:Icon:Entities:ZoneStorage />{% endif %} Create Storage area
                         </a>
                     </li>
                     <li>
                         <a href="{{ path('admin_suppliers_create') }}" role="button" class="{% if hasSupplier %}secondary disable-link {% endif %}w100">
-                            {% if hasSupplier %}<i class="fa-solid fa-square-check"></i>
-                            {% else %}<i class="fa-solid fa-truck-ramp-box"></i>{% endif %} Create Supplier
+                            {% if hasSupplier %}<twig:Icon:Check />
+                            {% else %}<twig:Icon:Entities:Supplier />{% endif %} Create Supplier
                         </a>
                     </li>
                     <li>
                         <a href="{{ path('admin_article_create') }}" role="button" class="{% if hasArticle %}secondary disable-link {% endif %}w100">
-                            {% if hasArticle %}<i class="fa-solid fa-square-check"></i>
-                            {% else %}<i class="fa-solid fa-plate-wheat"></i>{% endif %} Create Article
+                            {% if hasArticle %}<twig:Icon:Check />
+                            {% else %}<twig:Icon:Entities:Article />{% endif %} Create Article
                         </a>
                     </li>
                 </ul>
@@ -57,7 +57,9 @@
             <p></p>
             <p>Happy configure ;)</p>
 
-            <p class="bottom-element">{{ include('partials/components/_back-home-button.html.twig') }}</p>
+            <p class="bottom-element">
+                <twig:Button:BackTo label="Retour à l'accueil" href="{{ path('home') }}" />
+            </p>
         </article>
     </div>
 

@@ -1,0 +1,18 @@
+<div class="flex-1">
+
+    <h3>Rename Tax "{{ tax.name }}"</h3>
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    {{ form_row(form.name) }}
+    {{ form_row(form.uuid) }}
+
+    <div class="grid">
+        <twig:Form:Button:Cancel href="{{ path('admin_taxes_index') }}" label="Annuler" />
+        <twig:Form:Button:Submit label="Rename" />
+    </div>
+
+    {{ form_end(form) }}
+
+</div>

@@ -28,6 +28,9 @@ class UnitType extends AbstractType
                 'label' => 'Intitulé de l\'unité',
                 'required' => true,
                 'empty_data' => '',
+                'attr' => [
+                    'autofocus' => true,
+                ],
             ])
             ->add('abbreviation', TextType::class, [
                 'label' => 'Abréviation de l\'unité',

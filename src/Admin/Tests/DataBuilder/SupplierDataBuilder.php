@@ -56,6 +56,72 @@ final class SupplierDataBuilder implements DataBuilderInterface
         return $this;
     }
 
+    public function withAddress(string $address): self
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    public function withPostalCode(string $postalCode): self
+    {
+        $this->postalCode = $postalCode;
+
+        return $this;
+    }
+
+    public function withTown(string $town): self
+    {
+        $this->town = $town;
+
+        return $this;
+    }
+
+    public function withPhone(string $phone): self
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    public function withContact(string $contact): self
+    {
+        $this->contact = $contact;
+
+        return $this;
+    }
+
+    public function withCellphone(string $cellphone): self
+    {
+        $this->cellphone = $cellphone;
+
+        return $this;
+    }
+
+    public function withEmail(string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function withDelayDelivery(int $delay): self
+    {
+        $this->delayDelivery = $delay;
+
+        return $this;
+    }
+
+    /**
+     * @param array<int> $days
+     */
+    public function withOrderDays(array $days): self
+    {
+        $this->orderDays = $days;
+
+        return $this;
+    }
+
     public function build(): Supplier
     {
         return Supplier::create(

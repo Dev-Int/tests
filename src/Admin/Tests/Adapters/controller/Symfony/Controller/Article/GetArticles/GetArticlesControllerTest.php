@@ -19,6 +19,7 @@ use Admin\Adapters\Gateway\ORM\Repository\DoctrineSupplierRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineTaxRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineUnitRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineZoneStorageRepository;
+use Admin\Adapters\Gateway\Pagination\Pagination;
 use Admin\Entities\Exception\NoArticleRegisteredException;
 use Admin\Tests\DataBuilder\ArticleDataBuilder;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
@@ -26,6 +27,8 @@ use Admin\Tests\DataBuilder\SupplierDataBuilder;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
+use Faker\Factory;
+use FakerRestaurant\Provider\fr_FR\Restaurant;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,10 +40,12 @@ final class GetArticlesControllerTest extends WebTestCase
 {
     private const GET_ARTICLES_URI = '/admin/articles';
 
-    public function testGetArticlesWillSucceed(): void
+    public function testGetArticlesPaginatedWillSucceed(): void
     {
         // Arrange
         $client = self::createClient();
+        $faker = Factory::create('fr_FR');
+        $faker->addProvider(new Restaurant($faker));
 
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
@@ -79,31 +84,36 @@ final class GetArticlesControllerTest extends WebTestCase
         $supplierRepository->save($supplier);
 
         $articleDataBuilder = new ArticleDataBuilder();
-        $article1 = $articleDataBuilder
-            ->create(
-                'Jambon Trad 6kg',
-                $supplier,
-                $tax,
-                [$zoneStorage],
-                $familyLog,
-                [[$colis, 1.0], null, null]
-            )
-            ->build()
-        ;
-        $article2 = $articleDataBuilder
-            ->create(
-                'Jambon Trad 6kg',
-                $supplier,
-                $tax,
-                [$zoneStorage],
-                $familyLog,
-                [[$colis, 1.0], null, null]
-            )
-            ->withUuid('99282a8d-f344-456c-bbd3-37fe89f3876c')
-            ->build()
-        ;
-        $articleRepository->save($article1);
-        $articleRepository->save($article2);
+        for ($i = 0; $i < 15; $i++) {
+            $article1 = $articleDataBuilder
+                ->create(
+                    $faker->vegetableName(),
+                    $supplier,
+                    $tax,
+                    [$zoneStorage],
+                    $familyLog,
+                    [[$colis, 1.0], null, null]
+                )
+                ->withUuid($faker->uuid())
+                ->build()
+            ;
+            $articleRepository->save($article1);
+        }
+        for ($i = 0; $i < 15; $i++) {
+            $article2 = $articleDataBuilder
+                ->create(
+                    $faker->meatName(),
+                    $supplier,
+                    $tax,
+                    [$zoneStorage],
+                    $familyLog,
+                    [[$colis, 1.0], null, null]
+                )
+                ->withUuid($faker->uuid())
+                ->build()
+            ;
+            $articleRepository->save($article2);
+        }
 
         // Act
         $crawler = $client->request(Request::METHOD_GET, self::GET_ARTICLES_URI);
@@ -112,8 +122,10 @@ final class GetArticlesControllerTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', 'Articles');
 
-        $list = $crawler->filter('body > div.container > div.row > article > ul.w100')->children('li.li-unstyled');
-        self::assertCount(2, $list);
+        $list = $crawler->filter('body > div.container > main > article > turbo-frame > ul.table > turbo-frame')
+            ->children('li.li-unstyled')
+        ;
+        self::assertCount(Pagination::DEFAULT_ITEMS_PER_PAGE, $list);
     }
 
     public function testGetArticlesFailWithNoArticleRegisteredException(): void
@@ -129,7 +141,7 @@ final class GetArticlesControllerTest extends WebTestCase
         self::assertResponseRedirects('/admin/configure');
 
         $admin = $client->followRedirect();
-        $flash = $admin->filter('body > div.container')->children('div.flash.flash-error')->text();
+        $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame(NoArticleRegisteredException::MESSAGE, $flash);
     }

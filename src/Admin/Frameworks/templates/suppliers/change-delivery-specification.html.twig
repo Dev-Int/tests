@@ -10,25 +10,11 @@
 
 {% block body %}
 
-    <h1><i class="fa-solid fa-truck-ramp-box"></i> Change delivery specification "{{ supplier.name }}"</h1>
+    <h1><twig:Icon:Entities:Supplier /> Change delivery specification "{{ supplier.name }}"</h1>
 
-    {{ form_start(form) }}
-    {{ form_errors(form) }}
-
-    <div class="grid">
-        {{ include('partials/components/form/_familyLogs-select.html.twig', {familyLog: form.familyLog}) }}
-        <div>
-            {{ form_row(form.delayDelivery, {'attr': {'class': 'w50'}}) }}
-            {{ form_row(form.orderDays) }}
-        </div>
-    </div>
-
-    <div class="grid">
-        <a href="{{ path('admin_suppliers_index') }}" class="secondary" role="button">Annuler</a>
-        <button type="submit">Update</button>
-    </div>
-
-    {{ form_end(form) }}
+    <turbo-frame id="supplier_{{ supplier.uuid }}">
+        <twig:Form:Supplier:ChangeDeliverySpecificationForm form="{{ form }}" supplier="{{ supplier }}" />
+    </turbo-frame>
 
 {% endblock %}
 

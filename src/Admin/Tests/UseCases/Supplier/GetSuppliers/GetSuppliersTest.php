@@ -18,6 +18,7 @@ use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\SupplierDataBuilder;
 use Admin\UseCases\Gateway\SupplierRepository;
 use Admin\UseCases\Supplier\GetSuppliers\GetSuppliers;
+use Admin\UseCases\Supplier\GetSuppliers\GetSuppliersRequest;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -29,20 +30,25 @@ final class GetSuppliersTest extends TestCase
     {
         // Arrange
         $supplierRepository = $this->createMock(SupplierRepository::class);
+        $useCase = new GetSuppliers($supplierRepository);
+        $request = $this->createMock(GetSuppliersRequest::class);
+
         $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
         $supplierBuilder = new SupplierDataBuilder();
         $supplier1 = $supplierBuilder->create('Supplier1', $familyLog)->build();
         $supplier2 = $supplierBuilder->create('Supplier2', $familyLog)->build();
-        $suppliers = new SupplierCollection();
+
+        $suppliers = new SupplierCollection(totalItems: 2);
         $suppliers->add($supplier1);
         $suppliers->add($supplier2);
 
-        $supplierRepository->expects(self::once())->method('findAllSuppliers')->willReturn($suppliers);
+        $request->expects(self::once())->method('page')->willReturn(1);
+        $request->expects(self::once())->method('itemsPerPage')->willReturn(10);
 
-        $useCase = new GetSuppliers($supplierRepository);
+        $supplierRepository->expects(self::once())->method('findAllSuppliersPaginated')->willReturn($suppliers);
 
         // Act
-        $response = $useCase->execute();
+        $response = $useCase->execute($request);
         $getSuppliers = $response->suppliers;
 
         // Assert

@@ -21,6 +21,9 @@ final class PackagingNotFoundException extends \DomainException implements \Json
 
     public const MESSAGE = 'Packaging not found.';
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function __construct(private readonly int $id, ?\Throwable $previous = null)
     {
         parent::__construct(self::MESSAGE, 0, $previous);

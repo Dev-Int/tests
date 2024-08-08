@@ -30,6 +30,9 @@ final class ChangeDeliverySpecificationSupplierType extends AbstractType
             ->add('familyLog', FamilyLogEntitySelectType::class, [
                 'label' => 'Famille logistique',
                 'required' => true,
+                'attr' => [
+                    'autofocus' => true,
+                ],
             ])
             ->add('delayDelivery', NumberType::class, [
                 'label' => 'Délai de livraison',

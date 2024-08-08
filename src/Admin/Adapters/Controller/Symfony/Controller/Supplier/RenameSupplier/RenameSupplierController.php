@@ -37,7 +37,11 @@ final class RenameSupplierController extends AbstractController
     {
         $form = $this->createForm(
             RenameSupplierType::class,
-            new RenameSupplierApiRequest($supplier->name(), $supplier->slug())
+            new RenameSupplierApiRequest($supplier->name(), $supplier->slug()),
+            [
+                'action' => $this->generateUrl('admin_suppliers_rename', ['supplier' => $supplier->uuid()]),
+                'attr' => ['data-turbo-frame' => '_top'],
+            ]
         );
 
         $form->handleRequest($request);

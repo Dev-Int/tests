@@ -77,7 +77,7 @@ final class ChangeZoneStorageFamilyLogControllerTest extends WebTestCase
         self::assertCount(1, $zoneStorages);
 
         $admin = $client->followRedirect();
-        $flash = $admin->filter('body > div.container')->children('div.flash.flash-success')->text();
+        $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertSame('Zone storage updated', $flash);
 

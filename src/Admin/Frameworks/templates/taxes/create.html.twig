@@ -6,19 +6,10 @@
 
 {% block body %}
 
-    <h1><i class="fas fa-percent"></i> Create Tax</h1>
+    <h1><twig:Icon:Entities:Taxe /> Create Tax</h1>
 
-    {{ form_start(form) }}
-    {{ form_errors(form) }}
-
-    {{ form_row(form.name) }}
-    {{ form_row(form.rate) }}
-
-    <div class="grid">
-        <a href="{{ path('admin_taxes_index') }}" class="secondary" role="button">Annuler</a>
-        <button type="submit">Create</button>
-    </div>
-
-    {{ form_end(form) }}
+    <turbo-frame id="tax_create">
+        <twig:Form:Taxes:CreateForm form="{{ form }}" />
+    </turbo-frame>
 
 {% endblock %}

@@ -15,9 +15,11 @@ namespace Admin\Tests\Adapters\controller\Symfony\Controller\Supplier\GetSupplie
 
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineSupplierRepository;
+use Admin\Adapters\Gateway\Pagination\Pagination;
 use Admin\Entities\Exception\NoSupplierRegisteredException;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\SupplierDataBuilder;
+use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,6 +35,7 @@ final class GetSuppliersControllerTest extends WebTestCase
     {
         // Arrange
         $client = self::createClient();
+        $faker = Factory::create('fr_FR');
 
         /** @var DoctrineSupplierRepository $supplierRepository */
         $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
@@ -41,17 +44,18 @@ final class GetSuppliersControllerTest extends WebTestCase
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
         $supplierBuilder = new SupplierDataBuilder();
         $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')
-            ->withUuid('99282a8d-f344-456c-bbd3-37fe89f3876c')
+            ->withUuid($faker->uuid())
             ->build()
         ;
         $familyLogRepository->save($familyLog);
-        $supplier1 = $supplierBuilder->create('supplier1', $familyLog)->build();
-        $supplier2 = $supplierBuilder->create('supplier2', $familyLog)
-            ->withUuid('99282a8d-f344-456c-bbd3-37fe89f3876c')
-            ->build()
-        ;
-        $supplierRepository->save($supplier1);
-        $supplierRepository->save($supplier2);
+
+        for ($i = 0; $i < 30; $i++) {
+            $supplier = $supplierBuilder->create($faker->company(), $familyLog)
+                ->withUuid($faker->uuid())
+                ->build()
+            ;
+            $supplierRepository->save($supplier);
+        }
 
         // Act
         $crawler = $client->request(Request::METHOD_GET, self::GET_SUPPLIERS_URI);
@@ -60,8 +64,10 @@ final class GetSuppliersControllerTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', 'Suppliers');
 
-        $list = $crawler->filter('body > div.container > div.row > article > ul.w100')->children('li.li-unstyled');
-        self::assertCount(2, $list);
+        $list = $crawler->filter('body > div.container > main > article > turbo-frame > ul.table > turbo-frame')
+            ->children('li.li-unstyled')
+        ;
+        self::assertCount(Pagination::DEFAULT_ITEMS_PER_PAGE, $list);
     }
 
     public function testGetSuppliersFailWithNoSupplierRegisteredException(): void
@@ -77,7 +83,7 @@ final class GetSuppliersControllerTest extends WebTestCase
         self::assertResponseRedirects('/admin/configure');
 
         $admin = $client->followRedirect();
-        $flash = $admin->filter('body > div.container')->children('div.flash.flash-error')->text();
+        $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame(NoSupplierRegisteredException::MESSAGE, $flash);
     }

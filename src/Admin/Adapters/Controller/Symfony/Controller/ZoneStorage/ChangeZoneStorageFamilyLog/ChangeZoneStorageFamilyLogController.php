@@ -50,7 +50,14 @@ final class ChangeZoneStorageFamilyLogController extends AbstractController
 
         $form = $this->createForm(
             ChangeZoneStorageFamilyLogType::class,
-            new ChangeZoneStorageFamilyLogDto($familyLog, $zoneStorage->slug())
+            new ChangeZoneStorageFamilyLogDto($familyLog, $zoneStorage->slug()),
+            [
+                'action' => $this->generateUrl(
+                    'admin_zone_storages_change-family_log',
+                    ['zoneStorage' => $zoneStorage->uuid()]
+                ),
+                'attr' => ['data-turbo-frame' => '_top'],
+            ]
         );
 
         $form->handleRequest($request);

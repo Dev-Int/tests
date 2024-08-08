@@ -1,0 +1,17 @@
+<div class="flex-1">
+
+    <h3>Change label "{{ zoneStorage.label }}"</h3>
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    {{ form_row(form.label) }}
+
+    <div class="grid">
+        <twig:Form:Button:Cancel href="{{ path('admin_zone_storages_index') }}" label="Annuler" />
+        <twig:Form:Button:Submit label="Change label" />
+    </div>
+
+    {{ form_end(form) }}
+
+</div>

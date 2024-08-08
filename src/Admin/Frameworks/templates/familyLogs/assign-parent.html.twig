@@ -9,21 +9,10 @@
 {% endblock %}
 
 {% block body %}
-    <h1><i class="fas fa-tags"></i> Assign parent to "{{ familyLog.label }}"</h1>
+    <h1><twig:Icon:Entities:FamilyLog /> Assign parent to "{{ familyLog.label }}"</h1>
 
-    {{ form_start(form) }}
-    {{ form_errors(form) }}
-
-    {{ include('partials/components/form/_familyLogs-select.html.twig', {familyLog: form.parent}) }}
-    {{ form_row(form.uuid) }}
-
-
-    <div class="grid">
-        <a role="button" href="{{ path('admin_family_logs_index') }}" class="secondary">Annuler</a>
-        <button type="submit">Assign</button>
-    </div>
-
-    {{ form_end(form) }}
-
+    <turbo-frame id="familyLog_{{ familyLog.uuid }}">
+        <twig:Form:FamilyLog:AssignParentForm form="{{ form }}" familyLog="{{ familyLog }}" />
+    </turbo-frame>
 {% endblock %}
 

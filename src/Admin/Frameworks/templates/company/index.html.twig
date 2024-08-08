@@ -6,24 +6,16 @@
 
 {% block body %}
 
-    <h1><i class="fa-solid fa-building"></i> Company</h1>
+    <h1><twig:Icon:Entities:Company /> Company</h1>
 
-    <div class="row">
-        <aside class="col-md-3">
-            <nav class="menu">
-                <ul>
-                    <li>
-                        <a href="{{ path('admin_company_update', { 'company': company.slug }) }}" role="button" class="w100">
-                            <i class="fa-solid fa-pen-to-square"></i> Update Company
-                        </a>
-                    </li>
-                    <li>
-                        {{ include('@admin/partials/components/_back-admin-button.html.twig') }}
-                    </li>
-                </ul>
-            </nav>
-        </aside>
-        <article class="col-md-9">
+    <main>
+        <article >
+            <div>
+                <turbo-frame id="company_update" class="flex-between">
+                    <span></span>
+                    <twig:Button:UpdateEntity href="{{ path('admin_company_update', { 'company': company.slug }) }}" label="Update Company" />
+                </turbo-frame>
+            </div>
             <table>
                 <tbody>
                 <tr>
@@ -48,8 +40,9 @@
                 </tr>
                 </tbody>
             </table>
+            <twig:Button:BackTo href="{{ path('admin_index') }}" label="Retour à l'administration" />
         </article>
-    </div>
+    </main>
 
 {% endblock %}
 

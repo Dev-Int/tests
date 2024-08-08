@@ -21,9 +21,9 @@ final readonly class GetSuppliers
     {
     }
 
-    public function execute(): GetSuppliersResponse
+    public function execute(GetSuppliersRequest $request): GetSuppliersResponse
     {
-        $suppliers = $this->repository->findAllSuppliers();
+        $suppliers = $this->repository->findAllSuppliersPaginated($request->page(), $request->itemsPerPage());
 
         return new GetSuppliersResponse($suppliers);
     }

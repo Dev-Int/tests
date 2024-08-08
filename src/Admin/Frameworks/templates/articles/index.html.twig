@@ -4,36 +4,49 @@
     Articles | {{ parent() }}
 {% endblock %}
 
+{% block importmap %}
+    {{ importmap(['app','pagination']) }}
+{% endblock %}
+
 {% block body %}
 
-    <h1><i class="fa-solid fa-plate-wheat"></i> Articles</h1>
+    <h1><twig:Icon:Entities:Article /> Articles</h1>
 
-    <div class="row">
-        <aside class="col-md-3">
-            <nav class="menu">
-                <ul>
-                    <li><a href="{{ path('admin_article_create') }}" class="w100" role="button">Create Article</a></li>
-                    <li>
-                        {{ include('@admin/partials/components/_back-admin-button.html.twig') }}
+    <main>
+        <article>
+            <div>
+                <turbo-frame id="article_create" class="flex-between">
+                    <span></span>
+                    <twig:Button:CreateEntity href="{{ path('admin_article_create') }}" label="Create Article" />
+                </turbo-frame>
+            </div>
+            <turbo-frame id="article_paginated">
+                <ul class="table">
+                    <li class="li-unstyled flex-between head">
+                        <span>Name</span>
+                        <span>Supplier</span>
+                        <span>Action</span>
                     </li>
+                    {% for article in articles %}
+                        <turbo-frame id="article_{{ article.uuid }}">
+                            <li class="li-unstyled flex-between">
+                                <span>{{ article.name }}</span>
+                                <span>{{ article.supplier.name }}</span>
+                                <span>
+                                    <twig:Button:UpdateEntity href="{{ path('admin_articles_rename', {'article': article.uuid}) }}" class="btn-small" label="Rename"/>
+                                    <twig:Button:UpdateEntity href="{{ path('admin_articles_reassign-supplier', {'article': article.uuid}) }}" class="btn-small" label="Supplier"/>
+                                    <twig:Button:UpdateEntity href="{{ path('admin_articles_change-storage-information', {'article': article.uuid}) }}" class="btn-small" label="Storage information"/>
+                                    <twig:Button:UpdateEntity href="{{ path('admin_articles_change_financial-information', {'article': article.uuid}) }}" class="btn-small" label="Financial information"/>
+                                </span>
+                            </li>
+                        </turbo-frame>
+                    {%  endfor %}
                 </ul>
-            </nav>
-        </aside>
-        <article class="col-md-9">
-            <ul class="w100">
-                {% for article in articles %}
-                <li class="li-unstyled flex-between">
-                    {{ article.name }}
-                    <span>
-                        <a href="{{ path('admin_articles_rename', {'article': article.uuid}) }}" role="button">Rename</a>
-                        <a href="{{ path('admin_articles_reassign-supplier', {'article': article.uuid}) }}" role="button">Re-assign Supplier</a>
-                        <a href="{{ path('admin_articles_change-storage-information', {'article': article.uuid}) }}" role="button">Change storage information</a>
-                        <a href="{{ path('admin_articles_change_financial-information', {'article': article.uuid}) }}" role="button">Change financial information</a>
-                    </span>
-                </li>
-                {%  endfor %}
-            </ul>
+
+                <twig:Pagination page="{{ pagination.page }}" itemsPerPage="{{ pagination.itemsPerPage }}" totalPages="{{ pagination.totalPages }}" />
+            </turbo-frame>
+            <twig:Button:BackTo href="{{ path('admin_index') }}" label="Retour à l'administration" />
         </article>
-    </div>
+    </main>
 
 {% endblock %}

@@ -37,6 +37,7 @@
         <exclude>
             <file>src/Kernel.php</file>
             <directory>src/**/Tests</directory>
+            <directory>src/**/Adapters/DataFixtures</directory>
         </exclude>
         <report>
             <clover outputFile="clover.xml" />

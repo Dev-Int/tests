@@ -10,40 +10,10 @@
 
 {% block body %}
 
-    <h1><i class="fa-solid fa-truck-ramp-box"></i> Create Supplier</h1>
+    <h1><twig:Icon:Entities:Supplier /> Create Supplier</h1>
 
-    {{ form_start(form) }}
-    {{ form_errors(form) }}
-
-    {{ form_row(form.name) }}
-    {{ form_row(form.address) }}
-    <div class="grid">
-        {{ form_row(form.postalCode) }}
-        {{ form_row(form.town) }}
-        {{ form_row(form.country) }}
-    </div>
-    <div class="grid">
-        {{ form_row(form.phone) }}
-        {{ form_row(form.email) }}
-    </div>
-    <div class="grid">
-        {{ form_row(form.contact) }}
-        {{ form_row(form.cellphone) }}
-    </div>
-
-    <div class="grid">
-        {{ include('partials/components/form/_familyLogs-select.html.twig', {familyLog: form.familyLog}) }}
-        <div>
-            {{ form_row(form.delayDelivery, {'attr': {'class': 'w50'}}) }}
-            {{ form_row(form.orderDays) }}
-        </div>
-    </div>
-
-    <div class="grid">
-        <a href="{{ path('admin_suppliers_index') }}" class="secondary" role="button">Annuler</a>
-        <button type="submit">Create</button>
-    </div>
-
-    {{ form_end(form) }}
+    <turbo-frame id="supplier_create">
+        <twig:Form:Supplier:CreateForm form="{{ form }}" />
+    </turbo-frame>
 
 {% endblock %}

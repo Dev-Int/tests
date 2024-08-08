@@ -60,7 +60,7 @@ final class RevaluateTaxControllerTest extends WebTestCase
         self::assertResponseRedirects('/admin/taxes');
 
         $admin = $client->followRedirect();
-        $flash = $admin->filter('body > div.container')->children('div.flash.flash-success')->text();
+        $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertSame('Tax revaluated', $flash);
 
@@ -110,7 +110,7 @@ final class RevaluateTaxControllerTest extends WebTestCase
         self::assertResponseRedirects('/admin/taxes');
 
         $admin = $client->followRedirect();
-        $flash = $admin->filter('body > div.container')->children('div.flash.flash-error')->text();
+        $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame(TaxAlreadyExistsException::MESSAGE, $flash);
 

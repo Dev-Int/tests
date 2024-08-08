@@ -34,5 +34,7 @@ interface SupplierRepository
 
     public function findAllSuppliers(): SupplierCollection;
 
+    public function findAllSuppliersPaginated(int $page, int $itemPerPage): SupplierCollection;
+
     public function findBySlug(string $slug): Supplier;
 }

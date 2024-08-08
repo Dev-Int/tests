@@ -13,9 +13,15 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\Supplier\GetSuppliers;
 
+use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
+
 final readonly class SupplierDto
 {
-    public function __construct(public string $uuid, public string $name, public string $slug)
-    {
+    public function __construct(
+        public string $uuid,
+        public string $name,
+        public FamilyLog $familyLog,
+        public string $slug
+    ) {
     }
 }

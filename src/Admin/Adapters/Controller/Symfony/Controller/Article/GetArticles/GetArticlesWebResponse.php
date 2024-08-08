@@ -14,27 +14,32 @@ declare(strict_types=1);
 namespace Admin\Adapters\Controller\Symfony\Controller\Article\GetArticles;
 
 use Admin\Adapters\Controller\Symfony\Controller\Supplier\GetSuppliers\SupplierDto;
+use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Admin\UseCases\Article\GetArticles\GetArticlesResponse;
 
 final class GetArticlesWebResponse
 {
     /** @var array<ArticleDto> */
     private array $articles = [];
+    private int $totalItems;
 
-    public function __construct(GetArticlesResponse $articles)
+    public function __construct(GetArticlesResponse $response)
     {
-        foreach ($articles->articles as $article) {
+        foreach ($response->articles as $article) {
             $this->articles[] = new ArticleDto(
                 $article->uuid()->toString(),
                 $article->name()->toString(),
                 new SupplierDto(
                     $article->supplier()->uuid()->toString(),
                     $article->supplier()->name()->toString(),
+                    (new FamilyLog())->fromDomain($article->supplier()->familyLog()),
                     $article->supplier()->slug()
                 ),
                 $article->slug()
             );
         }
+
+        $this->totalItems = $response->articles->count();
     }
 
     /**
@@ -43,5 +48,10 @@ final class GetArticlesWebResponse
     public function articles(): array
     {
         return $this->articles;
+    }
+
+    public function totalItems(): int
+    {
+        return $this->totalItems;
     }
 }

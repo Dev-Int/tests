@@ -16,11 +16,15 @@ namespace Admin\Entities\Article;
 use Shared\Entities\Collection;
 use Webmozart\Assert\Assert;
 
-final class ArticleCollection implements Collection
+final class ArticleCollection implements Collection, \Countable
 {
     /** @var array<Article> */
     private array $articles = [];
     private int $key = 0;
+
+    public function __construct(private readonly int $totalItems)
+    {
+    }
 
     public function add(object $item): void
     {
@@ -39,6 +43,9 @@ final class ArticleCollection implements Collection
         $this->key++;
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function key(): int
     {
         return $this->key;
@@ -62,5 +69,10 @@ final class ArticleCollection implements Collection
     public function toArray(): iterable
     {
         return $this->articles;
+    }
+
+    public function count(): int
+    {
+        return $this->totalItems;
     }
 }

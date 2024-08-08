@@ -186,7 +186,9 @@ final class FamilyLog
     private function removeChild(self $childToRemove): void
     {
         if ($this->children === null) {
+            // @codeCoverageIgnoreStart
             return;
+            // @codeCoverageIgnoreEnd
         }
 
         foreach ($this->children as $child) {

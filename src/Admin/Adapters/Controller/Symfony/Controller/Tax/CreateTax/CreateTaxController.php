@@ -41,7 +41,10 @@ final class CreateTaxController extends AbstractController
             return $this->redirectToRoute('admin_configure');
         }
 
-        $form = $this->createForm(TaxType::class);
+        $form = $this->createForm(TaxType::class, new CreateTaxApiRequest(), [
+            'action' => $this->generateUrl('admin_taxes_create'),
+            'attr' => ['data-turbo-frame' => '_top'],
+        ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
