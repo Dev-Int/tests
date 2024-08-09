@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Admin\Entities\Tax;
 
 use Shared\Entities\Collection;
+use Shared\Entities\Exception\InvalidCollectionIterationException;
 use Webmozart\Assert\Assert;
 
 final class TaxCollection implements Collection
@@ -32,7 +33,13 @@ final class TaxCollection implements Collection
 
     public function current(): Tax
     {
-        return $this->taxes[$this->key];
+        if ($this->valid()) {
+            return $this->taxes[$this->key];
+        }
+
+        // @codeCoverageIgnoreStart
+        throw new InvalidCollectionIterationException();
+        // @codeCoverageIgnoreEnd
     }
 
     public function next(): void

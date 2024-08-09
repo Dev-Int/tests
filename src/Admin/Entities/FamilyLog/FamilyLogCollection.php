@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Admin\Entities\FamilyLog;
 
 use Shared\Entities\Collection;
+use Shared\Entities\Exception\InvalidCollectionIterationException;
 use Webmozart\Assert\Assert;
 
 final class FamilyLogCollection implements Collection
@@ -31,7 +32,13 @@ final class FamilyLogCollection implements Collection
 
     public function current(): FamilyLog
     {
-        return $this->familyLogs[$this->key];
+        if ($this->valid()) {
+            return $this->familyLogs[$this->key];
+        }
+
+        // @codeCoverageIgnoreStart
+        throw new InvalidCollectionIterationException();
+        // @codeCoverageIgnoreEnd
     }
 
     public function next(): void

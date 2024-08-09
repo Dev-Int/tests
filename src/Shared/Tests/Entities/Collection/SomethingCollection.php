@@ -11,38 +11,33 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Entities\Article;
+namespace Shared\Tests\Entities\Collection;
 
 use Shared\Entities\Collection;
 use Shared\Entities\Exception\InvalidCollectionIterationException;
 use Webmozart\Assert\Assert;
 
-final class ArticleCollection implements Collection, \Countable
+final class SomethingCollection implements Collection
 {
-    /** @var array<Article> */
-    private array $articles = [];
-    private int $key = 0;
+    /** @var array<Something> */
+    private array $collection = [];
 
-    public function __construct(private readonly int $totalItems)
-    {
-    }
+    private int $key = 0;
 
     public function add(object $item): void
     {
-        Assert::isInstanceOf($item, Article::class);
+        Assert::isInstanceOf($item, Something::class);
 
-        $this->articles[] = $item;
+        $this->collection[] = $item;
     }
 
-    public function current(): Article
+    public function current(): Something
     {
         if ($this->valid()) {
-            return $this->articles[$this->key];
+            return $this->collection[$this->key];
         }
 
-        // @codeCoverageIgnoreStart
         throw new InvalidCollectionIterationException();
-        // @codeCoverageIgnoreEnd
     }
 
     public function next(): void
@@ -50,9 +45,6 @@ final class ArticleCollection implements Collection, \Countable
         $this->key++;
     }
 
-    /**
-     * @codeCoverageIgnore
-     */
     public function key(): int
     {
         return $this->key;
@@ -60,7 +52,7 @@ final class ArticleCollection implements Collection, \Countable
 
     public function valid(): bool
     {
-        return isset($this->articles[$this->key]);
+        return isset($this->collection[$this->key]);
     }
 
     public function rewind(): void
@@ -69,17 +61,10 @@ final class ArticleCollection implements Collection, \Countable
     }
 
     /**
-     * @return iterable<Article>
-     *
-     * @codeCoverageIgnore
+     * @return iterable<Something>
      */
     public function toArray(): iterable
     {
-        return $this->articles;
-    }
-
-    public function count(): int
-    {
-        return $this->totalItems;
+        return $this->collection;
     }
 }
