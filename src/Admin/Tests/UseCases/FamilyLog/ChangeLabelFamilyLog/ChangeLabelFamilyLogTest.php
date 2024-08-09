@@ -18,6 +18,7 @@ use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\UseCases\FamilyLog\ChangeLabelFamilyLog\ChangeLabelFamilyLog;
 use Admin\UseCases\FamilyLog\ChangeLabelFamilyLog\ChangeLabelFamilyLogRequest;
 use Admin\UseCases\Gateway\FamilyLogRepository;
+use Faker\Factory;
 use PHPUnit\Framework\TestCase;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
@@ -34,6 +35,7 @@ final class ChangeLabelFamilyLogTest extends TestCase
         $useCase = new ChangeLabelFamilyLog($repository);
         $familyLog = (new FamilyLogDataBuilder())->create('Viande')->build();
         $request = $this->createMock(ChangeLabelFamilyLogRequest::class);
+
         $request->expects(self::once())->method('uuid')->willReturn(FamilyLogDataBuilder::VALID_UUID);
         $request->expects(self::exactly(2))->method('label')->willReturn('Viandes');
 
@@ -58,8 +60,65 @@ final class ChangeLabelFamilyLogTest extends TestCase
 
         // Assert
         self::assertSame('Viandes', $response->familyLog->label()->toString());
-        self::assertSame('viande', $response->familyLog->slug());
+        self::assertSame('viandes', $response->familyLog->slug());
         self::assertNull($response->familyLog->parent());
+    }
+
+    public function testChangeLabelFamilyLogWithChildren(): void
+    {
+        // Arrange
+        $faker = Factory::create('fr_FR');
+        $familyLogBuilder = new FamilyLogDataBuilder();
+        $repository = $this->createMock(FamilyLogRepository::class);
+        $useCase = new ChangeLabelFamilyLog($repository);
+        $request = $this->createMock(ChangeLabelFamilyLogRequest::class);
+
+        $familyLogParent = $familyLogBuilder->create('Alimentaire')->build();
+        $familyLog = $familyLogBuilder->create('Viande')
+            ->withUuid($faker->uuid())
+            ->withParent($familyLogParent)
+            ->build()
+        ;
+        $familyLogBuilder->create('Boeuf')
+            ->withUuid($faker->uuid())
+            ->withParent($familyLog)
+            ->build()
+        ;
+
+        $request->expects(self::once())->method('uuid')->willReturn(FamilyLogDataBuilder::VALID_UUID);
+        $request->expects(self::exactly(2))->method('label')->willReturn('Alimentaires');
+
+        $repository->expects(self::once())
+            ->method('findByUuid')
+            ->with(ResourceUuid::fromString(FamilyLogDataBuilder::VALID_UUID))
+            ->willReturn($familyLogParent)
+        ;
+        $repository->expects(self::once())
+            ->method('exists')
+            ->with('Alimentaires', $familyLogParent->parent())
+            ->willReturn(false)
+        ;
+        $familyLogParent->changeLabel(NameField::fromString('Alimentaires'));
+        $repository->expects(self::once())
+            ->method('updateLabel')
+            ->with($familyLogParent)
+        ;
+
+        // Act
+        $response = $useCase->execute($request);
+
+        // Assert
+        self::assertSame('Alimentaires', $response->familyLog->label()->toString());
+        self::assertSame('alimentaires', $response->familyLog->slug());
+        self::assertNotNull($response->familyLog->children());
+        $children = $response->familyLog->children();
+        $child = $children[0];
+        self::assertSame('alimentaires-viande', $child->slug());
+        self::assertNull($response->familyLog->parent());
+        self::assertNotNull($child->children());
+        $grandChildren = $child->children();
+        $grandChild = $grandChildren[0];
+        self::assertSame('alimentaires-viande-boeuf', $grandChild->slug());
     }
 
     public function testChangeLabelFamilyLogFailWithAlreadyExistsException(): void

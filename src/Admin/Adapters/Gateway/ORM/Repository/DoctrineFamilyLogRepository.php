@@ -121,7 +121,15 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
             // @codeCoverageIgnoreEnd
         }
 
-        $familyLogToUpdate->setLabel($familyLog->label()->toString());
+        $familyLogToUpdate
+            ->setLabel($familyLog->label()->toString())
+            ->setSlug($familyLog->slug())
+        ;
+        if ($familyLogToUpdate->children()->count() > 0) {
+            foreach ($familyLogToUpdate->children() as $familyLogChild) {
+                $familyLogChild->updateSlug($familyLog->slug());
+            }
+        }
 
         $this->_em->flush();
     }

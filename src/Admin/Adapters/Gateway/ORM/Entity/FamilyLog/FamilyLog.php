@@ -160,6 +160,18 @@ class FamilyLog
         return ($familyLog->parent instanceof self) && $familyLog->isDescendantOf($this);
     }
 
+    public function updateSlug(string $parentSlug): void
+    {
+        $slugExploded = explode('-', $this->slug);
+        $this->slug = $parentSlug . '-' . end($slugExploded);
+
+        if ($this->children()->count() > 0) {
+            foreach ($this->children() as $child) {
+                $child->updateSlug($this->slug());
+            }
+        }
+    }
+
     private function isEqual(self $familyLog): bool
     {
         return $this->slug === $familyLog->slug;
