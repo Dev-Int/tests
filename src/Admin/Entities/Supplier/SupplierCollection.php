@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Admin\Entities\Supplier;
 
 use Shared\Entities\Collection;
+use Shared\Entities\Exception\InvalidCollectionIterationException;
 use Webmozart\Assert\Assert;
 
 final class SupplierCollection implements Collection, \Countable
@@ -36,7 +37,13 @@ final class SupplierCollection implements Collection, \Countable
 
     public function current(): Supplier
     {
-        return $this->suppliers[$this->key];
+        if ($this->valid()) {
+            return $this->suppliers[$this->key];
+        }
+
+        // @codeCoverageIgnoreStart
+        throw new InvalidCollectionIterationException();
+        // @codeCoverageIgnoreEnd
     }
 
     public function next(): void

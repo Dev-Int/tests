@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Admin\Entities\ZoneStorage;
 
 use Shared\Entities\Collection;
+use Shared\Entities\Exception\InvalidCollectionIterationException;
 use Webmozart\Assert\Assert;
 
 final class ZoneStorageCollection implements Collection
@@ -31,7 +32,13 @@ final class ZoneStorageCollection implements Collection
 
     public function current(): ZoneStorage
     {
-        return $this->zoneStorages[$this->key];
+        if ($this->valid()) {
+            return $this->zoneStorages[$this->key];
+        }
+
+        // @codeCoverageIgnoreStart
+        throw new InvalidCollectionIterationException();
+        // @codeCoverageIgnoreEnd
     }
 
     public function next(): void

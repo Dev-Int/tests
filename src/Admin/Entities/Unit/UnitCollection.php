@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Admin\Entities\Unit;
 
 use Shared\Entities\Collection;
+use Shared\Entities\Exception\InvalidCollectionIterationException;
 use Webmozart\Assert\Assert;
 
 final class UnitCollection implements Collection
@@ -31,7 +32,13 @@ final class UnitCollection implements Collection
 
     public function current(): Unit
     {
-        return $this->units[$this->key];
+        if ($this->valid()) {
+            return $this->units[$this->key];
+        }
+
+        // @codeCoverageIgnoreStart
+        throw new InvalidCollectionIterationException();
+        // @codeCoverageIgnoreEnd
     }
 
     public function next(): void
