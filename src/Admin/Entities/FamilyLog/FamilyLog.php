@@ -73,6 +73,13 @@ final class FamilyLog
     public function changeLabel(NameField $label): void
     {
         $this->label = $label;
+        $this->slug = $this->parent instanceof self ? $this->parent->slug . '-' . $label->slugify() : $label->slugify();
+
+        if ($this->children !== null) {
+            foreach ($this->children as $child) {
+                $child->changeSlugFromParent($this->slug);
+            }
+        }
     }
 
     public function parent(): ?self
@@ -197,6 +204,17 @@ final class FamilyLog
                 if ($key !== false) {
                     unset($this->children[$key]);
                 }
+            }
+        }
+    }
+
+    private function changeSlugFromParent(string $parentSlug): void
+    {
+        $this->slug = $parentSlug . '-' . $this->label->slugify();
+
+        if ($this->children !== null) {
+            foreach ($this->children as $child) {
+                $child->changeSlugFromParent($this->slug);
             }
         }
     }
