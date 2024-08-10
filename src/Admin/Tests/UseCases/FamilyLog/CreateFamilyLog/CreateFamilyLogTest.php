@@ -81,9 +81,9 @@ final class CreateFamilyLogTest extends TestCase
 
         // Assert
         self::assertSame('Viande', $familyLog->label()->toString());
-        self::assertSame('surgele-viande', $familyLog->slug());
+        self::assertSame('surgele_viande', $familyLog->slug());
         self::assertInstanceOf(FamilyLog::class, $familyLog->parent());
-        self::assertSame('surgele-viande', $familyLog->path());
+        self::assertSame('surgele_viande', $familyLog->path());
     }
 
     public function testCreateFamilyLogWithParentHasParentSucceed(): void
@@ -120,9 +120,9 @@ final class CreateFamilyLogTest extends TestCase
 
         // Assert
         self::assertSame('Boeuf', $familyLog->label()->toString());
-        self::assertSame('surgele-viande-boeuf', $familyLog->slug());
+        self::assertSame('surgele_viande_boeuf', $familyLog->slug());
         self::assertInstanceOf(FamilyLog::class, $familyLog->parent());
-        self::assertSame('surgele-viande-boeuf', $familyLog->path());
+        self::assertSame('surgele_viande_boeuf', $familyLog->path());
     }
 
     public function testCreateFamilyLogFailWithAlreadyExistName(): void

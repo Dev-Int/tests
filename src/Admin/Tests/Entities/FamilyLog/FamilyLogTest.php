@@ -39,7 +39,7 @@ final class FamilyLogTest extends TestCase
         );
 
         // Assert
-        self::assertSame('alimentaire-surgele-viande', $familyLog->path());
+        self::assertSame('alimentaire_surgele_viande', $familyLog->path());
         self::assertSame('Viande', $familyLog->label()->toString());
         self::assertNotEmpty($parent->children());
         $child = $parent->children()[0];

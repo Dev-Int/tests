@@ -72,7 +72,7 @@ final class AssignParentFamilyLogControllerTest extends WebTestCase
         $familyLogAssigned = $familyLogRepository->find(FamilyLogDataBuilder::VALID_UUID);
         self::assertSame('Viande', $familyLogAssigned->label());
         self::assertNotNull($familyLogAssigned->parent());
-        self::assertSame('surgele-viande', $familyLogAssigned->slug());
+        self::assertSame('surgele_viande', $familyLogAssigned->slug());
     }
 
     public function testAssignParentFailWithAlreadyExistsException(): void

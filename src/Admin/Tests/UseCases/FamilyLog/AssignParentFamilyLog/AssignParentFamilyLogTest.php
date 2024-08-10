@@ -69,8 +69,8 @@ final class AssignParentFamilyLogTest extends TestCase
         self::assertSame($parent, $response->familyLog->parent());
         self::assertSame('Viande', $response->familyLog->label()->toString());
         // @todo à faire évoluer après l'implémentation des articles
-        self::assertSame('surgele-viande', $response->familyLog->slug());
-        self::assertSame('surgele-viande', $response->familyLog->path());
+        self::assertSame('surgele_viande', $response->familyLog->slug());
+        self::assertSame('surgele_viande', $response->familyLog->path());
     }
 
     public function testAssignParentFamilyLogSucceedWithParentWithoutChildren(): void
@@ -115,8 +115,8 @@ final class AssignParentFamilyLogTest extends TestCase
         self::assertSame('Viande', $response->familyLog->label()->toString());
         self::assertEmpty($parent->children());
         // @todo à faire évoluer après l'implémentation des articles
-        self::assertSame('frais-viande', $response->familyLog->slug());
-        self::assertSame('frais-viande', $response->familyLog->path());
+        self::assertSame('frais_viande', $response->familyLog->slug());
+        self::assertSame('frais_viande', $response->familyLog->path());
         self::assertSame(2, $response->familyLog->level());
     }
 
@@ -165,8 +165,8 @@ final class AssignParentFamilyLogTest extends TestCase
         self::assertSame($parent, $response->familyLog->parent());
         self::assertSame('Viande', $response->familyLog->label()->toString());
         // @todo à faire évoluer après l'implémentation des articles
-        self::assertSame('surgele-viande', $response->familyLog->slug());
-        self::assertSame('surgele-viande', $response->familyLog->path());
+        self::assertSame('surgele_viande', $response->familyLog->slug());
+        self::assertSame('surgele_viande', $response->familyLog->path());
         self::assertSame(2, $response->familyLog->level());
 
         $children = $response->familyLog->children();
@@ -174,8 +174,8 @@ final class AssignParentFamilyLogTest extends TestCase
         $childrenChild = $children[0];
 
         self::assertSame($familyLog, $childrenChild->parent());
-        self::assertSame('surgele-viande-poulet', $childrenChild->slug());
-        self::assertSame('surgele-viande-poulet', $childrenChild->path());
+        self::assertSame('surgele_viande_poulet', $childrenChild->slug());
+        self::assertSame('surgele_viande_poulet', $childrenChild->path());
         self::assertSame(3, $childrenChild->level());
     }
 
@@ -228,8 +228,8 @@ final class AssignParentFamilyLogTest extends TestCase
         self::assertSame($otherParent, $response->familyLog->parent());
         self::assertSame('Viande', $response->familyLog->label()->toString());
         // @todo à faire évoluer après l'implémentation des articles
-        self::assertSame('frais-viande', $response->familyLog->slug());
-        self::assertSame('frais-viande', $response->familyLog->path());
+        self::assertSame('frais_viande', $response->familyLog->slug());
+        self::assertSame('frais_viande', $response->familyLog->path());
         self::assertSame(2, $response->familyLog->level());
         self::assertEmpty($parent->children());
 
@@ -238,8 +238,8 @@ final class AssignParentFamilyLogTest extends TestCase
         $childrenChild = $children[0];
 
         self::assertSame($familyLog, $childrenChild->parent());
-        self::assertSame('frais-viande-poulet', $childrenChild->slug());
-        self::assertSame('frais-viande-poulet', $childrenChild->path());
+        self::assertSame('frais_viande_poulet', $childrenChild->slug());
+        self::assertSame('frais_viande_poulet', $childrenChild->path());
         self::assertSame(3, $childrenChild->level());
     }
 

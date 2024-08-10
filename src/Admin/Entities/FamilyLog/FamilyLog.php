@@ -19,6 +19,8 @@ use Shared\Entities\VO\NameField;
 
 final class FamilyLog
 {
+    public const SLUG_SEPARATOR = '_';
+
     /**
      * @var array<FamilyLog>|null
      */
@@ -51,8 +53,8 @@ final class FamilyLog
         ?string $path = null,
         ?int $level = 1
     ) {
-        $this->path = $path ?? $label->slugify();
-        $this->slug = $slug ?? $label->slugify();
+        $this->path = $path ?? $label->slugify(self::SLUG_SEPARATOR);
+        $this->slug = $slug ?? $label->slugify(self::SLUG_SEPARATOR);
         $this->level = $level ?? 1;
 
         if ($parent instanceof self) {
@@ -73,7 +75,9 @@ final class FamilyLog
     public function changeLabel(NameField $label): void
     {
         $this->label = $label;
-        $this->slug = $this->parent instanceof self ? $this->parent->slug . '-' . $label->slugify() : $label->slugify();
+        $this->slug = $this->parent instanceof self ?
+            $this->parent->slug . self::SLUG_SEPARATOR . $label->slugify(self::SLUG_SEPARATOR) :
+            $label->slugify(self::SLUG_SEPARATOR);
 
         if ($this->children !== null) {
             foreach ($this->children as $child) {
@@ -112,7 +116,7 @@ final class FamilyLog
 
     public function assignParent(self $parent): void
     {
-        $slug = $parent->slug() . '-' . $this->label->slugify();
+        $slug = $parent->slug() . self::SLUG_SEPARATOR . $this->label->slugify(self::SLUG_SEPARATOR);
         $this->path = $slug;
         $this->slug = $slug;
         $this->level = $parent->level + 1;
@@ -210,7 +214,7 @@ final class FamilyLog
 
     private function changeSlugFromParent(string $parentSlug): void
     {
-        $this->slug = $parentSlug . '-' . $this->label->slugify();
+        $this->slug = $parentSlug . self::SLUG_SEPARATOR . $this->label->slugify(self::SLUG_SEPARATOR);
 
         if ($this->children !== null) {
             foreach ($this->children as $child) {
