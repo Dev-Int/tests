@@ -24,6 +24,7 @@ RUN apk add --no-cache \
 		git \
 		make \
 		sudo \
+		curl \
 		bash \
 	;
 
@@ -76,6 +77,21 @@ RUN set -eux; \
 	;
 
 COPY --link frankenphp/conf.d/app.dev.ini $PHP_INI_DIR/conf.d/
+
+# user sed instead of usermod to avoid fs leaks on mac os
+RUN sed -i -E "s/www-data(:.*:).*:.*(:.*:).*(:.*)/www-data\1${HOST_USERID}:${HOST_GROUPID}\2\/home\/www\3/" /etc/passwd
+
+RUN apk add --no-cache zsh fzf
+RUN mkdir "/home/www" && chown -R www-data:www-data "/home/www"
+
+USER www-data
+RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+RUN git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+RUN git clone https://github.com/joshskidmore/zsh-fzf-history-search ${ZSH_CUSTOM:=~/.oh-my-zsh/custom}/plugins/zsh-fzf-history-search
+RUN git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+COPY frankenphp/.zshrc /home/www
+COPY frankenphp/.p10k.zsh /home/www
+USER root
 
 CMD [ "frankenphp", "run", "--config", "/etc/caddy/Caddyfile", "--watch" ]
 

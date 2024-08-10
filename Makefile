@@ -149,6 +149,8 @@ dist_file: .php-cs-fixer.php.dist phpcs.xml.dist phpunit.xml.dist # copy the .di
 	cp ./phpunit.xml.dist ./phpunit.xml
 build: compose.yaml ## build docker images
 	@$(DOCKER_COMP) build --pull --no-cache
+tls: ## copy .crt files from container
+	sudo docker cp $(docker compose ps -q php):/data/caddy/pki/authorities/local/root.crt /usr/local/share/ca-certificates/root.crt && sudo update-ca-certificates
 up: ## Start the containers
 	@$(DOCKER_COMP) up --detach
 down: ## Stop the docker hub
@@ -157,7 +159,12 @@ logs: ## Show live logs
 	@$(DOCKER_COMP) logs --tail=0 --follow
 sh: ## Connect to the PHP FPM container
 	@$(PHP_CONT) bash
-.PHONY: dist_file sh
+zsh: ## Execute commands in php container with zsh
+	@$(DOCKER_COMP) exec -u www-data php zsh
+perm: ## Change permissions' files to user
+	docker compose run --rm php chown -R $(id -u):$(id -g) .
+
+.PHONY: dist_file tls sh zsh
 
 
 ## —— Stats ————————————————————————————————————————————————————————————————————
