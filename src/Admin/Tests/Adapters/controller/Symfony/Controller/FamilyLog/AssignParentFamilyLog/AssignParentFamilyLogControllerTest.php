@@ -16,6 +16,7 @@ namespace Admin\Tests\Adapters\controller\Symfony\Controller\FamilyLog\AssignPar
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
+use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,6 +31,7 @@ final class AssignParentFamilyLogControllerTest extends WebTestCase
     public function testAssignParentWithoutParentWithoutChildrenWillSucceed(): void
     {
         // Arrange
+        $faker = Factory::create('fr_FR');
         $client = self::createClient();
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
@@ -38,7 +40,7 @@ final class AssignParentFamilyLogControllerTest extends WebTestCase
 
         $familyLog = $familyLogBuilder->create('Viande')->build();
         $parent = $familyLogBuilder->create('Surgelé')
-            ->withUuid('99282a8d-f344-456c-bbd3-37fe89f3876c')
+            ->withUuid($faker->uuid())
             ->build()
         ;
         $familyLogRepository->save($familyLog);
@@ -75,9 +77,71 @@ final class AssignParentFamilyLogControllerTest extends WebTestCase
         self::assertSame('surgele_viande', $familyLogAssigned->slug());
     }
 
+    public function testAssignParentWithoutParentWithChildrenWillSucceed(): void
+    {
+        // Arrange
+        $faker = Factory::create('fr_FR');
+        $client = self::createClient();
+
+        /** @var DoctrineFamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        $familyLogBuilder = new FamilyLogDataBuilder();
+
+        $parent = $familyLogBuilder->create('Surgelé')
+            ->withUuid($faker->uuid())
+            ->build()
+        ;
+        $familyLog = $familyLogBuilder->create('Viande')->build();
+        $child = $familyLogBuilder->create('Poulet')
+            ->withUuid($faker->uuid())
+            ->withParent($familyLog)
+            ->build()
+        ;
+
+        $familyLogRepository->save($familyLog);
+        $familyLogRepository->save($parent);
+        $familyLogRepository->save($child);
+
+        // Act
+        $crawler = $client->request(
+            Request::METHOD_GET,
+            sprintf(self::ASSIGN_PARENT_FAMILY_LOG_URI, $familyLog->uuid()->toString())
+        );
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('h1', 'Assign parent to "Viande"');
+
+        $form = $crawler->selectButton('Assign')->form([
+            'assignParentFamilyLog[parent]' => $parent->uuid()->toString(),
+            'assignParentFamilyLog[uuid]' => $familyLog->uuid()->toString(),
+        ]);
+        $client->submit($form);
+
+        // Assert
+        self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
+        self::assertResponseRedirects('/admin/family_logs');
+
+        $admin = $client->followRedirect();
+        $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
+
+        self::assertSame('FamilyLog parent assigned.', $flash);
+
+        /** @var FamilyLog $familyLogAssigned */
+        $familyLogAssigned = $familyLogRepository->find(FamilyLogDataBuilder::VALID_UUID);
+        self::assertSame('Viande', $familyLogAssigned->label());
+        self::assertNotNull($familyLogAssigned->parent());
+        self::assertSame('surgele_viande', $familyLogAssigned->slug());
+        self::assertCount(1, $familyLogAssigned->children());
+        $familyLogChild = $familyLogAssigned->children()->current();
+        self::assertInstanceOf(FamilyLog::class, $familyLogChild);
+        self::assertSame('surgele_viande_poulet', $familyLogChild->slug());
+        self::assertSame('surgele_viande_poulet', $familyLogChild->path());
+    }
+
     public function testAssignParentFailWithAlreadyExistsException(): void
     {
         // Arrange
+        $faker = Factory::create('fr_FR');
         $client = self::createClient();
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
@@ -87,12 +151,12 @@ final class AssignParentFamilyLogControllerTest extends WebTestCase
         $familyLog = $familyLogBuilder->create('Viande')->build();
         $familyLogRepository->save($familyLog);
         $parent = $familyLogBuilder->create('Surgelé')
-            ->withUuid('99282a8d-f344-456c-bbd3-37fe89f3876c')
+            ->withUuid($faker->uuid())
             ->build()
         ;
         $familyLogRepository->save($parent);
         $otherFamilyLog = $familyLogBuilder->create('Viande')
-            ->withUuid('a07b8ad8-128c-4c0d-875f-a4bee7654169')
+            ->withUuid($faker->uuid())
             ->withParent($parent)
             ->build()
         ;

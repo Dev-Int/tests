@@ -164,6 +164,7 @@ class FamilyLog
     {
         $slugExploded = explode(FamilyLogDomain::SLUG_SEPARATOR, $this->slug);
         $this->slug = $parentSlug . FamilyLogDomain::SLUG_SEPARATOR . end($slugExploded);
+        $this->path = $this->slug;
 
         if ($this->children()->count() > 0) {
             foreach ($this->children() as $child) {

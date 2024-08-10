@@ -19,6 +19,7 @@ use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\UseCases\FamilyLog\ChangeParentFamilyLog\AssignParentFamilyLog;
 use Admin\UseCases\FamilyLog\ChangeParentFamilyLog\AssignParentFamilyLogRequest;
 use Admin\UseCases\Gateway\FamilyLogRepository;
+use Faker\Factory;
 use PHPUnit\Framework\TestCase;
 use Shared\Entities\ResourceUuid;
 
@@ -32,11 +33,12 @@ final class AssignParentFamilyLogTest extends TestCase
     public function testAssignParentFamilyLogSucceedWithoutParentWithoutChildren(): void
     {
         // Arrange
+        $faker = Factory::create('fr_FR');
         $repository = $this->createMock(FamilyLogRepository::class);
         $useCase = new AssignParentFamilyLog($repository);
         $familyLogBuilder = new FamilyLogDataBuilder();
         $parent = $familyLogBuilder->create('Surgelé')
-            ->withUuid('99282a8d-f344-456c-bbd3-37fe89f3876c')
+            ->withUuid($faker->uuid())
             ->build()
         ;
         $familyLog = $familyLogBuilder->create('Viande')->build();
@@ -76,11 +78,12 @@ final class AssignParentFamilyLogTest extends TestCase
     public function testAssignParentFamilyLogSucceedWithParentWithoutChildren(): void
     {
         // Arrange
+        $faker = Factory::create('fr_FR');
         $repository = $this->createMock(FamilyLogRepository::class);
         $useCase = new AssignParentFamilyLog($repository);
         $familyLogBuilder = new FamilyLogDataBuilder();
         $parent = $familyLogBuilder->create('Surgelé')
-            ->withUuid('99282a8d-f344-456c-bbd3-37fe89f3876c')
+            ->withUuid($faker->uuid())
             ->build()
         ;
         $otherParent = $familyLogBuilder->create('Frais')->build();
@@ -123,16 +126,17 @@ final class AssignParentFamilyLogTest extends TestCase
     public function testAssignParentFamilyLogSucceedWithoutParentWithChildren(): void
     {
         // Arrange
+        $faker = Factory::create('fr_FR');
         $repository = $this->createMock(FamilyLogRepository::class);
         $useCase = new AssignParentFamilyLog($repository);
         $familyLogBuilder = new FamilyLogDataBuilder();
         $parent = $familyLogBuilder->create('Surgelé')
-            ->withUuid('99282a8d-f344-456c-bbd3-37fe89f3876c')
+            ->withUuid($faker->uuid())
             ->build()
         ;
         $familyLog = $familyLogBuilder->create('Viande')->build();
         $familyLogBuilder->create('Poulet')
-            ->withUuid('7e2a8ea8-71e6-449d-90eb-8a18d7ab8ced')
+            ->withUuid($faker->uuid())
             ->withParent($familyLog)
             ->build()
         ;
@@ -182,21 +186,22 @@ final class AssignParentFamilyLogTest extends TestCase
     public function testAssignParentFamilyLogSucceedWithParentWithChildren(): void
     {
         // Arrange
+        $faker = Factory::create('fr_FR');
         $repository = $this->createMock(FamilyLogRepository::class);
         $useCase = new AssignParentFamilyLog($repository);
         $familyLogBuilder = new FamilyLogDataBuilder();
         $parent = $familyLogBuilder->create('Surgelé')
-            ->withUuid('99282a8d-f344-456c-bbd3-37fe89f3876c')
+            ->withUuid($faker->uuid())
             ->build()
         ;
         $otherParent = $familyLogBuilder->create('Frais')
-            ->withUuid('fdfedfaa-9b1e-48e2-a689-1944a03a5927')
+            ->withUuid($faker->uuid())
             ->build()
         ;
         $familyLog = $familyLogBuilder->create('Viande')->withParent($parent)->build();
         $familyLogBuilder->create('Poulet')
             ->withParent($familyLog)
-            ->withUuid('7e2a8ea8-71e6-449d-90eb-8a18d7ab8ced')
+            ->withUuid($faker->uuid())
             ->build()
         ;
 
@@ -246,11 +251,12 @@ final class AssignParentFamilyLogTest extends TestCase
     public function testAssignParentFamilyLogFailWithFamilyLogAlreadyExists(): void
     {
         // Arrange
+        $faker = Factory::create('fr_FR');
         $repository = $this->createMock(FamilyLogRepository::class);
         $useCase = new AssignParentFamilyLog($repository);
         $familyLogBuilder = new FamilyLogDataBuilder();
         $parent = $familyLogBuilder->create('Surgelé')
-            ->withUuid('99282a8d-f344-456c-bbd3-37fe89f3876c')
+            ->withUuid($faker->uuid())
             ->build()
         ;
 
@@ -286,11 +292,12 @@ final class AssignParentFamilyLogTest extends TestCase
     public function testAssignParentFamilyLogFailWithNotFoundException(): void
     {
         // Arrange
+        $faker = Factory::create('fr_FR');
         $repository = $this->createMock(FamilyLogRepository::class);
         $useCase = new AssignParentFamilyLog($repository);
         $familyLogBuilder = new FamilyLogDataBuilder();
         $parent = $familyLogBuilder->create('Surgelé')
-            ->withUuid('99282a8d-f344-456c-bbd3-37fe89f3876c')
+            ->withUuid($faker->uuid())
             ->build()
         ;
 
