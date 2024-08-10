@@ -66,7 +66,7 @@ final class FamilyLogFixtures extends Fixture
             ['name' => 'frais-viande', 'label' => 'Viande', 'parent' => 'frais'],
             ['name' => 'frais-fruits-legumes', 'label' => 'Fruits & Légumes', 'parent' => 'frais'],
             ['name' => 'epicerie', 'label' => 'Épicerie', 'parent' => 'alimentaire'],
-            ['name' => 'non-alimentaire', 'label' => 'Non alimentaire', 'parent' => null],
+            ['name' => 'non-alimentaire', 'label' => 'Non-alimentaire', 'parent' => null],
             ['name' => 'emballage', 'label' => 'Emballage', 'parent' => 'non-alimentaire'],
             ['name' => 'hygiene', 'label' => 'Hygiène', 'parent' => 'non-alimentaire'],
         ];

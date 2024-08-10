@@ -80,7 +80,7 @@ final class ChangeLabelFamilyLogControllerTest extends WebTestCase
         $familyLogs = $familyLogRepository->findAll();
         self::assertCount(2, $familyLogs);
         self::assertSame('Viandes', $familyLogUpdated->label());
-        self::assertSame('surgele-viandes', $familyLogUpdated->slug());
+        self::assertSame('surgele_viandes', $familyLogUpdated->slug());
         self::assertSame('Surgelé', $familyLogUpdated->parent()?->label());
     }
 
@@ -150,14 +150,14 @@ final class ChangeLabelFamilyLogControllerTest extends WebTestCase
         /** @var FamilyLog $familyLogChild */
         $familyLogChild = $familyLogUpdated->children()->first();
 
-        self::assertSame('surgeles-viande', $familyLogChild->slug());
+        self::assertSame('surgeles_viande', $familyLogChild->slug());
 
         self::assertCount(1, $familyLogChild->children());
 
         /** @var FamilyLog $grandChild */
         $grandChild = $familyLogChild->children()->first();
 
-        self::assertSame('surgeles-viande-pate', $grandChild->slug());
+        self::assertSame('surgeles_viande_pate', $grandChild->slug());
     }
 
     public function testChangeLabelFamilyLogFailWithAlreadyExistsException(): void

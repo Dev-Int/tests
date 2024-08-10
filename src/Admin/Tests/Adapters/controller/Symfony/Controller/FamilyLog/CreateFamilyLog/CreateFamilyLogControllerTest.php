@@ -135,9 +135,9 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         self::assertSame('FamilyLog created', $flash);
 
         /** @var FamilyLogDomain $familyCreated */
-        $familyCreated = $familyLogRepository->findBySlug('surgele-viande');
+        $familyCreated = $familyLogRepository->findBySlug('surgele_viande');
         self::assertSame('Viande', $familyCreated->label()->toString());
-        self::assertSame('surgele-viande', $familyCreated->slug());
+        self::assertSame('surgele_viande', $familyCreated->slug());
         self::assertSame('Surgelé', $familyCreated->parent()?->label()->toString());
     }
 
@@ -174,7 +174,7 @@ final class CreateFamilyLogControllerTest extends WebTestCase
             ->build()
         ;
         $familyLogRepository->save($familyLogParent);
-        $familyLogParentOrm = $familyLogRepository->findBySlug('surgele-viande');
+        $familyLogParentOrm = $familyLogRepository->findBySlug('surgele_viande');
 
         // Act
         $crawler = $client->request(Request::METHOD_GET, self::CREATE_FAMILY_LOG_URI);
@@ -198,9 +198,9 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         self::assertSame('FamilyLog created', $flash);
 
         /** @var FamilyLogDomain $familyCreated */
-        $familyCreated = $familyLogRepository->findBySlug('surgele-viande-poulet');
+        $familyCreated = $familyLogRepository->findBySlug('surgele_viande_poulet');
         self::assertSame('Poulet', $familyCreated->label()->toString());
-        self::assertSame('surgele-viande-poulet', $familyCreated->slug());
+        self::assertSame('surgele_viande_poulet', $familyCreated->slug());
         self::assertSame('Viande', $familyCreated->parent()?->label()->toString());
     }
 

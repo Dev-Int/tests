@@ -113,12 +113,12 @@ final class ChangeLabelFamilyLogTest extends TestCase
         self::assertNotNull($response->familyLog->children());
         $children = $response->familyLog->children();
         $child = $children[0];
-        self::assertSame('alimentaires-viande', $child->slug());
+        self::assertSame('alimentaires_viande', $child->slug());
         self::assertNull($response->familyLog->parent());
         self::assertNotNull($child->children());
         $grandChildren = $child->children();
         $grandChild = $grandChildren[0];
-        self::assertSame('alimentaires-viande-boeuf', $grandChild->slug());
+        self::assertSame('alimentaires_viande_boeuf', $grandChild->slug());
     }
 
     public function testChangeLabelFamilyLogFailWithAlreadyExistsException(): void

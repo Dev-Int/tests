@@ -14,7 +14,7 @@
             {% set uuid = familyLog.vars.value %}
         {% endif %}
         {% for levelLabel, value in field_choices(familyLog) %}
-            {% set levelLabel = levelLabel | split('-') %}
+            {% set levelLabel = levelLabel | split('_') %}
             {% set level, children, label = levelLabel[0], levelLabel[1], levelLabel[2] %}
             {% if previousLevel > level %}
                 {% for iter in range(1, (previousLevel - level)) %}

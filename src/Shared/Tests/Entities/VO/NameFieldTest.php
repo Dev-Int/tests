@@ -40,4 +40,14 @@ final class NameFieldTest extends TestCase
         self::assertSame('test-slugify', $name->slugify());
         self::assertSame('Test slugify', $name->toString());
     }
+
+    public function testSlugifyWithOption(): void
+    {
+        // Arrange && Act
+        $name = NameField::fromString('Test slugify');
+
+        // Assert
+        self::assertSame('test_slugify', $name->slugify('_'));
+        self::assertSame('Test slugify', $name->toString());
+    }
 }

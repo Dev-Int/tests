@@ -141,7 +141,7 @@ class FamilyLog
 
     public function getLevelChildrenLabel(): string
     {
-        return sprintf('%d-%d-%s', $this->level, (int) $this->hasChildren(), $this->label);
+        return sprintf('%d_%d_%s', $this->level, (int) $this->hasChildren(), $this->label);
     }
 
     public function getIndentedLabel(): string
@@ -162,8 +162,8 @@ class FamilyLog
 
     public function updateSlug(string $parentSlug): void
     {
-        $slugExploded = explode('-', $this->slug);
-        $this->slug = $parentSlug . '-' . end($slugExploded);
+        $slugExploded = explode(FamilyLogDomain::SLUG_SEPARATOR, $this->slug);
+        $this->slug = $parentSlug . FamilyLogDomain::SLUG_SEPARATOR . end($slugExploded);
 
         if ($this->children()->count() > 0) {
             foreach ($this->children() as $child) {
