@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\ZoneStorage\CreateZoneStorage;
 
-use Admin\Entities\Exception\FamilyLogNotFoundException;
-use Admin\Entities\Exception\ZoneStorageAlreadyExistsException;
+use Admin\Entities\Exception\FamilyLog\FamilyLogNotFoundException;
+use Admin\Entities\Exception\ZoneStorage\ZoneStorageAlreadyExistsException;
 use Admin\Entities\FamilyLog\FamilyLog;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\UseCases\Gateway\ZoneStorageRepository;

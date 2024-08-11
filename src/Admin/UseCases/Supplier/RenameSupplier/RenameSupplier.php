@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Supplier\RenameSupplier;
 
-use Admin\Entities\Exception\SupplierAlreadyExists;
+use Admin\Entities\Exception\Supplier\SupplierAlreadyExists;
 use Admin\UseCases\Gateway\SupplierRepository;
 use Shared\Entities\VO\NameField;
 

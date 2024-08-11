@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Unit\ChangeUnitLabel;
 
-use Admin\Entities\Exception\UnitAlreadyExistsException;
+use Admin\Entities\Exception\Unit\UnitAlreadyExistsException;
 use Admin\UseCases\Gateway\UnitRepository;
 use Shared\Entities\VO\NameField;
 

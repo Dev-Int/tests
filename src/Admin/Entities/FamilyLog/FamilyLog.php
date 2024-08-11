@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Entities\FamilyLog;
 
-use Admin\Entities\Exception\IsAlreadyChildException;
+use Admin\Entities\Exception\FamilyLog\IsAlreadyChildException;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
 

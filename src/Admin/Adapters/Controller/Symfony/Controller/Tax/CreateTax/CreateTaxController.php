@@ -15,7 +15,7 @@ namespace Admin\Adapters\Controller\Symfony\Controller\Tax\CreateTax;
 
 use Admin\Adapters\Form\Type\Tax\TaxType;
 use Admin\Adapters\Gateway\ConfigurationService;
-use Admin\Entities\Exception\NoUnitRegisteredException;
+use Admin\Entities\Exception\Unit\NoUnitRegisteredException;
 use Admin\UseCases\Tax\CreateTax\CreateTax;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;

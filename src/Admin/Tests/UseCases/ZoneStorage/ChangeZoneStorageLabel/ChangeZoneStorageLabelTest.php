@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\ZoneStorage\ChangeZoneStorageLabel;
 
-use Admin\Entities\Exception\ZoneStorageAlreadyExistsException;
-use Admin\Entities\Exception\ZoneStorageNotFoundException;
+use Admin\Entities\Exception\ZoneStorage\ZoneStorageAlreadyExistsException;
+use Admin\Entities\Exception\ZoneStorage\ZoneStorageNotFoundException;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
 use Admin\UseCases\Gateway\ZoneStorageRepository;

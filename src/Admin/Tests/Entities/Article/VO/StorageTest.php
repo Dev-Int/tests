@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\Tests\Entities\Article\VO;
 
 use Admin\Entities\Article\VO\Storage;
-use Admin\Entities\Exception\InvalidUnitException;
+use Admin\Entities\Exception\Unit\InvalidUnitException;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
 use PHPUnit\Framework\TestCase;
 

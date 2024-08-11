@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace Admin\Adapters\Gateway\ORM\Repository;
 
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
-use Admin\Entities\Exception\FamilyLogNotFoundException;
-use Admin\Entities\Exception\NoFamilyLogRegisteredException;
+use Admin\Entities\Exception\FamilyLog\FamilyLogNotFoundException;
+use Admin\Entities\Exception\FamilyLog\NoFamilyLogRegisteredException;
 use Admin\Entities\FamilyLog\FamilyLog as FamilyLogDomain;
 use Admin\Entities\FamilyLog\FamilyLogCollection;
 use Admin\UseCases\Gateway\FamilyLogRepository;

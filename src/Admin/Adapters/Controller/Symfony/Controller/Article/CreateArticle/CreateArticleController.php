@@ -17,7 +17,7 @@ use Admin\Adapters\Form\Type\Article\CreateArticleType;
 use Admin\Adapters\Gateway\ConfigurationService;
 use Admin\Adapters\Gateway\ORM\Entity\ReadModel\Packaging;
 use Admin\Adapters\Gateway\ORM\Entity\Unit;
-use Admin\Entities\Exception\NoSupplierRegisteredException;
+use Admin\Entities\Exception\Supplier\NoSupplierRegisteredException;
 use Admin\Entities\Unit\Unit as UnitDomain;
 use Admin\UseCases\Article\CreateArticle\CreateArticle;
 use Admin\UseCases\Gateway\FamilyLogRepository;

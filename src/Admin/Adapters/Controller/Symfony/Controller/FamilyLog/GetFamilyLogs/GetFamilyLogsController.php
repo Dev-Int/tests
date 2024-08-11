@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\FamilyLog\GetFamilyLogs;
 
-use Admin\Entities\Exception\NoFamilyLogRegisteredException;
+use Admin\Entities\Exception\FamilyLog\NoFamilyLogRegisteredException;
 use Admin\UseCases\FamilyLog\GetFamilyLogs\GetFamilyLogs;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;

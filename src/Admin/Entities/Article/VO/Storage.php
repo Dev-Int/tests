@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Entities\Article\VO;
 
-use Admin\Entities\Exception\InvalidUnitException;
+use Admin\Entities\Exception\Unit\InvalidUnitException;
 use Admin\Entities\Unit\Unit;
 
 final class Storage

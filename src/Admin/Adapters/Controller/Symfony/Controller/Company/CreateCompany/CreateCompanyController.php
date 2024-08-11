@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\Adapters\Controller\Symfony\Controller\Company\CreateCompany;
 
 use Admin\Adapters\Form\Type\Company\CompanyType;
-use Admin\Entities\Exception\CompanyAlreadyExistsException;
+use Admin\Entities\Exception\Company\CompanyAlreadyExistsException;
 use Admin\UseCases\Company\CreateCompany\CreateCompany;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;

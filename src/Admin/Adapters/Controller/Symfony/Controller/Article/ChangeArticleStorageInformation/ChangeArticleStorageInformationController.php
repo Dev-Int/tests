@@ -18,7 +18,7 @@ use Admin\Adapters\Gateway\ORM\Entity\Article\Article;
 use Admin\Adapters\Gateway\ORM\Entity\ReadModel\Packaging;
 use Admin\Adapters\Gateway\ORM\Entity\ReadModel\Storage;
 use Admin\Adapters\Gateway\ORM\Entity\Unit;
-use Admin\Entities\Exception\ArticleNotFoundException;
+use Admin\Entities\Exception\Article\ArticleNotFoundException;
 use Admin\Entities\Unit\Unit as UnitDomain;
 use Admin\UseCases\Article\ChangeStorageInformation\ChangeArticleStorageInformation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

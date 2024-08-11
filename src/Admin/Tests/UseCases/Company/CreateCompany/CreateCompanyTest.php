@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\Company\CreateCompany;
 
-use Admin\Entities\Exception\CompanyAlreadyExistsException;
+use Admin\Entities\Exception\Company\CompanyAlreadyExistsException;
 use Admin\UseCases\Company\CreateCompany\CreateCompany;
 use Admin\UseCases\Company\CreateCompany\CreateCompanyRequest;
 use Admin\UseCases\Gateway\CompanyRepository;

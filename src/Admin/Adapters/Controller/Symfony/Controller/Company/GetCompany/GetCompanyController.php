@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\Adapters\Controller\Symfony\Controller\Company\GetCompany;
 
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineCompanyRepository;
-use Admin\Entities\Exception\NoCompanyRegisteredException;
+use Admin\Entities\Exception\Company\NoCompanyRegisteredException;
 use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;

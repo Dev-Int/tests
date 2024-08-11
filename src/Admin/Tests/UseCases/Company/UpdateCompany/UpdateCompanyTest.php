@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\Company\UpdateCompany;
 
-use Admin\Entities\Exception\CompanyNotFoundException;
+use Admin\Entities\Exception\Company\CompanyNotFoundException;
 use Admin\Tests\DataBuilder\CompanyDataBuilder;
 use Admin\UseCases\Company\UpdateCompany\UpdateCompany;
 use Admin\UseCases\Company\UpdateCompany\UpdateCompanyRequest;

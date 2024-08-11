@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\Article\ReAssignSupplier;
 
-use Admin\Entities\Exception\BadFamilyLogAssignedException;
+use Admin\Entities\Exception\FamilyLog\BadFamilyLogAssignedException;
 use Admin\Entities\FamilyLog\FamilyLog;
 use Admin\Tests\DataBuilder\ArticleDataBuilder;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;

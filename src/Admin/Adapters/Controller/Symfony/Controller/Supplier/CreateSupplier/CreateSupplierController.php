@@ -15,8 +15,8 @@ namespace Admin\Adapters\Controller\Symfony\Controller\Supplier\CreateSupplier;
 
 use Admin\Adapters\Form\Type\Supplier\SupplierType;
 use Admin\Adapters\Gateway\ConfigurationService;
-use Admin\Entities\Exception\NoZoneStorageRegisteredException;
-use Admin\Entities\Exception\SupplierAlreadyExists;
+use Admin\Entities\Exception\Supplier\SupplierAlreadyExists;
+use Admin\Entities\Exception\ZoneStorage\NoZoneStorageRegisteredException;
 use Admin\UseCases\Supplier\CreateSupplier\CreateSupplier;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;

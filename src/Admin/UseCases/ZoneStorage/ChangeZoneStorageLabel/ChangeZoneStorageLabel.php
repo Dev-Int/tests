@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\ZoneStorage\ChangeZoneStorageLabel;
 
-use Admin\Entities\Exception\ZoneStorageAlreadyExistsException;
+use Admin\Entities\Exception\ZoneStorage\ZoneStorageAlreadyExistsException;
 use Admin\UseCases\Gateway\ZoneStorageRepository;
 use Shared\Entities\VO\NameField;
 

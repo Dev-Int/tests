@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Entities\FamilyLog;
 
-use Admin\Entities\Exception\IsAlreadyChildException;
+use Admin\Entities\Exception\FamilyLog\IsAlreadyChildException;
 use Admin\Entities\FamilyLog\FamilyLog;
 use PHPUnit\Framework\TestCase;
 use Shared\Entities\ResourceUuid;

@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\FamilyLog\ChangeLabelFamilyLog;
 
-use Admin\Entities\Exception\FamilyLogAlreadyExistsException;
+use Admin\Entities\Exception\FamilyLog\FamilyLogAlreadyExistsException;
 use Admin\UseCases\Gateway\FamilyLogRepository;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;

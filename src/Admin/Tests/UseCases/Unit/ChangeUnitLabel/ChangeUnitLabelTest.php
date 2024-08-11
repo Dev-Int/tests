@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\Unit\ChangeUnitLabel;
 
-use Admin\Entities\Exception\UnitAlreadyExistsException;
-use Admin\Entities\Exception\UnitNotFoundException;
+use Admin\Entities\Exception\Unit\UnitAlreadyExistsException;
+use Admin\Entities\Exception\Unit\UnitNotFoundException;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\UseCases\Gateway\UnitRepository;
 use Admin\UseCases\Unit\ChangeUnitLabel\ChangeUnitLabel;

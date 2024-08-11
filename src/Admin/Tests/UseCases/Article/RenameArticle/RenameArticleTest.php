@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\Article\RenameArticle;
 
-use Admin\Entities\Exception\ArticleAlreadyExistsException;
-use Admin\Entities\Exception\ArticleNotFoundException;
+use Admin\Entities\Exception\Article\ArticleAlreadyExistsException;
+use Admin\Entities\Exception\Article\ArticleNotFoundException;
 use Admin\Tests\DataBuilder\ArticleDataBuilder;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\SupplierDataBuilder;

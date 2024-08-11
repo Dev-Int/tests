@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\FamilyLog\AssignParentFamilyLog;
 
-use Admin\Entities\Exception\FamilyLogAlreadyExistsException;
-use Admin\Entities\Exception\FamilyLogNotFoundException;
+use Admin\Entities\Exception\FamilyLog\FamilyLogAlreadyExistsException;
+use Admin\Entities\Exception\FamilyLog\FamilyLogNotFoundException;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\UseCases\FamilyLog\ChangeParentFamilyLog\AssignParentFamilyLog;
 use Admin\UseCases\FamilyLog\ChangeParentFamilyLog\AssignParentFamilyLogRequest;

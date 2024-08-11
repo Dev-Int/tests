@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\ZoneStorage\ChangeZoneStorageFamilyLog;
 
-use Admin\Entities\Exception\FamilyLogNotFoundException;
+use Admin\Entities\Exception\FamilyLog\FamilyLogNotFoundException;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
 use Admin\UseCases\Gateway\ZoneStorageRepository;
