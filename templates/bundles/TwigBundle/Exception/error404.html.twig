@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block javascripts %}
+    {% block importmap %}{{ importmap(['app','error']) }}{% endblock %}
+{% endblock %}
+
+{% block body %}
+    <h1>Page non trouvée</h1>
+
+    <p>
+        La ressource que vous cherchez n'existe pas ou plus.
+    </p>
+    <p>
+        Vérifier votre choix ou <a id="go-back">retournez d'où vous venez</a>.
+    </p>
+{% endblock %}

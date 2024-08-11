@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Supplier\CreateSupplier;
 
-use Admin\Entities\Exception\SupplierAlreadyExists;
+use Admin\Entities\Exception\Supplier\SupplierAlreadyExists;
 use Admin\Entities\Supplier\Supplier;
 use Admin\UseCases\Gateway\SupplierRepository;
 use Shared\Entities\ResourceUuid;

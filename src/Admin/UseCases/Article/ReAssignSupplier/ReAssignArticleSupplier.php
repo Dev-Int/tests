@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Article\ReAssignSupplier;
 
-use Admin\Entities\Exception\BadFamilyLogAssignedException;
+use Admin\Entities\Exception\FamilyLog\BadFamilyLogAssignedException;
 use Admin\Entities\ZoneStorage\ZoneStorageCollection;
 use Admin\UseCases\Gateway\ArticleRepository;
 

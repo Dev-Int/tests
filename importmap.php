@@ -16,12 +16,16 @@ return [
         'path' => './assets/app.js',
         'entrypoint' => true,
     ],
-    'familyLog-select' => [
-        'path' => './assets/familyLog-select.js',
+    'error' => [
+        'path' => './assets/error.js',
         'entrypoint' => true,
     ],
     'pagination' => [
         'path' => './assets/pagination.js',
+        'entrypoint' => true,
+    ],
+    'familyLog-select' => [
+        'path' => './assets/familyLog-select.js',
         'entrypoint' => true,
     ],
     '@hotwired/stimulus' => [

@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Tax\RevaluateTax;
 
-use Admin\Entities\Exception\TaxAlreadyExistsException;
+use Admin\Entities\Exception\Tax\TaxAlreadyExistsException;
 use Admin\UseCases\Gateway\TaxRepository;
 
 final readonly class RevaluateTax

@@ -15,8 +15,8 @@ namespace Admin\Adapters\Gateway\ORM\Repository;
 
 use Admin\Adapters\Gateway\ORM\Entity\Company;
 use Admin\Entities\Company as CompanyDomain;
-use Admin\Entities\Exception\CompanyNotFoundException;
-use Admin\Entities\Exception\NoCompanyRegisteredException;
+use Admin\Entities\Exception\Company\CompanyNotFoundException;
+use Admin\Entities\Exception\Company\NoCompanyRegisteredException;
 use Admin\UseCases\Gateway\CompanyRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;

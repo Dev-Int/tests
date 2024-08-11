@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\UseCases\Company\CreateCompany;
 
 use Admin\Entities\Company;
-use Admin\Entities\Exception\CompanyAlreadyExistsException;
+use Admin\Entities\Exception\Company\CompanyAlreadyExistsException;
 use Admin\UseCases\Gateway\CompanyRepository;
 use Shared\Entities\VO\ContactAddress;
 use Shared\Entities\VO\EmailField;

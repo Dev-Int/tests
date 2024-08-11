@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\Supplier\ChangeDeliverySpecification;
 
-use Admin\Entities\Exception\SupplierNotFoundException;
+use Admin\Entities\Exception\Supplier\SupplierNotFoundException;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\SupplierDataBuilder;
 use Admin\UseCases\Gateway\SupplierRepository;

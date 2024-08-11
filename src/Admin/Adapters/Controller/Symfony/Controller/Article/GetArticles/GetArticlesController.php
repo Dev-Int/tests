@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\Adapters\Controller\Symfony\Controller\Article\GetArticles;
 
 use Admin\Adapters\Gateway\Pagination\Pagination;
-use Admin\Entities\Exception\NoArticleRegisteredException;
+use Admin\Entities\Exception\Article\NoArticleRegisteredException;
 use Admin\UseCases\Article\GetArticles\GetArticles;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;

@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\Unit\CreateUnit;
 
-use Admin\Entities\Exception\UnitAlreadyExistsException;
+use Admin\Entities\Exception\Unit\UnitAlreadyExistsException;
 use Admin\UseCases\Gateway\UnitRepository;
 use Admin\UseCases\Unit\CreateUnit\CreateUnit;
 use Admin\UseCases\Unit\CreateUnit\CreateUnitRequest;

@@ -33,9 +33,9 @@ parameters:
 		-
 			message: "#^Call to an undefined method Faker\\\\Generator\\:\\:meatName\\(\\)\\.$#"
 			count: 1
-			path: src/Admin/Tests/Adapters/controller/Symfony/Controller/Article/GetArticles/GetArticlesControllerTest.php
+			path: src/Admin/Tests/Adapters/Controller/Symfony/Controller/Article/GetArticles/GetArticlesControllerTest.php
 
 		-
 			message: "#^Call to an undefined method Faker\\\\Generator\\:\\:vegetableName\\(\\)\\.$#"
 			count: 1
-			path: src/Admin/Tests/Adapters/controller/Symfony/Controller/Article/GetArticles/GetArticlesControllerTest.php
+			path: src/Admin/Tests/Adapters/Controller/Symfony/Controller/Article/GetArticles/GetArticlesControllerTest.php

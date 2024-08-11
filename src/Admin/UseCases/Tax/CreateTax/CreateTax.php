@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Tax\CreateTax;
 
-use Admin\Entities\Exception\TaxAlreadyExistsException;
+use Admin\Entities\Exception\Tax\TaxAlreadyExistsException;
 use Admin\Entities\Tax\Tax;
 use Admin\UseCases\Gateway\TaxRepository;
 use Shared\Entities\ResourceUuid;

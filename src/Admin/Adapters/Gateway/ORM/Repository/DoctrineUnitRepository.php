@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace Admin\Adapters\Gateway\ORM\Repository;
 
 use Admin\Adapters\Gateway\ORM\Entity\Unit;
-use Admin\Entities\Exception\NoUnitRegisteredException;
-use Admin\Entities\Exception\UnitNotFoundException;
+use Admin\Entities\Exception\Unit\NoUnitRegisteredException;
+use Admin\Entities\Exception\Unit\UnitNotFoundException;
 use Admin\Entities\Unit\Unit as UnitDomain;
 use Admin\Entities\Unit\UnitCollection;
 use Admin\UseCases\Gateway\UnitRepository;

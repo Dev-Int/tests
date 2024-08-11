@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\FamilyLog\CreateFamilyLog;
 
-use Admin\Entities\Exception\FamilyLogAlreadyExistsException;
+use Admin\Entities\Exception\FamilyLog\FamilyLogAlreadyExistsException;
 use Admin\Entities\FamilyLog\FamilyLog;
 use Admin\UseCases\Gateway\FamilyLogRepository;
 use Shared\Entities\ResourceUuid;

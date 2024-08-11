@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Tax\RenameTax;
 
-use Admin\Entities\Exception\TaxAlreadyExistsException;
+use Admin\Entities\Exception\Tax\TaxAlreadyExistsException;
 use Admin\UseCases\Gateway\TaxRepository;
 use Shared\Entities\VO\NameField;
 

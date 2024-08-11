@@ -15,9 +15,9 @@ namespace Admin\Adapters\Gateway\ORM\Repository;
 
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
-use Admin\Entities\Exception\FamilyLogNotFoundException;
-use Admin\Entities\Exception\NoZoneStorageRegisteredException;
-use Admin\Entities\Exception\ZoneStorageNotFoundException;
+use Admin\Entities\Exception\FamilyLog\FamilyLogNotFoundException;
+use Admin\Entities\Exception\ZoneStorage\NoZoneStorageRegisteredException;
+use Admin\Entities\Exception\ZoneStorage\ZoneStorageNotFoundException;
 use Admin\Entities\ZoneStorage\ZoneStorage as ZoneStorageDomain;
 use Admin\Entities\ZoneStorage\ZoneStorageCollection;
 use Admin\UseCases\Gateway\ZoneStorageRepository;

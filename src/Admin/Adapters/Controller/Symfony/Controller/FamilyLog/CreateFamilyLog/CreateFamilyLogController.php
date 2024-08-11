@@ -15,8 +15,8 @@ namespace Admin\Adapters\Controller\Symfony\Controller\FamilyLog\CreateFamilyLog
 
 use Admin\Adapters\Form\Type\FamilyLog\CreateFamilyLogType;
 use Admin\Adapters\Gateway\ConfigurationService;
-use Admin\Entities\Exception\FamilyLogAlreadyExistsException;
-use Admin\Entities\Exception\NoTaxRegisteredException;
+use Admin\Entities\Exception\FamilyLog\FamilyLogAlreadyExistsException;
+use Admin\Entities\Exception\Tax\NoTaxRegisteredException;
 use Admin\UseCases\FamilyLog\CreateFamilyLog\CreateFamilyLog;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;

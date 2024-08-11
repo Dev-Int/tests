@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block javascripts %}
+    {% block importmap %}{{ importmap(['app','error']) }}{% endblock %}
+{% endblock %}
+
+{% block body %}
+    <h1>Une erreur s'est produite.</h1>
+
+    <p>
+        Un problème vous empêche de continuer votre navigation.
+        Nous faisons notre maximum pour le corriger.
+    </p>
+{% endblock %}

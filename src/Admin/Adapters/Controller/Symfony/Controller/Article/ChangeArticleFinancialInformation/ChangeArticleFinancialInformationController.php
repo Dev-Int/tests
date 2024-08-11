@@ -15,7 +15,7 @@ namespace Admin\Adapters\Controller\Symfony\Controller\Article\ChangeArticleFina
 
 use Admin\Adapters\Form\Type\Article\ChangeFinancialInformationType;
 use Admin\Adapters\Gateway\ORM\Entity\Article\Article;
-use Admin\Entities\Exception\ArticleNotFoundException;
+use Admin\Entities\Exception\Article\ArticleNotFoundException;
 use Admin\UseCases\Article\ChangeFinancialInformation\ChangeArticleFinancialInformation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;

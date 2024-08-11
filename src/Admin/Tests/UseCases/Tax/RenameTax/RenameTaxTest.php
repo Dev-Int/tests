@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\Tax\RenameTax;
 
-use Admin\Entities\Exception\TaxAlreadyExistsException;
-use Admin\Entities\Exception\TaxNotFoundException;
+use Admin\Entities\Exception\Tax\TaxAlreadyExistsException;
+use Admin\Entities\Exception\Tax\TaxNotFoundException;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
 use Admin\UseCases\Gateway\TaxRepository;
 use Admin\UseCases\Tax\RenameTax\RenameTax;

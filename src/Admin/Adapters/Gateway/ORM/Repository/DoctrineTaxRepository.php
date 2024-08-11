@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace Admin\Adapters\Gateway\ORM\Repository;
 
 use Admin\Adapters\Gateway\ORM\Entity\Tax;
-use Admin\Entities\Exception\NoTaxRegisteredException;
-use Admin\Entities\Exception\TaxNotFoundException;
+use Admin\Entities\Exception\Tax\NoTaxRegisteredException;
+use Admin\Entities\Exception\Tax\TaxNotFoundException;
 use Admin\Entities\Tax\Tax as TaxDomain;
 use Admin\Entities\Tax\TaxCollection;
 use Admin\UseCases\Gateway\TaxRepository;

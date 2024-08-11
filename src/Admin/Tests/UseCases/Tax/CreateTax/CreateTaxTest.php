@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\Tax\CreateTax;
 
-use Admin\Entities\Exception\TaxAlreadyExistsException;
+use Admin\Entities\Exception\Tax\TaxAlreadyExistsException;
 use Admin\UseCases\Gateway\TaxRepository;
 use Admin\UseCases\Tax\CreateTax\CreateTax;
 use Admin\UseCases\Tax\CreateTax\CreateTaxRequest;

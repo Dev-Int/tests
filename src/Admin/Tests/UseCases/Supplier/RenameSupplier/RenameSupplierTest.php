@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\Supplier\RenameSupplier;
 
-use Admin\Entities\Exception\SupplierAlreadyExists;
-use Admin\Entities\Exception\SupplierNotFoundException;
+use Admin\Entities\Exception\Supplier\SupplierAlreadyExists;
+use Admin\Entities\Exception\Supplier\SupplierNotFoundException;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\SupplierDataBuilder;
 use Admin\UseCases\Gateway\SupplierRepository;

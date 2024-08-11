@@ -22,6 +22,7 @@ use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
 use Admin\UseCases\Article\ChangeStorageInformation\ChangeArticleStorageInformation;
 use Admin\UseCases\Article\ChangeStorageInformation\ChangeArticleStorageInformationRequest;
 use Admin\UseCases\Gateway\ArticleRepository;
+use Faker\Factory;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -32,12 +33,13 @@ final class ChangeArticleStorageInformationTest extends TestCase
     public function testChangeStorageInformationWithSuccess(): void
     {
         // Arrange
+        $faker = Factory::create('fr_FR');
         $articleRepository = $this->createMock(ArticleRepository::class);
         $useCase = new ChangeArticleStorageInformation($articleRepository);
         $request = $this->createMock(ChangeArticleStorageInformationRequest::class);
         $frais = (new FamilyLogDataBuilder())->create('Frais')->build();
         $fraisViande = (new FamilyLogDataBuilder())->create('Viande')
-            ->withUuid('46835a0c-3e6c-4a5c-ab80-b1d6d96b05ae')
+            ->withUuid($faker->uuid())
             ->withParent($frais)
             ->build()
         ;
@@ -46,7 +48,7 @@ final class ChangeArticleStorageInformationTest extends TestCase
         $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
         $colis = (new UnitDataBuilder())->create('Colis', 'cls')->build();
         $kilogramme = (new UnitDataBuilder())->create('Kilogramme', 'kg')
-            ->withUuid('2a1882c5-fbe9-4259-9637-47cc4d6c5508')
+            ->withUuid($faker->uuid())
             ->build()
         ;
         $article = (new ArticleDataBuilder())

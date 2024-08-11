@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\Adapters\Controller\Symfony\Controller\Supplier\GetSuppliers;
 
 use Admin\Adapters\Gateway\Pagination\Pagination;
-use Admin\Entities\Exception\NoSupplierRegisteredException;
+use Admin\Entities\Exception\Supplier\NoSupplierRegisteredException;
 use Admin\UseCases\Supplier\GetSuppliers\GetSuppliers;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;

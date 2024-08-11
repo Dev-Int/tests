@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\GetZoneStorages;
 
-use Admin\Entities\Exception\NoZoneStorageRegisteredException;
+use Admin\Entities\Exception\ZoneStorage\NoZoneStorageRegisteredException;
 use Admin\UseCases\ZoneStorage\GetZoneStorages\GetZoneStorages;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;

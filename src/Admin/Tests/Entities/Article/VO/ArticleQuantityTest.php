@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\Tests\Entities\Article\VO;
 
 use Admin\Entities\Article\VO\ArticleQuantity;
-use Admin\Entities\Exception\NegativeValueException;
+use Admin\Entities\Exception\Article\NegativeValueException;
 use PHPUnit\Framework\TestCase;
 
 /**

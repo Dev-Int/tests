@@ -15,8 +15,8 @@ namespace Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\CreateZoneSto
 
 use Admin\Adapters\Form\Type\ZoneStorage\ZoneStorageType;
 use Admin\Adapters\Gateway\ConfigurationService;
-use Admin\Entities\Exception\NoFamilyLogRegisteredException;
-use Admin\Entities\Exception\ZoneStorageAlreadyExistsException;
+use Admin\Entities\Exception\FamilyLog\NoFamilyLogRegisteredException;
+use Admin\Entities\Exception\ZoneStorage\ZoneStorageAlreadyExistsException;
 use Admin\UseCases\ZoneStorage\CreateZoneStorage\CreateZoneStorage;
 use Ramsey\Uuid\Exception\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

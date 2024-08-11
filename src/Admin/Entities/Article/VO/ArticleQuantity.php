@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Entities\Article\VO;
 
-use Admin\Entities\Exception\NegativeValueException;
+use Admin\Entities\Exception\Article\NegativeValueException;
 
 final readonly class ArticleQuantity
 {

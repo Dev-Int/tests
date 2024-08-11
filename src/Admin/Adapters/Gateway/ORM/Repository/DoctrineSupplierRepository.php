@@ -15,9 +15,9 @@ namespace Admin\Adapters\Gateway\ORM\Repository;
 
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Admin\Adapters\Gateway\ORM\Entity\Supplier;
-use Admin\Entities\Exception\FamilyLogNotFoundException;
-use Admin\Entities\Exception\NoSupplierRegisteredException;
-use Admin\Entities\Exception\SupplierNotFoundException;
+use Admin\Entities\Exception\FamilyLog\FamilyLogNotFoundException;
+use Admin\Entities\Exception\Supplier\NoSupplierRegisteredException;
+use Admin\Entities\Exception\Supplier\SupplierNotFoundException;
 use Admin\Entities\Supplier\Supplier as SupplierDomain;
 use Admin\Entities\Supplier\SupplierCollection;
 use Admin\UseCases\Gateway\SupplierRepository;

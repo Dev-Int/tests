@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Article\RenameArticle;
 
-use Admin\Entities\Exception\ArticleAlreadyExistsException;
+use Admin\Entities\Exception\Article\ArticleAlreadyExistsException;
 use Admin\UseCases\Gateway\ArticleRepository;
 use Shared\Entities\VO\NameField;
 

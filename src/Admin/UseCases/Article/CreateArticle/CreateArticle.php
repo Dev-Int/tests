@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace Admin\UseCases\Article\CreateArticle;
 
 use Admin\Entities\Article\Article;
-use Admin\Entities\Exception\ArticleAlreadyExistsException;
-use Admin\Entities\Exception\BadFamilyLogAssignedException;
+use Admin\Entities\Exception\Article\ArticleAlreadyExistsException;
+use Admin\Entities\Exception\FamilyLog\BadFamilyLogAssignedException;
 use Admin\Entities\FamilyLog\FamilyLog;
 use Admin\Entities\ZoneStorage\ZoneStorage;
 use Admin\UseCases\Gateway\ArticleRepository;
