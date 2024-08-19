@@ -25,7 +25,7 @@ final class CompanyFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create('fr_FR');
-        $company = (new CompanyDataBuilder())->create($faker->company)
+        $company = (new CompanyDataBuilder())->create($faker->company())
             ->build()
         ;
 

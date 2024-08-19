@@ -11,11 +11,16 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace App\Twig\Components\Icon\Entities;
+namespace Shared\Twig\Components;
 
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
+/**
+ * @codeCoverageIgnore
+ */
 #[AsTwigComponent]
-final class ZoneStorage
+final class Flashes
 {
+    public string $label;
+    public string $message;
 }

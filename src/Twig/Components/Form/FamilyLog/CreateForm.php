@@ -17,10 +17,12 @@ use Admin\Adapters\Controller\Symfony\Controller\FamilyLog\CreateFamilyLog\Creat
 use Admin\Adapters\Form\Type\FamilyLog\CreateFamilyLogType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
+use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
+#[AsLiveComponent]
 final class CreateForm extends AbstractController
 {
     use ComponentWithFormTrait;

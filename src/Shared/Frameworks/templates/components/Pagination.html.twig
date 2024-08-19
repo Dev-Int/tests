@@ -1,43 +1,46 @@
 <div {{ attributes }} id="pagination">
     {% set url = app.current_route %}
-    {% set param = app.current_route_parameters %}
 
     {% if totalPages > 1 %}
         <nav aria-label="Page navigation">
             <ul class="pagination">
                 <li class="page-item">
-                    <a class="page-link{% if page == 1 %} disable-link{% endif %}" href="{{ path(url, {page: 1, itemsPerPage: itemsPerPage}) }}" aria-label="First">
+                    <a class="page-link{% if page == 1 %} disable-link{% endif %}" href="{{ path(url, {page: 1, itemsPerPage: itemsPerPage, _live_component: 'pagination'}) }}" aria-label="First">
                         <span aria-hidden="true">&laquo;</span>
                     </a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link{% if page - 1 == 0 %} disable-link{% endif %}" href="{{ path(url, {page: (page - 1), itemsPerPage: itemsPerPage}) }}" aria-label="Previous">
+                    <a class="page-link{% if page - 1 == 0 %} disable-link{% endif %}" href="{{ path(url, {page: (page - 1), itemsPerPage: itemsPerPage, _live_component: 'pagination'}) }}" aria-label="Previous">
                         <span aria-hidden="true">&lt;</span>
                     </a>
                 </li>
                 {% if page - 1 != 0 %}
                     <li class="page-item"><a class="page-link" href="{{ path(url, {page: page - 1}) }}">{{ page - 1 }}</a></li>
                 {% endif %}
-                <li class="page-item"><a class="page-link active" aria-current="page" href="{{ path(url, {page: page, itemsPerPage: itemsPerPage}) }}">{{ page }}</a></li>
+                <li class="page-item">
+                    <a class="page-link active" aria-current="page"  aria-label="Current" href="{{ path(url, {page: page, itemsPerPage: itemsPerPage, _live_component: 'pagination'}) }}">
+                        {{ page }}
+                    </a>
+                </li>
                 {% if page + 1 <= totalPages %}
-                    <li class="page-item"><a class="page-link" href="{{ path(url, {page: (page + 1), itemsPerPage: itemsPerPage}) }}">{{ page + 1 }}</a></li>
+                    <li class="page-item"><a class="page-link" href="{{ path(url, {page: (page + 1), itemsPerPage: itemsPerPage, _live_component: 'pagination'}) }}">{{ page + 1 }}</a></li>
                 {% endif %}
                 {% if page + 2 != totalPages and page + 2 < totalPages  %}
-                    <li class="page-item"><a class="page-link" href="{{ path(url, {page: (page + 2), itemsPerPage: itemsPerPage}) }}">{{ page + 2 }}</a></li>
+                    <li class="page-item"><a class="page-link" href="{{ path(url, {page: (page + 2), itemsPerPage: itemsPerPage, _live_component: 'pagination'}) }}">{{ page + 2 }}</a></li>
                 {% endif %}
                 {% if totalPages > page + 3  %}
                     <li class="page-item"><a class="page-link disable-link">...</a></li>
                 {% endif %}
                 {% if totalPages > page + 2 %}
-                    <li class="page-item"><a class="page-link" href="{{ path(url, {page: (totalPages), itemsPerPage: itemsPerPage}) }}">{{ totalPages }}</a></li>
+                    <li class="page-item"><a class="page-link" href="{{ path(url, {page: (totalPages), itemsPerPage: itemsPerPage, _live_component: 'pagination'}) }}">{{ totalPages }}</a></li>
                 {% endif %}
                 <li class="page-item">
-                    <a class="page-link{% if page + 1 > totalPages %} disable-link{% endif %}" href="{{ path(url, {page: (page + 1), itemsPerPage: itemsPerPage}) }}" aria-label="Next">
+                    <a class="page-link{% if page + 1 > totalPages %} disable-link{% endif %}" href="{{ path(url, {page: (page + 1), itemsPerPage: itemsPerPage, _live_component: 'pagination'}) }}" aria-label="Next">
                         <span aria-hidden="true">&gt;</span>
                     </a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link{% if page == totalPages %} disable-link{% endif %}" href="{{ path(url, {page: totalPages, itemsPerPage: itemsPerPage}) }}" aria-label="Last">
+                    <a class="page-link{% if page == totalPages %} disable-link{% endif %}" href="{{ path(url, {page: totalPages, itemsPerPage: itemsPerPage, _live_component: 'pagination'}) }}" aria-label="Last">
                         <span aria-hidden="true">&raquo;</span>
                     </a>
                 </li>
@@ -53,7 +56,7 @@
                     {% if (totalPages * itemsPerPage) >= 100  %}<option value="100" {% if itemsPerPage == 100 %}selected{% endif %}>100</option>{% endif %}
                 </select>
             </label>
-            <button class="btn-small"
+            <button class="btn-small" type="submit"
                 data-action="live#action"
                 data-live-action-param="paginate"
             ><i class="fas fa-list"></i> {{ 'paginate'|trans }}</button>

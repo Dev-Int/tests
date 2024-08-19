@@ -31,7 +31,6 @@ final class ZoneStorageFixtures extends Fixture implements DependentFixtureInter
         $faker = Factory::create('fr_FR');
 
         foreach ($this->getData() as $datum) {
-            /** @var FamilyLog $familyLog */
             $familyLog = $this->getReference($datum['familyLogReference'], FamilyLog::class);
 
             $zoneStorage = (new ZoneStorageDataBuilder())

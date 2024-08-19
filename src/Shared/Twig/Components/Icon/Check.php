@@ -11,11 +11,14 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace App\Twig\Components\Icon\Entities;
+namespace Shared\Twig\Components\Icon;
 
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
+/**
+ * @codeCoverageIgnore
+ */
 #[AsTwigComponent]
-final class Taxe
+final class Check
 {
 }

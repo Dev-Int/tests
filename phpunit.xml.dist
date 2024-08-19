@@ -27,6 +27,7 @@
         </testsuite>
         <testsuite name="Functional Test Suite">
             <directory>src/**/Tests/Adapters</directory>
+            <directory>src/**/Tests/Twig</directory>
         </testsuite>
     </testsuites>
 

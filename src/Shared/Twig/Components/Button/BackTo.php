@@ -11,12 +11,16 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace App\Twig\Components\Button;
+namespace Shared\Twig\Components\Button;
 
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
+/**
+ * @codeCoverageIgnore
+ */
 #[AsTwigComponent]
-final class UpdateEntity
+final class BackTo
 {
+    public string $href;
     public string $label;
 }

@@ -11,7 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace App\Twig\Components;
+namespace Shared\Twig\Components;
 
 use Admin\Adapters\Gateway\Pagination\Pagination as BasePagination;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -37,8 +37,8 @@ final class Pagination extends AbstractController
     public function paginate(): Response
     {
         return $this->redirectToRoute(
-            'admin_articles_index',
-            ['page' => $this->page, 'itemsPerPage' => $this->itemsPerPage]
+            route: 'admin_articles_index',
+            parameters: ['page' => $this->page, 'itemsPerPage' => $this->itemsPerPage]
         );
     }
 }

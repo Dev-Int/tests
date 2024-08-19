@@ -33,18 +33,17 @@ final class SupplierFixtures extends Fixture implements DependentFixtureInterfac
     {
         $faker = Factory::create('fr_FR');
         foreach ($this->getData() as $datum) {
-            /** @var FamilyLog $familyLog */
             $familyLog = $this->getReference($datum['familyLogReference'], FamilyLog::class);
             $supplier = (new SupplierDataBuilder())
-                ->create($faker->company, $familyLog->toDomain($familyLog->parent()))
+                ->create($faker->company(), $familyLog->toDomain($familyLog->parent()))
                 ->withUuid($faker->uuid())
-                ->withAddress($faker->streetAddress)
-                ->withPostalCode($faker->postcode)
-                ->withTown($faker->city)
+                ->withAddress($faker->streetAddress())
+                ->withPostalCode($faker->postcode())
+                ->withTown($faker->city())
                 ->withPhone($this->getValidPhoneNumber($faker))
                 ->withCellphone($this->getValidPhoneNumber($faker))
-                ->withEmail($faker->email)
-                ->withContact($faker->name)
+                ->withEmail($faker->email())
+                ->withContact($faker->name())
                 ->withDelayDelivery($datum['delayDelivery'])
                 ->withOrderDays($datum['orderDays'])
                 ->build()
@@ -103,7 +102,7 @@ final class SupplierFixtures extends Fixture implements DependentFixtureInterfac
     private function getValidPhoneNumber(Generator $faker): string
     {
         try {
-            $phoneNumber = PhoneField::fromString($faker->phoneNumber)->toNumber();
+            $phoneNumber = PhoneField::fromString($faker->phoneNumber())->toNumber();
         } catch (InvalidPhoneException $e) {
             $phoneNumber = $this->getValidPhoneNumber($faker);
         }

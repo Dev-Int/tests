@@ -11,17 +11,15 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace App\Twig\Components;
+namespace Shared\Twig\Components\Button;
 
-use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
-use Symfony\UX\LiveComponent\Attribute\LiveProp;
+use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
-#[AsLiveComponent]
-final class Flashes
+/**
+ * @codeCoverageIgnore
+ */
+#[AsTwigComponent]
+final class UpdateEntity
 {
-    #[LiveProp]
     public string $label;
-
-    #[LiveProp]
-    public string $message;
 }
