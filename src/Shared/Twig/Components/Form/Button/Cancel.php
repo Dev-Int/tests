@@ -11,13 +11,16 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace App\Twig\Components\Form\Button;
+namespace Shared\Twig\Components\Form\Button;
 
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
+/**
+ * @codeCoverageIgnore
+ */
 #[AsTwigComponent]
-final class Submit
+final class Cancel
 {
+    public string $href;
     public string $label;
-    public ?string $icon;
 }
