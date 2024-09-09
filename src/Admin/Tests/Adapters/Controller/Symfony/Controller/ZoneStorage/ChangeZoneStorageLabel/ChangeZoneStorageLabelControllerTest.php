@@ -55,7 +55,7 @@ final class ChangeZoneStorageLabelControllerTest extends WebTestCase
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            sprintf(self::CHANGE_LABEL_URI, $zoneStorage->uuid()->toString())
+            \sprintf(self::CHANGE_LABEL_URI, $zoneStorage->uuid()->toString())
         );
 
         self::assertResponseIsSuccessful();
@@ -109,7 +109,7 @@ final class ChangeZoneStorageLabelControllerTest extends WebTestCase
         // Act
         $client->request(
             Request::METHOD_GET,
-            sprintf(self::CHANGE_LABEL_URI, $faker->uuid())
+            \sprintf(self::CHANGE_LABEL_URI, $faker->uuid())
         );
 
         // Assert

@@ -44,7 +44,7 @@ final class UpdateCompanyControllerTest extends WebTestCase
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            sprintf(self::UPDATE_COMPANY_URI, $company->slug())
+            \sprintf(self::UPDATE_COMPANY_URI, $company->slug())
         );
 
         self::assertResponseIsSuccessful();
@@ -84,7 +84,7 @@ final class UpdateCompanyControllerTest extends WebTestCase
         // Act
         $client->request(
             Request::METHOD_GET,
-            sprintf(self::UPDATE_COMPANY_URI, 'Test company')
+            \sprintf(self::UPDATE_COMPANY_URI, 'Test company')
         );
 
         // Assert

@@ -235,7 +235,7 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
         foreach ($familyLogs as $familyLog) {
             if (!$familyLog instanceof FamilyLog) {
                 // @codeCoverageIgnoreStart
-                throw new \RuntimeException(sprintf('%s expected', FamilyLog::class));
+                throw new \RuntimeException(\sprintf('%s expected', FamilyLog::class));
                 // @codeCoverageIgnoreEnd
             }
 

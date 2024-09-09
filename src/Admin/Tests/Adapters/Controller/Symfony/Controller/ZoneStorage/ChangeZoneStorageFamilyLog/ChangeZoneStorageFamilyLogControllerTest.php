@@ -59,7 +59,7 @@ final class ChangeZoneStorageFamilyLogControllerTest extends WebTestCase
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            sprintf(self::CHANGE_FAMILY_LOG_URI, $zoneStorage->uuid()->toString())
+            \sprintf(self::CHANGE_FAMILY_LOG_URI, $zoneStorage->uuid()->toString())
         );
 
         self::assertResponseIsSuccessful();
@@ -116,7 +116,7 @@ final class ChangeZoneStorageFamilyLogControllerTest extends WebTestCase
         // Act
         $client->request(
             Request::METHOD_GET,
-            sprintf(self::CHANGE_FAMILY_LOG_URI, $faker->uuid())
+            \sprintf(self::CHANGE_FAMILY_LOG_URI, $faker->uuid())
         );
 
         // Assert

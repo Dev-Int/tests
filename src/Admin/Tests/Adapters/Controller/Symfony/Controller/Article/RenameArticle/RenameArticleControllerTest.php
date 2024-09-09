@@ -94,7 +94,7 @@ final class RenameArticleControllerTest extends WebTestCase
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            sprintf(self::RENAME_ARTICLE_URI, $article->uuid()->toString())
+            \sprintf(self::RENAME_ARTICLE_URI, $article->uuid()->toString())
         );
 
         self::assertResponseIsSuccessful();
@@ -187,7 +187,7 @@ final class RenameArticleControllerTest extends WebTestCase
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            sprintf(self::RENAME_ARTICLE_URI, $article1->uuid()->toString())
+            \sprintf(self::RENAME_ARTICLE_URI, $article1->uuid()->toString())
         );
 
         self::assertResponseIsSuccessful();
@@ -264,7 +264,7 @@ final class RenameArticleControllerTest extends WebTestCase
         // Act
         $client->request(
             Request::METHOD_GET,
-            sprintf(self::RENAME_ARTICLE_URI, $faker->uuid())
+            \sprintf(self::RENAME_ARTICLE_URI, $faker->uuid())
         );
 
         // Assert

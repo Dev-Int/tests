@@ -28,7 +28,7 @@ final class ErrorController extends AbstractController
 
         $this->addFlash('error', $flattenException->getMessage());
 
-        return $this->render(sprintf('bundles/TwigBundle/Exception/error%d.html.twig', $statusCode), [
+        return $this->render(\sprintf('bundles/TwigBundle/Exception/error%d.html.twig', $statusCode), [
             'message' => $flattenException->getStatusText(),
         ]);
     }

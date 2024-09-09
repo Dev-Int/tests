@@ -49,7 +49,7 @@ final class AssignParentFamilyLogControllerTest extends WebTestCase
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            sprintf(self::ASSIGN_PARENT_FAMILY_LOG_URI, $familyLog->uuid()->toString())
+            \sprintf(self::ASSIGN_PARENT_FAMILY_LOG_URI, $familyLog->uuid()->toString())
         );
 
         self::assertResponseIsSuccessful();
@@ -105,7 +105,7 @@ final class AssignParentFamilyLogControllerTest extends WebTestCase
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            sprintf(self::ASSIGN_PARENT_FAMILY_LOG_URI, $familyLog->uuid()->toString())
+            \sprintf(self::ASSIGN_PARENT_FAMILY_LOG_URI, $familyLog->uuid()->toString())
         );
 
         self::assertResponseIsSuccessful();
@@ -165,7 +165,7 @@ final class AssignParentFamilyLogControllerTest extends WebTestCase
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            sprintf(self::ASSIGN_PARENT_FAMILY_LOG_URI, $familyLog->uuid()->toString())
+            \sprintf(self::ASSIGN_PARENT_FAMILY_LOG_URI, $familyLog->uuid()->toString())
         );
 
         self::assertResponseIsSuccessful();
@@ -214,7 +214,7 @@ final class AssignParentFamilyLogControllerTest extends WebTestCase
         // Act
         $client->request(
             Request::METHOD_GET,
-            sprintf(self::ASSIGN_PARENT_FAMILY_LOG_URI, $faker->uuid())
+            \sprintf(self::ASSIGN_PARENT_FAMILY_LOG_URI, $faker->uuid())
         );
 
         // Assert

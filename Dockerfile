@@ -91,6 +91,7 @@ RUN git clone https://github.com/joshskidmore/zsh-fzf-history-search ${ZSH_CUSTO
 RUN git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
 COPY frankenphp/.zshrc /home/www
 COPY frankenphp/.p10k.zsh /home/www
+RUN /bin/zsh /home/www/.zshrc
 USER root
 
 CMD [ "frankenphp", "run", "--config", "/etc/caddy/Caddyfile", "--watch" ]

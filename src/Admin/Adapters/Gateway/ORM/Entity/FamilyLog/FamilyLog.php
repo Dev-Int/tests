@@ -141,14 +141,14 @@ class FamilyLog
 
     public function getLevelChildrenLabel(): string
     {
-        return sprintf('%d_%d_%s', $this->level, (int) $this->hasChildren(), $this->label);
+        return \sprintf('%d_%d_%s', $this->level, (int) $this->hasChildren(), $this->label);
     }
 
     public function getIndentedLabel(): string
     {
         $prefix = str_repeat('|- - ', $this->level);
 
-        return sprintf('%s %s', $prefix, $this->label);
+        return \sprintf('%s %s', $prefix, $this->label);
     }
 
     public function isCompatible(self $familyLog): bool

@@ -101,7 +101,7 @@ final class ChangeFinancialInformationControllerTest extends WebTestCase
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            sprintf(self::CHANGE_ARTICLE_FINANCIAL_INFORMATION_URI, $article->uuid()->toString())
+            \sprintf(self::CHANGE_ARTICLE_FINANCIAL_INFORMATION_URI, $article->uuid()->toString())
         );
 
         self::assertResponseIsSuccessful();
@@ -194,7 +194,7 @@ final class ChangeFinancialInformationControllerTest extends WebTestCase
         // Act
         $client->request(
             Request::METHOD_GET,
-            sprintf(self::CHANGE_ARTICLE_FINANCIAL_INFORMATION_URI, $faker->uuid())
+            \sprintf(self::CHANGE_ARTICLE_FINANCIAL_INFORMATION_URI, $faker->uuid())
         );
 
         // Assert

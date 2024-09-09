@@ -36,3 +36,5 @@ clover.xml
 /public/assets/
 /assets/vendor/
 ###< symfony/asset-mapper ###
+
+/.gitconfig
