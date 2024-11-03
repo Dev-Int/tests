@@ -112,7 +112,7 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            sprintf(self::REASSIGN_ARTICLE_SUPPLIER_URI, $article->uuid()->toString())
+            \sprintf(self::REASSIGN_ARTICLE_SUPPLIER_URI, $article->uuid()->toString())
         );
 
         self::assertResponseIsSuccessful();
@@ -212,7 +212,7 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            sprintf(self::REASSIGN_ARTICLE_SUPPLIER_URI, $article->uuid()->toString())
+            \sprintf(self::REASSIGN_ARTICLE_SUPPLIER_URI, $article->uuid()->toString())
         );
 
         self::assertResponseIsSuccessful();
@@ -312,7 +312,7 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            sprintf(self::REASSIGN_ARTICLE_SUPPLIER_URI, $article->uuid()->toString())
+            \sprintf(self::REASSIGN_ARTICLE_SUPPLIER_URI, $article->uuid()->toString())
         );
 
         self::assertResponseIsSuccessful();
@@ -419,7 +419,7 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
         // Act
         $client->request(
             Request::METHOD_GET,
-            sprintf(self::REASSIGN_ARTICLE_SUPPLIER_URI, $faker->uuid())
+            \sprintf(self::REASSIGN_ARTICLE_SUPPLIER_URI, $faker->uuid())
         );
 
         // Assert

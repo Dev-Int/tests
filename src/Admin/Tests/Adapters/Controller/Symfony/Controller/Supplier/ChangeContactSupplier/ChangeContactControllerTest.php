@@ -51,7 +51,7 @@ final class ChangeContactControllerTest extends WebTestCase
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            sprintf(self::CHANGE_CONTACT_SUPPLIER, $supplier->uuid()->toString())
+            \sprintf(self::CHANGE_CONTACT_SUPPLIER, $supplier->uuid()->toString())
         );
 
         self::assertResponseIsSuccessful();
@@ -101,7 +101,7 @@ final class ChangeContactControllerTest extends WebTestCase
         // Act
         $client->request(
             Request::METHOD_GET,
-            sprintf(self::CHANGE_CONTACT_SUPPLIER, $faker->uuid())
+            \sprintf(self::CHANGE_CONTACT_SUPPLIER, $faker->uuid())
         );
 
         // Assert

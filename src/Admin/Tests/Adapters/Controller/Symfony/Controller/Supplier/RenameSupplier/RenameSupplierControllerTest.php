@@ -52,7 +52,7 @@ final class RenameSupplierControllerTest extends WebTestCase
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            sprintf(self::RENAME_SUPPLIER_URI, $supplier->uuid()->toString())
+            \sprintf(self::RENAME_SUPPLIER_URI, $supplier->uuid()->toString())
         );
 
         self::assertResponseIsSuccessful();
@@ -104,7 +104,7 @@ final class RenameSupplierControllerTest extends WebTestCase
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            sprintf(self::RENAME_SUPPLIER_URI, $supplier1->uuid()->toString())
+            \sprintf(self::RENAME_SUPPLIER_URI, $supplier1->uuid()->toString())
         );
 
         self::assertResponseIsSuccessful();
@@ -148,7 +148,7 @@ final class RenameSupplierControllerTest extends WebTestCase
         // Act
         $client->request(
             Request::METHOD_GET,
-            sprintf(self::RENAME_SUPPLIER_URI, $faker->uuid())
+            \sprintf(self::RENAME_SUPPLIER_URI, $faker->uuid())
         );
 
         // Assert

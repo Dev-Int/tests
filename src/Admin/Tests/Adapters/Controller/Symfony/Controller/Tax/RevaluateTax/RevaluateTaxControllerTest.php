@@ -44,7 +44,7 @@ final class RevaluateTaxControllerTest extends WebTestCase
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            sprintf(self::REEVALUATE_TAX_URI, TaxDataBuilder::UUID_VALID)
+            \sprintf(self::REEVALUATE_TAX_URI, TaxDataBuilder::UUID_VALID)
         );
 
         self::assertResponseIsSuccessful();
@@ -94,7 +94,7 @@ final class RevaluateTaxControllerTest extends WebTestCase
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            sprintf(self::REEVALUATE_TAX_URI, TaxDataBuilder::UUID_VALID)
+            \sprintf(self::REEVALUATE_TAX_URI, TaxDataBuilder::UUID_VALID)
         );
 
         self::assertResponseIsSuccessful();
@@ -137,7 +137,7 @@ final class RevaluateTaxControllerTest extends WebTestCase
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            sprintf(self::REEVALUATE_TAX_URI, TaxDataBuilder::UUID_VALID)
+            \sprintf(self::REEVALUATE_TAX_URI, TaxDataBuilder::UUID_VALID)
         );
 
         self::assertResponseIsSuccessful();
@@ -175,7 +175,7 @@ final class RevaluateTaxControllerTest extends WebTestCase
         // Act
         $client->request(
             Request::METHOD_GET,
-            sprintf(self::REEVALUATE_TAX_URI, $faker->uuid())
+            \sprintf(self::REEVALUATE_TAX_URI, $faker->uuid())
         );
 
         // Assert

@@ -43,7 +43,7 @@ final class PackagingTest extends TestCase
     /**
      * @return iterable<string, array<array<int, array{Unit, float}|null>>>
      */
-    public function provideDistributeTheSubdivisionCases(): iterable
+    public static function provideDistributeTheSubdivisionCases(): iterable
     {
         $unitDataBuilder = new UnitDataBuilder();
 

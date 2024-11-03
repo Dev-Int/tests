@@ -125,7 +125,7 @@ class Supplier
 
     public function fullAddress(): string
     {
-        return sprintf("%s\n%s %s, %s", $this->address, $this->postalCode, $this->town, $this->country);
+        return \sprintf("%s\n%s %s, %s", $this->address, $this->postalCode, $this->town, $this->country);
     }
 
     public function setAddress(string $address): self

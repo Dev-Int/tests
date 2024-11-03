@@ -41,7 +41,7 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
         self::assertCount(1, $units);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, sprintf(self::CHANGE_LABEL_URI, $unit->uuid()->toString()));
+        $crawler = $client->request(Request::METHOD_GET, \sprintf(self::CHANGE_LABEL_URI, $unit->uuid()->toString()));
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', 'Change label "Kilogramme"');
@@ -85,7 +85,7 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            sprintf(self::CHANGE_LABEL_URI, $unit->uuid()->toString())
+            \sprintf(self::CHANGE_LABEL_URI, $unit->uuid()->toString())
         );
 
         self::assertResponseIsSuccessful();
@@ -136,7 +136,7 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            sprintf(self::CHANGE_LABEL_URI, $unit1->uuid()->toString())
+            \sprintf(self::CHANGE_LABEL_URI, $unit1->uuid()->toString())
         );
 
         self::assertResponseIsSuccessful();
@@ -175,7 +175,7 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            sprintf(self::CHANGE_LABEL_URI, $unit->uuid()->toString())
+            \sprintf(self::CHANGE_LABEL_URI, $unit->uuid()->toString())
         );
 
         self::assertResponseIsSuccessful();
@@ -219,7 +219,7 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
         self::assertCount(1, $units);
 
         // Act
-        $client->request(Request::METHOD_GET, sprintf(self::CHANGE_LABEL_URI, $faker->uuid()));
+        $client->request(Request::METHOD_GET, \sprintf(self::CHANGE_LABEL_URI, $faker->uuid()));
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);

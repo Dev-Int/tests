@@ -55,7 +55,7 @@ final class ChangeLabelFamilyLogControllerTest extends WebTestCase
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            sprintf(self::CHANGE_LABEL_FAMILY_LOG_URI, $familyLog->uuid()->toString())
+            \sprintf(self::CHANGE_LABEL_FAMILY_LOG_URI, $familyLog->uuid()->toString())
         );
 
         self::assertResponseIsSuccessful();
@@ -118,7 +118,7 @@ final class ChangeLabelFamilyLogControllerTest extends WebTestCase
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            sprintf(self::CHANGE_LABEL_FAMILY_LOG_URI, $familyLogParent->uuid()->toString())
+            \sprintf(self::CHANGE_LABEL_FAMILY_LOG_URI, $familyLogParent->uuid()->toString())
         );
 
         self::assertResponseIsSuccessful();
@@ -191,7 +191,7 @@ final class ChangeLabelFamilyLogControllerTest extends WebTestCase
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            sprintf(self::CHANGE_LABEL_FAMILY_LOG_URI, $familyLog->uuid()->toString())
+            \sprintf(self::CHANGE_LABEL_FAMILY_LOG_URI, $familyLog->uuid()->toString())
         );
 
         self::assertResponseIsSuccessful();
@@ -239,7 +239,7 @@ final class ChangeLabelFamilyLogControllerTest extends WebTestCase
         // Act
         $client->request(
             Request::METHOD_GET,
-            sprintf(self::CHANGE_LABEL_FAMILY_LOG_URI, $faker->uuid())
+            \sprintf(self::CHANGE_LABEL_FAMILY_LOG_URI, $faker->uuid())
         );
 
         // Assert

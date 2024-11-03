@@ -44,7 +44,7 @@ final class RenameTaxControllerTest extends WebTestCase
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            sprintf(self::RENAME_TAX_URI, TaxDataBuilder::UUID_VALID)
+            \sprintf(self::RENAME_TAX_URI, TaxDataBuilder::UUID_VALID)
         );
 
         self::assertResponseIsSuccessful();
@@ -94,7 +94,7 @@ final class RenameTaxControllerTest extends WebTestCase
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            sprintf(self::RENAME_TAX_URI, TaxDataBuilder::UUID_VALID)
+            \sprintf(self::RENAME_TAX_URI, TaxDataBuilder::UUID_VALID)
         );
 
         self::assertResponseIsSuccessful();
@@ -140,7 +140,7 @@ final class RenameTaxControllerTest extends WebTestCase
         // Act
         $client->request(
             Request::METHOD_GET,
-            sprintf(self::RENAME_TAX_URI, $faker->uuid())
+            \sprintf(self::RENAME_TAX_URI, $faker->uuid())
         );
 
         // Assert
