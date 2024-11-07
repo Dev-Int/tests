@@ -24,23 +24,6 @@ use Shared\Entities\VO\Packaging;
 final class PackagingTest extends TestCase
 {
     /**
-     * @dataProvider provideDistributeTheSubdivisionCases
-     *
-     * @param array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null} $packaging
-     * @param array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null} $expected
-     */
-    public function testDistributeTheSubdivision(array $packaging, array $expected): void
-    {
-        // Arrange && Act
-        $packages = Packaging::fromArray($packaging);
-
-        // Assert
-        self::assertEquals($expected[0], $packages->parcel());
-        self::assertEquals($expected[1], $packages->subPackage());
-        self::assertEquals($expected[2], $packages->consumerUnit());
-    }
-
-    /**
      * @return iterable<string, array<array<int, array{Unit, float}|null>>>
      */
     public static function provideDistributeTheSubdivisionCases(): iterable
@@ -87,5 +70,22 @@ final class PackagingTest extends TestCase
             'packaging' => [[$unitDataBuilder->create('Colis', 'cls')->build(), 1.0], null, null],
             'expected' => [[$unitDataBuilder->create('Colis', 'cls')->build(), 1.0], null, null],
         ];
+    }
+
+    /**
+     * @dataProvider provideDistributeTheSubdivisionCases
+     *
+     * @param array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null} $packaging
+     * @param array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null} $expected
+     */
+    public function testDistributeTheSubdivision(array $packaging, array $expected): void
+    {
+        // Arrange && Act
+        $packages = Packaging::fromArray($packaging);
+
+        // Assert
+        self::assertEquals($expected[0], $packages->parcel());
+        self::assertEquals($expected[1], $packages->subPackage());
+        self::assertEquals($expected[2], $packages->consumerUnit());
     }
 }

@@ -43,7 +43,10 @@ final class CreateZoneStorageController extends AbstractController
             return $this->redirectToRoute('admin_configure');
         }
 
-        $form = $this->createForm(ZoneStorageType::class);
+        $form = $this->createForm(ZoneStorageType::class, new CreateZoneStorageDto(), [
+            'action' => $this->generateUrl('admin_zone_storages_create'),
+            'attr' => ['data-turbo-frame' => '_top'],
+        ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
