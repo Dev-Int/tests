@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Update Unit | {{ parent() }}
+    {{ 'admin.unit.changeLabel.titleShort'|trans({ '%unitName%':unit.label }) }} | {{ parent() }}
 {% endblock %}
 
 {% block body %}
 
-    <h1><twig:Icon:Entities:Unit /> Change label "{{ unit.label }}"</h1>
+    <h1><twig:Icon:Entities:Unit /> {{ 'admin.unit.changeLabel.titlePage'|trans({ '%unitName%':unit.label }) }}</h1>
 
     <turbo-frame id="unit_{{ unit.uuid }}">
         <twig:Form:Unit:ChangeLabelForm form="{{ form }}" unit="{{ unit }}" />

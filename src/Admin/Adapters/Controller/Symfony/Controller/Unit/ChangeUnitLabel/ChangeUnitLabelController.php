@@ -21,12 +21,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsController]
 final class ChangeUnitLabelController extends AbstractController
 {
-    public function __construct(private readonly ChangeUnitLabel $useCase)
-    {
+    public function __construct(
+        private readonly ChangeUnitLabel $useCase,
+        private readonly TranslatorInterface $translator
+    ) {
     }
 
     #[Route(
@@ -55,7 +58,7 @@ final class ChangeUnitLabelController extends AbstractController
 
                 return $this->redirectToRoute('admin_units_index');
             }
-            $this->addFlash('success', 'Unit updated');
+            $this->addFlash('success', $this->translator->trans('admin.unit.changeLabel.success'));
 
             return $this->redirectToRoute('admin_units_index');
         }

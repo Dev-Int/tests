@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'actions' => 'Actions',
     'name' => 'Nom',
     'address' => 'Adresse',
     'phone' => 'Téléphone',
@@ -50,8 +51,32 @@ return [
             'update' => [
                 'titlePage' => 'Modification de la compagnie "%companyName%"',
                 'titleShort' => 'Modifier "%companyName%"',
-                'success' => 'Compagnie mise à jour avec succès.'
+                'success' => 'Compagnie modifiée avec succès.'
             ]
+        ],
+        'unit' => [
+            'titlePage' => 'Unités',
+            'form' => [
+                'label' => [
+                    'label' => 'Intitulé',
+                    'placeholder' => 'Intitulé de l\'unité',
+                ],
+                'abbreviation' => [
+                    'label' => 'Abréviation',
+                    'placeholder' => 'Abréviation de l\'unité',
+                ],
+            ],
+            'create' => [
+                'titlePage' => 'Création d\'une unité',
+                'titleShort' => 'Nouvelle unité',
+                'success' => 'Unité créée avec succès.',
+            ],
+            'changeLabel' => [
+                'button' => 'Renommer',
+                'titlePage' => 'Changer l\'intitulé de l\'unité "%unitName%"',
+                'titleShort' => 'Renommer "%unitName%"',
+                'success' => 'L\'intitulé de l\'unité changé avec succès.'
+            ],
         ],
     ],
 ];

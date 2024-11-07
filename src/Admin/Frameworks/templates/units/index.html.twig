@@ -1,26 +1,29 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Units | {{ parent() }}
+    {{ 'admin.unit.titlePage'|trans }} | {{ parent() }}
 {% endblock %}
 
 {% block body %}
 
-    <h1><twig:Icon:Entities:Unit /> Units</h1>
+    <h1><twig:Icon:Entities:Unit /> {{ 'admin.unit.titlePage'|trans }}</h1>
 
     <main>
         <article>
             <div>
                 <turbo-frame id="unit_create" class="flex-between">
                     <span></span>
-                    <twig:Button:CreateEntity href="{{ path('admin_unit_create') }}" label="Create Unit" />
+                    <twig:Button:CreateEntity
+                        href="{{ path('admin_unit_create') }}"
+                        label="{{ 'admin.unit.create.titleShort'|trans }}"
+                    />
                 </turbo-frame>
             </div>
             <ul class="table">
                 <li class="li-unstyled flex-between head">
-                    <span>Label</span>
-                    <span>Abbreviation</span>
-                    <span>Action</span>
+                    <span>{{ 'admin.unit.form.label.label'|trans }}</span>
+                    <span>{{ 'admin.unit.form.abbreviation.label'|trans }}</span>
+                    <span>{{ 'actions'|trans }}</span>
                 </li>
                 {% for unit in units %}
                     <turbo-frame id="unit_{{ unit.uuid }}">
@@ -28,7 +31,11 @@
                             <span>{{ unit.label }}</span>
                             <span>{{ unit.abbreviation }}</span>
                             <span>
-                                <twig:Button:UpdateEntity href="{{ path('admin_units_change-label', {unit: unit.uuid}) }}" class="btn-small" label="Change label"/>
+                                <twig:Button:UpdateEntity
+                                    href="{{ path('admin_units_change-label', {unit: unit.uuid}) }}"
+                                    class="btn-small"
+                                    label="{{ 'admin.unit.changeLabel.button'|trans }}"
+                                />
                             </span>
                         </li>
                     </turbo-frame>

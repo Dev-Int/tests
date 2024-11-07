@@ -18,14 +18,19 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UnitType extends AbstractType
 {
+    public function __construct(private TranslatorInterface $translator)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('label', TextType::class, [
-                'label' => 'Intitulé de l\'unité',
+                'label' => $this->translator->trans('admin.unit.form.label.placeholder'),
                 'required' => true,
                 'empty_data' => '',
                 'attr' => [
@@ -33,7 +38,7 @@ class UnitType extends AbstractType
                 ],
             ])
             ->add('abbreviation', TextType::class, [
-                'label' => 'Abréviation de l\'unité',
+                'label' => $this->translator->trans('admin.unit.form.abbreviation.placeholder'),
                 'required' => true,
                 'empty_data' => '',
             ])
