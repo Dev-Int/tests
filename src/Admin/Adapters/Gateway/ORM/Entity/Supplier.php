@@ -68,7 +68,7 @@ class Supplier
         $this->name = $supplier->name()->toString();
         $this->address = $supplier->address()->address();
         $this->postalCode = $supplier->address()->postalCode();
-        $this->town = $supplier->address()->town();
+        $this->town = $supplier->address()->city();
         $this->country = $supplier->address()->country();
         $this->phone = $supplier->phone()->toNumber();
         $this->email = $supplier->email()->toString();

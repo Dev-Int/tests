@@ -123,7 +123,7 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
 
         $supplierToUpdate->setAddress($supplier->address()->address())
             ->setPostalCode($supplier->address()->postalCode())
-            ->setTown($supplier->address()->town())
+            ->setTown($supplier->address()->city())
             ->setCountry($supplier->address()->country())
             ->setPhone($supplier->phone()->toNumber())
             ->setEmail($supplier->email()->toString())

@@ -19,6 +19,7 @@ use Admin\Tests\DataBuilder\CompanyDataBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @group functionalTest
@@ -35,6 +36,9 @@ final class GetCompanyControllerTest extends WebTestCase
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
 
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $company = (new CompanyDataBuilder())->create('Test Company')->build();
         $companyRepository->save($company);
 
@@ -43,13 +47,13 @@ final class GetCompanyControllerTest extends WebTestCase
 
         // Assert
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Company');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.company.titlePage'));
 
         $firstLine = $crawler
             ->filter('body > div.container > main > article > table > tbody > tr')
             ->children('td')
         ;
-        self::assertSame('Name', $firstLine->first()->text());
+        self::assertSame($translator->trans('name'), $firstLine->first()->text());
         self::assertSame('Test Company', $firstLine->siblings()->text());
     }
 

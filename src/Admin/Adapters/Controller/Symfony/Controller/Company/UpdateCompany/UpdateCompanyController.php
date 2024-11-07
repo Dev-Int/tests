@@ -21,12 +21,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsController]
 final class UpdateCompanyController extends AbstractController
 {
-    public function __construct(private readonly UpdateCompany $useCase)
-    {
+    public function __construct(
+        private readonly UpdateCompany $useCase,
+        private readonly TranslatorInterface $translator
+    ) {
     }
 
     #[Route(
@@ -40,7 +43,7 @@ final class UpdateCompanyController extends AbstractController
             $company->name(),
             $company->address(),
             $company->postalCode(),
-            $company->town(),
+            $company->city(),
             $company->country(),
             $company->phone(),
             $company->email(),
@@ -58,7 +61,7 @@ final class UpdateCompanyController extends AbstractController
 
             $this->useCase->execute($companyRequest);
 
-            $this->addFlash('success', 'Company updated');
+            $this->addFlash('success', $this->translator->trans('admin.company.update.success'));
 
             return $this->redirectToRoute('admin_company_index');
         }

@@ -19,6 +19,7 @@ use Admin\Tests\DataBuilder\CompanyDataBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @group functionalTest
@@ -35,17 +36,20 @@ final class CreateCompanyControllerTest extends WebTestCase
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
 
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         // Act
         $crawler = $client->request(Request::METHOD_GET, self::CREATE_COMPANY_URI);
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Create Company');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.company.create.titlePage'));
 
         $form = $crawler->selectButton('Create')->form([
             'createCompany[name]' => 'Dev-Int Création',
             'createCompany[address]' => '5, rue des Plantes',
             'createCompany[postalCode]' => '75000',
-            'createCompany[town]' => 'Paris',
+            'createCompany[city]' => 'Paris',
             'createCompany[country]' => 'France',
             'createCompany[phone]' => '+33297000000',
             'createCompany[email]' => 'test@test.fr',
@@ -65,7 +69,7 @@ final class CreateCompanyControllerTest extends WebTestCase
         $admin = $client->followRedirect(); // Configure page
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
-        self::assertEquals('Company created', $flash);
+        self::assertEquals($translator->trans('admin.company.create.success'), $flash);
     }
 
     public function testCreateCompanyControllerWillThrowAlreadyExistsException(): void
@@ -76,6 +80,9 @@ final class CreateCompanyControllerTest extends WebTestCase
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
 
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $company = (new CompanyDataBuilder())->create('TestCompany')->build();
         $companyRepository->save($company);
 
@@ -83,13 +90,13 @@ final class CreateCompanyControllerTest extends WebTestCase
         $crawler = $client->request(Request::METHOD_GET, self::CREATE_COMPANY_URI);
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Create Company');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.company.create.titlePage'));
 
         $form = $crawler->selectButton('Create')->form([
             'createCompany[name]' => 'Dev-Int Création',
             'createCompany[address]' => '5, rue des Plantes',
             'createCompany[postalCode]' => '75000',
-            'createCompany[town]' => 'Paris',
+            'createCompany[city]' => 'Paris',
             'createCompany[country]' => 'France',
             'createCompany[phone]' => '+33297000000',
             'createCompany[email]' => 'test@test.fr',
@@ -118,6 +125,9 @@ final class CreateCompanyControllerTest extends WebTestCase
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
 
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $company = (new CompanyDataBuilder())->create('TestCompany')->build();
         $companyRepository->save($company);
 
@@ -125,13 +135,13 @@ final class CreateCompanyControllerTest extends WebTestCase
         $crawler = $client->request(Request::METHOD_GET, self::CREATE_COMPANY_URI);
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Create Company');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.company.create.titlePage'));
 
         $form = $crawler->selectButton('Create')->form([
             'createCompany[name]' => 'Dev-Int Création',
             'createCompany[address]' => '5, rue des Plantes',
             'createCompany[postalCode]' => '75000',
-            'createCompany[town]' => 'Paris',
+            'createCompany[city]' => 'Paris',
             'createCompany[country]' => 'France',
             'createCompany[phone]' => '02.97-00 000',
             'createCompany[email]' => 'test@test.fr',
@@ -147,7 +157,7 @@ final class CreateCompanyControllerTest extends WebTestCase
         $groupField = $response->filter('form')->children('div')->eq(4);
         $phoneField = $groupField->children('div')->first();
 
-        self::assertSame('Téléphone', $phoneField->children('label')->text());
+        self::assertSame($translator->trans('phone'), $phoneField->children('label')->text());
         self::assertSame('Cette valeur n\'est pas valide.', $phoneField->children('ul > li')->text());
     }
 }

@@ -20,67 +20,72 @@ use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CompanyType extends AbstractType
 {
+    public function __construct(private readonly TranslatorInterface $translator)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('name', TextType::class, [
                 'required' => true,
-                'label' => 'Nom de la société',
+                'label' => $this->translator->trans('admin.company.form.name.label'),
                 'attr' => [
-                    'placeholder' => 'Le nom de votre société',
+                    'placeholder' => $this->translator->trans('admin.company.form.name.placeholder'),
                     'autofocus' => true,
                 ],
             ])
             ->add('address', TextType::class, [
                 'required' => true,
-                'label' => 'Adresse de la société',
+                'label' => $this->translator->trans('admin.company.form.address.label'),
                 'attr' => [
-                    'placeholder' => 'L\'adresse de votre société',
+                    'placeholder' => $this->translator->trans('admin.company.form.address.placeholder'),
                 ],
             ])
             ->add('postalCode', TextType::class, [
                 'required' => true,
-                'label' => 'Code postal',
+                'label' => $this->translator->trans('admin.company.form.postalCode.label'),
                 'attr' => [
-                    'placeholder' => 'Le code Postal où est domiciliée votre société',
+                    'placeholder' => $this->translator->trans('admin.company.form.postalCode.placeholder'),
                 ],
             ])
-            ->add('town', TextType::class, [
+            ->add('city', TextType::class, [
                 'required' => true,
                 'label' => 'Ville',
                 'attr' => [
-                    'placeholder' => 'La ville où est domiciliée votre société',
+                    'placeholder' => $this->translator->trans('admin.company.form.city.placeholder'),
                 ],
             ])
             ->add('country', TextType::class, [
                 'required' => true,
-                'label' => 'Pays',
+                'label' => $this->translator->trans('admin.company.form.country.label'),
                 'attr' => [
-                    'placeholder' => 'Le pays où est domiciliée votre société',
+                    'placeholder' => $this->translator->trans('admin.company.form.country.placeholder'),
                 ],
             ])
             ->add('phone', TelType::class, [
                 'required' => true,
-                'label' => 'Téléphone',
+                'label' => $this->translator->trans('admin.company.form.phone.label'),
                 'attr' => [
-                    'placeholder' => 'Le téléphone de votre société',
+                    'placeholder' => $this->translator->trans('admin.company.form.phone.placeholder'),
                 ],
             ])
             ->add('email', EmailType::class, [
                 'required' => true,
-                'label' => 'Adresse mail',
+                'label' => $this->translator->trans('admin.company.form.email.label'),
                 'attr' => [
-                    'placeholder' => 'L\'adresse mail de votre société',
+                    'placeholder' => $this->translator->trans('admin.company.form.email.placeholder'),
                 ],
             ])
             ->add('contact', TextType::class, [
                 'required' => true,
-                'label' => 'Contact de la société',
+                'label' => $this->translator->trans('admin.company.form.contact.label'),
                 'attr' => [
-                    'placeholder' => 'Le nom du contact de votre société',
+                    'placeholder' => $this->translator->trans('admin.company.form.contact.placeholder'),
                 ],
             ])
         ;

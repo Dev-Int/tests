@@ -21,12 +21,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsController]
 final class CreateCompanyController extends AbstractController
 {
-    public function __construct(private readonly CreateCompany $useCase)
-    {
+    public function __construct(
+        private readonly CreateCompany $useCase,
+        private readonly TranslatorInterface $translator
+    ) {
     }
 
     #[Route(path: '/company/create', name: 'admin_company_create', methods: ['GET', 'POST'])]
@@ -46,7 +49,7 @@ final class CreateCompanyController extends AbstractController
 
                 return $this->redirectToRoute('admin_index');
             }
-            $this->addFlash('success', 'Company created');
+            $this->addFlash('success', $this->translator->trans('admin.company.create.success'));
 
             return $this->redirectToRoute('admin_index', [], Response::HTTP_FOUND);
         }
