@@ -1,6 +1,6 @@
 <div class="flex-1">
 
-    <h3>Change label "{{ familyLog.label }}"</h3>
+    <h3>{{ 'admin.familyLog.changeLabel.titlePage'|trans({ '%familyLabel%': familyLog.label }) }}</h3>
 
     {{ form_start(form) }}
     {{ form_errors(form) }}
@@ -9,7 +9,7 @@
 
     <div class="grid">
         <twig:Form:Button:Cancel href="{{ path('admin_family_logs_index') }}" label="Annuler" />
-        <twig:Form:Button:Submit label="Update" />
+        <twig:Form:Button:Submit label="{{ 'admin.familyLog.changeLabel.button'|trans }}" />
     </div>
 
     {{ form_end(form) }}

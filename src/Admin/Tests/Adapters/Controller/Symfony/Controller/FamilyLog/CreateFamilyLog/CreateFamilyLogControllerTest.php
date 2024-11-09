@@ -29,6 +29,7 @@ use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @group functionalTest
@@ -42,29 +43,35 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         // Arrange
         $client = self::createClient();
 
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
-        $company = (new CompanyDataBuilder())->create('Test company')->build();
-        $companyRepository->save($company);
 
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
-        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
-        $unitRepository->save($unit);
 
         /** @var DoctrineTaxRepository $taxRepository */
         $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
-        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
-        $taxRepository->save($tax);
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+
+        $company = (new CompanyDataBuilder())->create('Test company')->build();
+        $companyRepository->save($company);
+
+        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
+        $unitRepository->save($unit);
+
+        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
+        $taxRepository->save($tax);
 
         // Act
         $crawler = $client->request(Request::METHOD_GET, self::CREATE_FAMILY_LOG_URI);
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Create Logistic Family');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.familyLog.create.titlePage'));
 
         $form = $crawler->selectButton('Create')->form([
             'createFamilyLog[label]' => 'Surgelé',
@@ -78,7 +85,7 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
-        self::assertSame('FamilyLog created', $flash);
+        self::assertSame($translator->trans('admin.familyLog.create.success'), $flash);
 
         /** @var FamilyLogDomain $familyCreated */
         $familyCreated = $familyLogRepository->findBySlug('surgele');
@@ -91,23 +98,30 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         $faker = Factory::create('fr_FR');
         $client = self::createClient();
 
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
-        $company = (new CompanyDataBuilder())->create('Test company')->build();
-        $companyRepository->save($company);
 
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
-        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
-        $unitRepository->save($unit);
 
         /** @var DoctrineTaxRepository $taxRepository */
         $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
-        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
-        $taxRepository->save($tax);
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+
+        $company = (new CompanyDataBuilder())->create('Test company')->build();
+        $companyRepository->save($company);
+
+        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
+        $unitRepository->save($unit);
+
+        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
+        $taxRepository->save($tax);
+
         $familyLogParent = (new FamilyLogDataBuilder())->create('Surgelé')
             ->withUuid($faker->uuid())
             ->build()
@@ -119,7 +133,7 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         $crawler = $client->request(Request::METHOD_GET, self::CREATE_FAMILY_LOG_URI);
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Create Logistic Family');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.familyLog.create.titlePage'));
 
         $form = $crawler->selectButton('Create')->form([
             'createFamilyLog[label]' => 'Viande',
@@ -134,7 +148,7 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
-        self::assertSame('FamilyLog created', $flash);
+        self::assertSame($translator->trans('admin.familyLog.create.success'), $flash);
 
         /** @var FamilyLogDomain $familyCreated */
         $familyCreated = $familyLogRepository->findBySlug('surgele_viande');
@@ -149,23 +163,30 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         $faker = Factory::create('fr_FR');
         $client = self::createClient();
 
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
-        $company = (new CompanyDataBuilder())->create('Test company')->build();
-        $companyRepository->save($company);
 
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
-        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
-        $unitRepository->save($unit);
 
         /** @var DoctrineTaxRepository $taxRepository */
         $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
-        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
-        $taxRepository->save($tax);
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+
+        $company = (new CompanyDataBuilder())->create('Test company')->build();
+        $companyRepository->save($company);
+
+        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
+        $unitRepository->save($unit);
+
+        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
+        $taxRepository->save($tax);
+
         $familyLogBuilder = new FamilyLogDataBuilder();
         $familyLogGrandParent = $familyLogBuilder->create('Surgelé')
             ->withUuid($faker->uuid())
@@ -183,7 +204,7 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         $crawler = $client->request(Request::METHOD_GET, self::CREATE_FAMILY_LOG_URI);
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Create Logistic Family');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.familyLog.create.titlePage'));
 
         $form = $crawler->selectButton('Create')->form([
             'createFamilyLog[label]' => 'Poulet',
@@ -198,7 +219,7 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
-        self::assertSame('FamilyLog created', $flash);
+        self::assertSame($translator->trans('admin.familyLog.create.success'), $flash);
 
         /** @var FamilyLogDomain $familyCreated */
         $familyCreated = $familyLogRepository->findBySlug('surgele_viande_poulet');
@@ -212,23 +233,30 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         // Arrange
         $client = self::createClient();
 
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
-        $company = (new CompanyDataBuilder())->create('Test company')->build();
-        $companyRepository->save($company);
 
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
-        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
-        $unitRepository->save($unit);
 
         /** @var DoctrineTaxRepository $taxRepository */
         $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
-        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
-        $taxRepository->save($tax);
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+
+        $company = (new CompanyDataBuilder())->create('Test company')->build();
+        $companyRepository->save($company);
+
+        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
+        $unitRepository->save($unit);
+
+        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
+        $taxRepository->save($tax);
+
         $familyLogBuilder = new FamilyLogDataBuilder();
         $familyLog = $familyLogBuilder->create('Surgelé')->build();
         $familyLogRepository->save($familyLog);
@@ -242,7 +270,7 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         $crawler = $client->request(Request::METHOD_GET, self::CREATE_FAMILY_LOG_URI);
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Create Logistic Family');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.familyLog.create.titlePage'));
 
         $form = $crawler->selectButton('Create')->form([
             'createFamilyLog[label]' => 'Surgelé',
@@ -266,11 +294,13 @@ final class CreateFamilyLogControllerTest extends WebTestCase
 
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
-        $company = (new CompanyDataBuilder())->create('Test company')->build();
-        $companyRepository->save($company);
 
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+
+        $company = (new CompanyDataBuilder())->create('Test company')->build();
+        $companyRepository->save($company);
+
         $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
         $unitRepository->save($unit);
 

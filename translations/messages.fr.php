@@ -108,5 +108,34 @@ return [
                 'success' => 'La taxe est réévaluée avec succès.'
             ],
         ],
+        'familyLog' => [
+            'titlePage' => 'Famille logistique',
+            'form' => [
+                'name' => [
+                    'label' => 'Nom de la famille logistique',
+                    'placeholder' => 'Le nom de la famille logistique',
+                ],
+                'parent' => [
+                    'label' => 'Famille logistique parente',
+                ],
+            ],
+            'create' => [
+                'titlePage' => 'Création d\'une famille logistique',
+                'titleShort' => 'Nouvelle famille logistique',
+                'success' => 'Famille logistique créée avec succès.',
+            ],
+            'changeLabel' => [
+                'button' => 'Renommer',
+                'titlePage' => 'Renommer la famille logistique "%familyLabel%"',
+                'titleShort' => 'Renommer "%familyLabel%"',
+                'success' => 'La famille logistique est renommée avec succès.'
+            ],
+            'assignParent' => [
+                'button' => 'Assigner un parent',
+                'titlePage' => 'Assigner un parent à "%familyLabel%"',
+                'titleShort' => 'Modifier une famille logistique',
+                'success' => 'Famille logistique parente assignée avec succès.',
+            ],
+        ],
     ],
 ];

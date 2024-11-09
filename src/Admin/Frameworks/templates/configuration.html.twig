@@ -27,7 +27,7 @@
                     <li>
                         <a href="{{ path('admin_family_logs_create') }}" role="button" class="{% if hasFamilyLog %}secondary disable-link {% endif %}w100">
                             {% if hasFamilyLog %}<twig:Icon:Check />
-                            {% else %}<twig:Icon:Entities:FamilyLog />{% endif %} Create Logistic family
+                            {% else %}<twig:Icon:Entities:FamilyLog />{% endif %} {{ 'admin.familyLog.create.titleShort'|trans }}
                         </a>
                     </li>
                     <li>

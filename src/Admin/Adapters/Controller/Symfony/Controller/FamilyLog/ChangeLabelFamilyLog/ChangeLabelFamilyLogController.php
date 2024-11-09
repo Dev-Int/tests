@@ -21,11 +21,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsController]
 final class ChangeLabelFamilyLogController extends AbstractController
 {
-    public function __construct(private readonly ChangeLabelFamilyLog $useCase)
+    public function __construct(private readonly ChangeLabelFamilyLog $useCase, private readonly TranslatorInterface $translator)
     {
     }
 
@@ -58,7 +59,7 @@ final class ChangeLabelFamilyLogController extends AbstractController
 
                 return $this->redirectToRoute('admin_family_logs_index');
             }
-            $this->addFlash('success', 'FamilyLog label changed.');
+            $this->addFlash('success', $this->translator->trans('admin.familyLog.changeLabel.success'));
 
             return $this->redirectToRoute('admin_family_logs_index');
         }

@@ -23,13 +23,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsController]
 final class CreateFamilyLogController extends AbstractController
 {
     public function __construct(
         private readonly CreateFamilyLog $useCase,
-        private readonly ConfigurationService $configurationService
+        private readonly ConfigurationService $configurationService,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -59,7 +61,7 @@ final class CreateFamilyLogController extends AbstractController
 
                 return $this->redirectToRoute('admin_family_logs_index');
             }
-            $this->addFlash('success', 'FamilyLog created');
+            $this->addFlash('success', $this->translator->trans('admin.familyLog.create.success'));
 
             return $this->redirectToRoute('admin_family_logs_index', [], Response::HTTP_FOUND);
         }

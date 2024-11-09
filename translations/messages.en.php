@@ -7,6 +7,7 @@ return [
     'phone' => 'Phone',
     'email' => 'Email',
     'contact' => 'Contact',
+    'rate' => 'Rate',
     'admin' => [
         'company' => [
             'titlePage' => 'Company',
@@ -75,7 +76,7 @@ return [
                 'button' => 'Change label',
                 'titlePage' => 'Change label "%unitName%"',
                 'titleShort' => 'Rename "%unitName%"',
-                'success' => 'Unit label changed successfully.'
+                'success' => 'Unit label changed successfully.',
             ],
         ],
         'tax' => [
@@ -90,20 +91,49 @@ return [
             ],
             'create' => [
                 'titlePage' => 'Create tax',
-                'titleShort' => 'New taxe',
+                'titleShort' => 'New tax',
                 'success' => 'Taxe created successfully.',
             ],
             'rename' => [
                 'button' => 'Rename',
                 'titlePage' => 'Rename tax "%taxName%"',
                 'titleShort' => 'Rename "%taxName%"',
-                'success' => 'Tax renamed successfully.'
+                'success' => 'Tax renamed successfully.',
             ],
             'revaluate' => [
                 'button' => 'Revaluate',
                 'titlePage' => 'Revaluate tax "%taxName%"',
                 'titleShort' => 'Revaluate "%taxName%"',
-                'success' => 'Tax revaluated successfully.'
+                'success' => 'Tax revaluated successfully.',
+            ],
+        ],
+        'familyLog' => [
+            'titlePage' => 'Logistics family',
+            'form' => [
+                'name' => [
+                    'label' => 'Logistics family name',
+                    'placeholder' => 'The name of the logistics family',
+                ],
+                'parent' => [
+                    'label' => 'Related logistics family',
+                ],
+            ],
+            'create' => [
+                'titlePage' => 'Create logistics family',
+                'titleShort' => 'New logistics family',
+                'success' => 'Logistics family created successfully.',
+            ],
+            'changeLabel' => [
+                'button' => 'Change label',
+                'titlePage' => 'Change label to "%familyLabel%"',
+                'titleShort' => 'Update logistique family',
+                'success' => 'Logistics family renamed successfully.',
+            ],
+            'assignParent' => [
+                'button' => 'Assign parent',
+                'titlePage' => 'Assign parent to "%familyLabel%"',
+                'titleShort' => 'Update logistique family',
+                'success' => 'FamilyLog parent assigned successfully.',
             ],
         ],
     ],

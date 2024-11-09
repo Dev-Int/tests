@@ -21,12 +21,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsController]
 final class AssignParentFamilyLogController extends AbstractController
 {
-    public function __construct(private readonly AssignParentFamilyLog $useCase)
-    {
+    public function __construct(
+        private readonly AssignParentFamilyLog $useCase,
+        private readonly TranslatorInterface $translator
+    ) {
     }
 
     #[Route(
@@ -62,7 +65,7 @@ final class AssignParentFamilyLogController extends AbstractController
 
                 return $this->redirectToRoute('admin_family_logs_index');
             }
-            $this->addFlash('success', 'FamilyLog parent assigned.');
+            $this->addFlash('success', $this->translator->trans('admin.familyLog.assignParent.success'));
 
             return $this->redirectToRoute('admin_family_logs_index');
         }

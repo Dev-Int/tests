@@ -1,19 +1,19 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    FamilyLogs | {{ parent() }}
+    {{ 'admin.familyLog.titlePage'|trans }} | {{ parent() }}
 {% endblock %}
 
 {% block body %}
 
-    <h1><twig:Icon:Entities:FamilyLog /> Logistics Families</h1>
+    <h1><twig:Icon:Entities:FamilyLog /> {{ 'admin.familyLog.titlePage'|trans }}</h1>
 
     <main>
         <article>
             <div>
                 <turbo-frame id="familyLog_create" class="flex-between">
                     <span></span>
-                    <twig:Button:CreateEntity href="{{ path('admin_family_logs_create') }}" label="Create FamilyLog" />
+                    <twig:Button:CreateEntity href="{{ path('admin_family_logs_create') }}" label="{{ 'admin.familyLog.create.titleShort'|trans }}" />
                 </turbo-frame>
             </div>
 
@@ -27,8 +27,8 @@
                         <li class="li-unstyled flex-between">
                             <span>{{ family.path }}&nbsp;</span>
                             <span>
-                                <twig:Button:UpdateEntity href="{{ path('admin_family_logs_change-label', {familyLog: family.uuid}) }}" class="btn-small" label="Change label" />
-                                <twig:Button:UpdateEntity href="{{ path('admin_family_logs_assign-parent', {familyLog: family.uuid}) }}" class="btn-small" label="Assign parent" />
+                                <twig:Button:UpdateEntity href="{{ path('admin_family_logs_change-label', {familyLog: family.uuid}) }}" class="btn-small" label="{{ 'admin.familyLog.changeLabel.button'|trans }}" />
+                                <twig:Button:UpdateEntity href="{{ path('admin_family_logs_assign-parent', {familyLog: family.uuid}) }}" class="btn-small" label="{{ 'admin.familyLog.assignParent.button'|trans }}" />
                             </span>
                         </li>
                     </turbo-frame>

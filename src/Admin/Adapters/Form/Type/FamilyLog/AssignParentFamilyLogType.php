@@ -17,15 +17,20 @@ use Admin\Adapters\Form\Type\Components\FamilyLogEntitySelectType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class AssignParentFamilyLogType extends AbstractType
 {
+    public function __construct(private readonly TranslatorInterface $translator)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('parent', FamilyLogEntitySelectType::class, [
                 'required' => false,
-                'label' => 'Famille logistique parente',
+                'label' => $this->translator->trans('admin.familyLog.form.parent.label'),
                 'attr' => [
                     'autofocus' => true,
                 ],
