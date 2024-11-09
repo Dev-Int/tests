@@ -19,21 +19,26 @@ use Symfony\Component\Form\Extension\Core\Type\PercentType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TaxType extends AbstractType
 {
+    public function __construct(private readonly TranslatorInterface $translator)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => 'Nom de la taxe',
+                'label' => $this->translator->trans('admin.tax.form.name.label'),
                 'empty_data' => '',
                 'attr' => [
                     'autofocus' => true,
                 ],
             ])
             ->add('rate', PercentType::class, [
-                'label' => 'Taux de la taxe',
+                'label' => $this->translator->trans('admin.tax.form.rate.label'),
                 'empty_data' => 0.0,
                 'html5' => false,
                 'scale' => 2,

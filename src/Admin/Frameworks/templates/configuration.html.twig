@@ -15,7 +15,7 @@
                     <li>
                         <a href="{{ path('admin_company_create') }}" role="button" class="{% if hasCompany %}secondary disable-link {% endif %}w100">
                             {% if hasCompany %}<twig:Icon:Check />
-                            {% else %}<twig:Icon:Entities:Company />{% endif%} Create Company
+                            {% else %}<twig:Icon:Entities:Company />{% endif%} {{ 'admin.company.create.titleShort'|trans }}
                         </a>
                     </li>
                     <li>

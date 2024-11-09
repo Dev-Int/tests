@@ -15,13 +15,13 @@
                     <li>
                         <a href="{{ path('admin_unit_create') }}" class="{% if hasUnit %}secondary disable-link {% endif %}w100" role="button">
                             {% if hasUnit %}<i class="fa-solid fa-square-check"></i>
-                            {% else %}<twig:Icon:Entities:Unit />{% endif%} Create Unit
+                            {% else %}<twig:Icon:Entities:Unit />{% endif%} {{ 'admin.unit.create.titleShort'|trans }}
                         </a>
                     </li>
                     <li>
                         <a href="{{ path('admin_taxes_create') }}" class="{% if hasTaxe %}secondary disable-link {% endif %}w100" role="button">
                             {% if hasTaxe %}<i class="fa-solid fa-square-check"></i>
-                            {% else %}<twig:Icon:Entities:Taxe />{% endif%} Create Taxe
+                            {% else %}<twig:Icon:Entities:Taxe />{% endif%} {{ 'admin.tax.create.titleShort'|trans }}
                         </a>
                     </li>
                     <li>

@@ -7,6 +7,7 @@ return [
     'phone' => 'Téléphone',
     'email' => 'Adresse email',
     'contact' => 'Contact',
+    'rate' => 'Taux',
     'admin' => [
         'company' => [
             'titlePage' => 'Compagnie',
@@ -46,6 +47,7 @@ return [
             ],
             'create' => [
                 'titlePage' => 'Création d\'une compagnie',
+                'titleShort' => 'Nouvelle compagnie',
                 'success' => 'Compagnie créée avec succès.',
             ],
             'update' => [
@@ -76,6 +78,34 @@ return [
                 'titlePage' => 'Changer l\'intitulé de l\'unité "%unitName%"',
                 'titleShort' => 'Renommer "%unitName%"',
                 'success' => 'L\'intitulé de l\'unité changé avec succès.'
+            ],
+        ],
+        'tax' => [
+            'titlePage' => 'Taxe',
+            'form' => [
+                'name' => [
+                    'label' => 'Nom de la taxe',
+                ],
+                'rate' => [
+                    'label' => 'Taux de la taxe',
+                ],
+            ],
+            'create' => [
+                'titlePage' => 'Création d\'une taxe',
+                'titleShort' => 'Nouvelle taxe',
+                'success' => 'Taxe créée avec succès.',
+            ],
+            'rename' => [
+                'button' => 'Renommer',
+                'titlePage' => 'Renommer la taxe "%taxName%"',
+                'titleShort' => 'Renommer "%taxName%"',
+                'success' => 'La taxe est renommée avec succès.'
+            ],
+            'revaluate' => [
+                'button' => 'Réévaluer',
+                'titlePage' => 'Réévaluer la taxe "%taxName%"',
+                'titleShort' => 'Réévaluer "%taxName%"',
+                'success' => 'La taxe est réévaluée avec succès.'
             ],
         ],
     ],

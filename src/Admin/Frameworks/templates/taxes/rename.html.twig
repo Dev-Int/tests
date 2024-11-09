@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Update Tax | {{ parent() }}
+    {{ 'admin.tax.rename.titlePage'|trans({ '%taxName%':tax.name }) }} | {{ parent() }}
 {% endblock %}
 
 {% block body %}
 
-    <h1><twig:Icon:Entities:Taxe /> Rename Tax "{{ tax.name }}"</h1>
+    <h1><twig:Icon:Entities:Taxe /> {{ 'admin.tax.rename.titlePage'|trans({ '%taxName%':tax.name }) }}</h1>
 
     <turbo-frame id="tax_{{ tax.uuid }}">
         <twig:Form:Taxes:RenameForm form="{{ form }}" tax="{{ tax }}" />

@@ -25,6 +25,7 @@ use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @group functionalTest
@@ -40,6 +41,10 @@ final class CreateTaxControllerTest extends WebTestCase
 
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $company = (new CompanyDataBuilder())->create('Test company')->build();
         $companyRepository->save($company);
 
@@ -55,7 +60,7 @@ final class CreateTaxControllerTest extends WebTestCase
         $crawler = $client->request(Request::METHOD_GET, self::CREATE_TAX_URI);
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Create Tax');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.tax.create.titlePage'));
 
         $form = $crawler->selectButton('Create')->form([
             'createTax[name]' => 'TVA taux normal',
@@ -70,7 +75,7 @@ final class CreateTaxControllerTest extends WebTestCase
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
-        self::assertSame('Tax created', $flash);
+        self::assertSame($translator->trans('admin.tax.create.success'), $flash);
 
         /** @var Tax $taxCreated */
         $taxCreated = $taxRepository->findOneBy(['name' => 'TVA taux normal']);
@@ -85,6 +90,10 @@ final class CreateTaxControllerTest extends WebTestCase
 
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $company = (new CompanyDataBuilder())->create('Test company')->build();
         $companyRepository->save($company);
 
@@ -102,7 +111,7 @@ final class CreateTaxControllerTest extends WebTestCase
         $crawler = $client->request(Request::METHOD_GET, self::CREATE_TAX_URI);
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Create Tax');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.tax.create.titlePage'));
 
         $form = $crawler->selectButton('Create')->form([
             'createTax[name]' => 'TVA taux normal',
@@ -132,6 +141,10 @@ final class CreateTaxControllerTest extends WebTestCase
 
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $company = (new CompanyDataBuilder())->create('Test company')->build();
         $companyRepository->save($company);
 
@@ -144,7 +157,7 @@ final class CreateTaxControllerTest extends WebTestCase
         $crawler = $client->request(Request::METHOD_GET, self::CREATE_TAX_URI);
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Create Tax');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.tax.create.titlePage'));
 
         $form = $crawler->selectButton('Create')->form([
             'createTax[name]' => '',
@@ -158,7 +171,7 @@ final class CreateTaxControllerTest extends WebTestCase
 
         $nameField = $response->filter('form')->children('div')->first();
 
-        self::assertSame('Nom de la taxe', $nameField->children('label')->text());
+        self::assertSame($translator->trans('admin.tax.form.name.label'), $nameField->children('label')->text());
         self::assertSame('Cette valeur ne doit pas être vide.', $nameField->children('ul > li')->text());
     }
 
@@ -169,6 +182,10 @@ final class CreateTaxControllerTest extends WebTestCase
 
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $company = (new CompanyDataBuilder())->create('Test company')->build();
         $companyRepository->save($company);
 
@@ -181,7 +198,7 @@ final class CreateTaxControllerTest extends WebTestCase
         $crawler = $client->request(Request::METHOD_GET, self::CREATE_TAX_URI);
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Create Tax');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.tax.create.titlePage'));
 
         $form = $crawler->selectButton('Create')->form([
             'createTax[name]' => 'TVA taux normal',
@@ -196,8 +213,11 @@ final class CreateTaxControllerTest extends WebTestCase
         $nameField = $response->filter('form')->children('div')->first();
         $rateField = $nameField->siblings();
 
-        self::assertSame('Taux de la taxe', $rateField->children('label')->text());
-        self::assertSame('This value should be less than or equal to 100%.', $rateField->children('ul > li')->text());
+        self::assertSame($translator->trans('admin.tax.form.rate.label'), $rateField->children('label')->text());
+        self::assertSame(
+            $translator->trans('tax.rate.invalid', [], 'validators'),
+            $rateField->children('ul > li')->text()
+        );
     }
 
     public function testCreateUnitFailWithNoCompanyRegisteredException(): void

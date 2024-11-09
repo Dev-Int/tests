@@ -21,11 +21,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsController]
 final class RevaluateTaxController extends AbstractController
 {
-    public function __construct(private readonly RevaluateTax $useCase)
+    public function __construct(private readonly RevaluateTax $useCase, private readonly TranslatorInterface $translator)
     {
     }
 
@@ -55,7 +56,7 @@ final class RevaluateTaxController extends AbstractController
 
                 return $this->redirectToRoute('admin_taxes_index');
             }
-            $this->addFlash('success', 'Tax revaluated');
+            $this->addFlash('success', $this->translator->trans('admin.tax.revaluate.success'));
 
             return $this->redirectToRoute('admin_taxes_index');
         }

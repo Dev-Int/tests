@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Create Tax | {{ parent() }}
+    {{ 'admin.tax.create.titlePage'|trans }} | {{ parent() }}
 {% endblock %}
 
 {% block body %}
 
-    <h1><twig:Icon:Entities:Taxe /> Create Tax</h1>
+    <h1><twig:Icon:Entities:Taxe /> {{ 'admin.tax.create.titlePage'|trans }}</h1>
 
     <turbo-frame id="tax_create">
         <twig:Form:Taxes:CreateForm form="{{ form }}" />

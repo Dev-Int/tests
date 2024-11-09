@@ -21,6 +21,7 @@ use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @group functionalTest
@@ -36,6 +37,10 @@ final class RenameTaxControllerTest extends WebTestCase
 
         /** @var TaxRepository $taxRepository */
         $taxRepository = self::getContainer()->get(TaxRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
         $taxRepository->save($tax);
         $taxes = $taxRepository->findAllTaxes();
@@ -48,9 +53,9 @@ final class RenameTaxControllerTest extends WebTestCase
         );
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Rename Tax');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.tax.rename.titlePage', ['%taxName%' => $tax->name()->toString()]));
 
-        $form = $crawler->selectButton('Rename')->form([
+        $form = $crawler->selectButton($translator->trans('admin.tax.rename.button'))->form([
             'renameTax[name]' => 'TVA taux réduit',
             'renameTax[uuid]' => $tax->uuid()->toString(),
         ]);
@@ -63,7 +68,7 @@ final class RenameTaxControllerTest extends WebTestCase
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
-        self::assertSame('Tax renamed', $flash);
+        self::assertSame($translator->trans('admin.tax.rename.success'), $flash);
 
         $taxes = $taxRepository->findAllTaxes();
         self::assertCount(1, $taxes);
@@ -81,6 +86,10 @@ final class RenameTaxControllerTest extends WebTestCase
 
         /** @var TaxRepository $taxRepository */
         $taxRepository = self::getContainer()->get(TaxRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $tax1 = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
         $tax2 = (new TaxDataBuilder())->create('TVA taux réduit', 20.0)
             ->withUuid('2fd3cd27-c9e8-49e2-b993-48390d3c665a')
@@ -98,9 +107,12 @@ final class RenameTaxControllerTest extends WebTestCase
         );
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Rename Tax');
+        self::assertSelectorTextContains(
+            'h1',
+            $translator->trans('admin.tax.rename.titlePage', ['%taxName%' => $tax1->name()->toString()])
+        );
 
-        $form = $crawler->selectButton('Rename')->form([
+        $form = $crawler->selectButton($translator->trans('admin.tax.rename.button'))->form([
             'renameTax[name]' => 'TVA taux réduit',
             'renameTax[uuid]' => $tax1->uuid()->toString(),
         ]);
@@ -132,6 +144,7 @@ final class RenameTaxControllerTest extends WebTestCase
 
         /** @var TaxRepository $taxRepository */
         $taxRepository = self::getContainer()->get(TaxRepository::class);
+
         $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
         $taxRepository->save($tax);
         $taxes = $taxRepository->findAllTaxes();

@@ -23,7 +23,7 @@ final class CreateTaxApiRequest implements CreateTaxRequest
         public string $name = '',
         #[Assert\NotBlank]
         #[Assert\Positive]
-        #[Assert\LessThanOrEqual(value: 1, message: 'This value should be less than or equal to 100%.')]
+        #[Assert\LessThanOrEqual(value: 1, message: 'tax.rate.invalid')]
         public float $rate = 0.0
     ) {
     }

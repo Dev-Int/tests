@@ -78,5 +78,33 @@ return [
                 'success' => 'Unit label changed successfully.'
             ],
         ],
+        'tax' => [
+            'titlePage' => 'Tax',
+            'form' => [
+                'name' => [
+                    'label' => 'Tax name',
+                ],
+                'rate' => [
+                    'label' => 'Tax rate',
+                ],
+            ],
+            'create' => [
+                'titlePage' => 'Create tax',
+                'titleShort' => 'New taxe',
+                'success' => 'Taxe created successfully.',
+            ],
+            'rename' => [
+                'button' => 'Rename',
+                'titlePage' => 'Rename tax "%taxName%"',
+                'titleShort' => 'Rename "%taxName%"',
+                'success' => 'Tax renamed successfully.'
+            ],
+            'revaluate' => [
+                'button' => 'Revaluate',
+                'titlePage' => 'Revaluate tax "%taxName%"',
+                'titleShort' => 'Revaluate "%taxName%"',
+                'success' => 'Tax revaluated successfully.'
+            ],
+        ],
     ],
 ];
