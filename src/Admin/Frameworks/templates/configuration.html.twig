@@ -39,7 +39,7 @@
                     <li>
                         <a href="{{ path('admin_suppliers_create') }}" role="button" class="{% if hasSupplier %}secondary disable-link {% endif %}w100">
                             {% if hasSupplier %}<twig:Icon:Check />
-                            {% else %}<twig:Icon:Entities:Supplier />{% endif %} Create Supplier
+                            {% else %}<twig:Icon:Entities:Supplier />{% endif %} {{ 'admin.supplier.create.titlePage'|trans }}
                         </a>
                     </li>
                     <li>

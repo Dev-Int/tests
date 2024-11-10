@@ -31,7 +31,7 @@ final class CreateSupplierDto
         #[Assert\Type(type: 'numeric')]
         public string $postalCode = '',
         #[Assert\NotBlank]
-        public string $town = '',
+        public string $city = '',
         #[Assert\NotBlank]
         public string $country = '',
         #[Assert\NotBlank]

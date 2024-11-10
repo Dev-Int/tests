@@ -21,11 +21,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsController]
 final class ChangeContactSupplierController extends AbstractController
 {
-    public function __construct(private readonly ChangeContactSupplier $useCase)
+    public function __construct(private readonly ChangeContactSupplier $useCase, private readonly TranslatorInterface $translator)
     {
     }
 
@@ -65,7 +66,7 @@ final class ChangeContactSupplierController extends AbstractController
                 // @codeCoverageIgnoreEnd
             }
 
-            $this->addFlash('success', 'Supplier updated');
+            $this->addFlash('success', $this->translator->trans('admin.supplier.changeContact.success'));
 
             return $this->redirectToRoute('admin_suppliers_index');
         }

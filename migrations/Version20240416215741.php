@@ -31,7 +31,7 @@ final class Version20240416215741 extends AbstractMigration
             'name VARCHAR(255) NOT NULL, ' .
             'address TEXT NOT NULL, ' .
             'postal_code VARCHAR(5) NOT NULL, ' .
-            'town VARCHAR(255) NOT NULL, ' .
+            'city VARCHAR(255) NOT NULL, ' .
             'country VARCHAR(255) NOT NULL, ' .
             'phone VARCHAR(12) NOT NULL, ' .
             'email VARCHAR(255) NOT NULL, ' .

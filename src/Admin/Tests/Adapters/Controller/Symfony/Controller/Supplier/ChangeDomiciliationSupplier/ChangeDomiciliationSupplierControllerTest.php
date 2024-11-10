@@ -22,6 +22,7 @@ use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @group functionalTest
@@ -41,6 +42,9 @@ final class ChangeDomiciliationSupplierControllerTest extends WebTestCase
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
 
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
         $familyLogRepository->save($familyLog);
         $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLog)->build();
@@ -55,9 +59,15 @@ final class ChangeDomiciliationSupplierControllerTest extends WebTestCase
         );
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Change domiciliation "Supplier 1"');
+        self::assertSelectorTextContains(
+            'h1',
+            $translator->trans(
+                'admin.supplier.changeDomiciliation.titlePage',
+                ['%supplierName%' => $supplier->name()->toString()],
+            )
+        );
 
-        $form = $crawler->selectButton('Update')->form([
+        $form = $crawler->selectButton($translator->trans('admin.supplier.changeDomiciliation.button'))->form([
             'changeDomiciliationSupplier[address]' => '5, rue des Fleurs',
             'changeDomiciliationSupplier[postalCode]' => '45000',
             'changeDomiciliationSupplier[town]' => 'Orléans',
@@ -75,7 +85,7 @@ final class ChangeDomiciliationSupplierControllerTest extends WebTestCase
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
-        self::assertEquals('Supplier updated', $flash);
+        self::assertEquals($translator->trans('admin.supplier.changeDomiciliation.success'), $flash);
 
         /** @var Supplier $supplierUpdated */
         $supplierUpdated = $supplierRepository->findOneBy(['slug' => 'supplier-1']);

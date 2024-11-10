@@ -32,7 +32,7 @@ final class Supplier
         NameField $name,
         string $address,
         string $postalCode,
-        string $town,
+        string $city,
         string $country,
         PhoneField $phone,
         EmailField $email,
@@ -46,7 +46,7 @@ final class Supplier
         return new self(
             $uuid,
             $name,
-            ContactAddress::fromString($address, $postalCode, $town, $country),
+            ContactAddress::fromString($address, $postalCode, $city, $country),
             $phone,
             $email,
             $contact,
@@ -134,7 +134,7 @@ final class Supplier
     /**
      * @param array<int> $orderDays
      */
-    public function changeDeliverySpecification(FamilyLog $familyLog, int $delayDelivery, array $orderDays): void
+    public function changeDeliverySpecifications(FamilyLog $familyLog, int $delayDelivery, array $orderDays): void
     {
         $this->familyLog = $familyLog;
         $this->delayDelivery = $delayDelivery;

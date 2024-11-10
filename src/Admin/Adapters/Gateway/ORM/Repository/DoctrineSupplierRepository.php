@@ -123,7 +123,7 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
 
         $supplierToUpdate->setAddress($supplier->address()->address())
             ->setPostalCode($supplier->address()->postalCode())
-            ->setTown($supplier->address()->city())
+            ->setCity($supplier->address()->city())
             ->setCountry($supplier->address()->country())
             ->setPhone($supplier->phone()->toNumber())
             ->setEmail($supplier->email()->toString())
@@ -149,7 +149,7 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
         $this->_em->flush();
     }
 
-    public function changeDeliverySpecification(SupplierDomain $supplier): void
+    public function changeDeliverySpecifications(SupplierDomain $supplier): void
     {
         $supplierToUpdate = $this->find($supplier->uuid()->toString());
 

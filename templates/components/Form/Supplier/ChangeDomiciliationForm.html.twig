@@ -1,6 +1,6 @@
 <div class="flex-1">
 
-    <h3>Change domiciliation "{{  supplier.name }}"</h3>
+    <h3>{{ 'admin.supplier.changeDomiciliation.titlePage'|trans({ '%supplierName%': supplier.name }) }}</h3>
 
     {{ form_start(form) }}
     {{ form_errors(form) }}
@@ -18,7 +18,7 @@
 
     <div class="grid">
         <twig:Form:Button:Cancel href="{{ path('admin_suppliers_index') }}" label="Annuler" />
-        <twig:Form:Button:Submit label="Update" />
+        <twig:Form:Button:Submit label="{{ 'admin.supplier.changeDomiciliation.button'|trans }}" icon="fa-pen-to-square" />
     </div>
 
     {{ form_end(form) }}

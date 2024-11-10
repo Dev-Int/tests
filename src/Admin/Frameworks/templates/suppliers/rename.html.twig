@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Rename supplier | {{ parent() }}
+    {{ 'admin.supplier.rename.titleShort'|trans }} | {{ parent() }}
 {% endblock %}
 
 {% block body %}
 
-    <h1><twig:Icon:Entities:Supplier /> Rename "{{ supplier.name }}"</h1>
+    <h1><twig:Icon:Entities:Supplier /> {{ 'admin.supplier.rename.titlePage'|trans({ '%supplierName%': supplier.name }) }}</h1>
 
     <turbo-frame id="supplier_{{ supplier.uuid }}">
         <twig:Form:Supplier:RenameForm form="{{ form }}" supplier="{{ supplier }}" />

@@ -11,35 +11,38 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Adapters\Controller\Symfony\Controller\Supplier\ChangeDeliverySpecificationSupplier;
+namespace Admin\Adapters\Controller\Symfony\Controller\Supplier\ChangeDeliverySpecificationsSupplier;
 
-use Admin\Adapters\Form\Type\Supplier\ChangeDeliverySpecificationSupplierType;
+use Admin\Adapters\Form\Type\Supplier\ChangeDeliverySpecificationsSupplierType;
 use Admin\Adapters\Gateway\ORM\Entity\Supplier;
-use Admin\UseCases\Supplier\ChangeDeliverySpecification\ChangeDeliverySpecificationSupplier;
+use Admin\UseCases\Supplier\ChangeDeliverySpecifications\ChangeDeliverySpecificationsSupplier;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsController]
-final class ChangeDeliverySpecificationSupplierController extends AbstractController
+final class ChangeDeliverySpecificationsSupplierController extends AbstractController
 {
-    public function __construct(private readonly ChangeDeliverySpecificationSupplier $useCase)
-    {
+    public function __construct(
+        private readonly ChangeDeliverySpecificationsSupplier $useCase,
+        private readonly TranslatorInterface $translator
+    ) {
     }
 
     #[Route(
-        path: 'suppliers/{supplier}/change-delivery-specification',
-        name: 'admin_suppliers_change-delivery-specification',
+        path: 'suppliers/{supplier}/change-delivery-specifications',
+        name: 'admin_suppliers_change-delivery-specifications',
         requirements: ['supplier' => '^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$'],
         methods: ['GET', 'POST']
     )]
     public function __invoke(Request $request, Supplier $supplier): Response
     {
         $form = $this->createForm(
-            ChangeDeliverySpecificationSupplierType::class,
-            new ChangeDeliverySpecificationSupplierDto(
+            ChangeDeliverySpecificationsSupplierType::class,
+            new ChangeDeliverySpecificationsSupplierDto(
                 $supplier->familyLog(),
                 $supplier->delayDelivery(),
                 $supplier->orderDays(),
@@ -47,7 +50,7 @@ final class ChangeDeliverySpecificationSupplierController extends AbstractContro
             ),
             [
                 'action' => $this->generateUrl(
-                    'admin_suppliers_change-delivery-specification',
+                    'admin_suppliers_change-delivery-specifications',
                     ['supplier' => $supplier->uuid()]
                 ),
                 'attr' => ['data-turbo-frame' => '_top'],
@@ -56,12 +59,12 @@ final class ChangeDeliverySpecificationSupplierController extends AbstractContro
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var ChangeDeliverySpecificationSupplierDto $supplierToUpdate */
+            /** @var ChangeDeliverySpecificationsSupplierDto $supplierToUpdate */
             $supplierToUpdate = $form->getData();
 
             try {
                 $this->useCase->execute(
-                    new ChangeDeliverySpecificationSupplierApiRequest(
+                    new ChangeDeliverySpecificationsSupplierApiRequest(
                         $supplierToUpdate->familyLog->toDomain(),
                         $supplierToUpdate->delayDelivery,
                         $supplierToUpdate->orderDays,
@@ -76,12 +79,12 @@ final class ChangeDeliverySpecificationSupplierController extends AbstractContro
                 // @codeCoverageIgnoreEnd
             }
 
-            $this->addFlash('success', 'Supplier updated');
+            $this->addFlash('success', $this->translator->trans('admin.supplier.changeDeliverySpecifications.success'));
 
             return $this->redirectToRoute('admin_suppliers_index');
         }
 
-        return $this->render('@admin/suppliers/change-delivery-specification.html.twig', [
+        return $this->render('@admin/suppliers/change-delivery-specifications.html.twig', [
             'form' => $form,
             'supplier' => $supplier,
         ]);

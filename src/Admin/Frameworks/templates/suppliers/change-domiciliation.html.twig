@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Change domiciliation Supplier | {{ parent() }}
+   {{ 'admin.supplier.changeDomiciliation.titleShort'|trans }} | {{ parent() }}
 {% endblock %}
 
 {% block body %}
 
-    <h1><twig:Icon:Entities:Supplier /> Change domiciliation "{{ supplier.name }}"</h1>
+    <h1><twig:Icon:Entities:Supplier /> {{ 'admin.supplier.changeDomiciliation.titlePage'|trans({ '%supplierName%': supplier.name }) }}</h1>
 
     <turbo-frame id="supplier_{{ supplier.uuid }}">
         <twig:Form:Supplier:ChangeDomiciliationForm form="{{ form }}" supplier="{{ supplier }}" />

@@ -23,6 +23,7 @@ use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @group functionalTest
@@ -42,6 +43,9 @@ final class RenameSupplierControllerTest extends WebTestCase
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
 
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
         $familyLogRepository->save($familyLog);
         $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLog)->build();
@@ -56,9 +60,12 @@ final class RenameSupplierControllerTest extends WebTestCase
         );
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Rename "Supplier 1"');
+        self::assertSelectorTextContains(
+            'h1',
+            $translator->trans('admin.supplier.rename.titlePage', ['%supplierName%' => $supplier->name()->toString()])
+        );
 
-        $form = $crawler->selectButton('Rename')->form([
+        $form = $crawler->selectButton($translator->trans('admin.supplier.rename.button'))->form([
             'renameSupplier[name]' => 'Supplier new',
             'renameSupplier[slug]' => 'supplier-1',
         ]);
@@ -71,7 +78,7 @@ final class RenameSupplierControllerTest extends WebTestCase
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
-        self::assertSame('Supplier updated', $flash);
+        self::assertSame($translator->trans('admin.supplier.rename.success'), $flash);
 
         /** @var Supplier $supplierUpdated */
         $supplierUpdated = $supplierRepository->findOneBy(['slug' => 'supplier-new']);
@@ -91,6 +98,9 @@ final class RenameSupplierControllerTest extends WebTestCase
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
 
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
         $familyLogRepository->save($familyLog);
         $supplier1 = (new SupplierDataBuilder())->create('Supplier 1', $familyLog)->build();
@@ -108,9 +118,12 @@ final class RenameSupplierControllerTest extends WebTestCase
         );
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Rename "Supplier 1"');
+        self::assertSelectorTextContains(
+            'h1',
+            $translator->trans('admin.supplier.rename.titlePage', ['%supplierName%' => $supplier1->name()->toString()])
+        );
 
-        $form = $crawler->selectButton('Rename')->form([
+        $form = $crawler->selectButton($translator->trans('admin.supplier.rename.button'))->form([
             'renameSupplier[name]' => 'Supplier new',
             'renameSupplier[slug]' => 'supplier-1',
         ]);

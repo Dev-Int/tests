@@ -23,6 +23,7 @@ use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @group functionalTest
@@ -42,6 +43,10 @@ final class GetSuppliersControllerTest extends WebTestCase
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $supplierBuilder = new SupplierDataBuilder();
         $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')
             ->withUuid($faker->uuid())
@@ -62,7 +67,7 @@ final class GetSuppliersControllerTest extends WebTestCase
 
         // Assert
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Suppliers');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.supplier.titlePage'));
 
         $list = $crawler->filter('body > div.container > main > article > turbo-frame > ul.table > turbo-frame')
             ->children('li.li-unstyled')

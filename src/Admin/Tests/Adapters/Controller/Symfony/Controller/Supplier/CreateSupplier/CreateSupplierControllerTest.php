@@ -33,6 +33,7 @@ use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 use function PHPUnit\Framework\assertInstanceOf;
 
@@ -51,21 +52,34 @@ final class CreateSupplierControllerTest extends WebTestCase
 
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
-        $company = (new CompanyDataBuilder())->create('Test company')->build();
-        $companyRepository->save($company);
 
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
-        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
-        $unitRepository->save($unit);
 
         /** @var DoctrineTaxRepository $taxRepository */
         $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
-        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
-        $taxRepository->save($tax);
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+
+        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+
+        /** @var DoctrineSupplierRepository $supplierRepository */
+        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
+        $company = (new CompanyDataBuilder())->create('Test company')->build();
+        $companyRepository->save($company);
+
+        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
+        $unitRepository->save($unit);
+
+        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
+        $taxRepository->save($tax);
+
         $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')
             ->withUuid($faker->uuid())
             ->build()
@@ -74,25 +88,20 @@ final class CreateSupplierControllerTest extends WebTestCase
         $familyLogOrm = $familyLogRepository->find($familyLog->uuid()->toString());
         assertInstanceOf(FamilyLog::class, $familyLogOrm);
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
         $zoneStorage = (new ZoneStorageDataBuilder())->create('Reserve négative', $familyLog)->build();
         $zoneStorageRepository->save($zoneStorage);
-
-        /** @var DoctrineSupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
 
         // Act
         $crawler = $client->request(Request::METHOD_GET, self::CREATE_SUPPLIER_URI);
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Create Supplier');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.supplier.create.titlePage'));
 
         $form = $crawler->selectButton('Create')->form([
             'createSupplier[name]' => 'Dev-Int Création',
             'createSupplier[address]' => '5, rue des Plantes',
             'createSupplier[postalCode]' => '75000',
-            'createSupplier[town]' => 'Paris',
+            'createSupplier[city]' => 'Paris',
             'createSupplier[country]' => 'France',
             'createSupplier[phone]' => '+33297000000',
             'createSupplier[email]' => 'test@test.fr',
@@ -116,14 +125,14 @@ final class CreateSupplierControllerTest extends WebTestCase
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
-        self::assertEquals('Supplier created', $flash);
+        self::assertEquals($translator->trans('admin.supplier.create.success'), $flash);
 
         $supplierCreated = $supplierRepository->findOneBy(['slug' => 'dev-int-creation']);
         self::assertInstanceOf(Supplier::class, $supplierCreated);
         self::assertSame('Dev-Int Création', $supplierCreated->name());
         self::assertSame('5, rue des Plantes', $supplierCreated->address());
         self::assertSame('75000', $supplierCreated->postalCode());
-        self::assertSame('Paris', $supplierCreated->town());
+        self::assertSame('Paris', $supplierCreated->city());
         self::assertSame('France', $supplierCreated->country());
         self::assertSame('+33297000000', $supplierCreated->phone());
         self::assertSame('test@test.fr', $supplierCreated->email());
@@ -144,21 +153,34 @@ final class CreateSupplierControllerTest extends WebTestCase
 
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
-        $company = (new CompanyDataBuilder())->create('Test company')->build();
-        $companyRepository->save($company);
 
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
-        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
-        $unitRepository->save($unit);
 
         /** @var DoctrineTaxRepository $taxRepository */
         $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
-        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
-        $taxRepository->save($tax);
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+
+        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+
+        /** @var DoctrineSupplierRepository $supplierRepository */
+        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
+        $company = (new CompanyDataBuilder())->create('Test company')->build();
+        $companyRepository->save($company);
+
+        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
+        $unitRepository->save($unit);
+
+        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
+        $taxRepository->save($tax);
+
         $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')
             ->withUuid($faker->uuid())
             ->build()
@@ -167,13 +189,9 @@ final class CreateSupplierControllerTest extends WebTestCase
         $familyLogOrm = $familyLogRepository->find($familyLog->uuid()->toString());
         assertInstanceOf(FamilyLog::class, $familyLogOrm);
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
         $zoneStorage = (new ZoneStorageDataBuilder())->create('Reserve négative', $familyLog)->build();
         $zoneStorageRepository->save($zoneStorage);
 
-        /** @var DoctrineSupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
         $supplier = (new SupplierDataBuilder())->create('Dev-Int Création', $familyLog)->build();
         $supplierRepository->save($supplier);
 
@@ -181,13 +199,13 @@ final class CreateSupplierControllerTest extends WebTestCase
         $crawler = $client->request(Request::METHOD_GET, self::CREATE_SUPPLIER_URI);
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Create Supplier');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.supplier.create.titlePage'));
 
         $form = $crawler->selectButton('Create')->form([
             'createSupplier[name]' => 'Dev-Int Création',
             'createSupplier[address]' => '5, rue des Plantes',
             'createSupplier[postalCode]' => '75000',
-            'createSupplier[town]' => 'Paris',
+            'createSupplier[city]' => 'Paris',
             'createSupplier[country]' => 'France',
             'createSupplier[phone]' => '+33297000000',
             'createSupplier[email]' => 'test@test.fr',
@@ -222,21 +240,25 @@ final class CreateSupplierControllerTest extends WebTestCase
 
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
-        $company = (new CompanyDataBuilder())->create('Test company')->build();
-        $companyRepository->save($company);
 
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
-        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
-        $unitRepository->save($unit);
 
         /** @var DoctrineTaxRepository $taxRepository */
         $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
-        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
-        $taxRepository->save($tax);
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+
+        $company = (new CompanyDataBuilder())->create('Test company')->build();
+        $companyRepository->save($company);
+
+        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
+        $unitRepository->save($unit);
+
+        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
+        $taxRepository->save($tax);
+
         $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')
             ->withUuid($faker->uuid())
             ->build()

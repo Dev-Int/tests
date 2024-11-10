@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Form\Type\Supplier;
 
-use Admin\Adapters\Controller\Symfony\Controller\Supplier\ChangeDeliverySpecificationSupplier\ChangeDeliverySpecificationSupplierDto;
+use Admin\Adapters\Controller\Symfony\Controller\Supplier\ChangeDeliverySpecificationsSupplier\ChangeDeliverySpecificationsSupplierDto;
 use Admin\Adapters\Form\Type\Components\FamilyLogEntitySelectType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -22,7 +22,7 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-final class ChangeDeliverySpecificationSupplierType extends AbstractType
+final class ChangeDeliverySpecificationsSupplierType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -61,12 +61,12 @@ final class ChangeDeliverySpecificationSupplierType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => ChangeDeliverySpecificationSupplierDto::class,
+            'data_class' => ChangeDeliverySpecificationsSupplierDto::class,
         ]);
     }
 
     public function getBlockPrefix(): string
     {
-        return 'changeDeliverySpecificationSupplier';
+        return 'changeDeliverySpecificationsSupplier';
     }
 }

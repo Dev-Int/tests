@@ -4,6 +4,7 @@ return [
     'actions' => 'Actions',
     'name' => 'Name',
     'address' => 'Address',
+    'postalCode' => 'Postal code',
     'phone' => 'Phone',
     'email' => 'Email',
     'contact' => 'Contact',
@@ -164,6 +165,76 @@ return [
                 'titlePage' => 'Change logistics family to "%zoneLabel%"',
                 'titleShort' => 'Update storage area',
                 'success' => 'Logistics family assigned successfully.',
+            ],
+        ],
+        'supplier' => [
+            'titlePage' => 'Supplier',
+            'form' => [
+                'name' => [
+                    'label' => 'Name of the supplier',
+                ],
+                'address' => [
+                    'label' => 'Address of the supplier',
+                ],
+                'postalCode' => [
+                    'label' => 'postal code',
+                ],
+                'city' => [
+                    'label' => 'City',
+                ],
+                'country' => [
+                    'label' => 'Country',
+                ],
+                'phone' => [
+                    'label' => 'Phone number',
+                ],
+                'email' => [
+                    'label' => 'Email',
+                ],
+                'contact' => [
+                    'label' => 'Name of the contact',
+                ],
+                'cellphone' => [
+                    'label' => 'Phone number of the contact',
+                ],
+                'familyLog' => [
+                    'label' => 'Logistics family',
+                ],
+                'delayDelivery' => [
+                    'label' => 'Delay of delivery',
+                ],
+                'orderDays' => [
+                    'label' => 'Order days',
+                ],
+            ],
+            'create' => [
+                'titlePage' => 'Create new supplier',
+                'titleShort' => 'New supplier',
+                'success' => 'Supplier created successfully.',
+            ],
+            'rename' => [
+                'button' => 'Rename',
+                'titlePage' => 'Rename the supplier "%supplierName%"',
+                'titleShort' => 'Rename "%supplierName%"',
+                'success' => 'The supplier has been renamed successfully.'
+            ],
+            'changeDomiciliation' => [
+                'button' => 'Domiciliation',
+                'titlePage' => 'Change domiciliation of "%supplierName%"',
+                'titleShort' => 'Update supplier',
+                'success' => 'Domiciliation updated successfully.',
+            ],
+            'changeContact' => [
+                'button' => 'Contact',
+                'titlePage' => 'Change the contact of "%supplierName%"',
+                'titleShort' => 'Update supplier',
+                'success' => 'Contact updated successfully.',
+            ],
+            'changeDeliverySpecifications' => [
+                'button' => 'Specifications of delivery',
+                'titlePage' => 'Change specification of delivery "%supplierName%"',
+                'titleShort' => 'Update supplier',
+                'success' => 'Specification of delivery updated successfully.',
             ],
         ],
     ],

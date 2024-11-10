@@ -11,29 +11,29 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\UseCases\Supplier\ChangeDeliverySpecification;
+namespace Admin\UseCases\Supplier\ChangeDeliverySpecifications;
 
 use Admin\UseCases\Gateway\SupplierRepository;
 
-final readonly class ChangeDeliverySpecificationSupplier
+final readonly class ChangeDeliverySpecificationsSupplier
 {
     public function __construct(private SupplierRepository $supplierRepository)
     {
     }
 
     public function execute(
-        ChangeDeliverySpecificationSupplierRequest $request
-    ): ChangeDeliverySpecificationSupplierResponse {
+        ChangeDeliverySpecificationsSupplierRequest $request
+    ): ChangeDeliverySpecificationsSupplierResponse {
         $supplier = $this->supplierRepository->findBySlug($request->slug());
 
-        $supplier->changeDeliverySpecification(
+        $supplier->changeDeliverySpecifications(
             $request->familyLog(),
             $request->delayDelivery(),
             $request->orderDays()
         );
 
-        $this->supplierRepository->changeDeliverySpecification($supplier);
+        $this->supplierRepository->changeDeliverySpecifications($supplier);
 
-        return new ChangeDeliverySpecificationSupplierResponse($supplier);
+        return new ChangeDeliverySpecificationsSupplierResponse($supplier);
     }
 }

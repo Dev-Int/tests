@@ -4,6 +4,7 @@ return [
     'actions' => 'Actions',
     'name' => 'Nom',
     'address' => 'Adresse',
+    'postalCode' => 'Code postal',
     'phone' => 'Téléphone',
     'email' => 'Adresse email',
     'contact' => 'Contact',
@@ -165,6 +166,76 @@ return [
                 'titlePage' => 'Changer la famille logistique de "%zoneLabel%"',
                 'titleShort' => 'Modifier une zone de stockage',
                 'success' => 'Famille logistique assignée avec succès.',
+            ],
+        ],
+        'supplier' => [
+            'titlePage' => 'Fournisseur',
+            'form' => [
+                'name' => [
+                    'label' => 'Nom de l\'entreprise',
+                ],
+                'address' => [
+                    'label' => 'Adresse de l\'entreprise',
+                ],
+                'postalCode' => [
+                    'label' => 'Code postal',
+                ],
+                'city' => [
+                    'label' => 'Ville',
+                ],
+                'country' => [
+                    'label' => 'Pays',
+                ],
+                'phone' => [
+                    'label' => 'Téléphone de l\'entreprise',
+                ],
+                'email' => [
+                    'label' => 'Adresse email',
+                ],
+                'contact' => [
+                    'label' => 'Nom du contact',
+                ],
+                'cellphone' => [
+                    'label' => 'Téléphone du contact'
+                ],
+                'familyLog' => [
+                    'label' => 'Famille logistique',
+                ],
+                'delayDelivery' => [
+                    'label' => 'Délai de livraison',
+                ],
+                'orderDays' => [
+                    'label' => 'Jour(s) de commande',
+                ],
+            ],
+            'create' => [
+                'titlePage' => 'Créer un fournisseur',
+                'titleShort' => 'Nouveau fournisseur',
+                'success' => 'Fournisseur créé avec succès.',
+            ],
+            'rename' => [
+                'button' => 'Renommer',
+                'titlePage' => 'Renommer le fournisseur "%supplierName%"',
+                'titleShort' => 'Renommer "%supplierName%"',
+                'success' => 'Le fournisseur est renommé avec succès.'
+            ],
+            'changeDomiciliation' => [
+                'button' => 'Domiciliation',
+                'titlePage' => 'Changer la domiciliation de "%supplierName%"',
+                'titleShort' => 'Modifier un fournisseur',
+                'success' => 'Domiciliation modifiée avec succès.',
+            ],
+            'changeContact' => [
+                'button' => 'Contact',
+                'titlePage' => 'Changer le contact de "%supplierName%"',
+                'titleShort' => 'Modifier un fournisseur',
+                'success' => 'Contact modifié avec succès.',
+            ],
+            'changeDeliverySpecifications' => [
+                'button' => 'Spécifications de livraison',
+                'titlePage' => 'Changer les spécifications de livraison de "%supplierName%"',
+                'titleShort' => 'Modifier un fournisseur',
+                'success' => 'Spécification de livraison modifiées avec succès.',
             ],
         ],
     ],

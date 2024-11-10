@@ -25,7 +25,7 @@ final class CreateSupplierApiRequest implements CreateSupplierRequest
         public string $name,
         public string $address,
         public string $postalCode,
-        public string $town,
+        public string $city,
         public string $country,
         public string $phone,
         public string $email,
@@ -52,9 +52,9 @@ final class CreateSupplierApiRequest implements CreateSupplierRequest
         return $this->postalCode;
     }
 
-    public function town(): string
+    public function city(): string
     {
-        return $this->town;
+        return $this->city;
     }
 
     public function country(): string

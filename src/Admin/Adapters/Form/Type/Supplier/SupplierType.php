@@ -22,14 +22,19 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class SupplierType extends AbstractType
 {
+    public function __construct(private readonly TranslatorInterface $translator)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => 'Nom de l\'entreprise',
+                'label' => $this->translator->trans('admin.supplier.form.name.label'),
                 'required' => true,
                 'empty_data' => '',
                 'attr' => [
@@ -37,57 +42,57 @@ final class SupplierType extends AbstractType
                 ],
             ])
             ->add('address', TextType::class, [
-                'label' => 'Adresse de l\'entreprise',
+                'label' => $this->translator->trans('admin.supplier.form.address.label'),
                 'required' => true,
                 'empty_data' => '',
             ])
             ->add('postalCode', TextType::class, [
-                'label' => 'Code postal',
+                'label' => $this->translator->trans('admin.supplier.form.postalCode.label'),
                 'required' => true,
                 'empty_data' => '',
             ])
-            ->add('town', TextType::class, [
-                'label' => 'Ville',
+            ->add('city', TextType::class, [
+                'label' => $this->translator->trans('admin.supplier.form.city.label'),
                 'required' => true,
                 'empty_data' => '',
             ])
             ->add('country', TextType::class, [
-                'label' => 'Pays',
+                'label' => $this->translator->trans('admin.supplier.form.country.label'),
                 'required' => true,
                 'empty_data' => '',
             ])
             ->add('phone', TextType::class, [
-                'label' => 'Téléphone de l\'entreprise',
+                'label' => $this->translator->trans('admin.supplier.form.phone.label'),
                 'required' => true,
                 'empty_data' => '',
             ])
             ->add('email', EmailType::class, [
-                'label' => 'Adresse email',
+                'label' => $this->translator->trans('admin.supplier.form.email.label'),
                 'required' => true,
                 'empty_data' => '',
             ])
             ->add('contact', TextType::class, [
-                'label' => 'Nom du contact',
+                'label' => $this->translator->trans('admin.supplier.form.contact.label'),
                 'required' => true,
                 'empty_data' => '',
             ])
             ->add('cellphone', TextType::class, [
-                'label' => 'Téléphone du contact',
+                'label' => $this->translator->trans('admin.supplier.form.cellphone.label'),
                 'required' => true,
                 'empty_data' => '',
             ])
             ->add('familyLog', FamilyLogEntitySelectType::class, [
-                'label' => 'Famille logistique',
+                'label' => $this->translator->trans('admin.supplier.form.familyLog.label'),
                 'required' => true,
             ])
             ->add('delayDelivery', NumberType::class, [
-                'label' => 'Délai de livraison',
+                'label' => $this->translator->trans('admin.supplier.form.delayDelivery.label'),
                 'required' => true,
                 'html5' => true,
                 'empty_data' => 1,
             ])
             ->add('orderDays', ChoiceType::class, [
-                'label' => 'Jour(s) de commande',
+                'label' => $this->translator->trans('admin.supplier.form.orderDays.label'),
                 'required' => true,
                 'expanded' => true,
                 'multiple' => true,
