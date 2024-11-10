@@ -45,7 +45,7 @@ final class Article
             $article->uuid()->toString(),
             $article->name()->toString(),
             $supplier,
-            $article->amount()->toInt(),
+            $article->unitPrice()->toInt(),
             $tax,
             $article->minStock(),
             $zoneStorages,
@@ -68,8 +68,8 @@ final class Article
         #[ORM\ManyToOne(targetEntity: Supplier::class)]
         #[ORM\JoinColumn(name: 'supplier_id', referencedColumnName: 'uuid')]
         private Supplier $supplier,
-        #[ORM\Column(name: 'amount', type: 'integer')]
-        private int $amount,
+        #[ORM\Column(name: 'unit_price', type: 'integer')]
+        private int $unitPrice,
         #[ORM\ManyToOne(targetEntity: Tax::class)]
         #[ORM\JoinColumn(name: 'tax_id', referencedColumnName: 'uuid')]
         private Tax $tax,
@@ -104,7 +104,7 @@ final class Article
             NameField::fromString($this->name),
             $this->supplier->toDomain(),
             $this->packaging->toDomain(),
-            Amount::fromInt($this->amount),
+            Amount::fromInt($this->unitPrice),
             $this->tax->toDomain(),
             $this->minStock,
             $zoneStorages,
@@ -156,16 +156,16 @@ final class Article
         return $this->packaging;
     }
 
-    public function setAmount(int $amount): self
+    public function setUnitPrice(int $unitPrice): self
     {
-        $this->amount = $amount;
+        $this->unitPrice = $unitPrice;
 
         return $this;
     }
 
-    public function amount(): int
+    public function unitPrice(): int
     {
-        return $this->amount;
+        return $this->unitPrice;
     }
 
     public function setTax(Tax $tax): self

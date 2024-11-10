@@ -237,5 +237,68 @@ return [
                 'success' => 'Specification of delivery updated successfully.',
             ],
         ],
+        'article' => [
+            'titlePage' => 'Article',
+            'form' => [
+                'name' => [
+                    'label' => 'Article name',
+                ],
+                'supplier' => [
+                    'label' => 'Supplier',
+                    'placeholder' => 'Choice a supplier',
+                ],
+                'packaging' => [
+                    'label' => 'Article packaging',
+                ],
+                'unitPrice' => [
+                    'label' => 'Unit price',
+                ],
+                'tax' => [
+                    'label' => 'Article tax',
+                ],
+                'minStock' => [
+                    'label' => 'Minimum stock',
+                ],
+                'zoneStorages' => [
+                    'label' => 'Stockage areas',
+                ],
+                'familyLog' => [
+                    'label' => 'Logistics family',
+                    'placeholder' => 'Choice a logistics family',
+                ],
+                'quantity' => [
+                    'label' => 'Quantity',
+                ],
+            ],
+            'create' => [
+                'titlePage' => 'Create new article',
+                'titleShort' => 'New article',
+                'success' => 'Article created successfully.',
+            ],
+            'changeFinancialInformation' => [
+                'button' => 'Financial information',
+                'titlePage' => 'Change financial information of "%articleName%"',
+                'titleShort' => 'Update an article',
+                'success' => 'Financial information updated successfully.',
+            ],
+            'changeStorageInformation' => [
+                'button' => 'Storage information',
+                'titlePage' => 'Change storage information of "%articleName%"',
+                'titleShort' => 'Update an article',
+                'success' => 'Storage information updated successfully.',
+            ],
+            'reassignSupplier' => [
+                'button' => 'Reassign supplier',
+                'titlePage' => 'Reassign supplier of "%articleName%"',
+                'titleShort' => 'Reassign "%articleName%"',
+                'success' => 'The supplier has been reassigned successfully.'
+            ],
+            'rename' => [
+                'button' => 'Rename',
+                'titlePage' => 'Rename the article "%articleName%"',
+                'titleShort' => 'Rename "%articleName%"',
+                'success' => 'The article has been renamed successfully.'
+            ],
+        ],
     ],
 ];

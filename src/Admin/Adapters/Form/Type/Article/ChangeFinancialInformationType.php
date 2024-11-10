@@ -20,13 +20,19 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ChangeFinancialInformationType extends AbstractType
 {
+    public function __construct(private readonly TranslatorInterface $translator)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('amount', MoneyType::class, [
+            ->add('unitPrice', MoneyType::class, [
+                'label' => $this->translator->trans('admin.article.form.unitPrice.label'),
                 'html5' => false,
                 'currency' => 'EUR',
                 'divisor' => 100,
@@ -39,11 +45,11 @@ final class ChangeFinancialInformationType extends AbstractType
                 ],
             ])
             ->add('tax', EntityType::class, [
-                'label' => 'TVA de l\'article',
+                'label' => $this->translator->trans('admin.article.form.tax.label'),
                 'class' => Tax::class,
                 'choice_label' => 'rate',
                 'required' => true,
-                'placeholder' => 'Choice a tax',
+                'placeholder' => $this->translator->trans('admin.article.form.tax.placeholder'),
             ])
         ;
     }

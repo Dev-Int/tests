@@ -1,6 +1,6 @@
 <div class="flex-1">
 
-    <h3>Create Article</h3>
+    <h3>{{ 'admin.article.create.titlePage'|trans }}</h3>
 
     {{ form_start(form) }}
     {{ form_errors(form) }}
@@ -11,7 +11,7 @@
     {{ include('partials/components/form/_packaging-select.html.twig', {packaging: form.packaging}) }}
 
     <div class="grid">
-        {{ form_row(form.amount) }}
+        {{ form_row(form.unitPrice) }}
         {{ form_row(form.tax) }}
     </div>
 
@@ -27,7 +27,7 @@
 
     <div class="grid">
         <twig:Form:Button:Cancel href="{{ path('admin_articles_index') }}" label="Annuler" />
-        <twig:Form:Button:Submit label="Create" />
+        <twig:Form:Button:Submit label="Create" icon="fa-plus" />
     </div>
 
     {{ form_end(form) }}

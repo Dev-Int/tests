@@ -45,7 +45,7 @@
                     <li>
                         <a href="{{ path('admin_article_create') }}" role="button" class="{% if hasArticle %}secondary disable-link {% endif %}w100">
                             {% if hasArticle %}<twig:Icon:Check />
-                            {% else %}<twig:Icon:Entities:Article />{% endif %} Create Article
+                            {% else %}<twig:Icon:Entities:Article />{% endif %} {{ 'admin.article.create.titlePage'|trans }}
                         </a>
                     </li>
                 </ul>

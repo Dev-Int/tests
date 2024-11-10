@@ -238,5 +238,69 @@ return [
                 'success' => 'Spécification de livraison modifiées avec succès.',
             ],
         ],
+        'article' => [
+            'titlePage' => 'Article',
+            'form' => [
+                'name' => [
+                    'label' => 'Nom de l\'article',
+                ],
+                'supplier' => [
+                    'label' => 'Fournisseur',
+                    'placeholder' => 'Choisir un fournisseur',
+                ],
+                'packaging' => [
+                    'label' => 'Packaging de l\'article',
+                ],
+                'unitPrice' => [
+                    'label' => 'Prix unitaire',
+                ],
+                'tax' => [
+                    'label' => 'T.V.A. de l\'article',
+                    'placeholder' => 'Choisir une taxe',
+                ],
+                'minStock' => [
+                    'label' => 'Stock minimum',
+                ],
+                'zoneStorages' => [
+                    'label' => 'Zones de stockage',
+                ],
+                'familyLog' => [
+                    'label' => 'Famille logistique',
+                    'placeholder' => 'Choisir une famille logistique',
+                ],
+                'quantity' => [
+                    'label' => 'Quantité',
+                ],
+            ],
+            'create' => [
+                'titlePage' => 'Créer un article',
+                'titleShort' => 'Nouvel article',
+                'success' => 'Article créé avec succès.',
+            ],
+            'changeFinancialInformation' => [
+                'button' => 'Informations financières',
+                'titlePage' => 'Changer les informations financières de "%articleName%"',
+                'titleShort' => 'Modifier un article',
+                'success' => 'Informations financières modifiées avec succès.',
+            ],
+            'changeStorageInformation' => [
+                'button' => 'Information de stockage',
+                'titlePage' => 'Changer les informations de stockage de "%articleName%"',
+                'titleShort' => 'Modifier un article',
+                'success' => 'Informations de stockage modifiées avec succès.',
+            ],
+            'reassignSupplier' => [
+                'button' => 'Réassigner un fournisseur',
+                'titlePage' => 'Réassigner un fournisseur à "%articleName%"',
+                'titleShort' => 'Réassigner "%articleName%"',
+                'success' => 'Le fournisseur a été réassigné avec succès.'
+            ],
+            'rename' => [
+                'button' => 'Renommer',
+                'titlePage' => 'Renommer le fournisseur "%articleName%"',
+                'titleShort' => 'Renommer "%articleName%"',
+                'success' => 'Le fournisseur est renommé avec succès.'
+            ],
+        ],
     ],
 ];

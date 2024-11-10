@@ -36,7 +36,7 @@ final class Article
         NameField $name,
         Supplier $supplier,
         Packaging $packaging,
-        Amount $amount,
+        Amount $unitPrice,
         Tax $tax,
         float $minStock,
         array $zoneStorages,
@@ -54,7 +54,7 @@ final class Article
             $name,
             $supplier,
             $packaging,
-            $amount,
+            $unitPrice,
             $tax,
             $minStock,
             $storages,
@@ -69,7 +69,7 @@ final class Article
         private NameField $name,
         private Supplier $supplier,
         private Packaging $packaging,
-        private Amount $amount,
+        private Amount $unitPrice,
         private Tax $tax,
         private float $minStock,
         private ZoneStorageCollection $zoneStorages,
@@ -124,9 +124,9 @@ final class Article
         return $this->packaging;
     }
 
-    public function amount(): Amount
+    public function unitPrice(): Amount
     {
-        return $this->amount;
+        return $this->unitPrice;
     }
 
     public function tax(): Tax
@@ -134,9 +134,9 @@ final class Article
         return $this->tax;
     }
 
-    public function changeFinancialInformation(Amount $amount, Tax $tax): void
+    public function changeFinancialInformation(Amount $unitPrice, Tax $tax): void
     {
-        $this->amount = $amount;
+        $this->unitPrice = $unitPrice;
         $this->tax = $tax;
     }
 

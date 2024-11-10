@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Rename article | {{ parent() }}
+    {{ 'admin.article.rename.titleShort'|trans({ '%articleName%': article.name }) }} | {{ parent() }}
 {% endblock %}
 
 {% block body %}
 
-    <h1><twig:Icon:Entities:Article /> Rename "{{ article.name }}"</h1>
+    <h1><twig:Icon:Entities:Article /> {{ 'admin.article.rename.titlePage'|trans({ '%articleName%': article.name }) }}</h1>
 
     <turbo-frame id="article_{{ article.uuid }}">
         <twig:Form:Article:RenameForm form="{{ form }}" article="{{ article }}" />

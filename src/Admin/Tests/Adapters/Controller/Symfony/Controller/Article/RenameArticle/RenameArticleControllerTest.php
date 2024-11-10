@@ -31,6 +31,7 @@ use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @group functionalTest
@@ -62,6 +63,9 @@ final class RenameArticleControllerTest extends WebTestCase
 
         /** @var DoctrineArticleRepository $articleRepository */
         $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
 
         $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
         $unitRepository->save($colis);
@@ -98,9 +102,12 @@ final class RenameArticleControllerTest extends WebTestCase
         );
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Rename "Jambon Trad 6kg"');
+        self::assertSelectorTextContains(
+            'h1',
+            $translator->trans('admin.article.rename.titlePage', ['%articleName%' => $article->name()->toString()])
+        );
 
-        $form = $crawler->selectButton('Rename')->form([
+        $form = $crawler->selectButton($translator->trans('admin.article.rename.button'))->form([
             'renameArticle[name]' => 'Jambon 6kg',
             'renameArticle[uuid]' => $article->uuid()->toString(),
         ]);
@@ -113,7 +120,7 @@ final class RenameArticleControllerTest extends WebTestCase
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
-        self::assertEquals('Article updated', $flash);
+        self::assertEquals($translator->trans('admin.article.rename.success'), $flash);
 
         $articleUpdated = $articleRepository->find($article->uuid()->toString());
         self::assertInstanceOf(Article::class, $articleUpdated);
@@ -143,6 +150,9 @@ final class RenameArticleControllerTest extends WebTestCase
 
         /** @var DoctrineArticleRepository $articleRepository */
         $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
 
         $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
         $unitRepository->save($colis);
@@ -191,9 +201,12 @@ final class RenameArticleControllerTest extends WebTestCase
         );
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Rename "Jambon Trad 6kg"');
+        self::assertSelectorTextContains(
+            'h1',
+            $translator->trans('admin.article.rename.titlePage', ['%articleName%' => $article1->name()->toString()])
+        );
 
-        $form = $crawler->selectButton('Rename')->form([
+        $form = $crawler->selectButton($translator->trans('admin.article.rename.button'))->form([
             'renameArticle[name]' => 'Jambon 6kg',
             'renameArticle[uuid]' => $article1->uuid()->toString(),
         ]);

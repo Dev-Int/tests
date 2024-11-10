@@ -37,6 +37,7 @@ use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 use function PHPUnit\Framework\assertInstanceOf;
 
@@ -73,6 +74,9 @@ final class CreateArticleControllerTest extends WebTestCase
 
         /** @var DoctrineArticleRepository $articleRepository */
         $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
 
         $company = (new CompanyDataBuilder())->create('Test company')->build();
         $companyRepository->save($company);
@@ -120,7 +124,7 @@ final class CreateArticleControllerTest extends WebTestCase
         $crawler = $client->request(Request::METHOD_GET, self::CREATE_ARTICLE_URI);
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Create Article');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.article.create.titlePage'));
 
         $form = $crawler->selectButton('Create')->form([
             'createArticle[name]' => 'Jambon Trad 6kg',
@@ -131,7 +135,7 @@ final class CreateArticleControllerTest extends WebTestCase
             'createArticle[packaging][subPackage][quantity]' => 2,
             'createArticle[packaging][consumeUnit][unit]' => $kilogramme->uuid()->toString(),
             'createArticle[packaging][consumeUnit][quantity]' => 6.800,
-            'createArticle[amount]' => 6.82,
+            'createArticle[unitPrice]' => 6.82,
             'createArticle[tax]' => $tax->uuid()->toString(),
             'createArticle[minStock]' => 8.8,
             'createArticle[zoneStorages]' => [$zoneStorage->uuid()->toString()],
@@ -147,7 +151,7 @@ final class CreateArticleControllerTest extends WebTestCase
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
-        self::assertEquals('Article created', $flash);
+        self::assertEquals($translator->trans('admin.article.create.success'), $flash);
 
         $articleCreated = $articleRepository->findOneBy(['slug' => 'jambon-trad-6kg']);
         self::assertInstanceOf(Article::class, $articleCreated);
@@ -166,7 +170,7 @@ final class CreateArticleControllerTest extends WebTestCase
         self::assertSame(2.0, $articleCreated->packaging()->subPackageQuantity());
         self::assertSame($kilogrammeOrm, $articleCreated->packaging()->consumeUnitUnit());
         self::assertSame(6.800, $articleCreated->packaging()->consumeUnitQuantity());
-        self::assertSame(682, $articleCreated->amount());
+        self::assertSame(682, $articleCreated->unitPrice());
         self::assertSame(0.055, $articleCreated->tax()->rate());
         self::assertSame('TVA taux réduit', $articleCreated->tax()->name());
         self::assertSame(8.8, $articleCreated->minStock());
@@ -207,6 +211,9 @@ final class CreateArticleControllerTest extends WebTestCase
 
         /** @var DoctrineArticleRepository $articleRepository */
         $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
 
         $company = (new CompanyDataBuilder())->create('Test company')->build();
         $companyRepository->save($company);
@@ -255,7 +262,7 @@ final class CreateArticleControllerTest extends WebTestCase
         $crawler = $client->request(Request::METHOD_GET, self::CREATE_ARTICLE_URI);
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Create Article');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.article.create.titlePage'));
 
         $form = $crawler->selectButton('Create')->form([
             'createArticle[name]' => 'Jambon Trad 6kg',
@@ -266,7 +273,7 @@ final class CreateArticleControllerTest extends WebTestCase
             'createArticle[packaging][subPackage][quantity]' => 2,
             'createArticle[packaging][consumeUnit][unit]' => $kilogramme->uuid()->toString(),
             'createArticle[packaging][consumeUnit][quantity]' => 6.000,
-            'createArticle[amount]' => 6.82,
+            'createArticle[unitPrice]' => 6.82,
             'createArticle[tax]' => $tax->uuid()->toString(),
             'createArticle[minStock]' => 8.8,
             'createArticle[zoneStorages]' => [$zoneStorage->uuid()->toString()],
@@ -373,6 +380,9 @@ final class CreateArticleControllerTest extends WebTestCase
         /** @var DoctrineSupplierRepository $supplierRepository */
         $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
 
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $company = (new CompanyDataBuilder())->create('Test company')->build();
         $companyRepository->save($company);
 
@@ -418,7 +428,7 @@ final class CreateArticleControllerTest extends WebTestCase
         $crawler = $client->request(Request::METHOD_GET, self::CREATE_ARTICLE_URI);
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Create Article');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.article.create.titlePage'));
 
         $form = $crawler->selectButton('Create')->form([
             'createArticle[name]' => 'Jambon Trad 6kg',
@@ -429,7 +439,7 @@ final class CreateArticleControllerTest extends WebTestCase
             'createArticle[packaging][subPackage][quantity]' => 2,
             'createArticle[packaging][consumeUnit][unit]' => $kilogramme->uuid()->toString(),
             'createArticle[packaging][consumeUnit][quantity]' => 6.800,
-            'createArticle[amount]' => 6.82,
+            'createArticle[unitPrice]' => 6.82,
             'createArticle[tax]' => $tax->uuid()->toString(),
             'createArticle[minStock]' => 8.8,
             'createArticle[zoneStorages]' => [$zoneStorage->uuid()->toString()],
@@ -445,7 +455,7 @@ final class CreateArticleControllerTest extends WebTestCase
         $zoneStorageField = $response->filter('form')->children('div')->eq(4)->children('div');
         $familyLogField = $zoneStorageField->siblings();
 
-        self::assertSame('Famille logistique', $familyLogField->children('label')->text());
+        self::assertSame($translator->trans('admin.article.form.familyLog.label'), $familyLogField->children('label')->text());
         self::assertSame(
             'The familyLog logistic family "Viande" is not compatible with the supplier logistic family: "Alimentaire"',
             $familyLogField->children('ul > li')->text()
@@ -475,6 +485,9 @@ final class CreateArticleControllerTest extends WebTestCase
 
         /** @var DoctrineSupplierRepository $supplierRepository */
         $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
 
         $company = (new CompanyDataBuilder())->create('Test company')->build();
         $companyRepository->save($company);
@@ -521,7 +534,7 @@ final class CreateArticleControllerTest extends WebTestCase
         $crawler = $client->request(Request::METHOD_GET, self::CREATE_ARTICLE_URI);
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Create Article');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.article.create.titlePage'));
 
         $form = $crawler->selectButton('Create')->form([
             'createArticle[name]' => 'Jambon Trad 6kg',
@@ -532,7 +545,7 @@ final class CreateArticleControllerTest extends WebTestCase
             'createArticle[packaging][subPackage][quantity]' => 2,
             'createArticle[packaging][consumeUnit][unit]' => $kilogramme->uuid()->toString(),
             'createArticle[packaging][consumeUnit][quantity]' => 6.800,
-            'createArticle[amount]' => 6.82,
+            'createArticle[unitPrice]' => 6.82,
             'createArticle[tax]' => $tax->uuid()->toString(),
             'createArticle[minStock]' => 8.8,
             'createArticle[zoneStorages]' => [$zoneStorage->uuid()->toString()],
@@ -547,7 +560,10 @@ final class CreateArticleControllerTest extends WebTestCase
 
         $zoneStorageField = $response->filter('form')->children('div')->eq(4)->children('div');
 
-        self::assertSame('Zone de stockage', $zoneStorageField->children('label')->text());
+        self::assertSame(
+            $translator->trans('admin.article.form.zoneStorages.label'),
+            $zoneStorageField->children('label')->text()
+        );
         self::assertSame(
             'The zoneStorages logistic family "Frais" is not compatible with the supplier logistic family: "Viande"',
             $zoneStorageField->children('ul > li')->text()

@@ -17,15 +17,15 @@
             <div>
                 <turbo-frame id="article_create" class="flex-between">
                     <span></span>
-                    <twig:Button:CreateEntity href="{{ path('admin_article_create') }}" label="Create Article" />
+                    <twig:Button:CreateEntity href="{{ path('admin_article_create') }}" label="{{ 'admin.article.create.titleShort'|trans }}" />
                 </turbo-frame>
             </div>
             <turbo-frame id="article_paginated">
                 <ul class="table">
                     <li class="li-unstyled flex-between head">
-                        <span>Name</span>
-                        <span>Supplier</span>
-                        <span>Action</span>
+                        <span>{{ 'name'|trans }}</span>
+                        <span>{{ 'admin.article.form.supplier.label'|trans }}</span>
+                        <span>{{ 'actions'|trans }}</span>
                     </li>
                     {% for article in articles %}
                         <turbo-frame id="article_{{ article.uuid }}">
@@ -33,10 +33,25 @@
                                 <span>{{ article.name }}</span>
                                 <span>{{ article.supplier.name }}</span>
                                 <span>
-                                    <twig:Button:UpdateEntity href="{{ path('admin_articles_rename', {'article': article.uuid}) }}" class="btn-small" label="Rename"/>
-                                    <twig:Button:UpdateEntity href="{{ path('admin_articles_reassign-supplier', {'article': article.uuid}) }}" class="btn-small" label="Supplier"/>
-                                    <twig:Button:UpdateEntity href="{{ path('admin_articles_change-storage-information', {'article': article.uuid}) }}" class="btn-small" label="Storage information"/>
-                                    <twig:Button:UpdateEntity href="{{ path('admin_articles_change_financial-information', {'article': article.uuid}) }}" class="btn-small" label="Financial information"/>
+                                    <twig:Button:UpdateEntity
+                                        href="{{ path('admin_articles_rename', {'article': article.uuid}) }}"
+                                        class="btn-small"
+                                        label="{{ 'admin.article.rename.button'|trans }}"/>
+                                    <twig:Button:UpdateEntity
+                                        href="{{ path('admin_articles_reassign-supplier', {'article': article.uuid}) }}"
+                                        class="btn-small"
+                                        label="{{ 'admin.article.reassignSupplier.button'|trans }}"
+                                    />
+                                    <twig:Button:UpdateEntity
+                                        href="{{ path('admin_articles_change-storage-information', {'article': article.uuid}) }}"
+                                        class="btn-small"
+                                        label="{{ 'admin.article.changeStorageInformation.button'|trans }}"
+                                    />
+                                    <twig:Button:UpdateEntity
+                                        href="{{ path('admin_articles_change_financial-information', {'article': article.uuid}) }}"
+                                        class="btn-small"
+                                        label="{{ 'admin.article.changeFinancialInformation.button'|trans }}"
+                                    />
                                 </span>
                             </li>
                         </turbo-frame>

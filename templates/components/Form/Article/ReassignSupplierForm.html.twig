@@ -1,6 +1,6 @@
 <div class="flex-1">
 
-    <h3>Re-assign supplier to "{{ article.name }}"</h3>
+    <h3>{{ 'admin.article.reassignSupplier.titlePage'|trans({ '%articleName%': article.name }) }}</h3>
 
     {{ form_start(form) }}
     {{ form_errors(form) }}
@@ -14,7 +14,7 @@
 
     <div class="grid">
         <twig:Form:Button:Cancel href="{{ path('admin_articles_index') }}" label="Annuler" />
-        <twig:Form:Button:Submit label="Re-assign supplier" />
+        <twig:Form:Button:Submit label="{{ 'admin.article.reassignSupplier.button'|trans }}" icon="fa-pen-to-square" />
     </div>
 
     {{ form_end(form) }}

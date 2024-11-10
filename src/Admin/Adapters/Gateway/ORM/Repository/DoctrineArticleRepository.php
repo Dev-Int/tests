@@ -234,7 +234,7 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         }
 
         $articleToUpdate
-            ->setAmount($article->amount()->toInt())
+            ->setUnitPrice($article->unitPrice()->toInt())
             ->setTax($tax)
         ;
 

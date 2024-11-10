@@ -39,7 +39,7 @@ final class CreateArticleInput
         public ?Packaging $packaging = null,
         #[Assert\NotBlank]
         #[Assert\PositiveOrZero]
-        public ?int $amount = 0,
+        public ?int $unitPrice = 0,
         #[Assert\NotBlank]
         #[Assert\Valid]
         public ?Tax $tax = null,

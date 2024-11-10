@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Change storage information Article | {{ parent() }}
+    {{ 'admin.article.changeStorageInformation.titleShort'|trans }} | {{ parent() }}
 {% endblock %}
 
 {% block body %}
 
-    <h1><twig:Icon:Entities:Article /> Change storage information to "{{ article.name }}"</h1>
+    <h1><twig:Icon:Entities:Article /> {{ 'admin.article.changeStorageInformation.titlePage'|trans({ '%articleName%': article.name }) }}</h1>
 
     <turbo-frame id="article_{{ article.uuid }}">
         <twig:Form:Article:ChangeStorageInformationForm form="{{ form }}" article="{{ article }}" />

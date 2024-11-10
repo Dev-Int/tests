@@ -26,12 +26,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsController]
 final class ChangeArticleStorageInformationController extends AbstractController
 {
-    public function __construct(private readonly ChangeArticleStorageInformation $useCase)
-    {
+    public function __construct(
+        private readonly ChangeArticleStorageInformation $useCase,
+        private readonly TranslatorInterface $translator
+    ) {
     }
 
     #[Route(
@@ -94,7 +97,7 @@ final class ChangeArticleStorageInformationController extends AbstractController
                 ]);
                 // @codeCoverageIgnoreEnd
             }
-            $this->addFlash('success', 'Article updated');
+            $this->addFlash('success', $this->translator->trans('admin.article.changeStorageInformation.success'));
 
             return $this->redirectToRoute('admin_articles_index');
         }

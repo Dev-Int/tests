@@ -31,6 +31,7 @@ use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @group functionalTest
@@ -62,6 +63,9 @@ class ChangeArticleStorageInformationControllerTest extends WebTestCase
 
         /** @var DoctrineArticleRepository $articleRepository */
         $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
 
         $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
         $piece = (new UnitDataBuilder())
@@ -116,9 +120,15 @@ class ChangeArticleStorageInformationControllerTest extends WebTestCase
         );
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Change storage information to "Jambon Trad 6kg"');
+        self::assertSelectorTextContains(
+            'h1',
+            $translator->trans(
+                'admin.article.changeStorageInformation.titlePage',
+                ['%articleName%' => $article->name()->toString()]
+            )
+        );
 
-        $form = $crawler->selectButton('Update')->form([
+        $form = $crawler->selectButton($translator->trans('admin.article.changeStorageInformation.button'))->form([
             'changeArticleStorageInformation[packaging][parcel][unit]' => $colis->uuid()->toString(),
             'changeArticleStorageInformation[packaging][parcel][quantity]' => 1,
             'changeArticleStorageInformation[packaging][subPackage][unit]' => $piece->uuid()->toString(),
@@ -136,7 +146,7 @@ class ChangeArticleStorageInformationControllerTest extends WebTestCase
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
-        static::assertEquals('Article updated', $flash);
+        static::assertEquals($translator->trans('admin.article.changeStorageInformation.success'), $flash);
 
         $articleUpdated = $articleRepository->findOneBy(['slug' => 'jambon-trad-6kg']);
         static::assertInstanceOf(Article::class, $articleUpdated);

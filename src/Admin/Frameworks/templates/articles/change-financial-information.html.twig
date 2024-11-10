@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Change financial information Article | {{ parent() }}
+    {{ 'admin.article.changeFinancialInformation.titleShort'|trans }} | {{ parent() }}
 {% endblock %}
 
 {% block body %}
 
-    <h1><twig:Icon:Entities:Article /> Change financial information to "{{ article.name }}"</h1>
+    <h1><twig:Icon:Entities:Article /> {{ 'admin.article.changeFinancialInformation.titlePage'|trans({ '%articleName%': article.name }) }}</h1>
 
     <turbo-frame id="article_{{ article.uuid }}">
         <twig:Form:Article:ChangeFinancialInformationForm form="{{ form }}" article="{{ article }}" />

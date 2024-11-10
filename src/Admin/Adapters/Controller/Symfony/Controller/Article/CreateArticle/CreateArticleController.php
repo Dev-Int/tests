@@ -28,6 +28,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsController]
 final class CreateArticleController extends AbstractController
@@ -37,7 +38,8 @@ final class CreateArticleController extends AbstractController
         private readonly ConfigurationService $configurationService,
         private readonly SupplierRepository $supplierRepository,
         private readonly FamilyLogRepository $familyLogRepository,
-        private readonly ZoneStorageRepository $zoneStorageRepository
+        private readonly ZoneStorageRepository $zoneStorageRepository,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -94,7 +96,7 @@ final class CreateArticleController extends AbstractController
                         $article->name,
                         $supplier,
                         $packaging,
-                        $article->amount ?? 0,
+                        $article->unitPrice ?? 0,
                         $article->tax->toDomain(),
                         $article->minStock,
                         $zoneStorages,
@@ -107,7 +109,7 @@ final class CreateArticleController extends AbstractController
 
                 return $this->redirectToRoute('admin_articles_index');
             }
-            $this->addFlash('success', 'Article created');
+            $this->addFlash('success', $this->translator->trans('admin.article.create.success'));
 
             return $this->redirectToRoute('admin_articles_index');
         }

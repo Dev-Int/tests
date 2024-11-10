@@ -32,6 +32,7 @@ use FakerRestaurant\Provider\fr_FR\Restaurant;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @group functionalTest
@@ -64,6 +65,9 @@ final class GetArticlesControllerTest extends WebTestCase
 
         /** @var DoctrineArticleRepository $articleRepository */
         $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
 
         $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
         $unitRepository->save($colis);
@@ -120,7 +124,7 @@ final class GetArticlesControllerTest extends WebTestCase
 
         // Assert
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Articles');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.article.titlePage'));
 
         $list = $crawler->filter('body > div.container > main > article > turbo-frame > ul.table > turbo-frame')
             ->children('li.li-unstyled')

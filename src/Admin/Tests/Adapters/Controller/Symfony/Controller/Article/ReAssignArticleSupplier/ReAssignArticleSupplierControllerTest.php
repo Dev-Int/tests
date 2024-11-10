@@ -31,6 +31,7 @@ use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @group functionalTest
@@ -62,6 +63,9 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
 
         /** @var DoctrineArticleRepository $articleRepository */
         $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
 
         $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
         $unitRepository->save($colis);
@@ -116,9 +120,15 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
         );
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Re-assign supplier to "Jambon Trad 6kg"');
+        self::assertSelectorTextContains(
+            'h1',
+            $translator->trans(
+                'admin.article.reassignSupplier.titlePage',
+                ['%articleName%' => $article->name()->toString()]
+            )
+        );
 
-        $form = $crawler->selectButton('Re-assign supplier')->form([
+        $form = $crawler->selectButton($translator->trans('admin.article.reassignSupplier.button'))->form([
             'reAssignArticleSupplier[supplier]' => $supplierSurgele->uuid()->toString(),
             'reAssignArticleSupplier[familyLog]' => $surgele->uuid()->toString(),
             'reAssignArticleSupplier[zoneStorages]' => [$storageSurgele->uuid()->toString()],
@@ -133,7 +143,7 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
-        self::assertEquals('Article updated', $flash);
+        self::assertEquals($translator->trans('admin.article.reassignSupplier.success'), $flash);
 
         $articleUpdated = $articleRepository->find($article->uuid()->toString());
         self::assertInstanceOf(Article::class, $articleUpdated);
@@ -169,6 +179,9 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
         /** @var DoctrineArticleRepository $articleRepository */
         $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
 
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
         $unitRepository->save($colis);
 
@@ -216,9 +229,15 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
         );
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Re-assign supplier to "Jambon Trad 6kg"');
+        self::assertSelectorTextContains(
+            'h1',
+            $translator->trans(
+                'admin.article.reassignSupplier.titlePage',
+                ['%articleName%' => $article->name()->toString()]
+            )
+        );
 
-        $form = $crawler->selectButton('Re-assign supplier')->form([
+        $form = $crawler->selectButton($translator->trans('admin.article.reassignSupplier.button'))->form([
             'reAssignArticleSupplier[supplier]' => $supplierSurgele->uuid()->toString(),
             'reAssignArticleSupplier[familyLog]' => $surgele->uuid()->toString(),
             'reAssignArticleSupplier[zoneStorages]' => [
@@ -235,10 +254,16 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
 
         $supplierField = $crawler->filter('form')->children('div')->first();
 
-        self::assertSame('Supplier', $supplierField->children('label')->text());
+        self::assertSame(
+            $translator->trans('admin.article.form.supplier.label'),
+            $supplierField->children('label')->text()
+        );
         $siblings = $supplierField->siblings()->first();
         $zoneStoragesField = $siblings->children('div')->first();
-        self::assertSame('Zone de stockage', $zoneStoragesField->children('label')->text());
+        self::assertSame(
+            $translator->trans('admin.article.form.zoneStorages.label'),
+            $zoneStoragesField->children('label')->text()
+        );
         self::assertSame(
             'The zoneStorages logistic family "Frais" is not compatible with the supplier logistic family: "Surgelé"',
             $zoneStoragesField->children('ul > li')->text()
@@ -269,6 +294,9 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
         /** @var DoctrineArticleRepository $articleRepository */
         $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
 
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
         $unitRepository->save($colis);
 
@@ -316,9 +344,15 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
         );
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Re-assign supplier to "Jambon Trad 6kg"');
+        self::assertSelectorTextContains(
+            'h1',
+            $translator->trans(
+                'admin.article.reassignSupplier.titlePage',
+                ['%articleName%' => $article->name()->toString()]
+            )
+        );
 
-        $form = $crawler->selectButton('Re-assign supplier')->form([
+        $form = $crawler->selectButton($translator->trans('admin.article.reassignSupplier.button'))->form([
             'reAssignArticleSupplier[supplier]' => $supplierSurgele->uuid()->toString(),
             'reAssignArticleSupplier[familyLog]' => $frais->uuid()->toString(),
             'reAssignArticleSupplier[zoneStorages]' => [
@@ -334,12 +368,21 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
 
         $supplierField = $crawler->filter('form')->children('div')->first();
 
-        self::assertSame('Supplier', $supplierField->children('label')->text());
+        self::assertSame(
+            $translator->trans('admin.article.form.supplier.label'),
+            $supplierField->children('label')->text()
+        );
         $siblings = $supplierField->siblings()->first();
         $zoneStoragesField = $siblings->children('div')->first();
-        self::assertSame('Zone de stockage', $zoneStoragesField->children('label')->text());
+        self::assertSame(
+            $translator->trans('admin.article.form.zoneStorages.label'),
+            $zoneStoragesField->children('label')->text()
+        );
         $familyLogField = $zoneStoragesField->siblings();
-        self::assertSame('Famille logistique', $familyLogField->children('label')->text());
+        self::assertSame(
+            $translator->trans('admin.article.form.familyLog.label'),
+            $familyLogField->children('label')->text()
+        );
         self::assertSame(
             'The familyLog logistic family "Frais" is not compatible with the supplier logistic family: "Surgelé"',
             $familyLogField->children('ul > li')->text()
