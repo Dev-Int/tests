@@ -22,6 +22,7 @@ use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @group functionalTest
@@ -41,6 +42,10 @@ final class ChangeZoneStorageLabelControllerTest extends WebTestCase
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $zoneStorageBuilder = new ZoneStorageDataBuilder();
         $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')
             ->withUuid($faker->uuid())
@@ -59,9 +64,15 @@ final class ChangeZoneStorageLabelControllerTest extends WebTestCase
         );
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Change label "Réserve négative"');
+        self::assertSelectorTextContains(
+            'h1',
+            $translator->trans(
+                'admin.zoneStorage.changeLabel.titlePage',
+                ['%zoneLabel%' => $zoneStorage->label()->toString()]
+            )
+        );
 
-        $form = $crawler->selectButton('Change label')->form([
+        $form = $crawler->selectButton($translator->trans('admin.zoneStorage.changeLabel.button'))->form([
             'changeZoneStorageLabel[label]' => 'Réserve positive',
             'changeZoneStorageLabel[slug]' => 'reserve-negative',
         ]);
@@ -74,7 +85,7 @@ final class ChangeZoneStorageLabelControllerTest extends WebTestCase
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
-        self::assertSame('Zone storage updated', $flash);
+        self::assertSame($translator->trans('admin.zoneStorage.changeLabel.success'), $flash);
 
         /** @var ZoneStorage $zoneStorageUpdated */
         $zoneStorageUpdated = $zoneStorageRepository->findOneBy(['slug' => 'reserve-positive']);

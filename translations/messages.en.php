@@ -7,6 +7,7 @@ return [
     'phone' => 'Phone',
     'email' => 'Email',
     'contact' => 'Contact',
+    'label' => 'Label',
     'rate' => 'Rate',
     'admin' => [
         'company' => [
@@ -134,6 +135,35 @@ return [
                 'titlePage' => 'Assign parent to "%familyLabel%"',
                 'titleShort' => 'Update logistique family',
                 'success' => 'FamilyLog parent assigned successfully.',
+            ],
+        ],
+        'zoneStorage' => [
+            'titlePage' => 'Storage area',
+            'form' => [
+                'name' => [
+                    'label' => 'Name of the storage area',
+                    'placeholder' => 'The name of the storage area',
+                ],
+                'parent' => [
+                    'label' => 'Famille logistique parente',
+                ],
+            ],
+            'create' => [
+                'titlePage' => 'Create new storage area',
+                'titleShort' => 'New storage area',
+                'success' => 'Storage area created successfully.',
+            ],
+            'changeLabel' => [
+                'button' => 'Change label',
+                'titlePage' => 'Change label of the storage area "%zoneLabel%"',
+                'titleShort' => 'Rename "%zoneLabel%"',
+                'success' => 'La zone de stockage est renommée avec succès.'
+            ],
+            'changeFamilyLog' => [
+                'button' => 'Change logistics family',
+                'titlePage' => 'Change logistics family to "%zoneLabel%"',
+                'titleShort' => 'Update storage area',
+                'success' => 'Logistics family assigned successfully.',
             ],
         ],
     ],

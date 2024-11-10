@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Update ZoneStorage | {{ parent() }}
+    {{ 'admin.zoneStorage.changeFamilyLog.titleShort'|trans }} | {{ parent() }}
 {% endblock %}
 
 {% block importmap %}
@@ -10,7 +10,7 @@
 
 {% block body %}
 
-    <h1><twig:Icon:Entities:ZoneStorage /> Change FamilyLog "{{ zoneStorage.label }}"</h1>
+    <h1><twig:Icon:Entities:ZoneStorage /> {{ 'admin.zoneStorage.changeFamilyLog.titlePage'|trans({ '%zoneLabel%': zoneStorage.label }) }}</h1>
 
     <turbo-frame id="zone_{{ zoneStorage.uuid }}">
         <twig:Form:ZoneStorage:ChangeFamilyLogForm form="{{ form }}" zoneStorage="{{ zoneStorage }}" />

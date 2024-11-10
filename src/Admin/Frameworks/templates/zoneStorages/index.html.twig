@@ -1,27 +1,27 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    ZoneStorages | {{ parent() }}
+    {{ 'admin.zoneStorage.titlePage'|trans}} | {{ parent() }}
 {% endblock %}
 
 {% block body %}
 
-    <h1><twig:Icon:Entities:ZoneStorage /> Storage Zones</h1>
+    <h1><twig:Icon:Entities:ZoneStorage /> {{ 'admin.zoneStorage.titlePage'|trans }}</h1>
 
     <main>
         <article>
             <div>
                 <turbo-frame id="zoneStorage_create" class="flex-between">
                     <span></span>
-                    <twig:Button:CreateEntity href="{{ path('admin_zone_storages_create') }}" label="Create ZoneStorage" />
+                    <twig:Button:CreateEntity href="{{ path('admin_zone_storages_create') }}" label="{{ 'admin.zoneStorage.create.titleShort'|trans }}" />
                 </turbo-frame>
             </div>
 
             <ul class="table">
                 <li class="li-unstyled flex-between head">
-                    <span>Label</span>
-                    <span>FamilyLog</span>
-                    <span>Actions</span>
+                    <span>{{ 'label'|trans }}</span>
+                    <span>{{ 'admin.zoneStorage.form.familyLog.label'|trans }}</span>
+                    <span>{{ 'actions'|trans}}</span>
                 </li>
                 {% for zone in zoneStorages %}
                     <turbo-frame id="zone_{{ zone.uuid }}">
@@ -29,8 +29,8 @@
                             <span>{{ zone.label }}</span>
                             <span>{{ zone.familyLogLabel }}</span>
                             <span>
-                                <twig:Button:UpdateEntity href="{{ path('admin_zone_storages_change-label', {zoneStorage: zone.uuid}) }}" class="btn-small" label="Change label"/>
-                                <twig:Button:UpdateEntity href="{{ path('admin_zone_storages_change-family_log', {zoneStorage: zone.uuid}) }}" class="btn-small" label="Change familyLog"/>
+                                <twig:Button:UpdateEntity href="{{ path('admin_zone_storages_change-label', {zoneStorage: zone.uuid}) }}" class="btn-small" label="{{ 'admin.zoneStorage.changeLabel.button'|trans }}"/>
+                                <twig:Button:UpdateEntity href="{{ path('admin_zone_storages_change-family_log', {zoneStorage: zone.uuid}) }}" class="btn-small" label="{{ 'admin.zoneStorage.changeFamilyLog.button'|trans }}"/>
                             </span>
                         </li>
                     </turbo-frame>

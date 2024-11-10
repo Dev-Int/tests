@@ -24,13 +24,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsController]
 final class CreateZoneStorageController extends AbstractController
 {
     public function __construct(
         private readonly CreateZoneStorage $useCase,
-        private readonly ConfigurationService $configurationService
+        private readonly ConfigurationService $configurationService,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -71,7 +73,7 @@ final class CreateZoneStorageController extends AbstractController
 
                 return $this->redirectToRoute('admin_zone_storages_index');
             }
-            $this->addFlash('success', 'Zone storage created');
+            $this->addFlash('success', $this->translator->trans('admin.zoneStorage.create.success'));
 
             return $this->redirectToRoute('admin_zone_storages_index', [], Response::HTTP_FOUND);
         }

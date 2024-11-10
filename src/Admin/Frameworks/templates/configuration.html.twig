@@ -33,7 +33,7 @@
                     <li>
                         <a href="{{ path('admin_zone_storages_create') }}" role="button" class="{% if hasStorage %}secondary disable-link {% endif %}w100">
                             {% if hasStorage %}<twig:Icon:Check />
-                            {% else %}<twig:Icon:Entities:ZoneStorage />{% endif %} Create Storage area
+                            {% else %}<twig:Icon:Entities:ZoneStorage />{% endif %} {{ 'admin.zoneStorage.create.titlePage'|trans }}
                         </a>
                     </li>
                     <li>

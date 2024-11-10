@@ -7,6 +7,7 @@ return [
     'phone' => 'Téléphone',
     'email' => 'Adresse email',
     'contact' => 'Contact',
+    'label' => 'Intitulé',
     'rate' => 'Taux',
     'admin' => [
         'company' => [
@@ -135,6 +136,35 @@ return [
                 'titlePage' => 'Assigner un parent à "%familyLabel%"',
                 'titleShort' => 'Modifier une famille logistique',
                 'success' => 'Famille logistique parente assignée avec succès.',
+            ],
+        ],
+        'zoneStorage' => [
+            'titlePage' => 'Zone de stockage',
+            'form' => [
+                'label' => [
+                    'label' => 'Nom de la zone de stockage',
+                    'placeholder' => 'Le nom de la zone de stockage',
+                ],
+                'familyLog' => [
+                    'label' => 'Famille logistique',
+                ],
+            ],
+            'create' => [
+                'titlePage' => 'Créer une zone de stockage',
+                'titleShort' => 'Nouvelle zone de stockage',
+                'success' => 'Zone de stockage créée avec succès.',
+            ],
+            'changeLabel' => [
+                'button' => 'Renommer',
+                'titlePage' => 'Renommer la zone de stockage "%zoneLabel%"',
+                'titleShort' => 'Renommer "%zoneLabel%"',
+                'success' => 'La zone de stockage est renommée avec succès.'
+            ],
+            'changeFamilyLog' => [
+                'button' => 'Changer de famille logistique',
+                'titlePage' => 'Changer la famille logistique de "%zoneLabel%"',
+                'titleShort' => 'Modifier une zone de stockage',
+                'success' => 'Famille logistique assignée avec succès.',
             ],
         ],
     ],

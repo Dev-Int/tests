@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Create ZoneStorage | {{ parent() }}
+    {{ 'admin.zoneStorage.create.titlePage'|trans}} | {{ parent() }}
 {% endblock %}
 
 {% block importmap %}
@@ -10,7 +10,7 @@
 
 {% block body %}
 
-    <h1><twig:Icon:Entities:ZoneStorage /> Create Zone Storage</h1>
+    <h1><twig:Icon:Entities:ZoneStorage /> {{ 'admin.zoneStorage.create.titlePage'|trans }}</h1>
 
     <turbo-frame id="zoneStorage_create">
         <twig:Form:ZoneStorage:CreateForm form="{{ form }}" />
