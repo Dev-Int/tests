@@ -81,8 +81,8 @@ final class ChangeFinancialInformationTest extends TestCase
         $articleUpdated = $response->article;
 
         // Assert
-        self::assertSame(725, $articleUpdated->amount()->toInt());
-        self::assertSame(7.25, $articleUpdated->amount()->toFloat());
+        self::assertSame(725, $articleUpdated->unitPrice()->toInt());
+        self::assertSame(7.25, $articleUpdated->unitPrice()->toFloat());
         self::assertEquals($tax55, $articleUpdated->tax());
     }
 }

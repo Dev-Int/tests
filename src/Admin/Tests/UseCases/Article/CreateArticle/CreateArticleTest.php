@@ -57,7 +57,7 @@ final class CreateArticleTest extends TestCase
         $request->expects(self::exactly(2))->method('name')->willReturn('Jambon Trad 6kg');
         $request->expects(self::exactly(2))->method('supplier')->willReturn($supplier);
         $request->expects(self::once())->method('packaging')->willReturn([[$unit, 1.0], null, null]);
-        $request->expects(self::once())->method('amount')->willReturn(2550);
+        $request->expects(self::once())->method('unitPrice')->willReturn(2550);
         $request->expects(self::once())->method('tax')->willReturn($tax);
         $request->expects(self::once())->method('minStock')->willReturn(8.000);
         $request->expects(self::once())->method('quantity')->willReturn(null);
@@ -82,8 +82,8 @@ final class CreateArticleTest extends TestCase
         self::assertSame('Jambon Trad 6kg', $article->name()->toString());
         self::assertSame('Supplier 1', $article->supplier()->name()->toString());
         self::assertSame([$unit, 1.0], $article->packaging()->parcel());
-        self::assertSame(25.50, $article->amount()->toFloat());
-        self::assertSame(2550, $article->amount()->toInt());
+        self::assertSame(25.50, $article->unitPrice()->toFloat());
+        self::assertSame(2550, $article->unitPrice()->toInt());
         self::assertSame(0.055, $article->tax()->rate());
         self::assertSame('TVA taux réduit', $article->tax()->name()->toString());
         self::assertSame(8.000, $article->minStock());
@@ -127,7 +127,7 @@ final class CreateArticleTest extends TestCase
         $request->expects(self::once())->method('name')->willReturn('Jambon Trad 6kg');
         $request->expects(self::once())->method('supplier')->willReturn($supplier);
         $request->expects(self::never())->method('packaging')->willReturn([[$unit, 1.0], null, null]);
-        $request->expects(self::never())->method('amount')->willReturn(2550);
+        $request->expects(self::never())->method('unitPrice')->willReturn(2550);
         $request->expects(self::never())->method('tax')->willReturn($tax);
         $request->expects(self::never())->method('minStock')->willReturn(8.000);
         $request->expects(self::never())->method('quantity')->willReturn(null);
@@ -171,7 +171,7 @@ final class CreateArticleTest extends TestCase
         $request->expects(self::exactly(2))->method('name')->willReturn('Jambon Trad 6kg');
         $request->expects(self::never())->method('supplier')->willReturn($supplier);
         $request->expects(self::never())->method('packaging')->willReturn([[$unit, 1.0], null, null]);
-        $request->expects(self::never())->method('amount')->willReturn(2550);
+        $request->expects(self::never())->method('unitPrice')->willReturn(2550);
         $request->expects(self::never())->method('tax')->willReturn($tax);
         $request->expects(self::never())->method('minStock')->willReturn(8.000);
         $request->expects(self::never())->method('quantity')->willReturn(null);

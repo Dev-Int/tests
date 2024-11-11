@@ -22,12 +22,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsController]
 final class ChangeArticleFinancialInformationController extends AbstractController
 {
-    public function __construct(private readonly ChangeArticleFinancialInformation $useCase)
-    {
+    public function __construct(
+        private readonly ChangeArticleFinancialInformation $useCase,
+        private readonly TranslatorInterface $translator
+    ) {
     }
 
     #[Route(
@@ -41,7 +44,7 @@ final class ChangeArticleFinancialInformationController extends AbstractControll
         $form = $this->createForm(
             ChangeFinancialInformationType::class,
             new ChangeArticleFinancialInformationInput(
-                $article->amount(),
+                $article->unitPrice(),
                 $article->tax(),
                 $article->uuid()
             ),
@@ -61,7 +64,7 @@ final class ChangeArticleFinancialInformationController extends AbstractControll
 
             try {
                 $this->useCase->execute(new ChangeArticleFinancialInformationApiRequest(
-                    amount: $articleToUpdate->amount,
+                    amount: $articleToUpdate->unitPrice,
                     tax: $articleToUpdate->tax->toDomain(),
                     uuid: $articleToUpdate->uuid
                 ));
@@ -75,7 +78,7 @@ final class ChangeArticleFinancialInformationController extends AbstractControll
                 ]);
                 // @codeCoverageIgnoreEnd
             }
-            $this->addFlash('success', 'Article updated');
+            $this->addFlash('success', $this->translator->trans('admin.article.changeFinancialInformation.success'));
 
             return $this->redirectToRoute('admin_articles_index');
         }

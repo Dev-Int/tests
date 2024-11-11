@@ -28,7 +28,7 @@ final class UpdateCompanyApiRequest implements UpdateCompanyRequest
         #[Assert\Type(type: 'numeric')]
         public string $postalCode,
         #[Assert\NotBlank]
-        public string $town,
+        public string $city,
         #[Assert\NotBlank]
         public string $country,
         #[Assert\NotBlank]
@@ -57,9 +57,9 @@ final class UpdateCompanyApiRequest implements UpdateCompanyRequest
         return $this->postalCode;
     }
 
-    public function town(): string
+    public function city(): string
     {
-        return $this->town;
+        return $this->city;
     }
 
     public function country(): string

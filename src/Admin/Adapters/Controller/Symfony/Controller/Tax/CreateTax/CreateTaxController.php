@@ -22,13 +22,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsController]
 final class CreateTaxController extends AbstractController
 {
     public function __construct(
         private readonly CreateTax $useCase,
-        private readonly ConfigurationService $configurationService
+        private readonly ConfigurationService $configurationService,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -58,7 +60,7 @@ final class CreateTaxController extends AbstractController
 
                 return $this->redirectToRoute('admin_taxes_index');
             }
-            $this->addFlash('success', 'Tax created');
+            $this->addFlash('success', $this->translator->trans('admin.tax.create.success'));
 
             return $this->redirectToRoute('admin_taxes_index');
         }

@@ -23,13 +23,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsController]
 final class CreateSupplierController extends AbstractController
 {
     public function __construct(
         private readonly CreateSupplier $useCase,
-        private readonly ConfigurationService $configurationService
+        private readonly ConfigurationService $configurationService,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -64,7 +66,7 @@ final class CreateSupplierController extends AbstractController
                         $supplier->name,
                         $supplier->address,
                         $supplier->postalCode,
-                        $supplier->town,
+                        $supplier->city,
                         $supplier->country,
                         $supplier->phone,
                         $supplier->email,
@@ -80,7 +82,7 @@ final class CreateSupplierController extends AbstractController
 
                 return $this->redirectToRoute('admin_suppliers_index');
             }
-            $this->addFlash('success', 'Supplier created');
+            $this->addFlash('success', $this->translator->trans('admin.supplier.create.success'));
 
             return $this->redirectToRoute('admin_suppliers_index', [], Response::HTTP_FOUND);
         }

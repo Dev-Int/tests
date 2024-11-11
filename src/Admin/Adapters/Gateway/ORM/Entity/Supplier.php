@@ -36,8 +36,8 @@ class Supplier
     private string $address;
     #[ORM\Column(name: 'postal_code', type: 'string', length: 5)]
     private string $postalCode;
-    #[ORM\Column(name: 'town', type: 'string', length: 255)]
-    private string $town;
+    #[ORM\Column(name: 'city', type: 'string', length: 255)]
+    private string $city;
     #[ORM\Column(name: 'country', type: 'string', length: 255)]
     private string $country;
     #[ORM\Column(name: 'phone', type: 'string', length: 12)]
@@ -68,7 +68,7 @@ class Supplier
         $this->name = $supplier->name()->toString();
         $this->address = $supplier->address()->address();
         $this->postalCode = $supplier->address()->postalCode();
-        $this->town = $supplier->address()->town();
+        $this->city = $supplier->address()->city();
         $this->country = $supplier->address()->country();
         $this->phone = $supplier->phone()->toNumber();
         $this->email = $supplier->email()->toString();
@@ -90,7 +90,7 @@ class Supplier
             NameField::fromString($this->name),
             $this->address,
             $this->postalCode,
-            $this->town,
+            $this->city,
             $this->country,
             PhoneField::fromString($this->phone),
             EmailField::fromString($this->email),
@@ -125,7 +125,7 @@ class Supplier
 
     public function fullAddress(): string
     {
-        return \sprintf("%s\n%s %s, %s", $this->address, $this->postalCode, $this->town, $this->country);
+        return \sprintf("%s\n%s %s, %s", $this->address, $this->postalCode, $this->city, $this->country);
     }
 
     public function setAddress(string $address): self
@@ -152,16 +152,16 @@ class Supplier
         return $this->postalCode;
     }
 
-    public function setTown(string $town): self
+    public function setCity(string $city): self
     {
-        $this->town = $town;
+        $this->city = $city;
 
         return $this;
     }
 
-    public function town(): string
+    public function city(): string
     {
-        return $this->town;
+        return $this->city;
     }
 
     public function setCountry(string $country): self

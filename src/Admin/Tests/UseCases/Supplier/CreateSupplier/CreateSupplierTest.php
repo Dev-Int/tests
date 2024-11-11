@@ -36,7 +36,7 @@ final class CreateSupplierTest extends TestCase
         $request->expects(self::exactly(2))->method('name')->willReturn('Dev-Int Création');
         $request->expects(self::once())->method('address')->willReturn('5, rue des Plantes');
         $request->expects(self::once())->method('postalCode')->willReturn('75000');
-        $request->expects(self::once())->method('town')->willReturn('Paris');
+        $request->expects(self::once())->method('city')->willReturn('Paris');
         $request->expects(self::once())->method('country')->willReturn('France');
         $request->expects(self::once())->method('phone')->willReturn('+33297000000');
         $request->expects(self::once())->method('email')->willReturn('test@test.fr');
@@ -82,7 +82,7 @@ final class CreateSupplierTest extends TestCase
         $request->expects(self::exactly(2))->method('name')->willReturn('Dev-Int Création');
         $request->expects(self::never())->method('address')->willReturn('5, rue des Plantes');
         $request->expects(self::never())->method('postalCode')->willReturn('75000');
-        $request->expects(self::never())->method('town')->willReturn('Paris');
+        $request->expects(self::never())->method('city')->willReturn('Paris');
         $request->expects(self::never())->method('country')->willReturn('France');
         $request->expects(self::never())->method('phone')->willReturn('+33297000000');
         $request->expects(self::never())->method('email')->willReturn('test@test.fr');

@@ -20,6 +20,7 @@ use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @group functionalTest
@@ -36,6 +37,9 @@ final class ChangeLabelFamilyLogControllerTest extends WebTestCase
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
         $familyLogBuilder = new FamilyLogDataBuilder();
 
         $familyLogParent = $familyLogBuilder->create('Surgelé')
@@ -59,9 +63,12 @@ final class ChangeLabelFamilyLogControllerTest extends WebTestCase
         );
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Change label "Viande"');
+        self::assertSelectorTextContains(
+            'h1',
+            $translator->trans('admin.familyLog.changeLabel.titlePage', ['%familyLabel%' => 'Viande'])
+        );
 
-        $form = $crawler->selectButton('Update')->form([
+        $form = $crawler->selectButton($translator->trans('admin.familyLog.changeLabel.button'))->form([
             'changeLabelFamilyLog[label]' => 'Viandes',
         ]);
         $client->submit($form);
@@ -73,7 +80,7 @@ final class ChangeLabelFamilyLogControllerTest extends WebTestCase
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
-        self::assertSame('FamilyLog label changed.', $flash);
+        self::assertSame($translator->trans('admin.familyLog.changeLabel.success'), $flash);
 
         /** @var FamilyLog $familyLogUpdated */
         $familyLogUpdated = $familyLogRepository->find(FamilyLogDataBuilder::VALID_UUID);
@@ -92,6 +99,9 @@ final class ChangeLabelFamilyLogControllerTest extends WebTestCase
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
         $familyLogBuilder = new FamilyLogDataBuilder();
 
         $familyLogParent = $familyLogBuilder->create('Surgelé')
@@ -122,9 +132,12 @@ final class ChangeLabelFamilyLogControllerTest extends WebTestCase
         );
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Change label "Surgelé"');
+        self::assertSelectorTextContains(
+            'h1',
+            $translator->trans('admin.familyLog.changeLabel.titlePage', ['%familyLabel%' => 'Surgelé'])
+        );
 
-        $form = $crawler->selectButton('Update')->form([
+        $form = $crawler->selectButton($translator->trans('admin.familyLog.changeLabel.button'))->form([
             'changeLabelFamilyLog[label]' => 'Surgelés',
         ]);
         $client->submit($form);
@@ -136,7 +149,7 @@ final class ChangeLabelFamilyLogControllerTest extends WebTestCase
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
-        self::assertSame('FamilyLog label changed.', $flash);
+        self::assertSame($translator->trans('admin.familyLog.changeLabel.success'), $flash);
 
         /** @var FamilyLog $familyLogUpdated */
         $familyLogUpdated = $familyLogRepository->find(FamilyLogDataBuilder::VALID_UUID);
@@ -168,6 +181,9 @@ final class ChangeLabelFamilyLogControllerTest extends WebTestCase
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
         $familyLogBuilder = new FamilyLogDataBuilder();
 
         $familyLogParent = $familyLogBuilder->create('Surgelé')
@@ -195,9 +211,12 @@ final class ChangeLabelFamilyLogControllerTest extends WebTestCase
         );
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Change label "Viande"');
+        self::assertSelectorTextContains(
+            'h1',
+            $translator->trans('admin.familyLog.changeLabel.titlePage', ['%familyLabel%' => 'Viande'])
+        );
 
-        $form = $crawler->selectButton('Update')->form([
+        $form = $crawler->selectButton($translator->trans('admin.familyLog.changeLabel.button'))->form([
             'changeLabelFamilyLog[label]' => 'Produits carnés',
         ]);
         $client->submit($form);

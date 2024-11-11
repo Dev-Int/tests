@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Create Unit | {{ parent() }}
+    {{ 'admin.unit.create.titlePage'|trans }} | {{ parent() }}
 {% endblock %}
 
 {% block body %}
 
-    <h1><twig:Icon:Entities:Unit /> Create Unit</h1>
+    <h1><twig:Icon:Entities:Unit /> {{ 'admin.unit.create.titlePage'|trans }}</h1>
 
     <turbo-frame id="unit_create">
         <twig:Form:Unit:CreateForm form="{{ form }}" />

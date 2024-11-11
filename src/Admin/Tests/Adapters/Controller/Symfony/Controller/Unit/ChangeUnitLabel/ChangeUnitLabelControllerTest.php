@@ -20,6 +20,7 @@ use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @group functionalTest
@@ -35,6 +36,10 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
 
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
         $unitRepository->save($unit);
         $units = $unitRepository->findAllUnits();
@@ -44,9 +49,12 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
         $crawler = $client->request(Request::METHOD_GET, \sprintf(self::CHANGE_LABEL_URI, $unit->uuid()->toString()));
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Change label "Kilogramme"');
+        self::assertSelectorTextContains(
+            'h1',
+            $translator->trans('admin.unit.changeLabel.titlePage', ['%unitName%' => 'Kilogramme'])
+        );
 
-        $form = $crawler->selectButton('Change label')->form([
+        $form = $crawler->selectButton($translator->trans('admin.unit.changeLabel.button'))->form([
             'changeUnitLabel[label]' => 'Kilogrammes',
             'changeUnitLabel[abbreviation]' => 'kg',
             'changeUnitLabel[slug]' => 'kilogramme',
@@ -60,7 +68,7 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
-        self::assertSame('Unit updated', $flash);
+        self::assertSame($translator->trans('admin.unit.changeLabel.success'), $flash);
 
         /** @var Unit $unitUpdated */
         $unitUpdated = $unitRepository->findOneBy(['slug' => 'kilogrammes']);
@@ -77,6 +85,10 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
 
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
         $unitRepository->save($unit);
         $units = $unitRepository->findAllUnits();
@@ -89,9 +101,12 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
         );
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Change label "Kilogramme"');
+        self::assertSelectorTextContains(
+            'h1',
+            $translator->trans('admin.unit.changeLabel.titlePage', ['%unitName%' => 'Kilogramme'])
+        );
 
-        $form = $crawler->selectButton('Change label')->form([
+        $form = $crawler->selectButton($translator->trans('admin.unit.changeLabel.button'))->form([
             'changeUnitLabel[label]' => 'Kilogramme',
             'changeUnitLabel[abbreviation]' => 'KG',
             'changeUnitLabel[slug]' => 'kilogramme',
@@ -105,7 +120,7 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
-        self::assertSame('Unit updated', $flash);
+        self::assertSame($translator->trans('admin.unit.changeLabel.success'), $flash);
 
         /** @var Unit $unitUpdated */
         $unitUpdated = $unitRepository->findOneBy(['slug' => 'kilogramme']);
@@ -122,6 +137,10 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
 
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $unitBuilder = new UnitDataBuilder();
         $unit1 = $unitBuilder->create('Kilogramme', 'kg')->build();
         $unitRepository->save($unit1);
@@ -140,9 +159,12 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
         );
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Change label "Kilogramme"');
+        self::assertSelectorTextContains(
+            'h1',
+            $translator->trans('admin.unit.changeLabel.titlePage', ['%unitName%' => 'Kilogramme'])
+        );
 
-        $form = $crawler->selectButton('Change label')->form([
+        $form = $crawler->selectButton($translator->trans('admin.unit.changeLabel.button'))->form([
             'changeUnitLabel[label]' => 'Litre',
             'changeUnitLabel[abbreviation]' => 'kg',
             'changeUnitLabel[slug]' => 'kilogramme',
@@ -169,6 +191,10 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
 
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
         $unitRepository->save($unit);
 
@@ -179,9 +205,12 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
         );
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Change label "Kilogramme"');
+        self::assertSelectorTextContains(
+            'h1',
+            $translator->trans('admin.unit.changeLabel.titlePage', ['%unitName%' => 'Kilogramme'])
+        );
 
-        $form = $crawler->selectButton('Change label')->form([
+        $form = $crawler->selectButton($translator->trans('admin.unit.changeLabel.button'))->form([
             'changeUnitLabel[label]' => '',
             'changeUnitLabel[abbreviation]' => '',
             'changeUnitLabel[slug]' => 'kilogramme',
@@ -195,10 +224,16 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
         $labelField = $response->filter('form')->children('div')->first();
         $abbreviationField = $labelField->siblings();
 
-        self::assertSame('Intitulé de l\'unité', $labelField->children('label')->text());
+        self::assertSame(
+            $translator->trans('admin.unit.form.label.placeholder'),
+            $labelField->children('label')->text()
+        );
         self::assertSame('Cette valeur ne doit pas être vide.', $labelField->children('ul > li')->text());
 
-        self::assertSame('Abréviation de l\'unité', $abbreviationField->children('label')->text());
+        self::assertSame(
+            $translator->trans('admin.unit.form.abbreviation.placeholder'),
+            $abbreviationField->children('label')->text()
+        );
         self::assertSame('Cette valeur ne doit pas être vide.', $abbreviationField->children('ul > li')->text());
 
         $units = $unitRepository->findAllUnits();

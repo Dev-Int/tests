@@ -14,50 +14,47 @@
                 <ul>
                     <li>
                         <a href="{{ path('admin_company_index') }}" role="button" class="w100">
-                            <twig:Icon:Entities:Company /> Company
+                            <twig:Icon:Entities:Company /> {{ 'admin.company.titlePage'|trans }}
                         </a>
                     </li>
                     <li>
                         <a href="{{ path('admin_units_index') }}" role="button" class="w100">
-                            <twig:Icon:Entities:Unit /> Units
+                            <twig:Icon:Entities:Unit /> {{ 'admin.unit.titlePage'|trans }}
                         </a>
                     </li>
                     <li>
                         <a href="{{ path('admin_taxes_index') }}" role="button" class="w100">
-                            <twig:Icon:Entities:Taxe /> Taxes
+                            <twig:Icon:Entities:Taxe /> {{ 'admin.tax.titlePage'|trans }}
                         </a>
                     </li>
                     <li>
                         <a href="{{ path('admin_family_logs_index') }}" role="button" class="w100">
-                            <twig:Icon:Entities:FamilyLog /> Logistic families
+                            <twig:Icon:Entities:FamilyLog /> {{ 'admin.familyLog.titlePage'|trans }}
                         </a>
                     </li>
                     <li>
                         <a href="{{ path('admin_zone_storages_index') }}" role="button" class="w100">
-                            <twig:Icon:Entities:ZoneStorage /> Storage areas
+                            <twig:Icon:Entities:ZoneStorage /> {{ 'admin.zoneStorage.titlePage'|trans }}
                         </a>
                     </li>
                     <li>
                         <a href="{{ path('admin_suppliers_index') }}" role="button" class="w100">
-                            <twig:Icon:Entities:Supplier /> Suppliers
+                            <twig:Icon:Entities:Supplier /> {{ 'admin.supplier.titlePage'|trans }}
                         </a>
                     </li>
                     <li>
                         <a href="{{ path('admin_articles_index') }}" role="button" class="w100">
-                            <twig:Icon:Entities:Article /> Articles
+                            <twig:Icon:Entities:Article /> {{ 'admin.article.titlePage'|trans }}
                         </a>
                     </li>
                 </ul>
             </nav>
         </aside>
         <article class="col-md-9">
-            <p>Here is how you administrate your application.</p>
-            <p>You can create, update or archive all parts of the application.</p>
-            <p></p>
-            <p>Happy use <i class="fa-solid fa-face-smile-wink"></i></p>
+            {{ 'admin.homePage.resume'|trans|raw }}
 
             <p class="bottom-element">
-                <twig:Button:BackTo  href="{{ path('home') }}" label="Retour à l'accueil" />
+                <twig:Button:BackTo  href="{{ path('home') }}" label="{{ 'admin.returnButton'|trans }}" />
             </p>
         </article>
     </div>

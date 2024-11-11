@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Create Supplier | {{ parent() }}
+    {{ 'admin.supplier.create.titlePage'|trans }} | {{ parent() }}
 {% endblock %}
 
 {% block importmap %}
@@ -10,7 +10,7 @@
 
 {% block body %}
 
-    <h1><twig:Icon:Entities:Supplier /> Create Supplier</h1>
+    <h1><twig:Icon:Entities:Supplier /> {{ 'admin.supplier.create.titlePage'|trans }}</h1>
 
     <turbo-frame id="supplier_create">
         <twig:Form:Supplier:CreateForm form="{{ form }}" />

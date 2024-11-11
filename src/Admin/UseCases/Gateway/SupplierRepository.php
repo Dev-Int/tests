@@ -30,7 +30,7 @@ interface SupplierRepository
 
     public function changeContact(Supplier $supplier): void;
 
-    public function changeDeliverySpecification(Supplier $supplier): void;
+    public function changeDeliverySpecifications(Supplier $supplier): void;
 
     public function findAllSuppliers(): SupplierCollection;
 

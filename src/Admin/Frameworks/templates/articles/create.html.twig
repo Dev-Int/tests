@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Create Article | {{ parent() }}
+    {{ 'admin.article.create.titleShort'|trans }} | {{ parent() }}
 {% endblock %}
 
 {% block importmap %}
@@ -10,7 +10,7 @@
 
 {% block body %}
 
-    <h1><twig:Icon:Entities:Article /> Create Article</h1>
+    <h1><twig:Icon:Entities:Article /> {{ 'admin.article.create.titlePage'|trans }}</h1>
 
     <turbo-frame id="article_create">
         <twig:Form:Article:CreateForm form="{{ form }}" />

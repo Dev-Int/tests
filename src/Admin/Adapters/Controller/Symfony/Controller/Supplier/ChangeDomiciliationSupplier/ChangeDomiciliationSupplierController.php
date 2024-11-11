@@ -21,12 +21,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsController]
 final class ChangeDomiciliationSupplierController extends AbstractController
 {
-    public function __construct(private readonly ChangeDomiciliationSupplier $useCase)
-    {
+    public function __construct(
+        private readonly ChangeDomiciliationSupplier $useCase,
+        private readonly TranslatorInterface $translator
+    ) {
     }
 
     #[Route(
@@ -42,7 +45,7 @@ final class ChangeDomiciliationSupplierController extends AbstractController
             new ChangeDomiciliationSupplierApiRequest(
                 $supplier->address(),
                 $supplier->postalCode(),
-                $supplier->town(),
+                $supplier->city(),
                 $supplier->country(),
                 $supplier->phone(),
                 $supplier->email(),
@@ -72,7 +75,7 @@ final class ChangeDomiciliationSupplierController extends AbstractController
                 // @codeCoverageIgnoreEnd
             }
 
-            $this->addFlash('success', 'Supplier updated');
+            $this->addFlash('success', $this->translator->trans('admin.supplier.changeDomiciliation.success'));
 
             return $this->redirectToRoute('admin_suppliers_index');
         }

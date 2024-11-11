@@ -47,7 +47,7 @@ final class UpdateCompanyTest extends TestCase
 
         $request->expects(self::once())->method('address')->willReturn('12, rue des Singes');
         $request->expects(self::once())->method('postalCode')->willReturn('56000');
-        $request->expects(self::once())->method('town')->willReturn('Vannes');
+        $request->expects(self::once())->method('city')->willReturn('Vannes');
         $request->expects(self::once())->method('country')->willReturn('France');
         $request->expects(self::once())->method('phone')->willReturn('+33297000000');
         $request->expects(self::once())->method('email')->willReturn('test@test.fr');
@@ -93,7 +93,7 @@ final class UpdateCompanyTest extends TestCase
 
         $request->expects(self::never())->method('address')->willReturn('12, rue des Singes');
         $request->expects(self::never())->method('postalCode')->willReturn('56000');
-        $request->expects(self::never())->method('town')->willReturn('Vannes');
+        $request->expects(self::never())->method('city')->willReturn('Vannes');
         $request->expects(self::never())->method('country')->willReturn('France');
         $request->expects(self::never())->method('phone')->willReturn('+33297000000');
         $request->expects(self::never())->method('email')->willReturn('test@test.fr');

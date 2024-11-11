@@ -11,11 +11,11 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\UseCases\Supplier\ChangeDeliverySpecification;
+namespace Admin\UseCases\Supplier\ChangeDeliverySpecifications;
 
 use Admin\Entities\Supplier\Supplier;
 
-final readonly class ChangeDeliverySpecificationSupplierResponse
+final readonly class ChangeDeliverySpecificationsSupplierResponse
 {
     public function __construct(public Supplier $supplier)
     {

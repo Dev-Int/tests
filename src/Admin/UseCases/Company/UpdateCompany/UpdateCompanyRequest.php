@@ -21,7 +21,7 @@ interface UpdateCompanyRequest
 
     public function postalCode(): string;
 
-    public function town(): string;
+    public function city(): string;
 
     public function country(): string;
 

@@ -22,12 +22,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsController]
 final class ReAssignArticleSupplierController extends AbstractController
 {
-    public function __construct(private readonly ReAssignArticleSupplier $useCase)
-    {
+    public function __construct(
+        private readonly ReAssignArticleSupplier $useCase,
+        private readonly TranslatorInterface $translator
+    ) {
     }
 
     #[Route(
@@ -85,7 +88,7 @@ final class ReAssignArticleSupplierController extends AbstractController
                 ]);
                 // @codeCoverageIgnoreEnd
             }
-            $this->addFlash('success', 'Article updated');
+            $this->addFlash('success', $this->translator->trans('admin.article.reassignSupplier.success'));
 
             return $this->redirectToRoute('admin_articles_index');
         }

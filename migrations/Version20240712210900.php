@@ -33,7 +33,7 @@ final class Version20240712210900 extends AbstractMigration
             'tax_id UUID DEFAULT NULL, ' .
             'family_log_id UUID DEFAULT NULL, ' .
             'name VARCHAR(255) NOT NULL, ' .
-            'amount INT NOT NULL, ' .
+            'unit_price INT NOT NULL, ' .
             'min_stock DOUBLE PRECISION NOT NULL, ' .
             'quantity DOUBLE PRECISION NOT NULL, ' .
             'slug VARCHAR(255) NOT NULL, ' .

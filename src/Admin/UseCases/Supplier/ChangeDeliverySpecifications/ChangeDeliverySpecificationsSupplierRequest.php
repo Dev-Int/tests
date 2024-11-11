@@ -11,11 +11,11 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\UseCases\Supplier\ChangeDeliverySpecification;
+namespace Admin\UseCases\Supplier\ChangeDeliverySpecifications;
 
 use Admin\Entities\FamilyLog\FamilyLog;
 
-interface ChangeDeliverySpecificationSupplierRequest
+interface ChangeDeliverySpecificationsSupplierRequest
 {
     public function familyLog(): FamilyLog;
 

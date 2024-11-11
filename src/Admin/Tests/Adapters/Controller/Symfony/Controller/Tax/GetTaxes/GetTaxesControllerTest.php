@@ -20,6 +20,7 @@ use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @group functionalTest
@@ -36,6 +37,10 @@ final class GetTaxesControllerTest extends WebTestCase
 
         /** @var DoctrineTaxRepository $taxRepository */
         $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $taxBuilder = new TaxDataBuilder();
         $tax1 = $taxBuilder->create('TVA taux normal', 20.0)->build();
         $tax2 = $taxBuilder->create('TVA taux réduit', 5.5)
@@ -50,7 +55,7 @@ final class GetTaxesControllerTest extends WebTestCase
 
         // Assert
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Taxes');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.tax.titlePage'));
 
         $list = $crawler->filter('body > div.container > main > article > ul.table > turbo-frame')
             ->children('li.li-unstyled')

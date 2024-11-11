@@ -11,7 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Article\ChangeFinancialInformation;
+namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Article\ChangeArticleFinancialInformation;
 
 use Admin\Adapters\Gateway\ORM\Entity\Article\Article;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineArticleRepository;
@@ -30,12 +30,13 @@ use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-final class ChangeFinancialInformationControllerTest extends WebTestCase
+final class ChangeArticleFinancialInformationControllerTest extends WebTestCase
 {
     public const CHANGE_ARTICLE_FINANCIAL_INFORMATION_URI = '/admin/articles/%s/change-financial-information';
 
-    public function testChangeFinancialInformationWillSucceed(): void
+    public function testChangeArticleFinancialInformationWillSucceed(): void
     {
         // Arrange
         $faker = Factory::create('fr_FR');
@@ -58,6 +59,9 @@ final class ChangeFinancialInformationControllerTest extends WebTestCase
 
         /** @var DoctrineArticleRepository $articleRepository */
         $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
 
         $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
         $unitRepository->save($colis);
@@ -105,10 +109,16 @@ final class ChangeFinancialInformationControllerTest extends WebTestCase
         );
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Change financial information to "Jambon Trad 6kg"');
+        self::assertSelectorTextContains(
+            'h1',
+            $translator->trans(
+                'admin.article.changeFinancialInformation.titlePage',
+                ['%articleName%' => $article->name()->toString()]
+            )
+        );
 
-        $form = $crawler->selectButton('Update')->form([
-            'changeArticleFinancialInformation[amount]' => 7.25,
+        $form = $crawler->selectButton($translator->trans('admin.article.changeFinancialInformation.button'))->form([
+            'changeArticleFinancialInformation[unitPrice]' => 7.25,
             'changeArticleFinancialInformation[tax]' => $tax55->uuid()->toString(),
         ]);
         $client->submit($form);
@@ -120,15 +130,15 @@ final class ChangeFinancialInformationControllerTest extends WebTestCase
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
-        self::assertEquals('Article updated', $flash);
+        self::assertEquals($translator->trans('admin.article.changeFinancialInformation.success'), $flash);
 
         $articleUpdated = $articleRepository->findOneBy(['slug' => 'jambon-trad-6kg']);
         self::assertInstanceOf(Article::class, $articleUpdated);
-        self::assertSame(725, $articleUpdated->amount());
+        self::assertSame(725, $articleUpdated->unitPrice());
         self::assertSame(0.055, $articleUpdated->tax()->rate());
     }
 
-    public function testChangeFinancialInformationFailWithArticleNotFoundException(): void
+    public function testChangeArticleFinancialInformationFailWithArticleNotFoundException(): void
     {
         // Arrange
         $faker = Factory::create('fr_FR');

@@ -1,6 +1,6 @@
 <div class="flex-1">
 
-    <h3>Change familyLog "{{ zoneStorage.label }}"</h3>
+    <h3>{{ 'admin.zoneStorage.changeFamilyLog.titlePage'|trans({ '%zoneLabel%': zoneStorage.label }) }}</h3>
 
     {{ form_start(form) }}
     {{ form_errors(form) }}
@@ -9,7 +9,7 @@
 
     <div class="grid">
         <twig:Form:Button:Cancel href="{{ path('admin_zone_storages_index') }}" label="Annuler" />
-        <twig:Form:Button:Submit label="Change FamilyLog" />
+        <twig:Form:Button:Submit label="{{ 'admin.zoneStorage.changeFamilyLog.button'|trans }}" icon="fa-pen-to-square" />
     </div>
 
     {{ form_end(form) }}

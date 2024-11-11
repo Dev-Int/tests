@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    ReAssign supplier Article | {{ parent() }}
+    {{ 'admin.article.reassignSupplier.titleShort'|trans({ '%articleName%': article.name }) }} | {{ parent() }}
 {% endblock %}
 
 {% block importmap %}
@@ -10,7 +10,7 @@
 
 {% block body %}
 
-    <h1><twig:Icon:Entities:Article /> Re-assign supplier to "{{ article.name }}"</h1>
+    <h1><twig:Icon:Entities:Article /> {{ 'admin.article.reassignSupplier.titlePage'|trans({ '%articleName%': article.name }) }}</h1>
 
     <turbo-frame id="article_{{ article.uuid }}">
         <twig:Form:Article:ReassignSupplierForm form="{{ form }}" article="{{ article }}" />

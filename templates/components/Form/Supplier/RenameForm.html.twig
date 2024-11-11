@@ -1,6 +1,6 @@
 <div class="flex-1">
 
-    <h3>Rename "{{ supplier.name }}"</h3>
+    <h3>{{ 'admin.supplier.rename.titlePage'|trans({ '%supplierName%': supplier.name }) }}</h3>
 
     {{ form_start(form) }}
     {{ form_errors(form) }}
@@ -9,7 +9,7 @@
 
     <div class="grid">
         <twig:Form:Button:Cancel href="{{ path('admin_suppliers_index') }}" label="Annuler" />
-        <twig:Form:Button:Submit label="Rename" />
+        <twig:Form:Button:Submit label="{{ 'admin.supplier.rename.button'|trans }}" icon="fa-pen-to-square" />
     </div>
 
     {{ form_end(form) }}

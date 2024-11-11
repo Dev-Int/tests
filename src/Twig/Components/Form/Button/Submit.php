@@ -19,4 +19,5 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 final class Submit
 {
     public string $label;
+    public ?string $icon;
 }

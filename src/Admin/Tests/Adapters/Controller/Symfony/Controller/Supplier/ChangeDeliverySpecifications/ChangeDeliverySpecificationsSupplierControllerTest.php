@@ -11,7 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Supplier\ChangeDeliverySpecification;
+namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Supplier\ChangeDeliverySpecifications;
 
 use Admin\Adapters\Gateway\ORM\Entity\Supplier;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
@@ -22,15 +22,16 @@ use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @group functionalTest
  */
-final class ChangeDeliverySpecificationSupplierControllerTest extends WebTestCase
+final class ChangeDeliverySpecificationsSupplierControllerTest extends WebTestCase
 {
-    private const CHANGE_DELIVERY_SPECIFICATION_SUPPLIER_URI = '/admin/suppliers/%s/change-delivery-specification';
+    private const CHANGE_DELIVERY_SPECIFICATIONS_SUPPLIER_URI = '/admin/suppliers/%s/change-delivery-specifications';
 
-    public function testChangeDeliverySpecificationSupplierWillSucceed(): void
+    public function testChangeDeliverySpecificationsSupplierWillSucceed(): void
     {
         // Arrange
         $faker = Factory::create('fr_FR');
@@ -41,6 +42,9 @@ final class ChangeDeliverySpecificationSupplierControllerTest extends WebTestCas
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
 
         $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
         $familyLog2 = (new FamilyLogDataBuilder())->create('Frais')
@@ -57,21 +61,27 @@ final class ChangeDeliverySpecificationSupplierControllerTest extends WebTestCas
         // Act
         $crawler = $client->request(
             Request::METHOD_GET,
-            \sprintf(self::CHANGE_DELIVERY_SPECIFICATION_SUPPLIER_URI, $supplier->uuid()->toString())
+            \sprintf(self::CHANGE_DELIVERY_SPECIFICATIONS_SUPPLIER_URI, $supplier->uuid()->toString())
         );
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Change delivery specification "Supplier 1"');
+        self::assertSelectorTextContains(
+            'h1',
+            $translator->trans(
+                'admin.supplier.changeDeliverySpecifications.titlePage',
+                ['%supplierName%' => $supplier->name()->toString()]
+            )
+        );
 
-        $form = $crawler->selectButton('Update')->form([
-            'changeDeliverySpecificationSupplier[familyLog]' => $familyLog2->uuid()->toString(),
-            'changeDeliverySpecificationSupplier[delayDelivery]' => 2,
-            'changeDeliverySpecificationSupplier[orderDays][0]' => true,
-            'changeDeliverySpecificationSupplier[orderDays][1]' => false,
-            'changeDeliverySpecificationSupplier[orderDays][3]' => true,
-            'changeDeliverySpecificationSupplier[orderDays][4]' => false,
-            'changeDeliverySpecificationSupplier[orderDays][5]' => true,
-            'changeDeliverySpecificationSupplier[slug]' => 'supplier-1',
+        $form = $crawler->selectButton($translator->trans('admin.supplier.changeDeliverySpecifications.button'))->form([
+            'changeDeliverySpecificationsSupplier[familyLog]' => $familyLog2->uuid()->toString(),
+            'changeDeliverySpecificationsSupplier[delayDelivery]' => 2,
+            'changeDeliverySpecificationsSupplier[orderDays][0]' => true,
+            'changeDeliverySpecificationsSupplier[orderDays][1]' => false,
+            'changeDeliverySpecificationsSupplier[orderDays][3]' => true,
+            'changeDeliverySpecificationsSupplier[orderDays][4]' => false,
+            'changeDeliverySpecificationsSupplier[orderDays][5]' => true,
+            'changeDeliverySpecificationsSupplier[slug]' => 'supplier-1',
         ]);
         $client->submit($form);
 
@@ -82,7 +92,7 @@ final class ChangeDeliverySpecificationSupplierControllerTest extends WebTestCas
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
-        self::assertEquals('Supplier updated', $flash);
+        self::assertEquals($translator->trans('admin.supplier.changeDeliverySpecifications.success'), $flash);
 
         /** @var Supplier $supplierUpdated */
         $supplierUpdated = $supplierRepository->findOneBy(['slug' => 'supplier-1']);
@@ -91,7 +101,7 @@ final class ChangeDeliverySpecificationSupplierControllerTest extends WebTestCas
         self::assertSame([0, 3, 5], $supplierUpdated->orderDays());
     }
 
-    public function testChangeDeliverySpecificationSupplierFailWithSupplierNotFound(): void
+    public function testChangeDeliverySpecificationsSupplierFailWithSupplierNotFound(): void
     {
         // Arrange
         $faker = Factory::create('fr_FR');
@@ -118,7 +128,7 @@ final class ChangeDeliverySpecificationSupplierControllerTest extends WebTestCas
         // Act
         $client->request(
             Request::METHOD_GET,
-            \sprintf(self::CHANGE_DELIVERY_SPECIFICATION_SUPPLIER_URI, $faker->uuid())
+            \sprintf(self::CHANGE_DELIVERY_SPECIFICATIONS_SUPPLIER_URI, $faker->uuid())
         );
 
         // Assert

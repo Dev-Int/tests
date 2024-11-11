@@ -11,27 +11,27 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Tests\UseCases\Supplier\ChangeDeliverySpecification;
+namespace Admin\Tests\UseCases\Supplier\ChangeDeliverySpecifications;
 
 use Admin\Entities\Exception\Supplier\SupplierNotFoundException;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\SupplierDataBuilder;
 use Admin\UseCases\Gateway\SupplierRepository;
-use Admin\UseCases\Supplier\ChangeDeliverySpecification\ChangeDeliverySpecificationSupplier;
-use Admin\UseCases\Supplier\ChangeDeliverySpecification\ChangeDeliverySpecificationSupplierRequest;
+use Admin\UseCases\Supplier\ChangeDeliverySpecifications\ChangeDeliverySpecificationsSupplier;
+use Admin\UseCases\Supplier\ChangeDeliverySpecifications\ChangeDeliverySpecificationsSupplierRequest;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @group unitTest
  */
-final class ChangeDeliverySpecificationSupplierTest extends TestCase
+final class ChangeDeliverySpecificationsSupplierTest extends TestCase
 {
-    public function testChangeDeliverySpecificationWithSuccess(): void
+    public function testChangeDeliverySpecificationsWithSuccess(): void
     {
         // Arrange
         $supplierRepository = $this->createMock(SupplierRepository::class);
-        $useCase = new ChangeDeliverySpecificationSupplier($supplierRepository);
-        $request = $this->createMock(ChangeDeliverySpecificationSupplierRequest::class);
+        $useCase = new ChangeDeliverySpecificationsSupplier($supplierRepository);
+        $request = $this->createMock(ChangeDeliverySpecificationsSupplierRequest::class);
         $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
         $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLog)->build();
 
@@ -47,7 +47,7 @@ final class ChangeDeliverySpecificationSupplierTest extends TestCase
         ;
 
         $supplierRepository->expects(self::once())
-            ->method('changeDeliverySpecification')
+            ->method('changeDeliverySpecifications')
             ->with($supplier)
         ;
 
@@ -61,12 +61,12 @@ final class ChangeDeliverySpecificationSupplierTest extends TestCase
         self::assertSame([1, 4], $supplierUpdated->orderDays());
     }
 
-    public function testChangeDeliverySpecificationFailWithSupplierNotFoundException(): void
+    public function testChangeDeliverySpecificationsFailWithSupplierNotFoundException(): void
     {
         // Arrange
         $supplierRepository = $this->createMock(SupplierRepository::class);
-        $useCase = new ChangeDeliverySpecificationSupplier($supplierRepository);
-        $request = $this->createMock(ChangeDeliverySpecificationSupplierRequest::class);
+        $useCase = new ChangeDeliverySpecificationsSupplier($supplierRepository);
+        $request = $this->createMock(ChangeDeliverySpecificationsSupplierRequest::class);
         $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
         $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLog)->build();
 
@@ -82,7 +82,7 @@ final class ChangeDeliverySpecificationSupplierTest extends TestCase
         ;
 
         $supplierRepository->expects(self::never())
-            ->method('changeDeliverySpecification')
+            ->method('changeDeliverySpecifications')
         ;
 
         // Act && Assert

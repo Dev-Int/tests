@@ -19,23 +19,28 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CreateFamilyLogType extends AbstractType
 {
+    public function __construct(private readonly TranslatorInterface $translator)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('label', TextType::class, [
                 'required' => true,
-                'label' => 'Nom de la famille logistique',
+                'label' => $this->translator->trans('admin.familyLog.form.name.label'),
                 'attr' => [
-                    'placeholder' => 'Le nom de la famille logistique',
+                    'placeholder' => $this->translator->trans('admin.familyLog.form.name.placeholder'),
                     'autofocus' => true,
                 ],
             ])
             ->add('parent', FamilyLogEntitySelectType::class, [
                 'required' => false,
-                'label' => 'Famille logistique parente',
+                'label' => $this->translator->trans('admin.familyLog.form.parent.label'),
             ])
         ;
     }

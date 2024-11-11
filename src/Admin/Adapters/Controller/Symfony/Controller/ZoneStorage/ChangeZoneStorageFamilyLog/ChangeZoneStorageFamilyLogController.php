@@ -23,13 +23,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsController]
 final class ChangeZoneStorageFamilyLogController extends AbstractController
 {
     public function __construct(
         private readonly ChangeZoneStorageFamilyLog $useCase,
-        private readonly DoctrineFamilyLogRepository $familyLogRepository
+        private readonly DoctrineFamilyLogRepository $familyLogRepository,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -79,7 +81,7 @@ final class ChangeZoneStorageFamilyLogController extends AbstractController
                 return $this->redirectToRoute('admin_zone_storages_index');
                 // @codeCoverageIgnoreEnd
             }
-            $this->addFlash('success', 'Zone storage updated');
+            $this->addFlash('success', $this->translator->trans('admin.zoneStorage.changeFamilyLog.success'));
 
             return $this->redirectToRoute('admin_zone_storages_index');
         }

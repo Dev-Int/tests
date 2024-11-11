@@ -20,6 +20,7 @@ use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @group functionalTest
@@ -36,6 +37,9 @@ final class AssignParentFamilyLogControllerTest extends WebTestCase
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
         $familyLogBuilder = new FamilyLogDataBuilder();
 
         $familyLog = $familyLogBuilder->create('Viande')->build();
@@ -53,9 +57,12 @@ final class AssignParentFamilyLogControllerTest extends WebTestCase
         );
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Assign parent to "Viande"');
+        self::assertSelectorTextContains(
+            'h1',
+            $translator->trans('admin.familyLog.assignParent.titlePage', ['%familyLabel%' => 'Viande'])
+        );
 
-        $form = $crawler->selectButton('Assign')->form([
+        $form = $crawler->selectButton($translator->trans('admin.familyLog.assignParent.button'))->form([
             'assignParentFamilyLog[parent]' => $parent->uuid()->toString(),
             'assignParentFamilyLog[uuid]' => $familyLog->uuid()->toString(),
         ]);
@@ -68,7 +75,7 @@ final class AssignParentFamilyLogControllerTest extends WebTestCase
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
-        self::assertSame('FamilyLog parent assigned.', $flash);
+        self::assertSame($translator->trans('admin.familyLog.assignParent.success'), $flash);
 
         /** @var FamilyLog $familyLogAssigned */
         $familyLogAssigned = $familyLogRepository->find(FamilyLogDataBuilder::VALID_UUID);
@@ -85,6 +92,9 @@ final class AssignParentFamilyLogControllerTest extends WebTestCase
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
         $familyLogBuilder = new FamilyLogDataBuilder();
 
         $parent = $familyLogBuilder->create('Surgelé')
@@ -109,9 +119,12 @@ final class AssignParentFamilyLogControllerTest extends WebTestCase
         );
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Assign parent to "Viande"');
+        self::assertSelectorTextContains(
+            'h1',
+            $translator->trans('admin.familyLog.assignParent.titlePage', ['%familyLabel%' => 'Viande'])
+        );
 
-        $form = $crawler->selectButton('Assign')->form([
+        $form = $crawler->selectButton($translator->trans('admin.familyLog.assignParent.button'))->form([
             'assignParentFamilyLog[parent]' => $parent->uuid()->toString(),
             'assignParentFamilyLog[uuid]' => $familyLog->uuid()->toString(),
         ]);
@@ -124,7 +137,7 @@ final class AssignParentFamilyLogControllerTest extends WebTestCase
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
-        self::assertSame('FamilyLog parent assigned.', $flash);
+        self::assertSame($translator->trans('admin.familyLog.assignParent.success'), $flash);
 
         /** @var FamilyLog $familyLogAssigned */
         $familyLogAssigned = $familyLogRepository->find(FamilyLogDataBuilder::VALID_UUID);
@@ -146,6 +159,9 @@ final class AssignParentFamilyLogControllerTest extends WebTestCase
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
         $familyLogBuilder = new FamilyLogDataBuilder();
 
         $familyLog = $familyLogBuilder->create('Viande')->build();
@@ -169,9 +185,12 @@ final class AssignParentFamilyLogControllerTest extends WebTestCase
         );
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Assign parent to "Viande"');
+        self::assertSelectorTextContains(
+            'h1',
+            $translator->trans('admin.familyLog.assignParent.titlePage', ['%familyLabel%' => 'Viande'])
+        );
 
-        $form = $crawler->selectButton('Assign')->form([
+        $form = $crawler->selectButton($translator->trans('admin.familyLog.assignParent.button'))->form([
             'assignParentFamilyLog[parent]' => $parent->uuid()->toString(),
             'assignParentFamilyLog[uuid]' => $familyLog->uuid()->toString(),
         ]);

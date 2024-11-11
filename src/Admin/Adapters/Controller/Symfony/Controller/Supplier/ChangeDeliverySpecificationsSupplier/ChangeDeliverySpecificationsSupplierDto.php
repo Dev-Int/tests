@@ -11,12 +11,12 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Adapters\Controller\Symfony\Controller\Supplier\ChangeDeliverySpecificationSupplier;
+namespace Admin\Adapters\Controller\Symfony\Controller\Supplier\ChangeDeliverySpecificationsSupplier;
 
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class ChangeDeliverySpecificationSupplierDto
+final class ChangeDeliverySpecificationsSupplierDto
 {
     /**
      * @param array<int> $orderDays

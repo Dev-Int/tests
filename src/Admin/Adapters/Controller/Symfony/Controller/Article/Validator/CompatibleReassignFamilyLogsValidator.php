@@ -17,9 +17,14 @@ use Admin\Adapters\Controller\Symfony\Controller\Article\ReAssignArticleSupplier
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class CompatibleReassignFamilyLogsValidator extends ConstraintValidator
 {
+    public function __construct(private readonly TranslatorInterface $translator)
+    {
+    }
+
     public function validate(mixed $value, Constraint $constraint): void
     {
         if (!$value instanceof ReAssignArticleSupplierDto) {
@@ -37,8 +42,11 @@ final class CompatibleReassignFamilyLogsValidator extends ConstraintValidator
         $familyLog = $value->familyLog;
         $checkFamilyLog = $supplierFamilyLog->isCompatible($familyLog);
         if ($checkFamilyLog === false) {
-            $this->context->buildViolation($constraint->incompatibleFamilyLogMessage)
-                ->setParameter('{{ field }}', 'familyLog')
+            $this->context
+                ->buildViolation(
+                    $this->translator->trans('article.form.incompatibleFamilyLogMessage', [], 'validators')
+                )
+                ->setParameter('{{ field }}', $this->translator->trans('admin.article.form.familyLog.label'))
                 ->setParameter('{{ field_family }}', $familyLog->label())
                 ->setParameter('{{ supplier_family }}', $supplierFamilyLog->label())
                 ->atPath('familyLog')
@@ -50,8 +58,11 @@ final class CompatibleReassignFamilyLogsValidator extends ConstraintValidator
             $zoneStorageFamilyLog = $zoneStorage->familyLog();
             $checkZone = $supplierFamilyLog->isCompatible($zoneStorageFamilyLog);
             if ($checkZone === false) {
-                $this->context->buildViolation($constraint->incompatibleFamilyLogMessage)
-                    ->setParameter('{{ field }}', 'zoneStorages')
+                $this->context
+                    ->buildViolation(
+                        $this->translator->trans('article.form.incompatibleFamilyLogMessage', [], 'validators')
+                    )
+                    ->setParameter('{{ field }}', $this->translator->trans('admin.article.form.zoneStorages.label'))
                     ->setParameter('{{ field_family }}', $zoneStorageFamilyLog->label())
                     ->setParameter('{{ supplier_family }}', $supplierFamilyLog->label())
                     ->atPath('zoneStorages')

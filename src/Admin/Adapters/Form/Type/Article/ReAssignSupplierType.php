@@ -22,28 +22,34 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ReAssignSupplierType extends AbstractType
 {
+    public function __construct(private readonly TranslatorInterface $translator)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('supplier', EntityType::class, [
+                'label' => $this->translator->trans('admin.article.form.supplier.label'),
                 'class' => Supplier::class,
                 'choice_label' => 'name',
                 'required' => true,
-                'placeholder' => 'Choice a supplier',
+                'placeholder' => $this->translator->trans('admin.article.form.supplier.placeholder'),
                 'attr' => [
                     'autofocus' => true,
                 ],
             ])
             ->add('familyLog', FamilyLogEntitySelectType::class, [
-                'label' => 'Famille logistique',
+                'label' => $this->translator->trans('admin.article.form.familyLog.label'),
                 'required' => true,
-                'placeholder' => 'Choice a Logistic family',
+                'placeholder' => $this->translator->trans('admin.article.form.familyLog.placeholder'),
             ])
             ->add('zoneStorages', EntityType::class, [
-                'label' => 'Zone de stockage',
+                'label' => $this->translator->trans('admin.article.form.zoneStorages.label'),
                 'class' => ZoneStorage::class,
                 'choice_label' => 'label',
                 'multiple' => true,

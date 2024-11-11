@@ -1,6 +1,6 @@
 <div class="flex-1">
 
-    <h3>Revaluate Tax "{{ tax.name }}"</h3>
+    <h3>{{ 'admin.tax.revaluate.titlePage'|trans({ '%taxName%':tax.name }) }}</h3>
 
     {{ form_start(form) }}
     {{ form_errors(form) }}
@@ -10,7 +10,7 @@
 
     <div class="grid">
         <twig:Form:Button:Cancel href="{{ path('admin_taxes_index') }}" label="Annuler" />
-        <twig:Form:Button:Submit label="Revaluate" />
+        <twig:Form:Button:Submit label="{{ 'admin.tax.revaluate.button'|trans }}" icon="fa-pen-to-square" />
     </div>
 
     {{ form_end(form) }}

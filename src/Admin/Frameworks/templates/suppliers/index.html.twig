@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Suppliers | {{ parent() }}
+    {{ 'admin.supplier.titlePage'|trans }} | {{ parent() }}
 {% endblock %}
 
 {% block importmap %}
@@ -10,22 +10,22 @@
 
 {% block body %}
 
-    <h1><twig:Icon:Entities:Supplier /> Suppliers</h1>
+    <h1><twig:Icon:Entities:Supplier /> {{ 'admin.supplier.titlePage'|trans }}</h1>
 
     <main>
         <article>
             <div>
                 <turbo-frame id="supplier_create" class="flex-between">
                     <span></span>
-                    <twig:Button:CreateEntity href="{{ path('admin_suppliers_create') }}" label="Create Supplier" />
+                    <twig:Button:CreateEntity href="{{ path('admin_suppliers_create') }}" label="{{ 'admin.supplier.create.titleShort'|trans }}" />
                 </turbo-frame>
             </div>
             <turbo-frame id="supplier_paginated">
                 <ul class="table">
                     <li class="li-unstyled flex-between head">
-                        <span>Name</span>
-                        <span>FamilyLog</span>
-                        <span>Action</span>
+                        <span>{{ 'admin.supplier.form.name.label'|trans }}</span>
+                        <span>{{ 'admin.supplier.form.familyLog.label'|trans }}</span>
+                        <span>{{ 'actions'|trans }}</span>
                     </li>
                     {% for supplier in suppliers %}
                         <turbo-frame id="supplier_{{ supplier.uuid }}">
@@ -33,10 +33,26 @@
                                 <span>{{ supplier.name }}</span>
                                 <span>{{ supplier.familyLog.label }}</span>
                                 <span>
-                                    <twig:Button:UpdateEntity href="{{ path('admin_suppliers_rename', {'supplier': supplier.uuid}) }}" class="btn-small" label="Rename"/>
-                                    <twig:Button:UpdateEntity href="{{ path('admin_supplier_change-domiciliation', {'supplier': supplier.uuid}) }}" class="btn-small" label="Change domiciliation"/>
-                                    <twig:Button:UpdateEntity href="{{ path('admin_suppliers_change-contact', {'supplier': supplier.uuid}) }}" class="btn-small" label="Change contact"/>
-                                    <twig:Button:UpdateEntity href="{{ path('admin_suppliers_change-delivery-specification', {'supplier': supplier.uuid}) }}" class="btn-small" label="Change delivery specification"/>
+                                    <twig:Button:UpdateEntity
+                                        href="{{ path('admin_suppliers_rename', {'supplier': supplier.uuid}) }}"
+                                        class="btn-small"
+                                        label="{{ 'admin.supplier.rename.button'|trans }}"
+                                    />
+                                    <twig:Button:UpdateEntity
+                                        href="{{ path('admin_supplier_change-domiciliation', {'supplier': supplier.uuid}) }}"
+                                        class="btn-small"
+                                        label="{{ 'admin.supplier.changeDomiciliation.button'|trans }}"
+                                    />
+                                    <twig:Button:UpdateEntity
+                                        href="{{ path('admin_suppliers_change-contact', {'supplier': supplier.uuid}) }}"
+                                        class="btn-small"
+                                        label="{{ 'admin.supplier.changeContact.button'|trans }}"
+                                    />
+                                    <twig:Button:UpdateEntity
+                                        href="{{ path('admin_suppliers_change-delivery-specifications', {'supplier': supplier.uuid}) }}"
+                                        class="btn-small"
+                                        label="{{ 'admin.supplier.changeDeliverySpecifications.button'|trans }}"
+                                    />
                                 </span>
                             </li>
                         </turbo-frame>
@@ -45,7 +61,7 @@
 
                 <twig:Pagination page="{{ pagination.page }}" itemsPerPage="{{ pagination.itemsPerPage }}" totalPages="{{ pagination.totalPages }}" />
             </turbo-frame>
-            <twig:Button:BackTo href="{{ path('admin_index') }}" label="Retour à l'administration" />
+            <twig:Button:BackTo href="{{ path('admin_index') }}" label="{{ 'admin.adminButton'|trans }}" />
         </article>
     </main>
 

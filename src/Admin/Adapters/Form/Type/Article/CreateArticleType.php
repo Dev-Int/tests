@@ -28,14 +28,19 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class CreateArticleType extends AbstractType
 {
+    public function __construct(private readonly TranslatorInterface $translator)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => 'Nom de l\'article',
+                'label' => $this->translator->trans('admin.article.form.name.label'),
                 'required' => true,
                 'empty_data' => '',
                 'attr' => [
@@ -43,16 +48,18 @@ final class CreateArticleType extends AbstractType
                 ],
             ])
             ->add('supplier', EntityType::class, [
+                'label' => $this->translator->trans('admin.article.form.supplier.label'),
                 'class' => Supplier::class,
                 'choice_label' => 'name',
                 'required' => true,
-                'placeholder' => 'Choice a supplier',
+                'placeholder' => $this->translator->trans('admin.article.form.supplier.placeholder'),
             ])
             ->add('packaging', PackagingType::class, [
-                'label' => 'Packaging de l\'article',
+                'label' => $this->translator->trans('admin.article.form.packaging.label'),
                 'required' => true,
             ])
-            ->add('amount', MoneyType::class, [
+            ->add('unitPrice', MoneyType::class, [
+                'label' => $this->translator->trans('admin.article.form.unitPrice.label'),
                 'html5' => false,
                 'currency' => 'EUR',
                 'divisor' => 100,
@@ -62,32 +69,33 @@ final class CreateArticleType extends AbstractType
                 'empty_data' => 0.00,
             ])
             ->add('tax', EntityType::class, [
-                'label' => 'TVA de l\'article',
+                'label' => $this->translator->trans('admin.article.form.tax.label'),
                 'class' => Tax::class,
                 'choice_label' => 'rate',
                 'required' => true,
-                'placeholder' => 'Choice a tax',
+                'placeholder' => $this->translator->trans('admin.article.form.tax.placeholder'),
             ])
             ->add('minStock', NumberType::class, [
-                'label' => 'Stock minimum',
+                'label' => $this->translator->trans('admin.article.form.minStock.label'),
                 'html5' => true,
                 'scale' => 3,
                 'required' => true,
                 'empty_data' => 0.0,
             ])
             ->add('zoneStorages', EntityType::class, [
-                'label' => 'Zone de stockage',
+                'label' => $this->translator->trans('admin.article.form.zoneStorages.label'),
                 'class' => ZoneStorage::class,
                 'choice_label' => 'label',
                 'multiple' => true,
                 'required' => true,
             ])
             ->add('familyLog', FamilyLogEntitySelectType::class, [
-                'label' => 'Famille logistique',
+                'label' => $this->translator->trans('admin.article.form.familyLog.label'),
                 'required' => true,
-                'placeholder' => 'Choice a Logistic family',
+                'placeholder' => $this->translator->trans('admin.article.form.familyLog.placeholder'),
             ])
             ->add('quantity', NumberType::class, [
+                'label' => $this->translator->trans('admin.article.form.quantity.label'),
                 'html5' => true,
                 'required' => false,
                 'scale' => 3,

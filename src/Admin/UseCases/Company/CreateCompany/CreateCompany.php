@@ -39,7 +39,7 @@ final readonly class CreateCompany
             ContactAddress::fromString(
                 $request->address(),
                 $request->postalCode(),
-                $request->town(),
+                $request->city(),
                 $request->country()
             ),
             PhoneField::fromString($request->phone()),

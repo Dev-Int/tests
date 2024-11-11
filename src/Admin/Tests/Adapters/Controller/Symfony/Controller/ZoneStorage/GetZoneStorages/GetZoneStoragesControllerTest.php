@@ -22,6 +22,7 @@ use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @group functionalTest
@@ -41,6 +42,10 @@ final class GetZoneStoragesControllerTest extends WebTestCase
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $zoneStorageBuilder = new ZoneStorageDataBuilder();
         $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')
             ->withUuid($faker->uuid())
@@ -61,7 +66,7 @@ final class GetZoneStoragesControllerTest extends WebTestCase
 
         // Assert
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Storage Zones');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.zoneStorage.titlePage'));
 
         $list = $crawler->filter('body > div.container > main > article > ul.table > turbo-frame')
             ->children('li.li-unstyled')

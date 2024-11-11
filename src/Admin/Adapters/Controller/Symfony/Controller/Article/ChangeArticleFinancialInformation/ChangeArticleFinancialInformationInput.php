@@ -21,7 +21,7 @@ final class ChangeArticleFinancialInformationInput
     public function __construct(
         #[Assert\NotBlank]
         #[Assert\PositiveOrZero]
-        public int $amount,
+        public int $unitPrice,
         #[Assert\NotBlank]
         #[Assert\Valid]
         public Tax $tax,

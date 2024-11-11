@@ -28,7 +28,7 @@ final class CreateCompanyApiRequest implements CreateCompanyRequest
         #[Assert\Type(type: 'numeric')]
         public string $postalCode = '',
         #[Assert\NotBlank]
-        public string $town = '',
+        public string $city = '',
         #[Assert\NotBlank]
         public string $country = '',
         #[Assert\NotBlank]
@@ -57,9 +57,9 @@ final class CreateCompanyApiRequest implements CreateCompanyRequest
         return $this->postalCode;
     }
 
-    public function town(): string
+    public function city(): string
     {
-        return $this->town;
+        return $this->city;
     }
 
     public function country(): string

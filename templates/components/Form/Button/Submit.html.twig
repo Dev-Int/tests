@@ -1,1 +1,6 @@
-<button type="submit" formnovalidate>{{ label }}</button>
+<button type="submit" formnovalidate>
+    {% if icon is defined %}
+        <i class="fa-solid {{ icon }}"></i>
+    {% endif %}
+    {{ label }}
+</button>

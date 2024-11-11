@@ -19,6 +19,7 @@ use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @group functionalTest
@@ -34,6 +35,9 @@ final class GetFamilyLogsControllerTest extends WebTestCase
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
         $familyLogBuilder = new FamilyLogDataBuilder();
         $familyLog1 = $familyLogBuilder->create('Surgelé')
             ->withUuid('99282a8d-f344-456c-bbd3-37fe89f3876c')
@@ -56,7 +60,7 @@ final class GetFamilyLogsControllerTest extends WebTestCase
 
         // Assert
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Logistics Families');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.familyLog.titlePage'));
 
         $list = $crawler->filter('body > div.container > main > article > ul.table > turbo-frame')
             ->children('li.li-unstyled')

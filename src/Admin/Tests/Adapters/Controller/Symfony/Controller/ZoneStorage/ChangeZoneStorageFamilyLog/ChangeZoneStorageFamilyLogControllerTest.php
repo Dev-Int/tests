@@ -22,6 +22,7 @@ use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @group functionalTest
@@ -41,6 +42,10 @@ final class ChangeZoneStorageFamilyLogControllerTest extends WebTestCase
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $zoneStorageBuilder = new ZoneStorageDataBuilder();
         $familyLog1 = (new FamilyLogDataBuilder())->create('Surgelé')->build();
         $familyLog2 = (new FamilyLogDataBuilder())->create('Frais')
@@ -63,9 +68,12 @@ final class ChangeZoneStorageFamilyLogControllerTest extends WebTestCase
         );
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Change FamilyLog "Réserve négative"');
+        self::assertSelectorTextContains(
+            'h1',
+            $translator->trans('admin.zoneStorage.changeFamilyLog.titlePage', ['%zoneLabel%' => $zoneStorage->label()->toString()])
+        );
 
-        $form = $crawler->selectButton('Change FamilyLog')->form([
+        $form = $crawler->selectButton($translator->trans('admin.zoneStorage.changeFamilyLog.button'))->form([
             'changeZoneStorageFamilyLog[familyLog]' => $familyLogOrm?->uuid(),
             'changeZoneStorageFamilyLog[slug]' => $zoneStorage->slug(),
         ]);
@@ -81,7 +89,7 @@ final class ChangeZoneStorageFamilyLogControllerTest extends WebTestCase
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
-        self::assertSame('Zone storage updated', $flash);
+        self::assertSame($translator->trans('admin.zoneStorage.changeFamilyLog.success'), $flash);
 
         /** @var ZoneStorage $zoneStorageUpdated */
         $zoneStorageUpdated = $zoneStorageRepository->findOneBy(['slug' => 'reserve-negative']);

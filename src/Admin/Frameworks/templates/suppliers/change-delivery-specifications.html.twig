@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ 'admin.supplier.changeDeliverySpecifications.titleShort'|trans }} | {{ parent() }}
+{% endblock %}
+
+{% block importmap %}
+    {{ importmap(['app','familyLog-select']) }}
+{% endblock %}
+
+{% block body %}
+
+    <h1><twig:Icon:Entities:Supplier /> {{ 'admin.supplier.changeDeliverySpecifications.titlePage'|trans({ '%supplierName%': supplier.name }) }}</h1>
+
+    <turbo-frame id="supplier_{{ supplier.uuid }}">
+        <twig:Form:Supplier:ChangeDeliverySpecificationsForm form="{{ form }}" supplier="{{ supplier }}" />
+    </turbo-frame>
+
+{% endblock %}
+

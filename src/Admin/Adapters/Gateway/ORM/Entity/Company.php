@@ -34,7 +34,7 @@ final class Company
     #[ORM\Column]
     private string $postalCode;
     #[ORM\Column]
-    private string $town;
+    private string $city;
     #[ORM\Column]
     private string $country;
     #[ORM\Column]
@@ -51,7 +51,7 @@ final class Company
             $company->name()->toString(),
             $company->address()->address(),
             $company->address()->postalCode(),
-            $company->address()->town(),
+            $company->address()->city(),
             $company->address()->country(),
             $company->phone()->toNumber(),
             $company->email()->toString(),
@@ -64,7 +64,7 @@ final class Company
         string $name,
         string $address,
         string $postalCode,
-        string $town,
+        string $city,
         string $country,
         string $phone,
         string $email,
@@ -74,7 +74,7 @@ final class Company
         $this->name = $name;
         $this->address = $address;
         $this->postalCode = $postalCode;
-        $this->town = $town;
+        $this->city = $city;
         $this->country = $country;
         $this->phone = $phone;
         $this->email = $email;
@@ -101,9 +101,9 @@ final class Company
         return $this->postalCode;
     }
 
-    public function town(): string
+    public function city(): string
     {
-        return $this->town;
+        return $this->city;
     }
 
     public function country(): string
@@ -113,7 +113,7 @@ final class Company
 
     public function fullAddress(): string
     {
-        return $this->address . '<br />' . $this->postalCode . ' ' . $this->town . ', ' . $this->country;
+        return $this->address . '<br />' . $this->postalCode . ' ' . $this->city . ', ' . $this->country;
     }
 
     public function phone(): string
@@ -135,7 +135,7 @@ final class Company
     {
         $this->address = $company->address()->address();
         $this->postalCode = $company->address()->postalCode();
-        $this->town = $company->address()->town();
+        $this->city = $company->address()->city();
         $this->country = $company->address()->country();
         $this->phone = $company->phone()->toNumber();
         $this->email = $company->email()->toString();
@@ -149,7 +149,7 @@ final class Company
             ContactAddress::fromString(
                 $this->address,
                 $this->postalCode,
-                $this->town,
+                $this->city,
                 $this->country
             ),
             PhoneField::fromString($this->phone),

@@ -39,7 +39,7 @@ final readonly class CreateSupplier
             NameField::fromString($request->name()),
             $request->address(),
             $request->postalCode(),
-            $request->town(),
+            $request->city(),
             $request->country(),
             PhoneField::fromString($request->phone()),
             EmailField::fromString($request->email()),

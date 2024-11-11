@@ -30,6 +30,7 @@ use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @group functionalTest
@@ -46,21 +47,31 @@ final class CreateZoneStorageControllerTest extends WebTestCase
 
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
-        $company = (new CompanyDataBuilder())->create('Test company')->build();
-        $companyRepository->save($company);
 
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
-        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
-        $unitRepository->save($unit);
 
         /** @var DoctrineTaxRepository $taxRepository */
         $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
-        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
-        $taxRepository->save($tax);
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+
+        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
+        $company = (new CompanyDataBuilder())->create('Test company')->build();
+        $companyRepository->save($company);
+
+        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
+        $unitRepository->save($unit);
+
+        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
+        $taxRepository->save($tax);
+
         $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')
             ->withUuid($faker->uuid())
             ->build()
@@ -68,14 +79,11 @@ final class CreateZoneStorageControllerTest extends WebTestCase
         $familyLogRepository->save($familyLog);
         $familyLogOrm = $familyLogRepository->find($familyLog->uuid()->toString());
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
-
         // Act
         $crawler = $client->request(Request::METHOD_POST, self::CREATE_ZONE_STORAGE_URI);
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Create Zone Storage');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.zoneStorage.create.titlePage'));
 
         $form = $crawler->selectButton('Create')->form([
             'createZoneStorage[label]' => 'Réserve négative',
@@ -90,7 +98,7 @@ final class CreateZoneStorageControllerTest extends WebTestCase
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
-        self::assertSame('Zone storage created', $flash);
+        self::assertSame($translator->trans('admin.zoneStorage.create.success'), $flash);
 
         /** @var ZoneStorage $zoneStorageCreated */
         $zoneStorageCreated = $zoneStorageRepository->findOneBy(['slug' => 'reserve-negative']);
@@ -105,30 +113,38 @@ final class CreateZoneStorageControllerTest extends WebTestCase
 
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
-        $company = (new CompanyDataBuilder())->create('Test company')->build();
-        $companyRepository->save($company);
 
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
-        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
-        $unitRepository->save($unit);
 
         /** @var DoctrineTaxRepository $taxRepository */
         $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
-        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
-        $taxRepository->save($tax);
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
-        $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
 
         /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
         $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
+        $company = (new CompanyDataBuilder())->create('Test company')->build();
+        $companyRepository->save($company);
+
+        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
+        $unitRepository->save($unit);
+
+        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
+        $taxRepository->save($tax);
+
+        $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
+        $familyLogRepository->save($familyLog);
+
         $zoneStorage = (new ZoneStorageDataBuilder())
             ->create('Réserve négative', $familyLog)
             ->build()
         ;
-        $familyLogRepository->save($familyLog);
         $zoneStorageRepository->save($zoneStorage);
 
         $familyLogOrm = $familyLogRepository->find($familyLog->uuid()->toString());
@@ -137,7 +153,7 @@ final class CreateZoneStorageControllerTest extends WebTestCase
         $crawler = $client->request(Request::METHOD_POST, self::CREATE_ZONE_STORAGE_URI);
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Create Zone Storage');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.zoneStorage.create.titlePage'));
 
         $form = $crawler->selectButton('Create')->form([
             'createZoneStorage[label]' => 'Réserve négative',

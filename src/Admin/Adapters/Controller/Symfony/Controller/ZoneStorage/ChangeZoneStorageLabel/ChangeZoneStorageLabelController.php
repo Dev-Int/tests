@@ -21,12 +21,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsController]
 final class ChangeZoneStorageLabelController extends AbstractController
 {
-    public function __construct(private readonly ChangeZoneStorageLabel $useCase)
-    {
+    public function __construct(
+        private readonly ChangeZoneStorageLabel $useCase,
+        private readonly TranslatorInterface $translator
+    ) {
     }
 
     #[Route(
@@ -63,7 +66,7 @@ final class ChangeZoneStorageLabelController extends AbstractController
                 return $this->redirectToRoute('admin_zone_storages_index');
                 // @codeCoverageIgnoreEnd
             }
-            $this->addFlash('success', 'Zone storage updated');
+            $this->addFlash('success', $this->translator->trans('admin.zoneStorage.changeLabel.success'));
 
             return $this->redirectToRoute('admin_zone_storages_index');
         }

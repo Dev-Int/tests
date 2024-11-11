@@ -1,16 +1,16 @@
 <div class="flex-1">
 
-    <h3>Change financial information to "{{ article.name }}"</h3>
+    <h3>{{ 'admin.article.changeFinancialInformation.titlePage'|trans({ '%articleName%': article.name }) }}</h3>
 
     {{ form_start(form) }}
     {{ form_errors(form) }}
 
-    {{ form_row(form.amount) }}
+    {{ form_row(form.unitPrice) }}
     {{ form_row(form.tax) }}
 
     <div class="grid">
         <twig:Form:Button:Cancel href="{{ path('admin_articles_index') }}" label="Annuler" />
-        <twig:Form:Button:Submit label="Update" />
+        <twig:Form:Button:Submit label="{{ 'admin.article.changeFinancialInformation.button'|trans }}" icon="fa-pen-to-square" />
     </div>
 
     {{ form_end(form) }}

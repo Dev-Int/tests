@@ -20,6 +20,7 @@ use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @group functionalTest
@@ -36,6 +37,10 @@ final class GetUnitsControllerTest extends WebTestCase
 
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $unitBuilder = new UnitDataBuilder();
         $unit1 = $unitBuilder->create('Kilogramme', 'kg')->build();
         $unit2 = $unitBuilder->create('Litre', 'L')
@@ -50,7 +55,7 @@ final class GetUnitsControllerTest extends WebTestCase
 
         // Assert
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Units');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.unit.titlePage'));
 
         $list = $crawler
             ->filter('body > div.container > main > article > ul.table > turbo-frame')

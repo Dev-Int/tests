@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Update FamilyLog | {{ parent() }}
+    {{ 'admin.familyLog.assignParent.titleShort'|trans }} | {{ parent() }}
 {% endblock %}
 
 {% block importmap %}
@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block body %}
-    <h1><twig:Icon:Entities:FamilyLog /> Assign parent to "{{ familyLog.label }}"</h1>
+    <h1><twig:Icon:Entities:FamilyLog /> {{ 'admin.familyLog.assignParent.titlePage'|trans({ '%familyLabel%':familyLog.label }) }}</h1>
 
     <turbo-frame id="familyLog_{{ familyLog.uuid }}">
         <twig:Form:FamilyLog:AssignParentForm form="{{ form }}" familyLog="{{ familyLog }}" />

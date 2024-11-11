@@ -1,46 +1,49 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Company | {{ parent() }}
+    {{ 'admin.company.titlePage'|trans }} | {{ parent() }}
 {% endblock %}
 
 {% block body %}
 
-    <h1><twig:Icon:Entities:Company /> Company</h1>
+    <h1><twig:Icon:Entities:Company /> {{ 'admin.company.titlePage'|trans }}</h1>
 
     <main>
         <article >
             <div>
                 <turbo-frame id="company_update" class="flex-between">
                     <span></span>
-                    <twig:Button:UpdateEntity href="{{ path('admin_company_update', { 'company': company.slug }) }}" label="Update Company" />
+                    <twig:Button:UpdateEntity
+                        href="{{ path('admin_company_update', { 'company': company.slug }) }}"
+                        label="{{ 'admin.company.update.titleShort'|trans({ '%companyName%':company.name }) }}"
+                    />
                 </turbo-frame>
             </div>
             <table>
                 <tbody>
                 <tr>
-                    <td>Name</td>
+                    <td>{{ 'name'|trans }}</td>
                     <td>{{ company.name }}</td>
                 </tr>
                 <tr>
-                    <td>Address</td>
+                    <td>{{ 'address'|trans }}</td>
                     <td>{{ company.fullAddress | raw }}</td>
                 </tr>
                 <tr>
-                    <td>Phone</td>
+                    <td>{{ 'phone'|trans }}</td>
                     <td>{{ company.phone }}</td>
                 </tr>
                 <tr>
-                    <td>Email</td>
+                    <td>{{ 'email'|trans }}</td>
                     <td>{{ company.email }}</td>
                 </tr>
                 <tr>
-                    <td>Contact</td>
+                    <td>{{ 'contact'|trans }}</td>
                     <td>{{ company.contact }}</td>
                 </tr>
                 </tbody>
             </table>
-            <twig:Button:BackTo href="{{ path('admin_index') }}" label="Retour à l'administration" />
+            <twig:Button:BackTo href="{{ path('admin_index') }}" label="{{ 'admin.adminButton'|trans }}" />
         </article>
     </main>
 

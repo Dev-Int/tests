@@ -11,12 +11,12 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Adapters\Controller\Symfony\Controller\Supplier\ChangeDeliverySpecificationSupplier;
+namespace Admin\Adapters\Controller\Symfony\Controller\Supplier\ChangeDeliverySpecificationsSupplier;
 
 use Admin\Entities\FamilyLog\FamilyLog;
-use Admin\UseCases\Supplier\ChangeDeliverySpecification\ChangeDeliverySpecificationSupplierRequest;
+use Admin\UseCases\Supplier\ChangeDeliverySpecifications\ChangeDeliverySpecificationsSupplierRequest;
 
-final class ChangeDeliverySpecificationSupplierApiRequest implements ChangeDeliverySpecificationSupplierRequest
+final class ChangeDeliverySpecificationsSupplierApiRequest implements ChangeDeliverySpecificationsSupplierRequest
 {
     /**
      * @param array<int> $orderDays

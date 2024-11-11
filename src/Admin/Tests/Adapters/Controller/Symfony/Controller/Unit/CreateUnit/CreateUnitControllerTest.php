@@ -22,6 +22,7 @@ use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @group functionalTest
@@ -37,6 +38,10 @@ final class CreateUnitControllerTest extends WebTestCase
 
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $company = (new CompanyDataBuilder())->create('Test company')->build();
         $companyRepository->save($company);
 
@@ -47,7 +52,7 @@ final class CreateUnitControllerTest extends WebTestCase
         $crawler = $client->request(Request::METHOD_POST, self::CREATE_UNIT_URI);
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Create Unit');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.unit.create.titlePage'));
 
         $form = $crawler->selectButton('Create')->form([
             'createUnit[label]' => 'Kilogramme',
@@ -62,7 +67,7 @@ final class CreateUnitControllerTest extends WebTestCase
         $admin = $client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
-        self::assertSame('Unit created', $flash);
+        self::assertSame($translator->trans('admin.unit.create.success'), $flash);
 
         /** @var Unit $unitCreated */
         $unitCreated = $unitRepository->findOneBy(['slug' => 'kilogramme']);
@@ -78,6 +83,10 @@ final class CreateUnitControllerTest extends WebTestCase
 
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $company = (new CompanyDataBuilder())->create('Test company')->build();
         $companyRepository->save($company);
 
@@ -90,7 +99,7 @@ final class CreateUnitControllerTest extends WebTestCase
         $crawler = $client->request(Request::METHOD_POST, self::CREATE_UNIT_URI);
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Create Unit');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.unit.create.titlePage'));
 
         $form = $crawler->selectButton('Create')->form([
             'createUnit[label]' => 'Kilogramme',
@@ -120,6 +129,10 @@ final class CreateUnitControllerTest extends WebTestCase
 
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $company = (new CompanyDataBuilder())->create('Test company')->build();
         $companyRepository->save($company);
 
@@ -132,7 +145,7 @@ final class CreateUnitControllerTest extends WebTestCase
         $crawler = $client->request(Request::METHOD_POST, self::CREATE_UNIT_URI);
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Create Unit');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.unit.create.titlePage'));
 
         $form = $crawler->selectButton('Create')->form([
             'createUnit[label]' => '',
