@@ -1,63 +1,34 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Accueil | {{ parent() }}
+    {{ 'home.titlePage'|trans }} | {{ parent() }}
 {% endblock %}
 
 {% block body %}
-    <h1>Welcome to your restaurant inventory management application!</h1>
+    <h1>{{ 'home.welcome'|trans }}</h1>
 
     <article>
-        <p>
-            A restaurant inventory management application is like a digital pantry and ledger combined, specifically
-            designed to streamline the process of tracking, ordering, and managing stock levels for ingredients,
-            supplies, and equipment in a restaurant setting. Here's a breakdown of its functionalities:
-        </p>
+        <p>{{ 'home.text.intro'|trans }}</p>
 
         <dl>
-            <dt>1. Inventory Tracking:</dt>
-            <dd>The core feature of the application is to keep a real-time record of all items in stock. It allows
-                restaurant staff to easily monitor quantities, expiry dates, and usage patterns of ingredients and
-                supplies.
-            </dd>
-            <dt>2. Ordering and Purchasing:</dt>
-            <dd>The application facilitates the ordering process by generating automatic purchase orders when stock
-                levels drop below a certain threshold. It can also integrate with suppliers' systems to streamline the
-                purchasing workflow.
-            </dd>
-            <dt>3. Recipe Management:</dt>
-            <dd>It enables chefs and kitchen staff to create and store recipes within the application, specifying the
-                ingredients required for each dish. This feature helps in accurately tracking ingredient usage and
-                calculating the cost of each recipe.
-            </dd>
-            <dt>4. Forecasting and Analytics:</dt>
-            <dd>By analyzing historical data and trends, the application can provide insights into inventory usage
-                patterns, helping restaurant owners and managers make informed decisions about stock levels, menu
-                planning, and pricing strategies.
-            </dd>
-            <dt>5. Vendor Management:</dt>
-            <dd>It centralizes information about suppliers, including contact details, pricing agreements, delivery
-                schedules, and order history, making it easier to manage relationships and negotiate favorable terms.
-            </dd>
-            <dt>6. Mobile Accessibility:</dt>
-            <dd>Many inventory management applications offer mobile compatibility, allowing staff to access inventory
-                data, place orders, and update stock levels from anywhere, enhancing flexibility and efficiency.
-            </dd>
-            <dt>7. Integration with POS Systems:</dt>
-            <dd>Integration with the restaurant's Point of Sale (POS) system ensures seamless communication between
-                inventory management and sales data, providing a comprehensive view of the business's financial health.
-            </dd>
-            <dt>8. Alerts and Notifications:</dt>
-            <dd>The application can send alerts and notifications to users when stock levels are low, when items are
-                about to expire, or when new orders have been placed or received, ensuring timely action and minimizing
-                wastage.
-            </dd>
+            <dt>{{ 'home.text.1.title'|trans }}</dt>
+            <dd>{{ 'home.text.1.text'|trans }}</dd>
+            <dt>{{ 'home.text.2.title'|trans }}</dt>
+            <dd>{{ 'home.text.2.text'|trans }}</dd>
+            <dt>{{ 'home.text.3.title'|trans }}</dt>
+            <dd>{{ 'home.text.3.text'|trans }}</dd>
+            <dt>{{ 'home.text.4.title'|trans }}</dt>
+            <dd>{{ 'home.text.4.text'|trans }}</dd>
+            <dt>{{ 'home.text.5.title'|trans }}</dt>
+            <dd>{{ 'home.text.5.text'|trans }}</dd>
+            <dt>{{ 'home.text.6.title'|trans }}</dt>
+            <dd>{{ 'home.text.6.text'|trans }}</dd>
+            <dt>{{ 'home.text.7.title'|trans }}</dt>
+            <dd>{{ 'home.text.7.text'|trans }}</dd>
+            <dt>{{ 'home.text.8.title'|trans }}</dt>
+            <dd>{{ 'home.text.8.text'|trans }}</dd>
         </dl>
 
-        <p>
-            Overall, a restaurant inventory management application serves as a vital tool for optimizing operations,
-            reducing costs, and ensuring that the kitchen is well-stocked with the necessary ingredients to meet
-            customer demand while minimizing waste.
-        </p>
+        <p>{{ 'home.text.conclusion'|trans }}</p>
     </article>
 {% endblock %}

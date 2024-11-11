@@ -29,6 +29,7 @@ use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @group functionalTest
@@ -62,6 +63,9 @@ final class HomeControllerTest extends WebTestCase
 
         /** @var DoctrineArticleRepository $articleRepository */
         $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
 
         $company = (new CompanyDataBuilder())->create('TestCompany')->build();
         $companyRepository->save($company);
@@ -102,7 +106,7 @@ final class HomeControllerTest extends WebTestCase
 
         // Assert
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Administration');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.titlePage'));
         $brand = $crawler->filter('body > header > nav')->children('ul')->first();
         self::assertSame('Application', $brand->text());
     }

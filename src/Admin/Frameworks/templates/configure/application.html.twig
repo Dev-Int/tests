@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Configure | {{ parent() }}
+    {{ 'admin.configuration.application.titlePage'|trans }} | {{ parent() }}
 {% endblock %}
 
 {% block body %}
 
-    <h1><i class="fa fa-cogs"></i> Configure application</h1>
+    <h1><i class="fa fa-cogs"></i> {{ 'admin.configuration.application.titlePage'|trans }}</h1>
 
     <div class="row">
         <aside class="col-md-3">
@@ -48,14 +48,11 @@
             </nav>
         </aside>
         <article class="col-md-9">
-            <p>Here you configure specific items of your application. Select items in order.</p>
-            <p>The main units needed to calculate volumes and amounts are defined here.</p>
-            <p></p>
-            <p>Happy configure <i class="fa-solid fa-face-smile-wink"></i></p>
+            {{ 'admin.configuration.application.resume'|trans|raw }}
 
             <p class="bottom-element">
                 <a href="{{ path('admin_configure') }}" role="button">
-                    <i class="fa-solid fa-angles-left"></i> Retour à la configuration
+                    <i class="fa-solid fa-angles-left"></i> {{ 'admin.configuration.application.returnButton'|trans }}
                 </a>
             </p>
         </article>

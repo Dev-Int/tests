@@ -15,6 +15,7 @@ namespace Shared\Tests\Adapters\Controller\Symfony\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Webmozart\Assert\Assert;
 
 final class HomeControllerTest extends WebTestCase
@@ -28,15 +29,18 @@ final class HomeControllerTest extends WebTestCase
         $siteName = self::getContainer()->getParameter('site.name');
         Assert::string($siteName);
 
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         // Act
         $crawler = $client->request(Request::METHOD_GET, self::HOME_URI);
 
         // Assert
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Welcome to your restaurant inventory management application!');
+        self::assertSelectorTextContains('h1', $translator->trans('home.welcome'));
 
         $header = $crawler->filter('body > header > nav')->children('ul');
         self::assertSame($siteName, $header->first()->text());
-        self::assertSame('Administration', $header->last()->children('li')->first()->text());
+        self::assertSame($translator->trans('admin.titlePage'), $header->last()->children('li')->first()->text());
     }
 }

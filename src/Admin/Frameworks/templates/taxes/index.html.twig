@@ -6,7 +6,7 @@
 
 {% block body %}
 
-    <h1><twig:Icon:Entities:Taxe /> Taxes</h1>
+    <h1><twig:Icon:Entities:Taxe /> {{ 'admin.tax.titlePage'|trans }}</h1>
 
     <main>
         <article>
@@ -28,14 +28,22 @@
                             <span>{{ tax.name }}</span>
                             <span>{{ tax.rate }}</span>
                             <span>
-                                <twig:Button:UpdateEntity href="{{ path('admin_taxes_rename', {'tax': tax.uuid}) }}" class="btn-small" label="{{ 'admin.tax.rename.button'|trans }}" />
-                                <twig:Button:UpdateEntity href="{{ path('admin_taxes_revaluate', {'tax': tax.uuid}) }}" class="btn-small" label="{{ 'admin.tax.revaluate.button'|trans }}" />
+                                <twig:Button:UpdateEntity
+                                    href="{{ path('admin_taxes_rename', {'tax': tax.uuid}) }}"
+                                    class="btn-small"
+                                    label="{{ 'admin.tax.rename.button'|trans }}"
+                                />
+                                <twig:Button:UpdateEntity
+                                    href="{{ path('admin_taxes_revaluate', {'tax': tax.uuid}) }}"
+                                    class="btn-small"
+                                    label="{{ 'admin.tax.revaluate.button'|trans }}"
+                                />
                             </span>
                         </li>
                     </turbo-frame>
                 {% endfor %}
             </ul>
-            <twig:Button:BackTo href="{{ path('admin_index') }}" label="Retour à l'administration" />
+            <twig:Button:BackTo href="{{ path('admin_index') }}" label="{{ 'admin.adminButton'|trans }}" />
         </article>
     </main>
 

@@ -29,6 +29,7 @@ use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @group functionalTest
@@ -45,6 +46,9 @@ final class ApplicationConfigureControllerTest extends WebTestCase
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
 
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $company = (new CompanyDataBuilder())->create('TestCompany')->build();
         $companyRepository->save($company);
 
@@ -53,7 +57,7 @@ final class ApplicationConfigureControllerTest extends WebTestCase
 
         // Assert
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Configure application');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.application.titlePage'));
     }
 
     public function testApplicationConfigured(): void
@@ -81,6 +85,9 @@ final class ApplicationConfigureControllerTest extends WebTestCase
 
         /** @var DoctrineArticleRepository $articleRepository */
         $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
 
         $company = (new CompanyDataBuilder())->create('Test company')->build();
         $companyRepository->save($company);
@@ -115,7 +122,7 @@ final class ApplicationConfigureControllerTest extends WebTestCase
 
         // Assert
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Configure application');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.application.titlePage'));
     }
 
     public function testApplicationConfigurePageRedirectConfigurePage(): void

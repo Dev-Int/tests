@@ -61,7 +61,7 @@
 
                 <twig:Pagination page="{{ pagination.page }}" itemsPerPage="{{ pagination.itemsPerPage }}" totalPages="{{ pagination.totalPages }}" />
             </turbo-frame>
-            <twig:Button:BackTo href="{{ path('admin_index') }}" label="Retour à l'administration" />
+            <twig:Button:BackTo href="{{ path('admin_index') }}" label="{{ 'admin.adminButton'|trans }}" />
         </article>
     </main>
 

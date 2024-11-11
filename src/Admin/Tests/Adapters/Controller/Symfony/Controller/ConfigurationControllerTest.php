@@ -27,6 +27,7 @@ use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @group functionalTest
@@ -76,22 +77,25 @@ final class ConfigurationControllerTest extends WebTestCase
         // Arrange
         $client = self::createClient();
 
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         // Act
         $crawler = $client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
 
         // Assert
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Configuration');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.titlePage'));
 
         $list = $crawler->filter('div.row > aside.col-md-3 > nav#menu > ul');
 
         self::assertCount(6, $list->children('li > a.w100'));
         self::assertCount(0, $list->children('li > a.disable-link'));
 
-        $home = $crawler->selectLink('Retour à l\'accueil')->link(Request::METHOD_GET);
+        $home = $crawler->selectLink($translator->trans('admin.returnButton'))->link(Request::METHOD_GET);
         $client->click($home);
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Welcome to your restaurant inventory management application!');
+        self::assertSelectorTextContains('h1', $translator->trans('home.welcome'));
     }
 
     public function testConfigurePageWithCompany(): void
@@ -102,6 +106,9 @@ final class ConfigurationControllerTest extends WebTestCase
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
 
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $company = (new CompanyDataBuilder())->create('TestCompany')->build();
         $companyRepository->save($company);
 
@@ -110,7 +117,7 @@ final class ConfigurationControllerTest extends WebTestCase
 
         // Assert
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Configuration');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.titlePage'));
 
         $list = $crawler->filter('div.row > aside.col-md-3 > nav#menu > ul');
 
@@ -132,6 +139,9 @@ final class ConfigurationControllerTest extends WebTestCase
         /** @var DoctrineTaxRepository $taxRepository */
         $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
 
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $company = (new CompanyDataBuilder())->create('TestCompany')->build();
         $companyRepository->save($company);
         $unit = (new UnitDataBuilder())->create('Kilogramme', 'KG')->build();
@@ -144,7 +154,7 @@ final class ConfigurationControllerTest extends WebTestCase
 
         // Assert
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Configuration');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.titlePage'));
 
         $list = $crawler->filter('div.row > aside.col-md-3 > nav#menu > ul');
 
@@ -169,6 +179,9 @@ final class ConfigurationControllerTest extends WebTestCase
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
 
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $company = (new CompanyDataBuilder())->create('TestCompany')->build();
         $companyRepository->save($company);
         $unit = (new UnitDataBuilder())->create('Kilogramme', 'KG')->build();
@@ -183,7 +196,7 @@ final class ConfigurationControllerTest extends WebTestCase
 
         // Assert
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Configuration');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.titlePage'));
 
         $list = $crawler->filter('div.row > aside.col-md-3 > nav#menu > ul');
 
@@ -211,6 +224,9 @@ final class ConfigurationControllerTest extends WebTestCase
         /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
         $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
 
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $company = (new CompanyDataBuilder())->create('TestCompany')->build();
         $companyRepository->save($company);
         $unit = (new UnitDataBuilder())->create('Kilogramme', 'KG')->build();
@@ -227,7 +243,7 @@ final class ConfigurationControllerTest extends WebTestCase
 
         // Assert
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Configuration');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.titlePage'));
 
         $list = $crawler->filter('div.row > aside.col-md-3 > nav#menu > ul');
 
@@ -258,6 +274,9 @@ final class ConfigurationControllerTest extends WebTestCase
         /** @var DoctrineSupplierRepository $supplierRepository */
         $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
 
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
         $company = (new CompanyDataBuilder())->create('TestCompany')->build();
         $companyRepository->save($company);
         $unit = (new UnitDataBuilder())->create('Kilogramme', 'KG')->build();
@@ -276,7 +295,7 @@ final class ConfigurationControllerTest extends WebTestCase
 
         // Assert
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Configuration');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.titlePage'));
 
         $list = $crawler->filter('div.row > aside.col-md-3 > nav#menu > ul');
 

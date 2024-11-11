@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Configure | {{ parent() }}
+    {{ 'admin.configuration.titlePage'|trans }} | {{ parent() }}
 {% endblock %}
 
 {% block body %}
 
-    <h1><i class="fas fa-cogs"></i> Configuration</h1>
+    <h1><i class="fas fa-cogs"></i> {{ 'admin.configuration.titlePage'|trans }}</h1>
 
     <div class="row">
         <aside class="col-md-3">
@@ -21,7 +21,7 @@
                     <li>
                         <a href="{{ path('admin_configure_application') }}" role="button" class="{% if hasApplication %}secondary disable-link {% endif %}w100">
                             {% if hasApplication %}<twig:Icon:Check />
-                            {% else %}<i class="fa-solid fa-cogs"></i>{% endif%} Configure application
+                            {% else %}<i class="fa-solid fa-cogs"></i>{% endif%} {{ 'admin.configuration.application.titlePage'|trans }}
                         </a>
                     </li>
                     <li>
@@ -52,13 +52,10 @@
             </nav>
         </aside>
         <article class="col-md-9">
-            <p>Here you configure your application. Select items in order.</p>
-            <p>Each part is important for the proper use of your application.</p>
-            <p></p>
-            <p>Happy configure ;)</p>
+            {{ 'admin.configuration.resume'|trans|raw }}
 
             <p class="bottom-element">
-                <twig:Button:BackTo label="Retour à l'accueil" href="{{ path('home') }}" />
+                <twig:Button:BackTo label="{{ 'admin.returnButton'|trans }}" href="{{ path('home') }}" />
             </p>
         </article>
     </div>

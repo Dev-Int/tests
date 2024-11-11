@@ -13,7 +13,10 @@
             <div>
                 <turbo-frame id="familyLog_create" class="flex-between">
                     <span></span>
-                    <twig:Button:CreateEntity href="{{ path('admin_family_logs_create') }}" label="{{ 'admin.familyLog.create.titleShort'|trans }}" />
+                    <twig:Button:CreateEntity
+                        href="{{ path('admin_family_logs_create') }}"
+                        label="{{ 'admin.familyLog.create.titleShort'|trans }}"
+                    />
                 </turbo-frame>
             </div>
 
@@ -27,14 +30,22 @@
                         <li class="li-unstyled flex-between">
                             <span>{{ family.path }}&nbsp;</span>
                             <span>
-                                <twig:Button:UpdateEntity href="{{ path('admin_family_logs_change-label', {familyLog: family.uuid}) }}" class="btn-small" label="{{ 'admin.familyLog.changeLabel.button'|trans }}" />
-                                <twig:Button:UpdateEntity href="{{ path('admin_family_logs_assign-parent', {familyLog: family.uuid}) }}" class="btn-small" label="{{ 'admin.familyLog.assignParent.button'|trans }}" />
+                                <twig:Button:UpdateEntity
+                                    href="{{ path('admin_family_logs_change-label', {familyLog: family.uuid}) }}"
+                                    class="btn-small"
+                                    label="{{ 'admin.familyLog.changeLabel.button'|trans }}"
+                                />
+                                <twig:Button:UpdateEntity
+                                    href="{{ path('admin_family_logs_assign-parent', {familyLog: family.uuid}) }}"
+                                    class="btn-small"
+                                    label="{{ 'admin.familyLog.assignParent.button'|trans }}"
+                                />
                             </span>
                         </li>
                     </turbo-frame>
                 {% endfor %}
             </ul>
-            <twig:Button:BackTo href="{{ path('admin_index') }}" label="Retour à l'administration" />
+            <twig:Button:BackTo href="{{ path('admin_index') }}" label="{{ 'admin.adminButton'|trans }}" />
         </article>
     </main>
 {% endblock %}

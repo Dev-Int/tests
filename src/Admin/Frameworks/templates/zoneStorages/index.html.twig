@@ -29,14 +29,22 @@
                             <span>{{ zone.label }}</span>
                             <span>{{ zone.familyLogLabel }}</span>
                             <span>
-                                <twig:Button:UpdateEntity href="{{ path('admin_zone_storages_change-label', {zoneStorage: zone.uuid}) }}" class="btn-small" label="{{ 'admin.zoneStorage.changeLabel.button'|trans }}"/>
-                                <twig:Button:UpdateEntity href="{{ path('admin_zone_storages_change-family_log', {zoneStorage: zone.uuid}) }}" class="btn-small" label="{{ 'admin.zoneStorage.changeFamilyLog.button'|trans }}"/>
+                                <twig:Button:UpdateEntity
+                                    href="{{ path('admin_zone_storages_change-label', {zoneStorage: zone.uuid}) }}"
+                                    class="btn-small"
+                                    label="{{ 'admin.zoneStorage.changeLabel.button'|trans }}"
+                                />
+                                <twig:Button:UpdateEntity
+                                    href="{{ path('admin_zone_storages_change-family_log', {zoneStorage: zone.uuid}) }}"
+                                    class="btn-small"
+                                    label="{{ 'admin.zoneStorage.changeFamilyLog.button'|trans }}"
+                                />
                             </span>
                         </li>
                     </turbo-frame>
                 {% endfor %}
             </ul>
-            <twig:Button:BackTo href="{{ path('admin_index') }}" label="Retour à l'administration" />
+            <twig:Button:BackTo href="{{ path('admin_index') }}" label="{{ 'admin.adminButton'|trans }}" />
         </article>
     </main>
 

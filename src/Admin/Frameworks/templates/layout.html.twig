@@ -51,13 +51,10 @@
             </nav>
         </aside>
         <article class="col-md-9">
-            <p>Here is how you administrate your application.</p>
-            <p>You can create, update or archive all parts of the application.</p>
-            <p></p>
-            <p>Happy use <i class="fa-solid fa-face-smile-wink"></i></p>
+            {{ 'admin.homePage.resume'|trans|raw }}
 
             <p class="bottom-element">
-                <twig:Button:BackTo  href="{{ path('home') }}" label="Retour à l'accueil" />
+                <twig:Button:BackTo  href="{{ path('home') }}" label="{{ 'admin.returnButton'|trans }}" />
             </p>
         </article>
     </div>

@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Articles | {{ parent() }}
+    {{ 'admin.article.titlePage'|trans }} | {{ parent() }}
 {% endblock %}
 
 {% block importmap %}
@@ -10,14 +10,17 @@
 
 {% block body %}
 
-    <h1><twig:Icon:Entities:Article /> Articles</h1>
+    <h1><twig:Icon:Entities:Article /> {{ 'admin.article.titlePage'|trans }}</h1>
 
     <main>
         <article>
             <div>
                 <turbo-frame id="article_create" class="flex-between">
                     <span></span>
-                    <twig:Button:CreateEntity href="{{ path('admin_article_create') }}" label="{{ 'admin.article.create.titleShort'|trans }}" />
+                    <twig:Button:CreateEntity
+                        href="{{ path('admin_article_create') }}"
+                        label="{{ 'admin.article.create.titleShort'|trans }}"
+                    />
                 </turbo-frame>
             </div>
             <turbo-frame id="article_paginated">
@@ -60,7 +63,7 @@
 
                 <twig:Pagination page="{{ pagination.page }}" itemsPerPage="{{ pagination.itemsPerPage }}" totalPages="{{ pagination.totalPages }}" />
             </turbo-frame>
-            <twig:Button:BackTo href="{{ path('admin_index') }}" label="Retour à l'administration" />
+            <twig:Button:BackTo href="{{ path('admin_index') }}" label="{{ 'admin.adminButton'|trans }}" />
         </article>
     </main>
 
