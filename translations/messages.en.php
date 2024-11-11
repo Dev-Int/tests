@@ -302,6 +302,9 @@ return [
                 'titleShort' => 'Rename "%articleName%"',
                 'success' => 'The article has been renamed successfully.'
             ],
+            'errors' => [
+                'packagingInvalid' => 'parcel should have unit and quantity',
+            ],
         ],
         'homePage' => [
             'titlePage' => 'Home',

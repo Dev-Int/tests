@@ -455,9 +455,12 @@ final class CreateArticleControllerTest extends WebTestCase
         $zoneStorageField = $response->filter('form')->children('div')->eq(4)->children('div');
         $familyLogField = $zoneStorageField->siblings();
 
-        self::assertSame($translator->trans('admin.article.form.familyLog.label'), $familyLogField->children('label')->text());
         self::assertSame(
-            'The familyLog logistic family "Viande" is not compatible with the supplier logistic family: "Alimentaire"',
+            $translator->trans('admin.article.form.familyLog.label'),
+            $familyLogField->children('label')->text()
+        );
+        self::assertSame(
+            'Le champ Famille logistique "Viande" n\'est pas compatible avec la famille logistique du fournisseur: "Alimentaire"',
             $familyLogField->children('ul > li')->text()
         );
     }
@@ -565,7 +568,7 @@ final class CreateArticleControllerTest extends WebTestCase
             $zoneStorageField->children('label')->text()
         );
         self::assertSame(
-            'The zoneStorages logistic family "Frais" is not compatible with the supplier logistic family: "Viande"',
+            'Le champ Zones de stockage "Frais" n\'est pas compatible avec la famille logistique du fournisseur: "Viande"',
             $zoneStorageField->children('ul > li')->text()
         );
     }

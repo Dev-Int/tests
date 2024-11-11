@@ -116,7 +116,7 @@ final class ChangeArticleStorageInformationController extends AbstractController
         $parcel = $packaging->parcel;
         if (!$parcel?->unit instanceof Unit || $parcel->quantity === null) {
             // @codeCoverageIgnoreStart
-            throw new \InvalidArgumentException('parcel should have unit and quantity');
+            throw new \InvalidArgumentException($this->translator->trans('admin.article.errors.packagingInvalid'));
             // @codeCoverageIgnoreEnd
         }
 

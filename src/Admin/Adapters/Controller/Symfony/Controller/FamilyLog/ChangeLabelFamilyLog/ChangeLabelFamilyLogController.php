@@ -26,8 +26,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[AsController]
 final class ChangeLabelFamilyLogController extends AbstractController
 {
-    public function __construct(private readonly ChangeLabelFamilyLog $useCase, private readonly TranslatorInterface $translator)
-    {
+    public function __construct(
+        private readonly ChangeLabelFamilyLog $useCase,
+        private readonly TranslatorInterface $translator
+    ) {
     }
 
     #[Route(

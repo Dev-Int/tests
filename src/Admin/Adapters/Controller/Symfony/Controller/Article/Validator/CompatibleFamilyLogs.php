@@ -18,8 +18,6 @@ use Symfony\Component\Validator\Constraint;
 #[\Attribute]
 final class CompatibleFamilyLogs extends Constraint
 {
-    public string $incompatibleFamilyLogMessage = 'The {{ field }} logistic family "{{ field_family }}" is not compatible with the supplier logistic family: "{{ supplier_family }}"';
-
     public function getTargets(): string
     {
         return self::CLASS_CONSTRAINT;

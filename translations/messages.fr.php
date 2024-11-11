@@ -304,6 +304,9 @@ return [
                 'titleShort' => 'Renommer "%articleName%"',
                 'success' => 'Le fournisseur est renommé avec succès.'
             ],
+            'errors' => [
+                'packagingInvalid' => 'Le colis doit avoir une unité et une quantité',
+            ],
         ],
         'homePage' => [
             'titlePage' => 'Home',

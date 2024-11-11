@@ -265,7 +265,7 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
             $zoneStoragesField->children('label')->text()
         );
         self::assertSame(
-            'The zoneStorages logistic family "Frais" is not compatible with the supplier logistic family: "Surgelé"',
+            'Le champ Zones de stockage "Frais" n\'est pas compatible avec la famille logistique du fournisseur: "Surgelé"',
             $zoneStoragesField->children('ul > li')->text()
         );
     }
@@ -384,7 +384,7 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
             $familyLogField->children('label')->text()
         );
         self::assertSame(
-            'The familyLog logistic family "Frais" is not compatible with the supplier logistic family: "Surgelé"',
+            'Le champ Famille logistique "Frais" n\'est pas compatible avec la famille logistique du fournisseur: "Surgelé"',
             $familyLogField->children('ul > li')->text()
         );
     }

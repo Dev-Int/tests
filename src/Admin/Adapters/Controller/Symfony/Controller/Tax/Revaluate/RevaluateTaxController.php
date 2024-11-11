@@ -26,8 +26,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[AsController]
 final class RevaluateTaxController extends AbstractController
 {
-    public function __construct(private readonly RevaluateTax $useCase, private readonly TranslatorInterface $translator)
-    {
+    public function __construct(
+        private readonly RevaluateTax $useCase,
+        private readonly TranslatorInterface $translator
+    ) {
     }
 
     #[Route(

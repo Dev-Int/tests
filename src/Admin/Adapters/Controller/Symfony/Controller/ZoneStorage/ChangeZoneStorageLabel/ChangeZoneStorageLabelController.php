@@ -26,8 +26,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[AsController]
 final class ChangeZoneStorageLabelController extends AbstractController
 {
-    public function __construct(private readonly ChangeZoneStorageLabel $useCase, private readonly TranslatorInterface $translator)
-    {
+    public function __construct(
+        private readonly ChangeZoneStorageLabel $useCase,
+        private readonly TranslatorInterface $translator
+    ) {
     }
 
     #[Route(
