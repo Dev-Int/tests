@@ -58,7 +58,7 @@ final class UpdateCompanyControllerTest extends WebTestCase
             $translator->trans('admin.company.update.titlePage', ['%companyName%' => 'Dev-Int Création'])
         );
 
-        $form = $crawler->selectButton('Update')->form([
+        $form = $crawler->selectButton($translator->trans('admin.company.update.button'))->form([
             'updateCompany[address]' => '12, rue des Singes',
             'updateCompany[postalCode]' => '56000',
             'updateCompany[city]' => 'Vannes',

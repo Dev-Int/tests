@@ -3,6 +3,8 @@
 return [
     'connection' => 'Connection',
     'actions' => 'Actions',
+    'cancel' => 'Cancel',
+    'add' => 'Add',
     'name' => 'Name',
     'address' => 'Address',
     'postalCode' => 'Postal code',

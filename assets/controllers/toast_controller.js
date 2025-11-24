@@ -5,6 +5,6 @@ export default class extends Controller {
     {
         const flashes = this.element;
 
-        setTimeout(() => {flashes.classList.add('hidden')}, 2000);
+        setTimeout(() => {flashes.classList.add('hidden')}, 5000);
     }
 }

@@ -36,9 +36,7 @@ final readonly class ConfigurationService
 
     public function isConfigured(): bool
     {
-        $hasArticle = $this->articleRepository->hasArticle();
-
-        return $this->isSupplierConfigured() && $hasArticle;
+        return $this->isArticleConfigured();
     }
 
     public function isCompanyConfigured(): bool
@@ -48,18 +46,16 @@ final readonly class ConfigurationService
 
     public function isUnitConfigured(): bool
     {
-        $hasCompany = $this->companyRepository->hasCompany();
         $hasUnit = $this->unitRepository->hasUnit();
 
-        return $hasCompany && $hasUnit;
+        return $this->isCompanyConfigured() && $hasUnit;
     }
 
     public function isTaxConfigured(): bool
     {
-        $hasCompany = $this->companyRepository->hasCompany();
-        $hasApplication = $this->unitRepository->hasUnit() && $this->taxRepository->hasTax();
+        $hasTax = $this->taxRepository->hasTax();
 
-        return $hasCompany && $hasApplication;
+        return $this->isUnitConfigured() && $hasTax;
     }
 
     public function isApplicationConfigured(): bool
@@ -71,20 +67,27 @@ final readonly class ConfigurationService
     {
         $hasFamilyLog = $this->familyLogRepository->hasFamilyLog();
 
-        return $hasFamilyLog && $this->isApplicationConfigured();
+        return $this->isApplicationConfigured() && $hasFamilyLog;
     }
 
     public function isZoneStorageConfigured(): bool
     {
         $hasZoneStorage = $this->zoneStorageRepository->hasZoneStorage();
 
-        return $hasZoneStorage && $this->isFamilyLogConfigured();
+        return $this->isFamilyLogConfigured() && $hasZoneStorage;
     }
 
     public function isSupplierConfigured(): bool
     {
         $hasSupplier = $this->supplierRepository->hasSupplier();
 
-        return $hasSupplier && $this->isZoneStorageConfigured();
+        return $this->isZoneStorageConfigured() && $hasSupplier;
+    }
+
+    public function isArticleConfigured(): bool
+    {
+        $hasArticle = $this->articleRepository->hasArticle();
+
+        return $this->isSupplierConfigured() && $hasArticle;
     }
 }

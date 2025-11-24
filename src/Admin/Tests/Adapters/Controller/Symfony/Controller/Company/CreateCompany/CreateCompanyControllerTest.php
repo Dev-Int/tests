@@ -45,7 +45,7 @@ final class CreateCompanyControllerTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.company.create.titlePage'));
 
-        $form = $crawler->selectButton('Create')->form([
+        $form = $crawler->selectButton($translator->trans('add'))->form([
             'createCompany[name]' => 'Dev-Int Création',
             'createCompany[address]' => '5, rue des Plantes',
             'createCompany[postalCode]' => '75000',
@@ -92,7 +92,7 @@ final class CreateCompanyControllerTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.company.create.titlePage'));
 
-        $form = $crawler->selectButton('Create')->form([
+        $form = $crawler->selectButton($translator->trans('add'))->form([
             'createCompany[name]' => 'Dev-Int Création',
             'createCompany[address]' => '5, rue des Plantes',
             'createCompany[postalCode]' => '75000',
@@ -137,7 +137,7 @@ final class CreateCompanyControllerTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.company.create.titlePage'));
 
-        $form = $crawler->selectButton('Create')->form([
+        $form = $crawler->selectButton($translator->trans('add'))->form([
             'createCompany[name]' => 'Dev-Int Création',
             'createCompany[address]' => '5, rue des Plantes',
             'createCompany[postalCode]' => '75000',
