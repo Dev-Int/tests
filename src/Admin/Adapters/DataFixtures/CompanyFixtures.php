@@ -18,14 +18,12 @@ use Admin\Adapters\Gateway\ORM\Repository\DoctrineCompanyRepository;
 use Admin\Tests\DataBuilder\CompanyDataBuilder;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-use Faker\Factory;
 
 final class CompanyFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        $faker = Factory::create('fr_FR');
-        $company = (new CompanyDataBuilder())->create($faker->company())
+        $company = (new CompanyDataBuilder())->create('Dev-Int Création')
             ->build()
         ;
 

@@ -16,6 +16,9 @@
         <server name="SHELL_VERBOSITY" value="-1" />
         <server name="SYMFONY_PHPUNIT_REMOVE" value="" />
         <server name="SYMFONY_PHPUNIT_VERSION" value="9.6" />
+        <server name="SYMFONY_PROJECT_DEFAULT_ROUTE_URL" value="" />
+        <server name="BROWSER_ALWAYS_START_WEBSERVER" value="1"/>
+        <server name="PANTHER_APP_ENV" value="test" />
         <env name="APP_ENV" value="test" force="true" />
         <env name="SYMFONY_DEPRECATIONS_HELPER" value="max[total]=999999"/>
     </php>
@@ -28,6 +31,9 @@
         <testsuite name="Functional Test Suite">
             <directory>src/**/Tests/Adapters</directory>
             <directory>src/**/Tests/Twig</directory>
+        </testsuite>
+        <testsuite name="E2E Test Suite">
+            <directory>src/**/Tests/EndToEnd</directory>
         </testsuite>
     </testsuites>
 
