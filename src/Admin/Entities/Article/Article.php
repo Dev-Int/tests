@@ -95,9 +95,6 @@ final class Article
         return $this->name;
     }
 
-    /**
-     * @param ZoneStorageCollection<ZoneStorage> $zoneStorages
-     */
     public function reAssignSupplier(
         Supplier $supplier,
         FamilyLog $familyLog,

@@ -107,5 +107,6 @@ return (new PhpCsFixer\Config())
     ->setIndent('    ')
     ->setLineEnding("\n")
     ->setUsingCache(true)
+    ->setParallelConfig(PhpCsFixer\Runner\Parallel\ParallelConfigFactory::detect())
     ->setFinder($finder)
 ;

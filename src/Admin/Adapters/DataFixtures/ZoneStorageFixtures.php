@@ -32,7 +32,7 @@ final class ZoneStorageFixtures extends Fixture implements DependentFixtureInter
 
         foreach ($this->getData() as $datum) {
             /** @var FamilyLog $familyLog */
-            $familyLog = $this->getReference($datum['familyLogReference']);
+            $familyLog = $this->getReference($datum['familyLogReference'], FamilyLog::class);
 
             $zoneStorage = (new ZoneStorageDataBuilder())
                 ->create($datum['label'], $familyLog->toDomain($familyLog->parent()))

@@ -17,6 +17,7 @@
 /public/bundles/
 /var/
 /vendor/
+/config/reference.php
 ###< symfony/framework-bundle ###
 
 ###> qossmic/deptrac-shim ###

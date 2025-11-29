@@ -34,7 +34,7 @@ final class SupplierFixtures extends Fixture implements DependentFixtureInterfac
         $faker = Factory::create('fr_FR');
         foreach ($this->getData() as $datum) {
             /** @var FamilyLog $familyLog */
-            $familyLog = $this->getReference($datum['familyLogReference']);
+            $familyLog = $this->getReference($datum['familyLogReference'], FamilyLog::class);
             $supplier = (new SupplierDataBuilder())
                 ->create($faker->company, $familyLog->toDomain($familyLog->parent()))
                 ->withUuid($faker->uuid())

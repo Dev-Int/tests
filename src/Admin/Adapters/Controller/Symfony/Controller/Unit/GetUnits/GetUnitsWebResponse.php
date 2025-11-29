@@ -22,7 +22,7 @@ final class GetUnitsWebResponse
 
     public function __construct(GetUnitsResponse $response)
     {
-        foreach ($response->units as $unit) {
+        foreach ($response->units->toArray() as $unit) {
             $this->units[] = new UnitDto(
                 $unit->label()->toString(),
                 $unit->abbreviation(),

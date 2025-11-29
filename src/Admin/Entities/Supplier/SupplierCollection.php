@@ -17,9 +17,12 @@ use Shared\Entities\Collection;
 use Shared\Entities\Exception\InvalidCollectionIterationException;
 use Webmozart\Assert\Assert;
 
+/**
+ * @implements Collection<Supplier>
+ */
 final class SupplierCollection implements Collection, \Countable
 {
-    /** @var array<Supplier>
+    /** @var array<array-key, Supplier>
      */
     private array $suppliers = [];
     private int $key = 0;

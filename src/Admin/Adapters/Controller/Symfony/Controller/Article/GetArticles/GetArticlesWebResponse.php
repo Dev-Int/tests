@@ -25,7 +25,7 @@ final class GetArticlesWebResponse
 
     public function __construct(GetArticlesResponse $response)
     {
-        foreach ($response->articles as $article) {
+        foreach ($response->articles->toArray() as $article) {
             $this->articles[] = new ArticleDto(
                 $article->uuid()->toString(),
                 $article->name()->toString(),
