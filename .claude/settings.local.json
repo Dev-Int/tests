@@ -3,7 +3,8 @@
     "allow": [
       "Bash(docker compose exec:*)",
       "Bash(cat:*)",
-      "Bash(make e2e:*)"
+      "Bash(make e2e:*)",
+      "Bash(docker compose:*)"
     ],
     "deny": [],
     "ask": []

@@ -24,7 +24,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 final class ReAssignArticleSupplierDto
 {
     /**
-     * @param Collection<ZoneStorage> $zoneStorages
+     * @param Collection<array-key, ZoneStorage> $zoneStorages
      */
     public function __construct(
         #[Assert\NotBlank]

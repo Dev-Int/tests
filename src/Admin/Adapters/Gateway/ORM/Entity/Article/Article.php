@@ -34,6 +34,9 @@ final class Article
     #[ORM\OneToOne(mappedBy: 'article', targetEntity: Packaging::class, cascade: ['persist', 'remove'])]
     private Packaging $packaging;
 
+    /**
+     * @param Collection<array-key, ZoneStorage> $zoneStorages
+     */
     public static function fromDomain(
         ArticleDomain $article,
         Supplier $supplier,
@@ -57,7 +60,7 @@ final class Article
     }
 
     /**
-     * @param array<ZoneStorage>|Collection<ZoneStorage> $zoneStorages
+     * @param array<ZoneStorage>|Collection<array-key, ZoneStorage> $zoneStorages
      */
     public function __construct(
         #[ORM\Id]
@@ -193,7 +196,7 @@ final class Article
     }
 
     /**
-     * @param ArrayCollection<ZoneStorage> $zoneStorages
+     * @param ArrayCollection<array-key, ZoneStorage> $zoneStorages
      */
     public function setZoneStorages(ArrayCollection $zoneStorages): self
     {
@@ -203,7 +206,7 @@ final class Article
     }
 
     /**
-     * @return array<ZoneStorage>|Collection<ZoneStorage>
+     * @return array<ZoneStorage>|Collection<array-key, ZoneStorage>
      */
     public function zoneStorages(): array|Collection
     {

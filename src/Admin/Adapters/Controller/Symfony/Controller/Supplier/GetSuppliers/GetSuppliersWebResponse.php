@@ -24,7 +24,7 @@ final class GetSuppliersWebResponse
 
     public function __construct(GetSuppliersResponse $response)
     {
-        foreach ($response->suppliers as $supplier) {
+        foreach ($response->suppliers->toArray() as $supplier) {
             $this->suppliers[] = new SupplierDto(
                 $supplier->uuid()->toString(),
                 $supplier->name()->toString(),

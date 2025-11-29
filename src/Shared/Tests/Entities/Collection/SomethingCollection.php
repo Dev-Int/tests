@@ -17,9 +17,12 @@ use Shared\Entities\Collection;
 use Shared\Entities\Exception\InvalidCollectionIterationException;
 use Webmozart\Assert\Assert;
 
+/**
+ * @implements Collection<Something>
+ */
 final class SomethingCollection implements Collection
 {
-    /** @var array<Something> */
+    /** @var array<array-key, Something> */
     private array $collection = [];
 
     private int $key = 0;

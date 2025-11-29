@@ -22,7 +22,7 @@ final class GetZoneStoragesWebResponse
 
     public function __construct(GetZoneStoragesResponse $response)
     {
-        foreach ($response->zoneStorages as $zoneStorage) {
+        foreach ($response->zoneStorages->toArray() as $zoneStorage) {
             $this->zoneStorages[] = new ZoneStorageDto(
                 $zoneStorage->uuid()->toString(),
                 $zoneStorage->label()->toString(),

@@ -115,7 +115,7 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         }
 
         $zoneStorages = new ArrayCollection();
-        foreach ($article->zoneStorages() as $zoneStorage) {
+        foreach ($article->zoneStorages()->toArray() as $zoneStorage) {
             $zoneStorageOrm = $this->zoneStorageRepository->find($zoneStorage->uuid()->toString());
             if (!$zoneStorageOrm instanceof ZoneStorage) {
                 // @codeCoverageIgnoreStart
@@ -184,7 +184,7 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
             // @codeCoverageIgnoreEnd
         }
         $zoneStorages = new ArrayCollection();
-        foreach ($article->zoneStorages() as $zoneStorage) {
+        foreach ($article->zoneStorages()->toArray() as $zoneStorage) {
             $zoneStorageOrm = $this->zoneStorageRepository->find($zoneStorage->uuid()->toString());
             if (!$zoneStorageOrm instanceof ZoneStorage) {
                 // @codeCoverageIgnoreStart

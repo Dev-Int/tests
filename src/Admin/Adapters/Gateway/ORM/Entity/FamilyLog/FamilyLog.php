@@ -39,7 +39,7 @@ class FamilyLog
     #[ORM\JoinColumn(name: 'parent_uuid', referencedColumnName: 'uuid', onDelete: 'CASCADE')]
     private ?FamilyLog $parent = null;
 
-    /** @var Collection<FamilyLog> */
+    /** @var Collection<array-key, FamilyLog> */
     #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class)]
     private Collection $children;
 
@@ -120,7 +120,7 @@ class FamilyLog
     /**
      * @codeCoverageIgnore
      *
-     * @return Collection<FamilyLog>
+     * @return Collection<array-key, FamilyLog>
      */
     public function children(): Collection
     {

@@ -13,6 +13,11 @@ declare(strict_types=1);
 
 namespace Shared\Entities;
 
+/**
+ * @template T
+ *
+ * @extends \Iterator<array-key, T>
+ */
 interface Collection extends \Iterator
 {
     public function add(object $item): void;

@@ -22,7 +22,7 @@ final class GetTaxesWebResponse
 
     public function __construct(GetTaxesResponse $response)
     {
-        foreach ($response->taxes as $tax) {
+        foreach ($response->taxes->toArray() as $tax) {
             $this->taxes[] = new TaxDto(
                 $tax->uuid()->toString(),
                 $tax->name()->toString(),

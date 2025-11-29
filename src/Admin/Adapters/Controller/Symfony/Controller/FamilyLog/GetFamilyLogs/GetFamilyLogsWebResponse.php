@@ -23,7 +23,7 @@ final class GetFamilyLogsWebResponse
 
     public function __construct(GetFamilyLogsResponse $familyLogs)
     {
-        foreach ($familyLogs->familyLogs as $familyLog) {
+        foreach ($familyLogs->familyLogs->toArray() as $familyLog) {
             $this->familyLogs[] = new FamilyLogDto(
                 (new FamilyLog())->fromDomain($familyLog)->getIndentedLabel(),
                 $familyLog->uuid()->toString()

@@ -2,10 +2,11 @@
 
 ## PHPStan Configuration
 
-### Warning: Deprecated config option `checkGenericClassInNonGenericObjectType`
+### ~~Warning: Deprecated config option `checkGenericClassInNonGenericObjectType`~~ ✅
 
-**Priority**: Medium
+**Priority**: ~~Medium~~ **COMPLETED**
 **Context**: PHPStan analysis
+**Status**: ✅ **RESOLVED on 2025-11-29**
 
 **Issue**:
 PHPStan displays a deprecation warning during analysis:
@@ -13,18 +14,22 @@ PHPStan displays a deprecation warning during analysis:
 ⚠️  You're using a deprecated config option checkGenericClassInNonGenericObjectType ⚠️️
 ```
 
-**Recommended action**:
-1. Remove the deprecated `checkGenericClassInNonGenericObjectType` option from `phpstan.neon`
-2. Add missing generic typehints throughout the codebase
-3. Alternatively, add the `missingType.generics` error identifier to `ignoreErrors` if you want to continue ignoring missing typehints from generics:
+**Resolution**:
+Fixed all generic type annotations in Collection implementations. The issue was that all collection classes were using `@implements Collection<array-key, EntityType>` with two type parameters, but the `Collection` interface only supports one type parameter `T` (it already extends `Iterator<array-key, T>`).
 
-```yaml
-parameters:
-    ignoreErrors:
-        -
-            identifier: missingType.generics
-```
+**Files corrected**:
+- `src/Admin/Entities/Article/ArticleCollection.php:21`
+- `src/Admin/Entities/FamilyLog/FamilyLogCollection.php:21`
+- `src/Admin/Entities/Supplier/SupplierCollection.php:21`
+- `src/Admin/Entities/Tax/TaxCollection.php:21`
+- `src/Admin/Entities/Unit/UnitCollection.php:21`
+- `src/Admin/Entities/ZoneStorage/ZoneStorageCollection.php:21`
+- `src/Shared/Tests/Entities/Collection/SomethingCollection.php:21`
 
-**Reference**: PHPStan documentation on generic types
+Changed from: `@implements Collection<array-key, EntityType>`
+To: `@implements Collection<EntityType>`
+
+**Verification**: `make stan` returns no errors
 
 **Created**: 2025-11-25
+**Resolved**: 2025-11-29
