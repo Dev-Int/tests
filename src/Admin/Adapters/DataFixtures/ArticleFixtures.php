@@ -38,16 +38,16 @@ final class ArticleFixtures extends Fixture implements DependentFixtureInterface
 
         foreach ($this->getData() as $datum) {
             /** @var Supplier $supplier */
-            $supplier = $this->getReference($datum['supplierReference']);
+            $supplier = $this->getReference($datum['supplierReference'], Supplier::class);
 
             /** @var FamilyLog $familyLog */
-            $familyLog = $this->getReference($datum['familyLogReference']);
+            $familyLog = $this->getReference($datum['familyLogReference'], FamilyLog::class);
 
             /** @var Tax $tax */
-            $tax = $this->getReference(TaxFixtures::REFERENCE_PREFIX . 'taux-reduit');
+            $tax = $this->getReference(TaxFixtures::REFERENCE_PREFIX . 'taux-reduit', Tax::class);
 
             /** @var ZoneStorage $zoneStorage */
-            $zoneStorage = $this->getReference($datum['zoneStorageReference']);
+            $zoneStorage = $this->getReference($datum['zoneStorageReference'], ZoneStorage::class);
 
             $names = $this->getArticleNames($faker, $datum['familyLogReference']);
 
@@ -126,7 +126,10 @@ final class ArticleFixtures extends Fixture implements DependentFixtureInterface
         $articleTypes = ['fruit', 'vegetable', 'meat', 'dairy'];
         $articleMaraicherTypes = ['fruit', 'vegetable'];
 
-        if ($familyLogReference === FamilyLogFixtures::REFERENCE_PREFIX . 'surgele' || $familyLogReference === FamilyLogFixtures::REFERENCE_PREFIX . 'frais') {
+        if (
+            $familyLogReference === FamilyLogFixtures::REFERENCE_PREFIX . 'surgele'
+            || $familyLogReference === FamilyLogFixtures::REFERENCE_PREFIX . 'frais'
+        ) {
             for ($i = 1; $i <= 20; $i++) {
                 $articleType = array_rand(array_flip($articleTypes));
 
@@ -173,7 +176,7 @@ final class ArticleFixtures extends Fixture implements DependentFixtureInterface
             }
 
             /** @var Unit $unit */
-            $unit = $this->getReference(UnitFixtures::REFERENCE_PREFIX . $unitReference);
+            $unit = $this->getReference(UnitFixtures::REFERENCE_PREFIX . $unitReference, Unit::class);
             $quantity = $faker->randomFloat(3, 1, 10);
             $packaging[] = [$unit->toDomain(), $quantity];
         }
