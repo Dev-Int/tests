@@ -17,8 +17,8 @@ use Admin\Entities\Exception\Tax\TaxAlreadyExistsException;
 use Admin\Entities\Tax\Tax;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
 use Admin\UseCases\Gateway\TaxRepository;
+use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -26,15 +26,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @group functionalTest
  */
-final class RevaluateTaxControllerTest extends WebTestCase
+final class RevaluateTaxControllerTest extends BaseFunctionalTestCase
 {
     private const REEVALUATE_TAX_URI = '/admin/taxes/%s/revaluate';
 
     public function testRevaluateTaxWillSucceed(): void
     {
         // Arrange
-        $client = self::createClient();
-
         /** @var TaxRepository $taxRepository */
         $taxRepository = self::getContainer()->get(TaxRepository::class);
 
@@ -47,7 +45,7 @@ final class RevaluateTaxControllerTest extends WebTestCase
         self::assertCount(1, $taxes);
 
         // Act
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::REEVALUATE_TAX_URI, TaxDataBuilder::UUID_VALID)
         );
@@ -62,13 +60,13 @@ final class RevaluateTaxControllerTest extends WebTestCase
             'revaluateTax[rate]' => 10,
             'revaluateTax[uuid]' => $tax->uuid()->toString(),
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/taxes');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertSame($translator->trans('admin.tax.revaluate.success'), $flash);
@@ -85,8 +83,6 @@ final class RevaluateTaxControllerTest extends WebTestCase
     public function testRevaluateTaxFailWithAlreadyExistsException(): void
     {
         // Arrange
-        $client = self::createClient();
-
         /** @var TaxRepository $taxRepository */
         $taxRepository = self::getContainer()->get(TaxRepository::class);
 
@@ -104,7 +100,7 @@ final class RevaluateTaxControllerTest extends WebTestCase
         self::assertCount(2, $taxes);
 
         // Act
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::REEVALUATE_TAX_URI, TaxDataBuilder::UUID_VALID)
         );
@@ -119,13 +115,13 @@ final class RevaluateTaxControllerTest extends WebTestCase
             'revaluateTax[rate]' => 10.0,
             'revaluateTax[uuid]' => $tax1->uuid()->toString(),
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/taxes');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame(TaxAlreadyExistsException::MESSAGE, $flash);
@@ -142,8 +138,6 @@ final class RevaluateTaxControllerTest extends WebTestCase
     public function testCreateTaxFailWithBadRequestException(): void
     {
         // Arrange
-        $client = self::createClient();
-
         /** @var TaxRepository $taxRepository */
         $taxRepository = self::getContainer()->get(TaxRepository::class);
 
@@ -154,7 +148,7 @@ final class RevaluateTaxControllerTest extends WebTestCase
         $taxRepository->save($tax);
 
         // Act
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::REEVALUATE_TAX_URI, TaxDataBuilder::UUID_VALID)
         );
@@ -169,11 +163,11 @@ final class RevaluateTaxControllerTest extends WebTestCase
             'revaluateTax[rate]' => 120.0,
             'revaluateTax[uuid]' => $tax->uuid()->toString(),
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
-        $response = $client->getCrawler();
+        $response = $this->client->getCrawler();
 
         $rateField = $response->filter('form')->children('div')->first();
 
@@ -188,7 +182,6 @@ final class RevaluateTaxControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
         /** @var TaxRepository $taxRepository */
         $taxRepository = self::getContainer()->get(TaxRepository::class);
@@ -199,14 +192,14 @@ final class RevaluateTaxControllerTest extends WebTestCase
         self::assertCount(1, $taxes);
 
         // Act
-        $client->request(
+        $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::REEVALUATE_TAX_URI, $faker->uuid())
         );
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
-        $response = $client->getCrawler();
+        $response = $this->client->getCrawler();
 
         $title = $response->filter('h1')->text();
 

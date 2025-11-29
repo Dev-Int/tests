@@ -31,18 +31,18 @@ final class CreateACompanyTest extends BasePantherTestCase
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        // Act
+        // Act && Assert
         $client->request('GET', '/');
         self::assertSelectorTextContains('h1', $translator->trans('home.welcome'));
 
         $client->clickLink($translator->trans('admin.titlePage'));
-        // Wait for Turbo to initialize
+
         $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.configuration.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.titlePage'));
 
         $client->clickLink($translator->trans('admin.company.create.titleShort'));
-        // Wait for Turbo to initialize
+
         $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.company.create.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.company.create.titlePage'));
@@ -60,14 +60,10 @@ final class CreateACompanyTest extends BasePantherTestCase
             'createCompany[contact]' => 'Laurent',
         ]);
 
-        // Wait for the redirect to complete
         $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.configuration.titlePage'));
-
-        // Assert - should be redirected to the configuration page after successful creation
         self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.titlePage'));
 
-        // Assert - the Company menu button should now be disabled (company created successfully)
         /** @var RouterInterface $router */
         $router = self::getContainer()->get('router');
         $companyCreateUrl = $router->generate(CreateCompanyController::ROUTE_NAME);
@@ -90,18 +86,18 @@ final class CreateACompanyTest extends BasePantherTestCase
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        // Act
+        // Act && Assert
         $client->request('GET', '/');
         self::assertSelectorTextContains('h1', $translator->trans('home.welcome'));
 
         $client->clickLink($translator->trans('admin.titlePage'));
-        // Wait for Turbo to initialize
+
         $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.configuration.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.titlePage'));
 
         $client->clickLink($translator->trans('admin.company.create.titleShort'));
-        // Wait for Turbo to initialize
+
         $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.company.create.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.company.create.titlePage'));
@@ -110,15 +106,11 @@ final class CreateACompanyTest extends BasePantherTestCase
 
         $client->clickLink($translator->trans('cancel'));
 
-        // Wait for the navigation to complete
         $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.configuration.titlePage'));
-
-        // Assert - should be back to the configuration page
         self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.titlePage'));
 
         // Assert - the menu button should still be active (configuration not completes yet)
-        // The button should NOT have the "disable-link" class since no company was created
         self::assertSelectorNotExists('#menu > ul > li > a.disable-link');
     }
 }

@@ -25,24 +25,21 @@ use Admin\Tests\DataBuilder\SupplierDataBuilder;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use App\Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @group functionalTest
  */
-final class ConfigurationControllerTest extends WebTestCase
+final class ConfigurationControllerTest extends BaseFunctionalTestCase
 {
     private const CONFIGURATION_URI = '/admin/configure';
 
     public function testConfigurePageWillSucceed(): void
     {
-        // Arrange
-        $client = self::createClient();
-
-        // Act
-        $crawler = $client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
+        // Arrange && Act
+        $crawler = $this->client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
 
         // Assert
         self::assertResponseIsSuccessful();
@@ -56,15 +53,12 @@ final class ConfigurationControllerTest extends WebTestCase
 
     public function testAdminPageWillRedirectToConfigurePage(): void
     {
-        // Arrange
-        $client = self::createClient();
-
-        // Act
-        $client->request(Request::METHOD_GET, '/admin/');
+        // Arrange && Act
+        $this->client->request(Request::METHOD_GET, '/admin/');
 
         // Assert
         self::assertResponseRedirects(self::CONFIGURATION_URI);
-        $crawler = $client->followRedirect();
+        $crawler = $this->client->followRedirect();
 
         $list = $crawler->filter('div.row > aside.col-md-3 > nav#menu > ul');
 
@@ -75,13 +69,11 @@ final class ConfigurationControllerTest extends WebTestCase
     public function testConfigurePageWillGoHomePage(): void
     {
         // Arrange
-        $client = self::createClient();
-
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
 
         // Assert
         self::assertResponseIsSuccessful();
@@ -93,7 +85,7 @@ final class ConfigurationControllerTest extends WebTestCase
         self::assertCount(0, $list->children('li > a.disable-link'));
 
         $home = $crawler->selectLink($translator->trans('admin.returnButton'))->link(Request::METHOD_GET);
-        $client->click($home);
+        $this->client->click($home);
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('home.welcome'));
     }
@@ -101,8 +93,6 @@ final class ConfigurationControllerTest extends WebTestCase
     public function testConfigurePageWithCompany(): void
     {
         // Arrange
-        $client = self::createClient();
-
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
 
@@ -113,7 +103,7 @@ final class ConfigurationControllerTest extends WebTestCase
         $companyRepository->save($company);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
 
         // Assert
         self::assertResponseIsSuccessful();
@@ -128,8 +118,6 @@ final class ConfigurationControllerTest extends WebTestCase
     public function testConfigurePageWithApplicationConfigured(): void
     {
         // Arrange
-        $client = self::createClient();
-
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
 
@@ -150,7 +138,7 @@ final class ConfigurationControllerTest extends WebTestCase
         $taxRepository->save($tax);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
 
         // Assert
         self::assertResponseIsSuccessful();
@@ -165,8 +153,6 @@ final class ConfigurationControllerTest extends WebTestCase
     public function testConfigurePageWithFamilyLog(): void
     {
         // Arrange
-        $client = self::createClient();
-
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
 
@@ -192,7 +178,7 @@ final class ConfigurationControllerTest extends WebTestCase
         $familyLogRepository->save($familyLog);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
 
         // Assert
         self::assertResponseIsSuccessful();
@@ -207,8 +193,6 @@ final class ConfigurationControllerTest extends WebTestCase
     public function testConfigurePageWithZoneStorage(): void
     {
         // Arrange
-        $client = self::createClient();
-
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
 
@@ -239,7 +223,7 @@ final class ConfigurationControllerTest extends WebTestCase
         $zoneStorageRepository->save($zoneStorage);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
 
         // Assert
         self::assertResponseIsSuccessful();
@@ -254,8 +238,6 @@ final class ConfigurationControllerTest extends WebTestCase
     public function testConfigurePageWithSupplier(): void
     {
         // Arrange
-        $client = self::createClient();
-
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
 
@@ -291,7 +273,7 @@ final class ConfigurationControllerTest extends WebTestCase
         $supplierRepository->save($supplier);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
 
         // Assert
         self::assertResponseIsSuccessful();

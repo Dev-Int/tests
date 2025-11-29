@@ -16,8 +16,8 @@ namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Unit\GetUnits;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineUnitRepository;
 use Admin\Entities\Exception\Unit\NoUnitRegisteredException;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
+use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -25,7 +25,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @group functionalTest
  */
-final class GetUnitsControllerTest extends WebTestCase
+final class GetUnitsControllerTest extends BaseFunctionalTestCase
 {
     private const GET_UNITS_URI = '/admin/units';
 
@@ -33,7 +33,6 @@ final class GetUnitsControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
@@ -51,7 +50,7 @@ final class GetUnitsControllerTest extends WebTestCase
         $unitRepository->save($unit2);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::GET_UNITS_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::GET_UNITS_URI);
 
         // Assert
         self::assertResponseIsSuccessful();
@@ -66,17 +65,14 @@ final class GetUnitsControllerTest extends WebTestCase
 
     public function testGetUnitsFailWithNoUnitRegisteredException(): void
     {
-        // Arrange
-        $client = self::createClient();
-
-        // Act
-        $client->request(Request::METHOD_GET, self::GET_UNITS_URI);
+        // Arrange && Act
+        $this->client->request(Request::METHOD_GET, self::GET_UNITS_URI);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/configure');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame(NoUnitRegisteredException::MESSAGE, $flash);

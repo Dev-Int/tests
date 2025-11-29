@@ -16,8 +16,8 @@ namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Unit\ChangeUnitLabe
 use Admin\Adapters\Gateway\ORM\Entity\Unit;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineUnitRepository;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
+use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -25,15 +25,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @group functionalTest
  */
-final class ChangeUnitLabelControllerTest extends WebTestCase
+final class ChangeUnitLabelControllerTest extends BaseFunctionalTestCase
 {
     private const CHANGE_LABEL_URI = '/admin/units/%s/change-label';
 
     public function testChangeLabelWillSucceed(): void
     {
         // Arrange
-        $client = self::createClient();
-
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
 
@@ -46,7 +44,7 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
         self::assertCount(1, $units);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, \sprintf(self::CHANGE_LABEL_URI, $unit->uuid()->toString()));
+        $crawler = $this->client->request(Request::METHOD_GET, \sprintf(self::CHANGE_LABEL_URI, $unit->uuid()->toString()));
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains(
@@ -59,13 +57,13 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
             'changeUnitLabel[abbreviation]' => 'kg',
             'changeUnitLabel[slug]' => 'kilogramme',
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/units');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertSame($translator->trans('admin.unit.changeLabel.success'), $flash);
@@ -81,8 +79,6 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
     public function testChangeAbbreviationWillSucceed(): void
     {
         // Arrange
-        $client = self::createClient();
-
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
 
@@ -95,7 +91,7 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
         self::assertCount(1, $units);
 
         // Act
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::CHANGE_LABEL_URI, $unit->uuid()->toString())
         );
@@ -111,13 +107,13 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
             'changeUnitLabel[abbreviation]' => 'KG',
             'changeUnitLabel[slug]' => 'kilogramme',
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/units');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertSame($translator->trans('admin.unit.changeLabel.success'), $flash);
@@ -133,8 +129,6 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
     public function testChangeLabelFailWithAlreadyExistsException(): void
     {
         // Arrange
-        $client = self::createClient();
-
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
 
@@ -153,7 +147,7 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
         self::assertCount(2, $units);
 
         // Act
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::CHANGE_LABEL_URI, $unit1->uuid()->toString())
         );
@@ -169,13 +163,13 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
             'changeUnitLabel[abbreviation]' => 'kg',
             'changeUnitLabel[slug]' => 'kilogramme',
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/units');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame('Unit already exists.', $flash);
@@ -187,8 +181,6 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
     public function testChangeLabelFailWithBadRequestException(): void
     {
         // Arrange
-        $client = self::createClient();
-
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
 
@@ -199,7 +191,7 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
         $unitRepository->save($unit);
 
         // Act
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::CHANGE_LABEL_URI, $unit->uuid()->toString())
         );
@@ -215,11 +207,11 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
             'changeUnitLabel[abbreviation]' => '',
             'changeUnitLabel[slug]' => 'kilogramme',
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
-        $response = $client->getCrawler();
+        $response = $this->client->getCrawler();
 
         $labelField = $response->filter('form')->children('div')->first();
         $abbreviationField = $labelField->siblings();
@@ -244,7 +236,6 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
@@ -254,11 +245,11 @@ final class ChangeUnitLabelControllerTest extends WebTestCase
         self::assertCount(1, $units);
 
         // Act
-        $client->request(Request::METHOD_GET, \sprintf(self::CHANGE_LABEL_URI, $faker->uuid()));
+        $this->client->request(Request::METHOD_GET, \sprintf(self::CHANGE_LABEL_URI, $faker->uuid()));
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
-        $response = $client->getCrawler();
+        $response = $this->client->getCrawler();
 
         $title = $response->filter('h1')->text();
 

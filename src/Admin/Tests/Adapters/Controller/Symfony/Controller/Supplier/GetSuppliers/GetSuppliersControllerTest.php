@@ -19,8 +19,8 @@ use Admin\Adapters\Gateway\Pagination\Pagination;
 use Admin\Entities\Exception\Supplier\NoSupplierRegisteredException;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\SupplierDataBuilder;
+use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -28,7 +28,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @group functionalTest
  */
-final class GetSuppliersControllerTest extends WebTestCase
+final class GetSuppliersControllerTest extends BaseFunctionalTestCase
 {
     private const GET_SUPPLIERS_URI = '/admin/suppliers';
 
@@ -36,7 +36,6 @@ final class GetSuppliersControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
         /** @var DoctrineSupplierRepository $supplierRepository */
         $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
@@ -63,7 +62,7 @@ final class GetSuppliersControllerTest extends WebTestCase
         }
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::GET_SUPPLIERS_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::GET_SUPPLIERS_URI);
 
         // Assert
         self::assertResponseIsSuccessful();
@@ -77,17 +76,14 @@ final class GetSuppliersControllerTest extends WebTestCase
 
     public function testGetSuppliersFailWithNoSupplierRegisteredException(): void
     {
-        // Arrange
-        $client = self::createClient();
-
-        // Act
-        $client->request(Request::METHOD_GET, self::GET_SUPPLIERS_URI);
+        // Arrange && Act
+        $this->client->request(Request::METHOD_GET, self::GET_SUPPLIERS_URI);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/configure');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame(NoSupplierRegisteredException::MESSAGE, $flash);

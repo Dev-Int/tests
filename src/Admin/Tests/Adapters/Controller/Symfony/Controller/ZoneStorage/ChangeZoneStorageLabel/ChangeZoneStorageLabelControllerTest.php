@@ -18,8 +18,8 @@ use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineZoneStorageRepository;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
+use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -27,7 +27,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @group functionalTest
  */
-final class ChangeZoneStorageLabelControllerTest extends WebTestCase
+final class ChangeZoneStorageLabelControllerTest extends BaseFunctionalTestCase
 {
     private const CHANGE_LABEL_URI = '/admin/zone_storages/%s/change-label';
 
@@ -35,7 +35,6 @@ final class ChangeZoneStorageLabelControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
         /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
         $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
@@ -58,7 +57,7 @@ final class ChangeZoneStorageLabelControllerTest extends WebTestCase
         self::assertCount(1, $zoneStorages);
 
         // Act
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::CHANGE_LABEL_URI, $zoneStorage->uuid()->toString())
         );
@@ -76,13 +75,13 @@ final class ChangeZoneStorageLabelControllerTest extends WebTestCase
             'changeZoneStorageLabel[label]' => 'Réserve positive',
             'changeZoneStorageLabel[slug]' => 'reserve-negative',
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/zone_storages');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertSame($translator->trans('admin.zoneStorage.changeLabel.success'), $flash);
@@ -99,7 +98,6 @@ final class ChangeZoneStorageLabelControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
         /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
         $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
@@ -118,14 +116,14 @@ final class ChangeZoneStorageLabelControllerTest extends WebTestCase
         self::assertCount(1, $zoneStorages);
 
         // Act
-        $client->request(
+        $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::CHANGE_LABEL_URI, $faker->uuid())
         );
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
-        $response = $client->getCrawler();
+        $response = $this->client->getCrawler();
 
         $title = $response->filter('h1')->text();
 

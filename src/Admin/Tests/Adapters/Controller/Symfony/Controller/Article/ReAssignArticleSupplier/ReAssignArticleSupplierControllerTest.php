@@ -27,8 +27,8 @@ use Admin\Tests\DataBuilder\SupplierDataBuilder;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
+use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -36,7 +36,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @group functionalTest
  */
-final class ReAssignArticleSupplierControllerTest extends WebTestCase
+final class ReAssignArticleSupplierControllerTest extends BaseFunctionalTestCase
 {
     private const REASSIGN_ARTICLE_SUPPLIER_URI = '/admin/articles/%s/reassign-supplier';
 
@@ -44,7 +44,6 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
@@ -114,7 +113,7 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
         $articleRepository->save($article);
 
         // Act
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::REASSIGN_ARTICLE_SUPPLIER_URI, $article->uuid()->toString())
         );
@@ -134,13 +133,13 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
             'reAssignArticleSupplier[zoneStorages]' => [$storageSurgele->uuid()->toString()],
             'reAssignArticleSupplier[uuid]' => $article->uuid()->toString(),
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/articles');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertEquals($translator->trans('admin.article.reassignSupplier.success'), $flash);
@@ -159,7 +158,6 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
@@ -223,7 +221,7 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
         $articleRepository->save($article);
 
         // Act
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::REASSIGN_ARTICLE_SUPPLIER_URI, $article->uuid()->toString())
         );
@@ -246,11 +244,11 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
             ],
             'reAssignArticleSupplier[uuid]' => $article->uuid()->toString(),
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
-        $crawler = $client->getCrawler();
+        $crawler = $this->client->getCrawler();
 
         $supplierField = $crawler->filter('form')->children('div')->first();
 
@@ -274,7 +272,6 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
@@ -338,7 +335,7 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
         $articleRepository->save($article);
 
         // Act
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::REASSIGN_ARTICLE_SUPPLIER_URI, $article->uuid()->toString())
         );
@@ -360,11 +357,11 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
             ],
             'reAssignArticleSupplier[uuid]' => $article->uuid()->toString(),
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
-        $crawler = $client->getCrawler();
+        $crawler = $this->client->getCrawler();
 
         $supplierField = $crawler->filter('form')->children('div')->first();
 
@@ -393,7 +390,6 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
@@ -460,14 +456,14 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
         $articleRepository->save($article);
 
         // Act
-        $client->request(
+        $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::REASSIGN_ARTICLE_SUPPLIER_URI, $faker->uuid())
         );
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
-        $response = $client->getCrawler();
+        $response = $this->client->getCrawler();
 
         $title = $response->filter('h1')->text();
 

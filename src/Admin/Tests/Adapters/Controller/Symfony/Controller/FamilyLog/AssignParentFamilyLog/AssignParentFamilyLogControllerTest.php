@@ -16,8 +16,8 @@ namespace Admin\Tests\Adapters\Controller\Symfony\Controller\FamilyLog\AssignPar
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
+use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -25,7 +25,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @group functionalTest
  */
-final class AssignParentFamilyLogControllerTest extends WebTestCase
+final class AssignParentFamilyLogControllerTest extends BaseFunctionalTestCase
 {
     private const ASSIGN_PARENT_FAMILY_LOG_URI = '/admin/family_logs/%s/assign-parent';
 
@@ -33,7 +33,6 @@ final class AssignParentFamilyLogControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
@@ -51,7 +50,7 @@ final class AssignParentFamilyLogControllerTest extends WebTestCase
         $familyLogRepository->save($parent);
 
         // Act
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::ASSIGN_PARENT_FAMILY_LOG_URI, $familyLog->uuid()->toString())
         );
@@ -66,13 +65,13 @@ final class AssignParentFamilyLogControllerTest extends WebTestCase
             'assignParentFamilyLog[parent]' => $parent->uuid()->toString(),
             'assignParentFamilyLog[uuid]' => $familyLog->uuid()->toString(),
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/family_logs');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertSame($translator->trans('admin.familyLog.assignParent.success'), $flash);
@@ -88,7 +87,6 @@ final class AssignParentFamilyLogControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
@@ -113,7 +111,7 @@ final class AssignParentFamilyLogControllerTest extends WebTestCase
         $familyLogRepository->save($child);
 
         // Act
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::ASSIGN_PARENT_FAMILY_LOG_URI, $familyLog->uuid()->toString())
         );
@@ -128,13 +126,13 @@ final class AssignParentFamilyLogControllerTest extends WebTestCase
             'assignParentFamilyLog[parent]' => $parent->uuid()->toString(),
             'assignParentFamilyLog[uuid]' => $familyLog->uuid()->toString(),
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/family_logs');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertSame($translator->trans('admin.familyLog.assignParent.success'), $flash);
@@ -155,7 +153,6 @@ final class AssignParentFamilyLogControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
@@ -179,7 +176,7 @@ final class AssignParentFamilyLogControllerTest extends WebTestCase
         $familyLogRepository->save($otherFamilyLog);
 
         // Act
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::ASSIGN_PARENT_FAMILY_LOG_URI, $familyLog->uuid()->toString())
         );
@@ -194,13 +191,13 @@ final class AssignParentFamilyLogControllerTest extends WebTestCase
             'assignParentFamilyLog[parent]' => $parent->uuid()->toString(),
             'assignParentFamilyLog[uuid]' => $familyLog->uuid()->toString(),
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/family_logs');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame('FamilyLog already exists.', $flash);
@@ -216,7 +213,6 @@ final class AssignParentFamilyLogControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
@@ -231,14 +227,14 @@ final class AssignParentFamilyLogControllerTest extends WebTestCase
         $familyLogRepository->save($parent);
 
         // Act
-        $client->request(
+        $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::ASSIGN_PARENT_FAMILY_LOG_URI, $faker->uuid())
         );
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
-        $response = $client->getCrawler();
+        $response = $this->client->getCrawler();
 
         $title = $response->filter('h1')->text();
 

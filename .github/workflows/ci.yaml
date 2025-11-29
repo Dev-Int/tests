@@ -94,7 +94,7 @@ jobs:
                   cp phpunit.xml.dist phpunit.xml
                   php bin/console importmap:install
                   make clean-db-test
-                  php bin/phpunit --coverage-clover=clover.xml
+                  php bin/phpunit --testsuite "Unit Test Suite" --testsuite "Functional Test Suite" --coverage-clover=clover.xml
               env:
                   XDEBUG_MODE: coverage
 

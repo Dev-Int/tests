@@ -29,8 +29,8 @@ use Admin\Tests\DataBuilder\SupplierDataBuilder;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
+use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -40,7 +40,7 @@ use function PHPUnit\Framework\assertInstanceOf;
 /**
  * @group functionalTest
  */
-final class CreateSupplierControllerTest extends WebTestCase
+final class CreateSupplierControllerTest extends BaseFunctionalTestCase
 {
     private const CREATE_SUPPLIER_URI = '/admin/suppliers/create';
 
@@ -48,7 +48,6 @@ final class CreateSupplierControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
@@ -92,7 +91,7 @@ final class CreateSupplierControllerTest extends WebTestCase
         $zoneStorageRepository->save($zoneStorage);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::CREATE_SUPPLIER_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_SUPPLIER_URI);
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.supplier.create.titlePage'));
@@ -116,13 +115,13 @@ final class CreateSupplierControllerTest extends WebTestCase
             'createSupplier[orderDays][4]' => false,
             'createSupplier[orderDays][5]' => true,
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/suppliers');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertEquals($translator->trans('admin.supplier.create.success'), $flash);
@@ -149,7 +148,6 @@ final class CreateSupplierControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
@@ -196,7 +194,7 @@ final class CreateSupplierControllerTest extends WebTestCase
         $supplierRepository->save($supplier);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::CREATE_SUPPLIER_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_SUPPLIER_URI);
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.supplier.create.titlePage'));
@@ -220,13 +218,13 @@ final class CreateSupplierControllerTest extends WebTestCase
             'createSupplier[orderDays][4]' => true,
             'createSupplier[orderDays][5]' => false,
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/suppliers');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertEquals(SupplierAlreadyExists::MESSAGE, $flash);
@@ -236,7 +234,6 @@ final class CreateSupplierControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
@@ -266,13 +263,13 @@ final class CreateSupplierControllerTest extends WebTestCase
         $familyLogRepository->save($familyLog);
 
         // Act
-        $client->request(Request::METHOD_GET, self::CREATE_SUPPLIER_URI);
+        $this->client->request(Request::METHOD_GET, self::CREATE_SUPPLIER_URI);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/configure');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertEquals(NoZoneStorageRegisteredException::MESSAGE, $flash);

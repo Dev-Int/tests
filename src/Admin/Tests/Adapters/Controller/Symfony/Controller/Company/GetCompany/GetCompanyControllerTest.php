@@ -16,7 +16,7 @@ namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Company\GetCompany;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineCompanyRepository;
 use Admin\Entities\Exception\Company\NoCompanyRegisteredException;
 use Admin\Tests\DataBuilder\CompanyDataBuilder;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use App\Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -24,15 +24,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @group functionalTest
  */
-final class GetCompanyControllerTest extends WebTestCase
+final class GetCompanyControllerTest extends BaseFunctionalTestCase
 {
     private const GET_COMPANY_URI = '/admin/company';
 
     public function testGetCompanyWillSucceed(): void
     {
         // Arrange
-        $client = self::createClient();
-
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
 
@@ -43,7 +41,7 @@ final class GetCompanyControllerTest extends WebTestCase
         $companyRepository->save($company);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::GET_COMPANY_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::GET_COMPANY_URI);
 
         // Assert
         self::assertResponseIsSuccessful();
@@ -59,17 +57,14 @@ final class GetCompanyControllerTest extends WebTestCase
 
     public function testGetCompanyFailWithNoCompanyRegisteredException(): void
     {
-        // Arrange
-        $client = self::createClient();
-
-        // Act
-        $client->request(Request::METHOD_GET, self::GET_COMPANY_URI);
+        // Arrange && Act
+        $this->client->request(Request::METHOD_GET, self::GET_COMPANY_URI);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/configure');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame(NoCompanyRegisteredException::MESSAGE, $flash);

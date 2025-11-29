@@ -22,7 +22,7 @@ use Admin\Entities\Exception\Unit\NoUnitRegisteredException;
 use Admin\Tests\DataBuilder\CompanyDataBuilder;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use App\Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -30,15 +30,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @group functionalTest
  */
-final class CreateTaxControllerTest extends WebTestCase
+final class CreateTaxControllerTest extends BaseFunctionalTestCase
 {
     private const CREATE_TAX_URI = '/admin/taxes/create';
 
     public function testCreateTaxWillSucceed(): void
     {
         // Arrange
-        $client = self::createClient();
-
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
 
@@ -57,7 +55,7 @@ final class CreateTaxControllerTest extends WebTestCase
         $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::CREATE_TAX_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_TAX_URI);
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.tax.create.titlePage'));
@@ -66,13 +64,13 @@ final class CreateTaxControllerTest extends WebTestCase
             'createTax[name]' => 'TVA taux normal',
             'createTax[rate]' => 20.0,
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/taxes');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertSame($translator->trans('admin.tax.create.success'), $flash);
@@ -86,8 +84,6 @@ final class CreateTaxControllerTest extends WebTestCase
     public function testCreateTaxFailWithAlreadyExistsException(): void
     {
         // Arrange
-        $client = self::createClient();
-
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
 
@@ -108,7 +104,7 @@ final class CreateTaxControllerTest extends WebTestCase
         $taxRepository->save($tax);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::CREATE_TAX_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_TAX_URI);
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.tax.create.titlePage'));
@@ -117,13 +113,13 @@ final class CreateTaxControllerTest extends WebTestCase
             'createTax[name]' => 'TVA taux normal',
             'createTax[rate]' => 20.0,
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/taxes');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame(TaxAlreadyExistsException::MESSAGE, $flash);
@@ -137,8 +133,6 @@ final class CreateTaxControllerTest extends WebTestCase
     public function testCreateTaxFailWithBadRequestException(): void
     {
         // Arrange
-        $client = self::createClient();
-
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
 
@@ -154,7 +148,7 @@ final class CreateTaxControllerTest extends WebTestCase
         $unitRepository->save($unit);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::CREATE_TAX_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_TAX_URI);
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.tax.create.titlePage'));
@@ -163,11 +157,11 @@ final class CreateTaxControllerTest extends WebTestCase
             'createTax[name]' => '',
             'createTax[rate]' => 0.0,
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
-        $response = $client->getCrawler();
+        $response = $this->client->getCrawler();
 
         $nameField = $response->filter('form')->children('div')->first();
 
@@ -178,8 +172,6 @@ final class CreateTaxControllerTest extends WebTestCase
     public function testCreateTaxFailWithRateTooLargeException(): void
     {
         // Arrange
-        $client = self::createClient();
-
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
 
@@ -195,7 +187,7 @@ final class CreateTaxControllerTest extends WebTestCase
         $unitRepository->save($unit);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::CREATE_TAX_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_TAX_URI);
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.tax.create.titlePage'));
@@ -204,11 +196,11 @@ final class CreateTaxControllerTest extends WebTestCase
             'createTax[name]' => 'TVA taux normal',
             'createTax[rate]' => 120.0,
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
-        $response = $client->getCrawler();
+        $response = $this->client->getCrawler();
 
         $nameField = $response->filter('form')->children('div')->first();
         $rateField = $nameField->siblings();
@@ -223,21 +215,19 @@ final class CreateTaxControllerTest extends WebTestCase
     public function testCreateUnitFailWithNoCompanyRegisteredException(): void
     {
         // Arrange
-        $client = self::createClient();
-
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
         $company = (new CompanyDataBuilder())->create('Test company')->build();
         $companyRepository->save($company);
 
         // Act
-        $client->request(Request::METHOD_POST, self::CREATE_TAX_URI);
+        $this->client->request(Request::METHOD_POST, self::CREATE_TAX_URI);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/configure');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame(NoUnitRegisteredException::MESSAGE, $flash);

@@ -16,8 +16,8 @@ namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Tax\GetTaxes;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineTaxRepository;
 use Admin\Entities\Exception\Tax\NoTaxRegisteredException;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
+use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -25,7 +25,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @group functionalTest
  */
-final class GetTaxesControllerTest extends WebTestCase
+final class GetTaxesControllerTest extends BaseFunctionalTestCase
 {
     private const GET_TAXES_URI = '/admin/taxes';
 
@@ -33,7 +33,6 @@ final class GetTaxesControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
         /** @var DoctrineTaxRepository $taxRepository */
         $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
@@ -51,7 +50,7 @@ final class GetTaxesControllerTest extends WebTestCase
         $taxRepository->save($tax2);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::GET_TAXES_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::GET_TAXES_URI);
 
         // Assert
         self::assertResponseIsSuccessful();
@@ -65,17 +64,14 @@ final class GetTaxesControllerTest extends WebTestCase
 
     public function testGetTaxesFailWithNoTaxRegisteredException(): void
     {
-        // Arrange
-        $client = self::createClient();
-
-        // Act
-        $client->request(Request::METHOD_GET, self::GET_TAXES_URI);
+        // Arrange && Act
+        $this->client->request(Request::METHOD_GET, self::GET_TAXES_URI);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/configure');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame(NoTaxRegisteredException::MESSAGE, $flash);

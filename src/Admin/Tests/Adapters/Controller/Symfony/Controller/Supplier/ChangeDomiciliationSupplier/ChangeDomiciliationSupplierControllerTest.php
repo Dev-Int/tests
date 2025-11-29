@@ -18,8 +18,8 @@ use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineSupplierRepository;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\SupplierDataBuilder;
+use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -27,15 +27,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @group functionalTest
  */
-final class ChangeDomiciliationSupplierControllerTest extends WebTestCase
+final class ChangeDomiciliationSupplierControllerTest extends BaseFunctionalTestCase
 {
     public const CHANGE_DOMICILIATION_SUPPLIER_URI = '/admin/suppliers/%s/change-domiciliation';
 
     public function testChangeDomiciliationWillSucceed(): void
     {
         // Arrange
-        $client = self::createClient();
-
         /** @var DoctrineSupplierRepository $supplierRepository */
         $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
 
@@ -53,7 +51,7 @@ final class ChangeDomiciliationSupplierControllerTest extends WebTestCase
         self::assertCount(1, $suppliers);
 
         // Act
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::CHANGE_DOMICILIATION_SUPPLIER_URI, $supplier->uuid()->toString())
         );
@@ -76,13 +74,13 @@ final class ChangeDomiciliationSupplierControllerTest extends WebTestCase
             'changeDomiciliationSupplier[email]' => 'test@test.fr',
             'changeDomiciliationSupplier[slug]' => 'supplier-1',
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/suppliers');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertEquals($translator->trans('admin.supplier.changeDomiciliation.success'), $flash);
@@ -99,7 +97,6 @@ final class ChangeDomiciliationSupplierControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
         /** @var DoctrineSupplierRepository $supplierRepository */
         $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
@@ -115,14 +112,14 @@ final class ChangeDomiciliationSupplierControllerTest extends WebTestCase
         self::assertCount(1, $suppliers);
 
         // Act
-        $client->request(
+        $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::CHANGE_DOMICILIATION_SUPPLIER_URI, $faker->uuid())
         );
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
-        $response = $client->getCrawler();
+        $response = $this->client->getCrawler();
 
         $title = $response->filter('h1')->text();
 

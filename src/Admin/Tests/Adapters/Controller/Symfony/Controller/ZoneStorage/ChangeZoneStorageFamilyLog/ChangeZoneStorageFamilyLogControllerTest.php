@@ -18,8 +18,8 @@ use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineZoneStorageRepository;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
+use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -27,7 +27,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @group functionalTest
  */
-final class ChangeZoneStorageFamilyLogControllerTest extends WebTestCase
+final class ChangeZoneStorageFamilyLogControllerTest extends BaseFunctionalTestCase
 {
     private const CHANGE_FAMILY_LOG_URI = '/admin/zone_storages/%s/change-family_log';
 
@@ -35,7 +35,6 @@ final class ChangeZoneStorageFamilyLogControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
         /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
         $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
@@ -62,7 +61,7 @@ final class ChangeZoneStorageFamilyLogControllerTest extends WebTestCase
         $familyLogOrm = $familyLogRepository->find($familyLog2->uuid()->toString());
 
         // Act
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::CHANGE_FAMILY_LOG_URI, $zoneStorage->uuid()->toString())
         );
@@ -70,14 +69,17 @@ final class ChangeZoneStorageFamilyLogControllerTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains(
             'h1',
-            $translator->trans('admin.zoneStorage.changeFamilyLog.titlePage', ['%zoneLabel%' => $zoneStorage->label()->toString()])
+            $translator->trans(
+                'admin.zoneStorage.changeFamilyLog.titlePage',
+                ['%zoneLabel%' => $zoneStorage->label()->toString()]
+            )
         );
 
         $form = $crawler->selectButton($translator->trans('admin.zoneStorage.changeFamilyLog.button'))->form([
             'changeZoneStorageFamilyLog[familyLog]' => $familyLogOrm?->uuid(),
             'changeZoneStorageFamilyLog[slug]' => $zoneStorage->slug(),
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
@@ -86,7 +88,7 @@ final class ChangeZoneStorageFamilyLogControllerTest extends WebTestCase
         $zoneStorages = $zoneStorageRepository->findAllZones();
         self::assertCount(1, $zoneStorages);
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertSame($translator->trans('admin.zoneStorage.changeFamilyLog.success'), $flash);
@@ -101,7 +103,6 @@ final class ChangeZoneStorageFamilyLogControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
         /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
         $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
@@ -122,14 +123,14 @@ final class ChangeZoneStorageFamilyLogControllerTest extends WebTestCase
         self::assertCount(1, $zoneStorages);
 
         // Act
-        $client->request(
+        $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::CHANGE_FAMILY_LOG_URI, $faker->uuid())
         );
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
-        $response = $client->getCrawler();
+        $response = $this->client->getCrawler();
 
         $title = $response->filter('h1')->text();
 

@@ -25,8 +25,8 @@ use Admin\Tests\DataBuilder\CompanyDataBuilder;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
+use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -34,15 +34,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @group functionalTest
  */
-final class CreateFamilyLogControllerTest extends WebTestCase
+final class CreateFamilyLogControllerTest extends BaseFunctionalTestCase
 {
     private const CREATE_FAMILY_LOG_URI = '/admin/family_logs/create';
 
     public function testCreateFamilyLogWithoutParentWillSucceed(): void
     {
         // Arrange
-        $client = self::createClient();
-
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
@@ -68,7 +66,7 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         $taxRepository->save($tax);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::CREATE_FAMILY_LOG_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_FAMILY_LOG_URI);
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.familyLog.create.titlePage'));
@@ -76,13 +74,13 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         $form = $crawler->selectButton('Create')->form([
             'createFamilyLog[label]' => 'Surgelé',
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/family_logs');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertSame($translator->trans('admin.familyLog.create.success'), $flash);
@@ -96,7 +94,6 @@ final class CreateFamilyLogControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -130,7 +127,7 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         $familyLogParentOrm = $familyLogRepository->findByUuid($familyLogParent->uuid());
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::CREATE_FAMILY_LOG_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_FAMILY_LOG_URI);
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.familyLog.create.titlePage'));
@@ -139,13 +136,13 @@ final class CreateFamilyLogControllerTest extends WebTestCase
             'createFamilyLog[label]' => 'Viande',
             'createFamilyLog[parent]' => $familyLogParentOrm->uuid()->toString(),
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/family_logs');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertSame($translator->trans('admin.familyLog.create.success'), $flash);
@@ -161,7 +158,6 @@ final class CreateFamilyLogControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -201,7 +197,7 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         $familyLogParentOrm = $familyLogRepository->findBySlug('surgele_viande');
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::CREATE_FAMILY_LOG_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_FAMILY_LOG_URI);
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.familyLog.create.titlePage'));
@@ -210,13 +206,13 @@ final class CreateFamilyLogControllerTest extends WebTestCase
             'createFamilyLog[label]' => 'Poulet',
             'createFamilyLog[parent]' => $familyLogParentOrm->uuid()->toString(),
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/family_logs');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertSame($translator->trans('admin.familyLog.create.success'), $flash);
@@ -231,8 +227,6 @@ final class CreateFamilyLogControllerTest extends WebTestCase
     public function testCreateFamilyLogFailWithAlreadyExistsException(): void
     {
         // Arrange
-        $client = self::createClient();
-
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
@@ -267,7 +261,7 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         self::assertNull($familyCreated->parent());
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::CREATE_FAMILY_LOG_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_FAMILY_LOG_URI);
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.familyLog.create.titlePage'));
@@ -275,13 +269,13 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         $form = $crawler->selectButton('Create')->form([
             'createFamilyLog[label]' => 'Surgelé',
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/family_logs');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame(FamilyLogAlreadyExistsException::MESSAGE, $flash);
@@ -290,8 +284,6 @@ final class CreateFamilyLogControllerTest extends WebTestCase
     public function testCreateUnitFailWithNoCompanyRegisteredException(): void
     {
         // Arrange
-        $client = self::createClient();
-
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
 
@@ -305,13 +297,13 @@ final class CreateFamilyLogControllerTest extends WebTestCase
         $unitRepository->save($unit);
 
         // Act
-        $client->request(Request::METHOD_POST, self::CREATE_FAMILY_LOG_URI);
+        $this->client->request(Request::METHOD_POST, self::CREATE_FAMILY_LOG_URI);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/configure');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame(NoTaxRegisteredException::MESSAGE, $flash);

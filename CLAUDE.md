@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Internal communication
+
+Use French and unformal language to communicate with the team.
+
 ## Project Overview
 
 This is a Symfony 7.1 application developed as a learning project focused on DDD (Domain-Driven Design), testing practices (ATDD, TDD, BDD), and clean architecture. The project domain involves restaurant/inventory management with use cases around configuration, inventory, and order management.

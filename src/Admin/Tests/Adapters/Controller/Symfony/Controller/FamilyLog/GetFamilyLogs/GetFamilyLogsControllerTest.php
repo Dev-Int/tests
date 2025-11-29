@@ -16,7 +16,7 @@ namespace Admin\Tests\Adapters\Controller\Symfony\Controller\FamilyLog\GetFamily
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
 use Admin\Entities\Exception\FamilyLog\NoFamilyLogRegisteredException;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use App\Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -24,15 +24,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @group functionalTest
  */
-final class GetFamilyLogsControllerTest extends WebTestCase
+final class GetFamilyLogsControllerTest extends BaseFunctionalTestCase
 {
     private const GET_FAMILY_LOGS_URI = '/admin/family_logs';
 
     public function testGetFamilyLogsWillSucceed(): void
     {
         // Arrange
-        $client = self::createClient();
-
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
 
@@ -56,7 +54,7 @@ final class GetFamilyLogsControllerTest extends WebTestCase
         $familyLogRepository->save($familyLog3);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::GET_FAMILY_LOGS_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::GET_FAMILY_LOGS_URI);
 
         // Assert
         self::assertResponseIsSuccessful();
@@ -70,17 +68,14 @@ final class GetFamilyLogsControllerTest extends WebTestCase
 
     public function testGetFamilyLogsFailWithNoFamilyLogRegisteredException(): void
     {
-        // Arrange
-        $client = self::createClient();
-
-        // Act
-        $client->request(Request::METHOD_GET, self::GET_FAMILY_LOGS_URI);
+        // Arrange && Act
+        $this->client->request(Request::METHOD_GET, self::GET_FAMILY_LOGS_URI);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/configure');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame(NoFamilyLogRegisteredException::MESSAGE, $flash);

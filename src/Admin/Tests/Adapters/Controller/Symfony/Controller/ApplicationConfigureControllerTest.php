@@ -27,22 +27,20 @@ use Admin\Tests\DataBuilder\SupplierDataBuilder;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use App\Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @group functionalTest
  */
-final class ApplicationConfigureControllerTest extends WebTestCase
+final class ApplicationConfigureControllerTest extends BaseFunctionalTestCase
 {
     private const APPLICATION_CONFIGURE_URI = '/admin/configure/application';
 
     public function testApplicationConfigurePageWillSucceed(): void
     {
         // Arrange
-        $client = self::createClient();
-
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
 
@@ -53,7 +51,7 @@ final class ApplicationConfigureControllerTest extends WebTestCase
         $companyRepository->save($company);
 
         // Act
-        $client->request(Request::METHOD_GET, self::APPLICATION_CONFIGURE_URI);
+        $this->client->request(Request::METHOD_GET, self::APPLICATION_CONFIGURE_URI);
 
         // Assert
         self::assertResponseIsSuccessful();
@@ -63,8 +61,6 @@ final class ApplicationConfigureControllerTest extends WebTestCase
     public function testApplicationConfigured(): void
     {
         // Arrange
-        $client = self::createClient();
-
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
 
@@ -118,7 +114,7 @@ final class ApplicationConfigureControllerTest extends WebTestCase
         $articleRepository->save($article);
 
         // Act
-        $client->request(Request::METHOD_GET, self::APPLICATION_CONFIGURE_URI);
+        $this->client->request(Request::METHOD_GET, self::APPLICATION_CONFIGURE_URI);
 
         // Assert
         self::assertResponseIsSuccessful();
@@ -127,11 +123,8 @@ final class ApplicationConfigureControllerTest extends WebTestCase
 
     public function testApplicationConfigurePageRedirectConfigurePage(): void
     {
-        // Arrange
-        $client = self::createClient();
-
-        // Act
-        $client->request(Request::METHOD_GET, self::APPLICATION_CONFIGURE_URI);
+        // Arrange && Act
+        $this->client->request(Request::METHOD_GET, self::APPLICATION_CONFIGURE_URI);
 
         // Assert
         self::assertResponseRedirects('/admin/configure');

@@ -4,7 +4,12 @@
       "Bash(docker compose exec:*)",
       "Bash(cat:*)",
       "Bash(make e2e:*)",
-      "Bash(docker compose:*)"
+      "Bash(docker compose:*)",
+      "Bash(git restore:*)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_fill_form",
+      "mcp__playwright__browser_take_screenshot"
     ],
     "deny": [],
     "ask": []

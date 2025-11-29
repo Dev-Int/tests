@@ -19,7 +19,7 @@ use Admin\Adapters\Gateway\ORM\Repository\DoctrineUnitRepository;
 use Admin\Entities\Exception\Company\NoCompanyRegisteredException;
 use Admin\Tests\DataBuilder\CompanyDataBuilder;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use App\Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -27,15 +27,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @group functionalTest
  */
-final class CreateUnitControllerTest extends WebTestCase
+final class CreateUnitControllerTest extends BaseFunctionalTestCase
 {
     private const CREATE_UNIT_URI = '/admin/units/create';
 
     public function testCreateUnitWillSucceed(): void
     {
         // Arrange
-        $client = self::createClient();
-
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
 
@@ -49,7 +47,7 @@ final class CreateUnitControllerTest extends WebTestCase
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
 
         // Act
-        $crawler = $client->request(Request::METHOD_POST, self::CREATE_UNIT_URI);
+        $crawler = $this->client->request(Request::METHOD_POST, self::CREATE_UNIT_URI);
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.unit.create.titlePage'));
@@ -58,13 +56,13 @@ final class CreateUnitControllerTest extends WebTestCase
             'createUnit[label]' => 'Kilogramme',
             'createUnit[abbreviation]' => 'kg',
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/units');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertSame($translator->trans('admin.unit.create.success'), $flash);
@@ -79,8 +77,6 @@ final class CreateUnitControllerTest extends WebTestCase
     public function testCreateUnitFailWithAlreadyExistsException(): void
     {
         // Arrange
-        $client = self::createClient();
-
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
 
@@ -96,7 +92,7 @@ final class CreateUnitControllerTest extends WebTestCase
         $unitRepository->save($unit);
 
         // Act
-        $crawler = $client->request(Request::METHOD_POST, self::CREATE_UNIT_URI);
+        $crawler = $this->client->request(Request::METHOD_POST, self::CREATE_UNIT_URI);
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.unit.create.titlePage'));
@@ -105,13 +101,13 @@ final class CreateUnitControllerTest extends WebTestCase
             'createUnit[label]' => 'Kilogramme',
             'createUnit[abbreviation]' => 'kg',
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/units');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame('Unit already exists.', $flash);
@@ -125,8 +121,6 @@ final class CreateUnitControllerTest extends WebTestCase
     public function testCreateUnitFailWithBadRequestException(): void
     {
         // Arrange
-        $client = self::createClient();
-
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
 
@@ -142,7 +136,7 @@ final class CreateUnitControllerTest extends WebTestCase
         $unitRepository->save($unit);
 
         // Act
-        $crawler = $client->request(Request::METHOD_POST, self::CREATE_UNIT_URI);
+        $crawler = $this->client->request(Request::METHOD_POST, self::CREATE_UNIT_URI);
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.unit.create.titlePage'));
@@ -151,11 +145,11 @@ final class CreateUnitControllerTest extends WebTestCase
             'createUnit[label]' => '',
             'createUnit[abbreviation]' => '',
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
-        $response = $client->getCrawler();
+        $response = $this->client->getCrawler();
 
         $labelField = $response->filter('form')->children('div')->first();
         $abbreviationField = $labelField->siblings();
@@ -175,21 +169,19 @@ final class CreateUnitControllerTest extends WebTestCase
     public function testCreateUnitFailWithNoCompanyRegisteredException(): void
     {
         // Arrange
-        $client = self::createClient();
-
         /** @var DoctrineUnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
         $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
         $unitRepository->save($unit);
 
         // Act
-        $client->request(Request::METHOD_POST, self::CREATE_UNIT_URI);
+        $this->client->request(Request::METHOD_POST, self::CREATE_UNIT_URI);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/configure');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame(NoCompanyRegisteredException::MESSAGE, $flash);

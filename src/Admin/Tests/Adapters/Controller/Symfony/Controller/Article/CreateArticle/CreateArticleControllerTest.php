@@ -33,8 +33,8 @@ use Admin\Tests\DataBuilder\SupplierDataBuilder;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
+use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -44,7 +44,7 @@ use function PHPUnit\Framework\assertInstanceOf;
 /**
  * @group functionalTest
  */
-final class CreateArticleControllerTest extends WebTestCase
+final class CreateArticleControllerTest extends BaseFunctionalTestCase
 {
     private const CREATE_ARTICLE_URI = '/admin/articles/create';
 
@@ -52,7 +52,6 @@ final class CreateArticleControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
@@ -121,7 +120,7 @@ final class CreateArticleControllerTest extends WebTestCase
         $supplierRepository->save($supplier);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::CREATE_ARTICLE_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_ARTICLE_URI);
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.article.create.titlePage'));
@@ -142,13 +141,13 @@ final class CreateArticleControllerTest extends WebTestCase
             'createArticle[familyLog]' => $familyLog2->uuid()->toString(),
             'createArticle[quantity]' => 12.500,
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/articles');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertEquals($translator->trans('admin.article.create.success'), $flash);
@@ -189,7 +188,6 @@ final class CreateArticleControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
@@ -259,7 +257,7 @@ final class CreateArticleControllerTest extends WebTestCase
         $articleRepository->save($article);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::CREATE_ARTICLE_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_ARTICLE_URI);
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.article.create.titlePage'));
@@ -280,13 +278,13 @@ final class CreateArticleControllerTest extends WebTestCase
             'createArticle[familyLog]' => $familyLog->uuid()->toString(),
             'createArticle[quantity]' => 12.500,
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/articles');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertEquals(ArticleAlreadyExistsException::MESSAGE, $flash);
@@ -296,7 +294,6 @@ final class CreateArticleControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
@@ -344,13 +341,13 @@ final class CreateArticleControllerTest extends WebTestCase
         $zoneStorageRepository->save($zoneStorage);
 
         // Act
-        $client->request(Request::METHOD_GET, self::CREATE_ARTICLE_URI);
+        $this->client->request(Request::METHOD_GET, self::CREATE_ARTICLE_URI);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/configure');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertEquals(NoSupplierRegisteredException::MESSAGE, $flash);
@@ -360,7 +357,6 @@ final class CreateArticleControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
@@ -425,7 +421,7 @@ final class CreateArticleControllerTest extends WebTestCase
         $supplierRepository->save($supplier);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::CREATE_ARTICLE_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_ARTICLE_URI);
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.article.create.titlePage'));
@@ -446,11 +442,11 @@ final class CreateArticleControllerTest extends WebTestCase
             'createArticle[familyLog]' => $familyLog2->uuid()->toString(),
             'createArticle[quantity]' => 12.500,
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
-        $response = $client->getCrawler();
+        $response = $this->client->getCrawler();
 
         $zoneStorageField = $response->filter('form')->children('div')->eq(4)->children('div');
         $familyLogField = $zoneStorageField->siblings();
@@ -469,7 +465,6 @@ final class CreateArticleControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
@@ -534,7 +529,7 @@ final class CreateArticleControllerTest extends WebTestCase
         $supplierRepository->save($supplier);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::CREATE_ARTICLE_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_ARTICLE_URI);
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.article.create.titlePage'));
@@ -555,11 +550,11 @@ final class CreateArticleControllerTest extends WebTestCase
             'createArticle[familyLog]' => $familyLog1->uuid()->toString(),
             'createArticle[quantity]' => 12.500,
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
-        $response = $client->getCrawler();
+        $response = $this->client->getCrawler();
 
         $zoneStorageField = $response->filter('form')->children('div')->eq(4)->children('div');
 

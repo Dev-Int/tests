@@ -27,22 +27,20 @@ use Admin\Tests\DataBuilder\SupplierDataBuilder;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use App\Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @group functionalTest
  */
-final class HomeControllerTest extends WebTestCase
+final class HomeControllerTest extends BaseFunctionalTestCase
 {
     private const HOME_URI = '/admin/';
 
     public function testHomePageWillSucceed(): void
     {
         // Arrange
-        $client = self::createClient();
-
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
 
@@ -102,7 +100,7 @@ final class HomeControllerTest extends WebTestCase
         $articleRepository->save($article);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::HOME_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::HOME_URI);
 
         // Assert
         self::assertResponseIsSuccessful();

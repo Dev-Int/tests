@@ -27,9 +27,9 @@ use Admin\Tests\DataBuilder\SupplierDataBuilder;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
+use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use FakerRestaurant\Provider\fr_FR\Restaurant;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -37,14 +37,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @group functionalTest
  */
-final class GetArticlesControllerTest extends WebTestCase
+final class GetArticlesControllerTest extends BaseFunctionalTestCase
 {
     private const GET_ARTICLES_URI = '/admin/articles';
 
     public function testGetArticlesPaginatedWillSucceed(): void
     {
         // Arrange
-        $client = self::createClient();
         $faker = Factory::create('fr_FR');
         $faker->addProvider(new Restaurant($faker));
 
@@ -120,7 +119,7 @@ final class GetArticlesControllerTest extends WebTestCase
         }
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::GET_ARTICLES_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::GET_ARTICLES_URI);
 
         // Assert
         self::assertResponseIsSuccessful();
@@ -134,17 +133,14 @@ final class GetArticlesControllerTest extends WebTestCase
 
     public function testGetArticlesFailWithNoArticleRegisteredException(): void
     {
-        // Arrange
-        $client = self::createClient();
-
-        // Act
-        $client->request(Request::METHOD_GET, self::GET_ARTICLES_URI);
+        // Arrange && Act
+        $this->client->request(Request::METHOD_GET, self::GET_ARTICLES_URI);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/configure');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame(NoArticleRegisteredException::MESSAGE, $flash);
