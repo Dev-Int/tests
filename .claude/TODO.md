@@ -70,3 +70,48 @@ To: `@implements Collection<EntityType>`
 
 **Created**: 2025-11-25
 **Resolved**: 2025-11-29
+
+## Routes Refactoring
+
+### Refactorer les noms de routes en dur en constantes de controller
+
+**Priority**: Medium
+**Context**: Code maintainability and refactoring
+**Status**: 🔴 **TO DO**
+
+**Issue**:
+Actuellement, plusieurs fichiers utilisent des noms de routes en dur (chaînes de caractères) au lieu de constantes définies dans les controllers. Cela rend le code moins maintenable et plus sujet aux erreurs lors de renommages de routes.
+
+**Examples de routes en dur**:
+- Tests E2E : `'admin_family_logs_index'`, `'admin_family_logs_create'`
+- Tests fonctionnels : `'admin_units_index'`, `'admin_taxes_index'`
+- Templates : `path('admin_family_logs_index')`, `path('admin_units_index')`
+
+**Action recommandée**:
+1. Identifier tous les fichiers utilisant des noms de routes en dur
+2. Créer/vérifier que chaque controller expose une constante `ROUTE_NAME` (ex: `GetFamilyLogsController::ROUTE_NAME`)
+3. Remplacer progressivement les chaînes en dur par les constantes
+4. Mettre à jour les templates Twig pour utiliser les constantes via des variables passées au contexte si nécessaire
+
+**Fichiers à auditer**:
+- `src/Admin/Tests/EndToEnd/**/*Test.php`
+- `src/Admin/Tests/Adapters/Controller/**/*Test.php`
+- `templates/**/*.html.twig`
+- `src/Admin/Adapters/Controller/**/*Controller.php`
+
+**Controllers ayant déjà des constantes ROUTE_NAME**:
+- `ConfigurationController::ROUTE_NAME`
+- `GetUnitsController::ROUTE_NAME`
+- `CreateUnitController::ROUTE_NAME`
+- `GetTaxesController::ROUTE_NAME`
+- `CreateTaxController::ROUTE_NAME`
+- (À compléter lors de l'audit)
+
+**Bénéfices**:
+- Meilleure maintenabilité du code
+- Refactoring plus sûr (erreur de compilation si route renommée)
+- Autocomplétion IDE
+- Centralisation de la définition des routes
+- Évite les typos dans les noms de routes
+
+**Created**: 2025-11-30

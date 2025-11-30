@@ -71,7 +71,7 @@ final class CreateFamilyLogControllerTest extends BaseFunctionalTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.familyLog.create.titlePage'));
 
-        $form = $crawler->selectButton('Create')->form([
+        $form = $crawler->selectButton($translator->trans('add'))->form([
             'createFamilyLog[label]' => 'Surgelé',
         ]);
         $this->client->submit($form);
@@ -132,7 +132,7 @@ final class CreateFamilyLogControllerTest extends BaseFunctionalTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.familyLog.create.titlePage'));
 
-        $form = $crawler->selectButton('Create')->form([
+        $form = $crawler->selectButton($translator->trans('add'))->form([
             'createFamilyLog[label]' => 'Viande',
             'createFamilyLog[parent]' => $familyLogParentOrm->uuid()->toString(),
         ]);
@@ -202,7 +202,7 @@ final class CreateFamilyLogControllerTest extends BaseFunctionalTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.familyLog.create.titlePage'));
 
-        $form = $crawler->selectButton('Create')->form([
+        $form = $crawler->selectButton($translator->trans('add'))->form([
             'createFamilyLog[label]' => 'Poulet',
             'createFamilyLog[parent]' => $familyLogParentOrm->uuid()->toString(),
         ]);
@@ -266,7 +266,7 @@ final class CreateFamilyLogControllerTest extends BaseFunctionalTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.familyLog.create.titlePage'));
 
-        $form = $crawler->selectButton('Create')->form([
+        $form = $crawler->selectButton($translator->trans('add'))->form([
             'createFamilyLog[label]' => 'Surgelé',
         ]);
         $this->client->submit($form);
