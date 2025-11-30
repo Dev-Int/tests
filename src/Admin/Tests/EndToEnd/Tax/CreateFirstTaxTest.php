@@ -11,13 +11,15 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Tests\EndToEnd\Unit;
+namespace Admin\Tests\EndToEnd\Tax;
 
 use Admin\Adapters\Controller\Symfony\Controller\ConfigurationController;
-use Admin\Adapters\Controller\Symfony\Controller\Unit\CreateUnit\CreateUnitController;
-use Admin\Adapters\Controller\Symfony\Controller\Unit\GetUnits\GetUnitsController;
+use Admin\Adapters\Controller\Symfony\Controller\Tax\CreateTax\CreateTaxController;
+use Admin\Adapters\Controller\Symfony\Controller\Tax\GetTaxes\GetTaxesController;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineCompanyRepository;
+use Admin\Adapters\Gateway\ORM\Repository\DoctrineUnitRepository;
 use Admin\Tests\DataBuilder\CompanyDataBuilder;
+use Admin\Tests\DataBuilder\UnitDataBuilder;
 use App\Shared\Tests\BasePantherTestCase;
 use Faker\Factory;
 use Symfony\Component\Panther\PantherTestCase;
@@ -27,9 +29,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @group e2eTest
  */
-final class CreateFirstUnitTest extends BasePantherTestCase
+final class CreateFirstTaxTest extends BasePantherTestCase
 {
-    public function testCreateFirstUnitSuccessfully(): void
+    public function testCreateFirstTaxSuccessfully(): void
     {
         // Arrange
         $faker = Factory::create('fr_FR');
@@ -38,14 +40,26 @@ final class CreateFirstUnitTest extends BasePantherTestCase
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
 
+        /** @var DoctrineUnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get('router');
 
+        // Créer Company et Unit (prérequis pour créer une Tax)
         $company = (new CompanyDataBuilder())->create(name: $faker->company())->build();
         $companyRepository->save($company);
+
+        $unit = (new UnitDataBuilder())
+            ->create('Kilogramme', 'kg')
+            ->withUuid($faker->uuid())
+            ->build()
+        ;
+        $unitRepository->save($unit);
+
         $this->flushAndClearEntityManager();
 
         // Act && Assert
@@ -64,35 +78,35 @@ final class CreateFirstUnitTest extends BasePantherTestCase
         $client->waitForElementToContain('h1', $translator->trans('admin.configuration.application.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.application.titlePage'));
 
-        $client->clickLink($translator->trans('admin.unit.create.titleShort'));
+        $client->clickLink($translator->trans('admin.tax.create.titleShort'));
 
         $client->wait(1);
-        $client->waitForElementToContain('h1', $translator->trans('admin.unit.create.titlePage'));
-        self::assertSelectorTextContains('h1', $translator->trans('admin.unit.create.titlePage'));
+        $client->waitForElementToContain('h1', $translator->trans('admin.tax.create.titlePage'));
+        self::assertSelectorTextContains('h1', $translator->trans('admin.tax.create.titlePage'));
 
         $client->waitForVisibility('button[type="submit"]');
 
-        $unitLabel = 'Litre';
-        $unitAbbreviation = 'L';
+        $taxName = 'TVA normale';
+        $taxRate = 0.2; // 20%
 
         $client->submitForm($translator->trans('add'), [
-            'createUnit[label]' => $unitLabel,
-            'createUnit[abbreviation]' => $unitAbbreviation,
+            'createTax[name]' => $taxName,
+            'createTax[rate]' => $taxRate,
         ]);
 
         $client->wait(2);
-        $getUnitsUrl = $router->generate(GetUnitsController::ROUTE_NAME);
-        self::assertStringContainsString($getUnitsUrl, $client->getCurrentURL());
+        $getTaxesUrl = $router->generate(GetTaxesController::ROUTE_NAME);
+        self::assertStringContainsString($getTaxesUrl, $client->getCurrentURL());
 
         // Vérifier qu'on a quitté la page de création
         $client->wait(1);
         self::assertStringNotContainsString(
-            $router->generate(CreateUnitController::ROUTE_NAME),
+            $router->generate(CreateTaxController::ROUTE_NAME),
             $client->getCurrentURL()
         );
     }
 
-    public function testCancelDuringFirstUnitCreation(): void
+    public function testCancelDuringFirstTaxCreation(): void
     {
         // Arrange
         $faker = Factory::create('fr_FR');
@@ -100,6 +114,9 @@ final class CreateFirstUnitTest extends BasePantherTestCase
 
         /** @var DoctrineCompanyRepository $companyRepository */
         $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+
+        /** @var DoctrineUnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -109,6 +126,14 @@ final class CreateFirstUnitTest extends BasePantherTestCase
 
         $company = (new CompanyDataBuilder())->create(name: $faker->company())->build();
         $companyRepository->save($company);
+
+        $unit = (new UnitDataBuilder())
+            ->create('Kilogramme', 'kg')
+            ->withUuid($faker->uuid())
+            ->build()
+        ;
+        $unitRepository->save($unit);
+
         $this->flushAndClearEntityManager();
 
         // Act && Assert
@@ -127,11 +152,11 @@ final class CreateFirstUnitTest extends BasePantherTestCase
         $client->waitForElementToContain('h1', $translator->trans('admin.configuration.application.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.application.titlePage'));
 
-        $client->clickLink($translator->trans('admin.unit.create.titleShort'));
+        $client->clickLink($translator->trans('admin.tax.create.titleShort'));
 
         $client->wait(1);
-        $client->waitForElementToContain('h1', $translator->trans('admin.unit.create.titlePage'));
-        self::assertSelectorTextContains('h1', $translator->trans('admin.unit.create.titlePage'));
+        $client->waitForElementToContain('h1', $translator->trans('admin.tax.create.titlePage'));
+        self::assertSelectorTextContains('h1', $translator->trans('admin.tax.create.titlePage'));
 
         $client->waitForVisibility('a[role="button"][aria-label="Cancel"]');
 
@@ -139,7 +164,6 @@ final class CreateFirstUnitTest extends BasePantherTestCase
         self::assertSelectorExists($cancelButtonSelector);
         self::assertSelectorTextContains($cancelButtonSelector, $translator->trans('cancel'));
 
-        // Cliquer sur Cancel
         $client->clickLink($translator->trans('cancel'));
 
         $client->wait(2);

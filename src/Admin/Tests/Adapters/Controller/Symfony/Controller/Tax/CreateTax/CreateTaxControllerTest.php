@@ -60,7 +60,7 @@ final class CreateTaxControllerTest extends BaseFunctionalTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.tax.create.titlePage'));
 
-        $form = $crawler->selectButton('Create')->form([
+        $form = $crawler->selectButton($translator->trans('add'))->form([
             'createTax[name]' => 'TVA taux normal',
             'createTax[rate]' => 20.0,
         ]);
@@ -109,7 +109,7 @@ final class CreateTaxControllerTest extends BaseFunctionalTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.tax.create.titlePage'));
 
-        $form = $crawler->selectButton('Create')->form([
+        $form = $crawler->selectButton($translator->trans('add'))->form([
             'createTax[name]' => 'TVA taux normal',
             'createTax[rate]' => 20.0,
         ]);
@@ -153,7 +153,7 @@ final class CreateTaxControllerTest extends BaseFunctionalTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.tax.create.titlePage'));
 
-        $form = $crawler->selectButton('Create')->form([
+        $form = $crawler->selectButton($translator->trans('add'))->form([
             'createTax[name]' => '',
             'createTax[rate]' => 0.0,
         ]);
@@ -192,7 +192,7 @@ final class CreateTaxControllerTest extends BaseFunctionalTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.tax.create.titlePage'));
 
-        $form = $crawler->selectButton('Create')->form([
+        $form = $crawler->selectButton($translator->trans('add'))->form([
             'createTax[name]' => 'TVA taux normal',
             'createTax[rate]' => 120.0,
         ]);
