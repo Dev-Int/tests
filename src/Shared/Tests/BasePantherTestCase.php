@@ -60,13 +60,17 @@ class BasePantherTestCase extends PantherTestCase
         $this->databaseTool = $databaseToolCollection->get();
 
         // Purge the database before each test for E2E tests
-        $this->databaseTool->loadFixtures([]);
+        $this->databaseTool->loadFixtures();
     }
 
     protected function tearDown(): void
     {
         parent::tearDown();
         $this->databaseTool = null;
+
+        // Ensure a clean state between tests
+        self::ensureKernelShutdown();
+        self::stopWebServer();
     }
 
     /**

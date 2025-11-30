@@ -52,7 +52,7 @@ final class CreateUnitControllerTest extends BaseFunctionalTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.unit.create.titlePage'));
 
-        $form = $crawler->selectButton('Create')->form([
+        $form = $crawler->selectButton($translator->trans('add'))->form([
             'createUnit[label]' => 'Kilogramme',
             'createUnit[abbreviation]' => 'kg',
         ]);
@@ -97,7 +97,7 @@ final class CreateUnitControllerTest extends BaseFunctionalTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.unit.create.titlePage'));
 
-        $form = $crawler->selectButton('Create')->form([
+        $form = $crawler->selectButton($translator->trans('add'))->form([
             'createUnit[label]' => 'Kilogramme',
             'createUnit[abbreviation]' => 'kg',
         ]);
@@ -141,7 +141,7 @@ final class CreateUnitControllerTest extends BaseFunctionalTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.unit.create.titlePage'));
 
-        $form = $crawler->selectButton('Create')->form([
+        $form = $crawler->selectButton($translator->trans('add'))->form([
             'createUnit[label]' => '',
             'createUnit[abbreviation]' => '',
         ]);

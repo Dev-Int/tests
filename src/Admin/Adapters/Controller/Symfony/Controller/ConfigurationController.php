@@ -27,6 +27,8 @@ use Symfony\Component\Routing\Attribute\Route;
 #[AsController]
 final class ConfigurationController extends AbstractController
 {
+    public const ROUTE_NAME = 'admin_configure';
+
     public function __construct(
         private readonly CompanyRepository $companyRepository,
         private readonly ConfigurationService $configurationService,
@@ -37,7 +39,7 @@ final class ConfigurationController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/configure', name: 'admin_configure')]
+    #[Route(path: '/configure', name: self::ROUTE_NAME)]
     public function __invoke(): Response
     {
         $hasCompany = $this->companyRepository->hasCompany();

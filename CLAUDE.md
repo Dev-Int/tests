@@ -8,7 +8,7 @@ Use French and unformal language to communicate with the team.
 
 ## Project Overview
 
-This is a Symfony 7.1 application developed as a learning project focused on DDD (Domain-Driven Design), testing practices (ATDD, TDD, BDD), and clean architecture. The project domain involves restaurant/inventory management with use cases around configuration, inventory, and order management.
+This is a Symfony 7.4 application developed as a learning project focused on DDD (Domain-Driven Design), testing practices (ATDD, TDD, BDD), and clean architecture. The project domain involves restaurant/inventory management with use cases around configuration, inventory, and order management.
 
 ## Architecture
 
@@ -79,7 +79,7 @@ Test files are organized by type within each module:
 ```bash
 make tu          # Run unit tests only
 make tf          # Run functional tests (resets test database)
-make ta          # Run all tests (resets test database)
+make ta          # Run unit and functional tests (resets test database)
 make e2e         # Run E2E tests with Panther (resets test database)
 make tc          # Run all tests with coverage report
 
@@ -95,7 +95,7 @@ php bin/phpunit src/Admin/Tests/UseCases/Tax/CreateTaxTest.php
 ### Database Operations
 
 ```bash
-make load-fixtures          # Reset schema and load fixtures (dev)
+make load-fixtures         # Reset schema and load fixtures (dev)
 make reload                # Alias for load-fixtures
 make clean-db-test         # Reset test database and run migrations
 make schema-validate       # Validate Doctrine schema
@@ -141,6 +141,8 @@ make assets      # Install assets with symlinks
 - **E2E testing**: Uses Symfony Panther with Chrome/Firefox drivers
 - **Test helpers**: DataBuilders in `src/**/Tests/DataBuilder/`
 
+**For detailed testing strategy, best practices, and E2E guidelines, see [.claude/TESTING_STRATEGY.md](.claude/TESTING_STRATEGY.md)**
+
 ## Autoloading
 
 PSR-4 autoloading with module namespaces:
@@ -164,6 +166,6 @@ PSR-4 autoloading with module namespaces:
 
 - **Main branch**: `develop` (not `main` or `master`)
 - PHP version: 8.2+
-- Symfony version: 7.1.*
+- Symfony version: 7.4.*
 - All dist files (`.php-cs-fixer.php.dist`, `phpcs.xml.dist`, `phpunit.xml.dist`) must be copied to their non-dist versions before use (handled by `make init`)
 - Tests use DAMA Doctrine Test Bundle for transaction-based test isolation (currently commented out in phpunit.xml)

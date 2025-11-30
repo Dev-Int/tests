@@ -44,18 +44,28 @@ final class MyE2ETest extends BasePantherTestCase
 {
     public function testSomething(): void
     {
-        $client = self::createPantherClient();
+        $client = self::createPantherClient(['browser' => PantherTestCase::FIREFOX]);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
 
         // Créer des données de test
         $company = (new CompanyDataBuilder())->create('Test')->build();
-        $repository->save($company);
+        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        $companyRepository->save($company);
 
         // IMPORTANT: Flusher pour que Panther voie les données
         $this->flushAndClearEntityManager();
 
-        // Tester avec Panther
+        // CRITIQUE: Toujours démarrer depuis la racine et suivre le flow utilisateur
         $client->request('GET', '/');
-        // ...
+        self::assertSelectorTextContains('h1', $translator->trans('home.welcome'));
+
+        // Naviguer en cliquant sur les liens (pas de navigation directe)
+        $client->clickLink($translator->trans('admin.titlePage'));
+        $client->wait(1);
+
+        // ...suite du test
     }
 }
 ```
@@ -137,6 +147,58 @@ final class LiveComponentTest extends BaseFunctionalTestCase
 1. **Tests E2E** (navigateur réel) → Utiliser `BasePantherTestCase`
 2. **Tests fonctionnels** (HTTP, pas de navigateur) → Utiliser `BaseFunctionalTestCase`
 3. **Tests unitaires** (pas de DB) → Utiliser `PHPUnit\Framework\TestCase`
+
+### Bonnes pratiques pour les tests E2E
+
+**CRITIQUE : Les tests E2E DOIVENT toujours partir de la page racine (`/`)**
+
+- **Toujours naviguer depuis la racine** : Les tests E2E doivent commencer par `$client->request('GET', '/')` et suivre le flow utilisateur complet
+- **Ne jamais naviguer directement vers les pages cibles** : Éviter les URLs directes comme `$client->request('GET', '/admin/units')`
+- **Raison** : L'application utilise LiveComponents et Turbo Frames qui nécessitent une initialisation correcte depuis la page racine
+- **Exemple** :
+  ```php
+  // ✅ CORRECT - Démarrer depuis la racine et suivre le flow
+  $client->request('GET', '/');
+  $client->clickLink($translator->trans('admin.titlePage'));
+  $client->clickLink($translator->trans('admin.unit.titlePage'));
+
+  // ❌ INCORRECT - Navigation directe qui contourne l'initialisation
+  $client->request('GET', '/admin/units');
+  ```
+
+Cela garantit que tous les LiveComponents, Turbo Frames et interactions JavaScript sont correctement initialisés et se comportent comme pour de vrais utilisateurs.
+
+**Utilisation de `createMinimalConfiguration()`** :
+
+Pour les tests nécessitant une configuration complète du système, utiliser la méthode helper `createMinimalConfiguration()` disponible dans `BasePantherTestCase` :
+
+```php
+public function testWithExistingData(): void
+{
+    $client = self::createPantherClient(['browser' => PantherTestCase::FIREFOX]);
+
+    /** @var TranslatorInterface $translator */
+    $translator = self::getContainer()->get('translator');
+
+    // Créer une configuration minimale (Company, Unit, Tax, FamilyLog, ZoneStorage, Supplier, Article)
+    $this->createMinimalConfiguration();
+
+    // Démarrer depuis la racine
+    $client->request('GET', '/');
+    self::assertSelectorTextContains('h1', $translator->trans('home.welcome'));
+
+    $client->clickLink($translator->trans('admin.titlePage'));
+
+    // Le système est configuré, on arrive directement sur la page Administration
+    $client->wait(1);
+    $client->waitForElementToContain('h1', $translator->trans('admin.titlePage'));
+    self::assertSelectorTextContains('h1', $translator->trans('admin.titlePage'));
+
+    // ...suite du test
+}
+```
+
+Cette méthode crée toutes les entités requises pour que `ConfigurationService::isConfigured()` retourne `true`, simulant un système déjà configuré.
 
 ### Isolation des tests
 
