@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\Supplier\CreateSupplier;
 
+use Admin\Adapters\Controller\Symfony\Controller\ConfigurationController;
+use Admin\Adapters\Controller\Symfony\Controller\Supplier\GetSuppliers\GetSuppliersController;
 use Admin\Adapters\Form\Type\Supplier\SupplierType;
 use Admin\Adapters\Gateway\ConfigurationService;
 use Admin\Entities\Exception\Supplier\SupplierAlreadyExists;
@@ -28,6 +30,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[AsController]
 final class CreateSupplierController extends AbstractController
 {
+    public const ROUTE_NAME = 'admin_suppliers_create';
+
     public function __construct(
         private readonly CreateSupplier $useCase,
         private readonly ConfigurationService $configurationService,
@@ -35,17 +39,17 @@ final class CreateSupplierController extends AbstractController
     ) {
     }
 
-    #[Route(path: 'suppliers/create', name: 'admin_suppliers_create', methods: ['GET', 'POST'])]
+    #[Route(path: 'suppliers/create', name: self::ROUTE_NAME, methods: ['GET', 'POST'])]
     public function __invoke(Request $request): Response
     {
         if (!$this->configurationService->isZoneStorageConfigured()) {
             $this->addFlash('error', NoZoneStorageRegisteredException::MESSAGE);
 
-            return $this->redirectToRoute('admin_configure');
+            return $this->redirectToRoute(ConfigurationController::ROUTE_NAME);
         }
 
         $form = $this->createForm(SupplierType::class, new CreateSupplierDto(), [
-            'action' => $this->generateUrl('admin_suppliers_create'),
+            'action' => $this->generateUrl(self::ROUTE_NAME),
             'attr' => ['data-turbo-frame' => '_top'],
         ]);
 
@@ -80,11 +84,11 @@ final class CreateSupplierController extends AbstractController
             } catch (SupplierAlreadyExists $exception) {
                 $this->addFlash('error', $exception->getMessage());
 
-                return $this->redirectToRoute('admin_suppliers_index');
+                return $this->redirectToRoute(GetSuppliersController::ROUTE_NAME);
             }
             $this->addFlash('success', $this->translator->trans('admin.supplier.create.success'));
 
-            return $this->redirectToRoute('admin_suppliers_index', [], Response::HTTP_FOUND);
+            return $this->redirectToRoute(GetSuppliersController::ROUTE_NAME, [], Response::HTTP_FOUND);
         }
 
         return $this->render('@admin/suppliers/create.html.twig', [

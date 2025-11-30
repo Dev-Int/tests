@@ -96,7 +96,7 @@ final class CreateSupplierControllerTest extends BaseFunctionalTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.supplier.create.titlePage'));
 
-        $form = $crawler->selectButton('Create')->form([
+        $form = $crawler->selectButton($translator->trans('add'))->form([
             'createSupplier[name]' => 'Dev-Int Création',
             'createSupplier[address]' => '5, rue des Plantes',
             'createSupplier[postalCode]' => '75000',
@@ -199,7 +199,7 @@ final class CreateSupplierControllerTest extends BaseFunctionalTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.supplier.create.titlePage'));
 
-        $form = $crawler->selectButton('Create')->form([
+        $form = $crawler->selectButton($translator->trans('add'))->form([
             'createSupplier[name]' => 'Dev-Int Création',
             'createSupplier[address]' => '5, rue des Plantes',
             'createSupplier[postalCode]' => '75000',

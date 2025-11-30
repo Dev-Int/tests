@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\Supplier\GetSuppliers;
 
+use Admin\Adapters\Controller\Symfony\Controller\ConfigurationController;
 use Admin\Adapters\Gateway\Pagination\Pagination;
 use Admin\Entities\Exception\Supplier\NoSupplierRegisteredException;
 use Admin\UseCases\Supplier\GetSuppliers\GetSuppliers;
@@ -25,13 +26,15 @@ use Symfony\Component\Routing\Attribute\Route;
 #[AsController]
 final class GetSuppliersController extends AbstractController
 {
+    public const ROUTE_NAME = 'admin_suppliers_index';
+
     public function __construct(private readonly GetSuppliers $useCase)
     {
     }
 
     #[Route(
         path: '/suppliers',
-        name: 'admin_suppliers_index',
+        name: self::ROUTE_NAME,
         defaults: ['page' => Pagination::DEFAULT_PAGE, 'itemsPerPage' => Pagination::DEFAULT_ITEMS_PER_PAGE],
         methods: ['GET']
     )]
@@ -45,7 +48,7 @@ final class GetSuppliersController extends AbstractController
         } catch (NoSupplierRegisteredException $exception) {
             $this->addFlash('error', $exception->getMessage());
 
-            return $this->redirectToRoute('admin_configure');
+            return $this->redirectToRoute(ConfigurationController::ROUTE_NAME);
         }
 
         $response = new GetSuppliersWebResponse($suppliers);
