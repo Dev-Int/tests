@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\GetZoneStorages;
 
+use Admin\Adapters\Controller\Symfony\Controller\ConfigurationController;
 use Admin\Entities\Exception\ZoneStorage\NoZoneStorageRegisteredException;
 use Admin\UseCases\ZoneStorage\GetZoneStorages\GetZoneStorages;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -23,11 +24,13 @@ use Symfony\Component\Routing\Attribute\Route;
 #[AsController]
 final class GetZoneStoragesController extends AbstractController
 {
+    public const ROUTE_NAME = 'admin_zone_storages_index';
+
     public function __construct(private readonly GetZoneStorages $useCase)
     {
     }
 
-    #[Route(path: '/zone_storages', name: 'admin_zone_storages_index')]
+    #[Route(path: '/zone_storages', name: self::ROUTE_NAME)]
     public function __invoke(): Response
     {
         try {
@@ -35,7 +38,7 @@ final class GetZoneStoragesController extends AbstractController
         } catch (NoZoneStorageRegisteredException $exception) {
             $this->addFlash('error', $exception->getMessage());
 
-            return $this->redirectToRoute('admin_configure');
+            return $this->redirectToRoute(ConfigurationController::ROUTE_NAME);
         }
 
         $response = new GetZoneStoragesWebResponse($zoneStorages);

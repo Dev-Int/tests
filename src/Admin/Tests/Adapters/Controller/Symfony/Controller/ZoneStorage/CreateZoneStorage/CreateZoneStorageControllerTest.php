@@ -84,7 +84,7 @@ final class CreateZoneStorageControllerTest extends BaseFunctionalTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.zoneStorage.create.titlePage'));
 
-        $form = $crawler->selectButton('Create')->form([
+        $form = $crawler->selectButton($translator->trans('add'))->form([
             'createZoneStorage[label]' => 'Réserve négative',
             'createZoneStorage[familyLog]' => $familyLogOrm?->uuid(),
         ]);
@@ -153,7 +153,7 @@ final class CreateZoneStorageControllerTest extends BaseFunctionalTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.zoneStorage.create.titlePage'));
 
-        $form = $crawler->selectButton('Create')->form([
+        $form = $crawler->selectButton($translator->trans('add'))->form([
             'createZoneStorage[label]' => 'Réserve négative',
             'createZoneStorage[familyLog]' => $familyLogOrm?->uuid(),
         ]);
