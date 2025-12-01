@@ -136,18 +136,17 @@ Les tests E2E pour les cas d'annulation (bouton Cancel) lors de la saisie de for
 Implémenter des tests Cancel pour toutes les opérations (Create et Update) de toutes les entités principales de configuration.
 
 **Tests de création (Create) - ✅ COMPLÉTÉS** :
-- ✅ Company: `CreateACompanyTest::testCreateACompanyCancelledDuringSeizure`
-- ✅ Unit: `CreateFirstUnitTest::testCancelDuringFirstUnitCreation` + `CreateAnotherUnitTest::testCancelDuringAnotherUnitCreation`
-- ✅ Tax: `CreateFirstTaxTest::testCancelDuringFirstTaxCreation` + `CreateAnotherTaxTest::testCancelDuringAnotherTaxCreation`
-- ✅ FamilyLog: `CreateFirstFamilyLogTest::testCancelDuringFirstFamilyLogCreation` + `CreateAnotherFamilyLogTest::testCancelDuringAnotherFamilyLogCreation`
-- ✅ ZoneStorage: `CreateFirstZoneStorageTest::testCancelDuringFirstZoneStorageCreation` + `CreateAnotherZoneStorageTest::testCancelDuringAnotherZoneStorageCreation`
-- ✅ Supplier: `CreateFirstSupplierTest::testCancelDuringFirstSupplierCreation` + `CreateAnotherSupplierTest::testCancelDuringAnotherSupplierCreation`
-- ✅ Article: `CreateFirstArticleTest::testCancelDuringFirstArticleCreation` + `CreateAnotherArticleTest::testCancelDuringAnotherArticleCreation`
+- ✅ Company : `CreateACompanyTest::testCreateACompanyCancelledDuringSeizure`
+- ✅ Unit : `CreateFirstUnitTest::testCancelDuringFirstUnitCreation` + `CreateAnotherUnitTest::testCancelDuringAnotherUnitCreation`
+- ✅ Tax : `CreateFirstTaxTest::testCancelDuringFirstTaxCreation` + `CreateAnotherTaxTest::testCancelDuringAnotherTaxCreation`
+- ✅ FamilyLog : `CreateFirstFamilyLogTest::testCancelDuringFirstFamilyLogCreation` + `CreateAnotherFamilyLogTest::testCancelDuringAnotherFamilyLogCreation`
+- ✅ ZoneStorage : `CreateFirstZoneStorageTest::testCancelDuringFirstZoneStorageCreation` + `CreateAnotherZoneStorageTest::testCancelDuringAnotherZoneStorageCreation`
+- ✅ Supplier : `CreateFirstSupplierTest::testCancelDuringFirstSupplierCreation` + `CreateAnotherSupplierTest::testCancelDuringAnotherSupplierCreation`
+- ✅ Article : `CreateFirstArticleTest::testCancelDuringFirstArticleCreation` + `CreateAnotherArticleTest::testCancelDuringAnotherArticleCreation`
 
 **Tests de modification (Update) - 🔴 À FAIRE** :
 
 **Tests fonctionnels (rapides)** :
-- ✅ Company : `RenameCompanyTest::testCancelDuringRenameCompany`
 - 🔴 Unit : test fonctionnel Cancel pour Rename
 - 🔴 Tax : tests fonctionnels Cancel pour Rename et ChangeRate
 - 🔴 FamilyLog : tests fonctionnels Cancel pour Rename et ChangeParent
@@ -179,11 +178,11 @@ Implémenter des tests Cancel pour toutes les opérations (Create et Update) de 
 **Created** : 2025-11-30
 **Updated** : 2025-12-01
 
-### Tests E2E pour la pagination des listes
+### ~~~Tests E2E pour la pagination des listes~~ ✅
 
-**Priority** : Medium
+**Priority** : ~~Medium~~ **COMPLETED**
 **Context** : E2E testing coverage
-**Status** : 🟡 **IN PROGRESS**
+**Status** : ✅ **RESOLVED on 2025-12-01**
 
 **Issue** :
 Les tests E2E pour la pagination des listes d'articles et de fournisseurs n'existent pas encore. La pagination est implémentée avec 25 items par page par défaut, et il est important de valider que la navigation entre les pages fonctionne correctement.
@@ -215,36 +214,36 @@ Créer des tests E2E complets pour valider tous les aspects de la pagination sur
 - ✅ Solution : Traiter simplement comme un formulaire classique avec `$form['itemsPerPage']->select('50')` et `$client->submit($form)`
 
 **Informations de pagination** :
-- 🔴 `testPaginationInfoDisplay` : Vérifier l'affichage des informations "X-Y sur Z items"
-- 🔴 `testTotalPagesCalculation` : Vérifier que le nombre total de pages est correct
+- ✅ `testPaginationInfoDisplay` : Vérifier l'affichage des informations "X-Y sur Z items"
+- ✅ `testTotalPagesCalculation` : Vérifier que le nombre total de pages est correct
 
 **Scénarios à tester - Supplier (`SuppliersPaginationTest.php`)** :
 
 **Navigation entre pages** :
-- 🔴 `testNavigateToSecondPage` : Naviguer vers la page 2
-- 🔴 `testNavigateToThirdPage` : Naviguer vers la page 3
-- 🔴 `testNavigateToLastPage` : Naviguer vers la dernière page
-- 🔴 `testNavigateBackToFirstPage` : Retourner à la page 1 depuis une autre page
+- ✅ `testNavigateToSecondPage` : Naviguer vers la page 2
+- ✅ `testNavigateToThirdPage` : Naviguer vers la page 3
+- ✅ `testNavigateToLastPage` : Naviguer vers la dernière page
+- ✅ `testNavigateBackToFirstPage` : Retourner à la page 1 depuis une autre page
 
 **Boutons de navigation** :
-- 🔴 `testNextButtonNavigation` : Utiliser le bouton "Suivant" pour naviguer
-- 🔴 `testPreviousButtonNavigation` : Utiliser le bouton "Précédent" pour naviguer
-- 🔴 `testNextButtonDisabledOnLastPage` : Vérifier que "Suivant" est désactivé sur la dernière page
-- 🔴 `testPreviousButtonDisabledOnFirstPage` : Vérifier que "Précédent" est désactivé sur la première page
+- ✅ `testNextButtonNavigation` : Utiliser le bouton "Suivant" pour naviguer
+- ✅ `testPreviousButtonNavigation` : Utiliser le bouton "Précédent" pour naviguer
+- ✅ `testNextButtonDisabledOnLastPage` : Vérifier que "Suivant" est désactivé sur la dernière page
+- ✅ `testPreviousButtonDisabledOnFirstPage` : Vérifier que "Précédent" est désactivé sur la première page
 
 **Affichage des items** :
-- 🔴 `testCorrectNumberOfItemsPerPage` : Vérifier qu'il y a bien 25 items par page (ou moins sur la dernière page)
-- 🔴 `testCorrectItemsDisplayedOnEachPage` : Vérifier que les bons fournisseurs sont affichés sur chaque page
-- 🔴 `testLastPageWithPartialItems` : Vérifier l'affichage correct de la dernière page avec moins de 25 items
+- ✅ `testCorrectNumberOfItemsPerPage` : Vérifier qu'il y a bien 25 items par page (ou moins sur la dernière page)
+- ✅ `testCorrectItemsDisplayedOnEachPage` : Vérifier que les bons fournisseurs sont affichés sur chaque page
+- ✅ `testLastPageWithPartialItems` : Vérifier l'affichage correct de la dernière page avec moins de 25 items
 
 **Changement du nombre d'items par page** (si implémenté) :
-- 🔴 `testChangeItemsPerPageTo10` : Changer le nombre d'items par page à 10
-- 🔴 `testChangeItemsPerPageTo50` : Changer le nombre d'items par page à 50
-- 🔴 `testChangeItemsPerPageTo100` : Changer le nombre d'items par page à 100
+- ✅ `testChangeItemsPerPageTo10` : Changer le nombre d'items par page à 10
+- ✅ `testChangeItemsPerPageTo50` : Changer le nombre d'items par page à 50
+- ✅ `testChangeItemsPerPageTo100` : Changer le nombre d'items par page à 100
 
 **Informations de pagination** :
-- 🔴 `testPaginationInfoDisplay` : Vérifier l'affichage des informations "X-Y sur Z items"
-- 🔴 `testTotalPagesCalculation` : Vérifier que le nombre total de pages est correct
+- ✅ `testPaginationInfoDisplay` : Vérifier l'affichage des informations "X-Y sur Z items"
+- ✅ `testTotalPagesCalculation` : Vérifier que le nombre total de pages est correct
 
 **Prérequis pour les tests** :
 1. Créer suffisamment d'articles/fournisseurs pour avoir au moins 3-4 pages (75-100 items)
@@ -266,3 +265,4 @@ Créer des tests E2E complets pour valider tous les aspects de la pagination sur
 - Assurance que tous les items sont accessibles via la pagination
 
 **Created** : 2025-12-01
+**Resolved** : 2025-12-01
