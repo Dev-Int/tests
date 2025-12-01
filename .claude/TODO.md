@@ -183,7 +183,7 @@ Implémenter des tests Cancel pour toutes les opérations (Create et Update) de 
 
 **Priority** : Medium
 **Context** : E2E testing coverage
-**Status** : 🔴 **TO DO**
+**Status** : 🟡 **IN PROGRESS**
 
 **Issue** :
 Les tests E2E pour la pagination des listes d'articles et de fournisseurs n'existent pas encore. La pagination est implémentée avec 25 items par page par défaut, et il est important de valider que la navigation entre les pages fonctionne correctement.
@@ -194,26 +194,25 @@ Créer des tests E2E complets pour valider tous les aspects de la pagination sur
 **Scénarios à tester - Article (`ArticlesPaginationTest.php`)** :
 
 **Navigation entre pages** :
-- 🔴 `testNavigateToSecondPage` : Naviguer vers la page 2
-- 🔴 `testNavigateToThirdPage` : Naviguer vers la page 3
-- 🔴 `testNavigateToLastPage` : Naviguer vers la dernière page
-- 🔴 `testNavigateBackToFirstPage` : Retourner à la page 1 depuis une autre page
+- ✅ `testNavigateToSecondPage` : Naviguer vers la page 2
+- ✅ `testNavigateToThirdPage` : Naviguer vers la page 3 (nécessite de cliquer sur '>' d'abord car seuls 1-2 sont visibles)
+- ✅ `testNavigateToLastPage` : Naviguer vers la dernière page
+- ✅ `testNavigateBackToFirstPage` : Retourner à la page 1 depuis une autre page
 
 **Boutons de navigation** :
-- 🔴 `testNextButtonNavigation` : Utiliser le bouton "Suivant" pour naviguer
-- 🔴 `testPreviousButtonNavigation` : Utiliser le bouton "Précédent" pour naviguer
-- 🔴 `testNextButtonDisabledOnLastPage` : Vérifier que "Suivant" est désactivé sur la dernière page
-- 🔴 `testPreviousButtonDisabledOnFirstPage` : Vérifier que "Précédent" est désactivé sur la première page
+- ✅ `testNextButtonNavigation` : Utiliser le bouton "Suivant" pour naviguer (page 1 -> 2 -> 3)
+- ✅ `testPreviousButtonNavigation` : Utiliser le bouton "Précédent" pour naviguer (page 3 -> 2 -> 1)
+- ✅ `testNextButtonDisabledOnLastPage` : Vérifier que "Suivant" a la classe "disable-link" sur la dernière page
+- ✅ `testPreviousButtonDisabledOnFirstPage` : Vérifier que "Précédent" a la classe "disable-link" sur la première page
 
 **Affichage des items** :
-- 🔴 `testCorrectNumberOfItemsPerPage` : Vérifier qu'il y a bien 25 items par page (ou moins sur la dernière page)
-- 🔴 `testCorrectItemsDisplayedOnEachPage` : Vérifier que les bons articles sont affichés sur chaque page
-- 🔴 `testLastPageWithPartialItems` : Vérifier l'affichage correct de la dernière page avec moins de 25 items
+- ✅ `testCorrectNumberOfItemsPerPage` : Vérifier qu'il y a bien 25 items par page sur les pages 1, 2 et 3
+- ✅ `testLastPageWithPartialItems` : Vérifier l'affichage correct de la dernière page avec 15 items (65 total)
 
-**Changement du nombre d'items par page** (si implémenté) :
-- 🔴 `testChangeItemsPerPageTo10` : Changer le nombre d'items par page à 10
-- 🔴 `testChangeItemsPerPageTo50` : Changer le nombre d'items par page à 50
-- 🔴 `testChangeItemsPerPageTo100` : Changer le nombre d'items par page à 100
+**Changement du nombre d'items par page** :
+- ✅ `testChangeItemsPerPageTo50` : Changer le nombre d'items par page à 50
+- ✅ `testItemsPerPagePersistsAcrossPages` : Vérifier que le paramètre persiste lors de la navigation
+- ✅ Solution : Traiter simplement comme un formulaire classique avec `$form['itemsPerPage']->select('50')` et `$client->submit($form)`
 
 **Informations de pagination** :
 - 🔴 `testPaginationInfoDisplay` : Vérifier l'affichage des informations "X-Y sur Z items"

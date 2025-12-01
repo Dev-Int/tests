@@ -13,7 +13,10 @@
       "Bash(for:*)",
       "Bash(do echo \"=== Run $i ===\")",
       "Bash(exit 1)",
-      "Bash(done)"
+      "Bash(done)",
+      "mcp__playwright__browser_close",
+      "mcp__playwright__browser_select_option",
+      "mcp__playwright__browser_evaluate"
     ],
     "deny": [],
     "ask": []
