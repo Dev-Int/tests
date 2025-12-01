@@ -125,7 +125,7 @@ final class CreateArticleControllerTest extends BaseFunctionalTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.article.create.titlePage'));
 
-        $form = $crawler->selectButton('Create')->form([
+        $form = $crawler->selectButton($translator->trans('add'))->form([
             'createArticle[name]' => 'Jambon Trad 6kg',
             'createArticle[supplier]' => $supplier->uuid()->toString(),
             'createArticle[packaging][parcel][unit]' => $colis->uuid()->toString(),
@@ -262,7 +262,7 @@ final class CreateArticleControllerTest extends BaseFunctionalTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.article.create.titlePage'));
 
-        $form = $crawler->selectButton('Create')->form([
+        $form = $crawler->selectButton($translator->trans('add'))->form([
             'createArticle[name]' => 'Jambon Trad 6kg',
             'createArticle[supplier]' => $supplier->uuid()->toString(),
             'createArticle[packaging][parcel][unit]' => $colis->uuid()->toString(),
@@ -426,7 +426,7 @@ final class CreateArticleControllerTest extends BaseFunctionalTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.article.create.titlePage'));
 
-        $form = $crawler->selectButton('Create')->form([
+        $form = $crawler->selectButton($translator->trans('add'))->form([
             'createArticle[name]' => 'Jambon Trad 6kg',
             'createArticle[supplier]' => $supplier->uuid()->toString(),
             'createArticle[packaging][parcel][unit]' => $colis->uuid()->toString(),
@@ -534,7 +534,7 @@ final class CreateArticleControllerTest extends BaseFunctionalTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.article.create.titlePage'));
 
-        $form = $crawler->selectButton('Create')->form([
+        $form = $crawler->selectButton($translator->trans('add'))->form([
             'createArticle[name]' => 'Jambon Trad 6kg',
             'createArticle[supplier]' => $supplier->uuid()->toString(),
             'createArticle[packaging][parcel][unit]' => $colis->uuid()->toString(),

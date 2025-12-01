@@ -38,4 +38,8 @@ clover.xml
 /assets/vendor/
 ###< symfony/asset-mapper ###
 
+###> Claude code ###
+.playwright-mcp
+###< Claude code ###
+
 /.gitconfig
