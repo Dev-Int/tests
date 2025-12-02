@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Unit\ChangeUnitLabel;
 
-use Admin\Adapters\Gateway\ORM\Entity\Unit;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineUnitRepository;
+use Admin\Entities\Unit\Unit;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
+use Admin\UseCases\Gateway\UnitRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,8 +32,8 @@ final class ChangeUnitLabelControllerTest extends BaseFunctionalTestCase
     public function testChangeLabelWillSucceed(): void
     {
         // Arrange
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -44,7 +44,10 @@ final class ChangeUnitLabelControllerTest extends BaseFunctionalTestCase
         self::assertCount(1, $units);
 
         // Act
-        $crawler = $this->client->request(Request::METHOD_GET, \sprintf(self::CHANGE_LABEL_URI, $unit->uuid()->toString()));
+        $crawler = $this->client->request(
+            Request::METHOD_GET,
+            \sprintf(self::CHANGE_LABEL_URI, $unit->uuid()->toString())
+        );
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains(
@@ -69,8 +72,8 @@ final class ChangeUnitLabelControllerTest extends BaseFunctionalTestCase
         self::assertSame($translator->trans('admin.unit.changeLabel.success'), $flash);
 
         /** @var Unit $unitUpdated */
-        $unitUpdated = $unitRepository->findOneBy(['slug' => 'kilogrammes']);
-        self::assertSame('Kilogrammes', $unitUpdated->label());
+        $unitUpdated = $unitRepository->findBySlug('kilogrammes');
+        self::assertSame('Kilogrammes', $unitUpdated->label()->toString());
         self::assertSame('kg', $unitUpdated->abbreviation());
         $units = $unitRepository->findAllUnits();
         self::assertCount(1, $units);
@@ -79,8 +82,8 @@ final class ChangeUnitLabelControllerTest extends BaseFunctionalTestCase
     public function testChangeAbbreviationWillSucceed(): void
     {
         // Arrange
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -119,8 +122,8 @@ final class ChangeUnitLabelControllerTest extends BaseFunctionalTestCase
         self::assertSame($translator->trans('admin.unit.changeLabel.success'), $flash);
 
         /** @var Unit $unitUpdated */
-        $unitUpdated = $unitRepository->findOneBy(['slug' => 'kilogramme']);
-        self::assertSame('Kilogramme', $unitUpdated->label());
+        $unitUpdated = $unitRepository->findBySlug('kilogramme');
+        self::assertSame('Kilogramme', $unitUpdated->label()->toString());
         self::assertSame('KG', $unitUpdated->abbreviation());
         $units = $unitRepository->findAllUnits();
         self::assertCount(1, $units);
@@ -129,8 +132,8 @@ final class ChangeUnitLabelControllerTest extends BaseFunctionalTestCase
     public function testChangeLabelFailWithAlreadyExistsException(): void
     {
         // Arrange
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -181,8 +184,8 @@ final class ChangeUnitLabelControllerTest extends BaseFunctionalTestCase
     public function testChangeLabelFailWithBadRequestException(): void
     {
         // Arrange
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -237,8 +240,8 @@ final class ChangeUnitLabelControllerTest extends BaseFunctionalTestCase
         // Arrange
         $faker = Factory::create('fr_FR');
 
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
         $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
         $unitRepository->save($unit);
         $units = $unitRepository->findAllUnits();
@@ -254,5 +257,49 @@ final class ChangeUnitLabelControllerTest extends BaseFunctionalTestCase
         $title = $response->filter('h1')->text();
 
         self::assertEquals('Page non trouvée', $title);
+    }
+
+    public function testCancelDuringUnitRename(): void
+    {
+        // Arrange
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
+        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
+        $unitRepository->save($unit);
+        $units = $unitRepository->findAllUnits();
+        self::assertCount(1, $units);
+
+        // Act
+        $crawler = $this->client->request(
+            Request::METHOD_GET,
+            \sprintf(self::CHANGE_LABEL_URI, $unit->uuid()->toString())
+        );
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains(
+            'h1',
+            $translator->trans('admin.unit.changeLabel.titlePage', ['%unitName%' => 'Kilogramme'])
+        );
+
+        $cancelLink = $crawler->selectLink($translator->trans('cancel'));
+        self::assertCount(1, $cancelLink, 'Cancel link should exist');
+
+        $this->client->click($cancelLink->link());
+
+        // Assert
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertRouteSame('admin_units_index');
+
+        /** @var Unit $unitAfterCancel */
+        $unitAfterCancel = $unitRepository->findBySlug($unit->slug());
+        self::assertSame($unit->label()->toString(), $unitAfterCancel->label()->toString());
+        self::assertSame($unit->abbreviation(), $unitAfterCancel->abbreviation());
+
+        $units = $unitRepository->findAllUnits();
+        self::assertCount(1, $units);
     }
 }

@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\Unit\ChangeUnitLabel;
 
+use Admin\Adapters\Controller\Symfony\Controller\Unit\GetUnits\GetUnitsController;
 use Admin\Adapters\Form\Type\Unit\ChangeLabelUnitType;
 use Admin\Adapters\Gateway\ORM\Entity\Unit;
 use Admin\UseCases\Unit\ChangeUnitLabel\ChangeUnitLabel;
@@ -26,6 +27,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[AsController]
 final class ChangeUnitLabelController extends AbstractController
 {
+    public const ROUTE_NAME = 'admin_units_change-label';
+
     public function __construct(
         private readonly ChangeUnitLabel $useCase,
         private readonly TranslatorInterface $translator
@@ -34,7 +37,7 @@ final class ChangeUnitLabelController extends AbstractController
 
     #[Route(
         path: 'units/{unit}/change-label',
-        name: 'admin_units_change-label',
+        name: self::ROUTE_NAME,
         requirements: ['unit' => '^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$'],
         methods: ['GET', 'POST']
     )]
@@ -42,7 +45,7 @@ final class ChangeUnitLabelController extends AbstractController
     {
         $unitToUpdate = new ChangeUnitLabelApiRequest($unit->label(), $unit->abbreviation(), $unit->slug());
         $form = $this->createForm(ChangeLabelUnitType::class, $unitToUpdate, [
-            'action' => $this->generateUrl('admin_units_change-label', ['unit' => $unit->uuid()]),
+            'action' => $this->generateUrl(self::ROUTE_NAME, ['unit' => $unit->uuid()]),
             'attr' => ['data-turbo-frame' => '_top'],
         ]);
 
@@ -56,11 +59,11 @@ final class ChangeUnitLabelController extends AbstractController
             } catch (\DomainException $exception) {
                 $this->addFlash('error', $exception->getMessage());
 
-                return $this->redirectToRoute('admin_units_index');
+                return $this->redirectToRoute(GetUnitsController::ROUTE_NAME);
             }
             $this->addFlash('success', $this->translator->trans('admin.unit.changeLabel.success'));
 
-            return $this->redirectToRoute('admin_units_index');
+            return $this->redirectToRoute(GetUnitsController::ROUTE_NAME);
         }
 
         return $this->render('@admin/units/change-label.html.twig', [

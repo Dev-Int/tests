@@ -147,7 +147,7 @@ Implémenter des tests Cancel pour toutes les opérations (Create et Update) de 
 **Tests de modification (Update) - 🟡 EN COURS** :
 
 **Tests fonctionnels (rapides)** :
-- 🔴 Unit : test fonctionnel Cancel pour Rename
+- ✅ Unit : test fonctionnel Cancel pour Rename
 - 🔴 Tax : tests fonctionnels Cancel pour Rename et ChangeRate
 - 🔴 FamilyLog : tests fonctionnels Cancel pour Rename et ChangeParent
 - 🔴 ZoneStorage : tests fonctionnels Cancel pour Rename et ChangeFamilyLog
