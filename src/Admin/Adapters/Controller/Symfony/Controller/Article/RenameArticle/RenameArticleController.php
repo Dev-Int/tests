@@ -26,6 +26,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[AsController]
 final class RenameArticleController extends AbstractController
 {
+    public const ROUTE_NAME = 'admin_articles_rename';
+
     public function __construct(
         private readonly RenameArticle $useCase,
         private readonly TranslatorInterface $translator
@@ -34,7 +36,7 @@ final class RenameArticleController extends AbstractController
 
     #[Route(
         path: 'articles/{article}/rename',
-        name: 'admin_articles_rename',
+        name: self::ROUTE_NAME,
         requirements: ['article' => '^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$'],
         methods: ['GET', 'POST']
     )]
@@ -44,7 +46,7 @@ final class RenameArticleController extends AbstractController
             RenameArticleType::class,
             new RenameArticleApiRequest($article->name(), $article->uuid()),
             [
-                'action' => $this->generateUrl('admin_articles_rename', ['article' => $article->uuid()]),
+                'action' => $this->generateUrl(self::ROUTE_NAME, ['article' => $article->uuid()]),
                 'attr' => ['data-turbo-frame' => '_top'],
             ]
         );

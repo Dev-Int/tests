@@ -24,6 +24,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class RenameSupplierController extends AbstractController
 {
+    public const ROUTE_NAME = 'admin_suppliers_rename';
+
     public function __construct(
         private readonly RenameSupplier $useCase,
         private readonly TranslatorInterface $translator
@@ -32,7 +34,7 @@ final class RenameSupplierController extends AbstractController
 
     #[Route(
         path: 'suppliers/{supplier}/rename',
-        name: 'admin_suppliers_rename',
+        name: self::ROUTE_NAME,
         requirements: ['supplier' => '^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$'],
         methods: ['GET', 'POST']
     )]
@@ -42,7 +44,7 @@ final class RenameSupplierController extends AbstractController
             RenameSupplierType::class,
             new RenameSupplierApiRequest($supplier->name(), $supplier->slug()),
             [
-                'action' => $this->generateUrl('admin_suppliers_rename', ['supplier' => $supplier->uuid()]),
+                'action' => $this->generateUrl(self::ROUTE_NAME, ['supplier' => $supplier->uuid()]),
                 'attr' => ['data-turbo-frame' => '_top'],
             ]
         );

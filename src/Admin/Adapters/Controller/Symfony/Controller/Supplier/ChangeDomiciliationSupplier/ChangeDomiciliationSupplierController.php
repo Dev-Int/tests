@@ -26,6 +26,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[AsController]
 final class ChangeDomiciliationSupplierController extends AbstractController
 {
+    public const ROUTE_NAME = 'admin_supplier_change-domiciliation';
+
     public function __construct(
         private readonly ChangeDomiciliationSupplier $useCase,
         private readonly TranslatorInterface $translator
@@ -34,7 +36,7 @@ final class ChangeDomiciliationSupplierController extends AbstractController
 
     #[Route(
         path: 'suppliers/{supplier}/change-domiciliation',
-        name: 'admin_supplier_change-domiciliation',
+        name: self::ROUTE_NAME,
         requirements: ['supplier' => '^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$'],
         methods: ['GET', 'POST']
     )]
@@ -53,7 +55,7 @@ final class ChangeDomiciliationSupplierController extends AbstractController
             ),
             [
                 'action' => $this->generateUrl(
-                    'admin_supplier_change-domiciliation',
+                    self::ROUTE_NAME,
                     ['supplier' => $supplier->uuid()]
                 ),
                 'attr' => ['data-turbo-frame' => '_top'],

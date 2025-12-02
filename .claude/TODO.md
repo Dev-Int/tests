@@ -144,7 +144,7 @@ Implémenter des tests Cancel pour toutes les opérations (Create et Update) de 
 - ✅ Supplier : `CreateFirstSupplierTest::testCancelDuringFirstSupplierCreation` + `CreateAnotherSupplierTest::testCancelDuringAnotherSupplierCreation`
 - ✅ Article : `CreateFirstArticleTest::testCancelDuringFirstArticleCreation` + `CreateAnotherArticleTest::testCancelDuringAnotherArticleCreation`
 
-**Tests de modification (Update) - 🔴 À FAIRE** :
+**Tests de modification (Update) - 🟡 EN COURS** :
 
 **Tests fonctionnels (rapides)** :
 - 🔴 Unit : test fonctionnel Cancel pour Rename
@@ -152,9 +152,9 @@ Implémenter des tests Cancel pour toutes les opérations (Create et Update) de 
 - 🔴 FamilyLog : tests fonctionnels Cancel pour Rename et ChangeParent
 - 🔴 ZoneStorage : tests fonctionnels Cancel pour Rename et ChangeFamilyLog
 
-**Tests E2E (validation UX pour entités complexes)** :
-- 🔴 Supplier : tests E2E Cancel pour Rename, ChangeDomiciliation, ChangeContact, ChangeDeliverySpecifications
-- 🔴 Article : tests E2E Cancel pour Rename, ChangeFinancialInformation, ChangeStorageInformation, ReassignSupplier
+**Tests E2E (validation UX pour entités complexes) - ✅ COMPLÉTÉS** :
+- ✅ Supplier : `RenameSupplierCancelTest`, `ChangeDomiciliationSupplierCancelTest`, `ChangeContactSupplierCancelTest`, `ChangeDeliverySpecificationsSupplierCancelTest`
+- ✅ Article : `RenameArticleCancelTest`, `ChangeFinancialInformationArticleCancelTest`, `ChangeStorageInformationArticleCancelTest`, `ReassignSupplierArticleCancelTest`
 
 **Stratégie** :
 1. **Tests fonctionnels** pour les entités simples (Unit, Tax, FamilyLog, ZoneStorage, Company) :
@@ -166,9 +166,13 @@ Implémenter des tests Cancel pour toutes les opérations (Create et Update) de 
    - Détecter les problèmes de navigation (`turboFrame="_top"` manquant)
    - S'assurer que les boutons Cancel ont bien `turboFrame="_top"` dans les templates
 
-**Corrections déjà apportées** :
+**Corrections apportées** :
 - Ajout de `turboFrame="_top"` sur tous les boutons Cancel des formulaires Article pour garantir une navigation correcte hors du contexte Turbo Frame
 - Fichiers corrigés : Article `CreateForm`, `ChangeStorageInformationForm`, `ReassignSupplierForm`, `RenameForm`, `ChangeFinancialInformationForm`
+- Ajout de `turboFrame="_top"` sur tous les boutons Cancel des formulaires Supplier Update
+- Fichiers corrigés : Supplier `RenameForm`, `ChangeDomiciliationForm`, `ChangeContactForm`, `ChangeDeliverySpecificationsForm`
+- Utilisation de `{{ 'cancel'|trans }}` au lieu de "Annuler" en dur dans tous les templates Supplier pour la cohérence
+- Ajout de constantes `ROUTE_NAME` dans les 8 controllers Update concernés (4 Supplier + 4 Article) pour améliorer la maintenabilité
 
 **Bénéfices** :
 - Couverture complète des scénarios d'annulation pour toutes les opérations
@@ -176,7 +180,7 @@ Implémenter des tests Cancel pour toutes les opérations (Create et Update) de 
 - Garantie que les utilisateurs peuvent annuler une saisie en cours sans effet de bord
 
 **Created** : 2025-11-30
-**Updated** : 2025-12-01
+**Updated** : 2025-12-02
 
 ### ~~~Tests E2E pour la pagination des listes~~ ✅
 
