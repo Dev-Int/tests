@@ -1,5 +1,45 @@
 # TODO List
 
+## Domain Entities & Repository
+
+### Récupération des FamilyLog avec leurs enfants depuis le domaine
+
+**Priority** : Medium
+**Context** : Domain Repository pattern
+**Status** : 🔴 **TO DO**
+
+**Issue** :
+Actuellement, lorsqu'on récupère une `FamilyLog` via le `FamilyLogRepository` (interface du domaine), la méthode `children()` de l'entité retourne `null` au lieu de charger les enfants de l'arborescence.
+
+Avec l'implémentation ORM (`DoctrineFamilyLogRepository`), les enfants étaient chargés automatiquement grâce aux relations Doctrine. Mais avec l'interface du domaine, ce chargement automatique n'existe pas.
+
+**Impact** :
+Plusieurs tests fonctionnels échouent, car ils s'attendent à ce que `children()` retourne un tableau :
+- `AssignParentFamilyLogControllerTest::testAssignParentWithoutParentWithChildrenWillSucceed` (ligne 147)
+- `ChangeLabelFamilyLogControllerTest::testChangeLabelFamilyLogWithChildrenWillSucceed` (ligne 161)
+
+**Action recommandée** :
+1. Décider d'une stratégie pour gérer les relations parent/enfant dans le domaine :
+   - Option A : Ajouter une méthode `findByUuidWithChildren(ResourceUuid $uuid): FamilyLog` dans `FamilyLogRepository`
+   - Option B : Charger explicitement les enfants dans le repository quand nécessaire
+   - Option C : Modifier l'entité du domaine pour ne pas exposer `children()` directement (CQRS pattern)
+
+2. Refactorer les tests concernés pour utiliser la nouvelle approche
+
+3. S'assurer que tous les tests FamilyLog passent avec l'interface du domaine
+
+**Fichiers concernés** :
+- `src/Admin/UseCases/Gateway/FamilyLogRepository.php` (interface)
+- `src/Admin/Entities/FamilyLog/FamilyLog.php` (entité domaine)
+- `src/Admin/Adapters/Gateway/ORM/Repository/DoctrineFamilyLogRepository.php` (implémentation)
+- `src/Admin/Tests/Adapters/Controller/Symfony/Controller/FamilyLog/AssignParentFamilyLog/AssignParentFamilyLogControllerTest.php`
+- `src/Admin/Tests/Adapters/Controller/Symfony/Controller/FamilyLog/ChangeLabelFamilyLog/ChangeLabelFamilyLogControllerTest.php`
+
+**Contexte** :
+Les tests Cancel pour FamilyLog ont été refactorisés pour utiliser les interfaces du domaine, mais les tests concernant les relations parent/enfant ont été revert car ils nécessitent une solution architecturale pour le chargement des enfants.
+
+**Created** : 2025-12-04
+
 ## Fixtures Architecture
 
 ### Uniformiser l'enregistrement des fixtures
@@ -15,9 +55,18 @@ Les fixtures utilisent actuellement deux stratégies différentes pour persister
 
 Ce mix de stratégies cause des problèmes lors de l'utilisation de `loadFixtures()` avec LiipTestFixturesBundle, car les entités persistées avec `persist()` ne sont pas toujours visibles par les repositories qui font des `find()` (problème de contexte d'EntityManager).
 
+**Options à explorer** :
+1. **Option A** : Utiliser uniquement `persist()` comme dans les fixtures Doctrine standard
+2. **Option B** : Utiliser Foundry (comme dans un autre projet)
+   - Relation directe avec la DB
+   - Factories intéressantes pour la génération de données
+   - Meilleure gestion de l'état de la DB dans les tests
+   - Simplification de la création d'objets avec des dépendances complexes
+
 **Action recommandée** :
 - Analyser toutes les fixtures dans `src/Admin/Adapters/DataFixtures/`
-- Choisir une stratégie unique (recommandation : utiliser uniquement `persist()` comme dans les fixtures Doctrine standard)
+- Évaluer Foundry comme alternative moderne aux fixtures Doctrine classiques
+- Choisir une stratégie unique (Foundry vs persist() classique)
 - Refactoriser les fixtures pour uniformiser l'approche
 - S'assurer que `ArticleFixtures` et autres fixtures complexes fonctionnent correctement avec `loadFixtures()`
 
