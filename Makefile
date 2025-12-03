@@ -142,6 +142,11 @@ schema-validate: ## Run schema validation
 .PHONY: qa phpcs cs-fixer stan stan-baseline rector schema-validate
 
 
+## —— Github 🐙 ———————————————————————————————————————————————————————————————————
+ci: qa ta e2e ## Run all tools like the CI
+.PHONY: ci
+
+
 ## —— Docker 🐳 ———————————————————————————————————————————————————————————————————
 init: dist_file build up ## Initialize the project
 

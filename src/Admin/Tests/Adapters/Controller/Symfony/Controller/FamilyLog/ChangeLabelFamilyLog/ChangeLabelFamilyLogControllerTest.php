@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\FamilyLog\ChangeLabelFamilyLog;
 
+use Admin\Adapters\Controller\Symfony\Controller\FamilyLog\GetFamilyLogs\GetFamilyLogsController;
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
@@ -264,5 +265,61 @@ final class ChangeLabelFamilyLogControllerTest extends BaseFunctionalTestCase
         $title = $response->filter('h1')->text();
 
         self::assertEquals('Page non trouvée', $title);
+    }
+
+    public function testCancelDuringFamilyLogLabelChange(): void
+    {
+        // Arrange
+        $faker = Factory::create('fr_FR');
+
+        /** @var DoctrineFamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+        $familyLogBuilder = new FamilyLogDataBuilder();
+
+        $familyLogParent = $familyLogBuilder->create('Surgelé')
+            ->withUuid($faker->uuid())
+            ->build()
+        ;
+        $familyLogRepository->save($familyLogParent);
+
+        $familyLog = $familyLogBuilder->create('Viande')
+            ->withParent($familyLogParent)
+            ->build()
+        ;
+        $familyLogRepository->save($familyLog);
+        $familyLogs = $familyLogRepository->findAll();
+        self::assertCount(2, $familyLogs);
+
+        // Act
+        $crawler = $this->client->request(
+            Request::METHOD_GET,
+            \sprintf(self::CHANGE_LABEL_FAMILY_LOG_URI, $familyLog->uuid()->toString())
+        );
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains(
+            'h1',
+            $translator->trans('admin.familyLog.changeLabel.titlePage', ['%familyLabel%' => 'Viande'])
+        );
+
+        $cancelLink = $crawler->selectLink($translator->trans('cancel'));
+        self::assertCount(1, $cancelLink, 'Cancel link should exist');
+
+        $this->client->click($cancelLink->link());
+
+        // Assert
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertRouteSame(GetFamilyLogsController::ROUTE_NAME);
+
+        /** @var FamilyLog $familyLogAfterCancel */
+        $familyLogAfterCancel = $familyLogRepository->find(FamilyLogDataBuilder::VALID_UUID);
+        self::assertSame('Viande', $familyLogAfterCancel->label());
+        self::assertSame('surgele_viande', $familyLogAfterCancel->slug());
+
+        $familyLogs = $familyLogRepository->findAll();
+        self::assertCount(2, $familyLogs);
     }
 }

@@ -149,7 +149,7 @@ Implémenter des tests Cancel pour toutes les opérations (Create et Update) de 
 **Tests fonctionnels (rapides)** :
 - ✅ Unit : test fonctionnel Cancel pour Rename
 - ✅ Tax : tests fonctionnels Cancel pour Rename et ChangeRate
-- 🔴 FamilyLog : tests fonctionnels Cancel pour Rename et ChangeParent
+- ✅ FamilyLog : tests fonctionnels Cancel pour ChangeLabel et AssignParent
 - 🔴 ZoneStorage : tests fonctionnels Cancel pour Rename et ChangeFamilyLog
 
 **Tests E2E (validation UX pour entités complexes) - ✅ COMPLÉTÉS** :
@@ -173,8 +173,10 @@ Implémenter des tests Cancel pour toutes les opérations (Create et Update) de 
 - Fichiers corrigés : Supplier `RenameForm`, `ChangeDomiciliationForm`, `ChangeContactForm`, `ChangeDeliverySpecificationsForm`
 - Ajout de `turboFrame="_top"` et `{{ 'cancel'|trans }}` sur les boutons Cancel des formulaires Tax Update
 - Fichiers corrigés : Tax `RenameForm`, `RevaluateForm`
+- Ajout de `turboFrame="_top"` et `{{ 'cancel'|trans }}` sur les boutons Cancel des formulaires FamilyLog Update
+- Fichiers corrigés : FamilyLog `ChangeLabelForm`, `AssignParentForm`
 - Utilisation de `{{ 'cancel'|trans }}` au lieu de "Annuler" en dur dans tous les templates Supplier pour la cohérence
-- Ajout de constantes `ROUTE_NAME` dans les 10 controllers Update concernés (4 Supplier + 4 Article + 2 Tax) pour améliorer la maintenabilité
+- Ajout de constantes `ROUTE_NAME` dans les 12 controllers Update concernés (4 Supplier + 4 Article + 2 Tax + 2 FamilyLog) pour améliorer la maintenabilité
 
 **Bénéfices** :
 - Couverture complète des scénarios d'annulation pour toutes les opérations
