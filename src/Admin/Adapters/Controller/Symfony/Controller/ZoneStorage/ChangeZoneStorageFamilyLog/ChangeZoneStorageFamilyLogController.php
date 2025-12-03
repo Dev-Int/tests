@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\ChangeZoneStorageFamilyLog;
 
+use Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\GetZoneStorages\GetZoneStoragesController;
 use Admin\Adapters\Form\Type\ZoneStorage\ChangeZoneStorageFamilyLogType;
 use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
@@ -28,6 +29,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[AsController]
 final class ChangeZoneStorageFamilyLogController extends AbstractController
 {
+    public const ROUTE_NAME = 'admin_zone_storages_change-family_log';
+
     public function __construct(
         private readonly ChangeZoneStorageFamilyLog $useCase,
         private readonly DoctrineFamilyLogRepository $familyLogRepository,
@@ -37,7 +40,7 @@ final class ChangeZoneStorageFamilyLogController extends AbstractController
 
     #[Route(
         path: 'zone_storages/{zoneStorage}/change-family_log',
-        name: 'admin_zone_storages_change-family_log',
+        name: self::ROUTE_NAME,
         requirements: ['zoneStorage' => '^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$'],
         methods: ['GET', 'POST']
     )]
@@ -55,7 +58,7 @@ final class ChangeZoneStorageFamilyLogController extends AbstractController
             new ChangeZoneStorageFamilyLogDto($familyLog, $zoneStorage->slug()),
             [
                 'action' => $this->generateUrl(
-                    'admin_zone_storages_change-family_log',
+                    self::ROUTE_NAME,
                     ['zoneStorage' => $zoneStorage->uuid()]
                 ),
                 'attr' => ['data-turbo-frame' => '_top'],
@@ -78,12 +81,12 @@ final class ChangeZoneStorageFamilyLogController extends AbstractController
             } catch (\DomainException $exception) {
                 $this->addFlash('error', $exception->getMessage());
 
-                return $this->redirectToRoute('admin_zone_storages_index');
+                return $this->redirectToRoute(GetZoneStoragesController::ROUTE_NAME);
                 // @codeCoverageIgnoreEnd
             }
             $this->addFlash('success', $this->translator->trans('admin.zoneStorage.changeFamilyLog.success'));
 
-            return $this->redirectToRoute('admin_zone_storages_index');
+            return $this->redirectToRoute(GetZoneStoragesController::ROUTE_NAME);
         }
 
         return $this->render('@admin/zoneStorages/change-family_log.html.twig', [

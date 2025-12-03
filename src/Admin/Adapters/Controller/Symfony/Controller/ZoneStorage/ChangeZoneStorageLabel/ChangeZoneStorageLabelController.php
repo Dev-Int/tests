@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\ChangeZoneStorageLabel;
 
+use Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\GetZoneStorages\GetZoneStoragesController;
 use Admin\Adapters\Form\Type\ZoneStorage\ChangeLabelZoneStorageType;
 use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
 use Admin\UseCases\ZoneStorage\ChangeZoneStorageLabel\ChangeZoneStorageLabel;
@@ -26,6 +27,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[AsController]
 final class ChangeZoneStorageLabelController extends AbstractController
 {
+    public const ROUTE_NAME = 'admin_zone_storages_change-label';
+
     public function __construct(
         private readonly ChangeZoneStorageLabel $useCase,
         private readonly TranslatorInterface $translator
@@ -34,7 +37,7 @@ final class ChangeZoneStorageLabelController extends AbstractController
 
     #[Route(
         path: 'zone_storages/{zoneStorage}/change-label',
-        name: 'admin_zone_storages_change-label',
+        name: self::ROUTE_NAME,
         requirements: ['zoneStorage' => '^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$'],
         methods: ['GET', 'POST']
     )]
@@ -45,7 +48,7 @@ final class ChangeZoneStorageLabelController extends AbstractController
             new ChangeZoneStorageLabelApiRequest($zoneStorage->label(), $zoneStorage->slug()),
             [
                 'action' => $this->generateUrl(
-                    'admin_zone_storages_change-label',
+                    self::ROUTE_NAME,
                     ['zoneStorage' => $zoneStorage->uuid()]
                 ),
                 'attr' => ['data-turbo-frame' => '_top'],
@@ -63,12 +66,12 @@ final class ChangeZoneStorageLabelController extends AbstractController
             } catch (\DomainException $exception) {
                 $this->addFlash('error', $exception->getMessage());
 
-                return $this->redirectToRoute('admin_zone_storages_index');
+                return $this->redirectToRoute(GetZoneStoragesController::ROUTE_NAME);
                 // @codeCoverageIgnoreEnd
             }
             $this->addFlash('success', $this->translator->trans('admin.zoneStorage.changeLabel.success'));
 
-            return $this->redirectToRoute('admin_zone_storages_index');
+            return $this->redirectToRoute(GetZoneStoragesController::ROUTE_NAME);
         }
 
         return $this->render('@admin/zoneStorages/change-label.html.twig', [

@@ -13,11 +13,12 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\ZoneStorage\ChangeZoneStorageFamilyLog;
 
-use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineZoneStorageRepository;
+use Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\GetZoneStorages\GetZoneStoragesController;
+use Admin\Entities\ZoneStorage\ZoneStorage;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
+use Admin\UseCases\Gateway\FamilyLogRepository;
+use Admin\UseCases\Gateway\ZoneStorageRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,11 +37,11 @@ final class ChangeZoneStorageFamilyLogControllerTest extends BaseFunctionalTestC
         // Arrange
         $faker = Factory::create('fr_FR');
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+        /** @var ZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -58,7 +59,7 @@ final class ChangeZoneStorageFamilyLogControllerTest extends BaseFunctionalTestC
         $zoneStorages = $zoneStorageRepository->findAllZones();
         self::assertCount(1, $zoneStorages);
 
-        $familyLogOrm = $familyLogRepository->find($familyLog2->uuid()->toString());
+        $familyLog = $familyLogRepository->findByUuid($familyLog2->uuid());
 
         // Act
         $crawler = $this->client->request(
@@ -76,7 +77,7 @@ final class ChangeZoneStorageFamilyLogControllerTest extends BaseFunctionalTestC
         );
 
         $form = $crawler->selectButton($translator->trans('admin.zoneStorage.changeFamilyLog.button'))->form([
-            'changeZoneStorageFamilyLog[familyLog]' => $familyLogOrm?->uuid(),
+            'changeZoneStorageFamilyLog[familyLog]' => $familyLog->uuid()->toString(),
             'changeZoneStorageFamilyLog[slug]' => $zoneStorage->slug(),
         ]);
         $this->client->submit($form);
@@ -94,9 +95,12 @@ final class ChangeZoneStorageFamilyLogControllerTest extends BaseFunctionalTestC
         self::assertSame($translator->trans('admin.zoneStorage.changeFamilyLog.success'), $flash);
 
         /** @var ZoneStorage $zoneStorageUpdated */
-        $zoneStorageUpdated = $zoneStorageRepository->findOneBy(['slug' => 'reserve-negative']);
-        self::assertSame('Réserve négative', $zoneStorageUpdated->label());
-        self::assertEquals('Frais', $zoneStorageUpdated->familyLog()->label());
+        $zoneStorageUpdated = $zoneStorageRepository->findBySlug('reserve-negative');
+        self::assertSame('Réserve négative', $zoneStorageUpdated->label()->toString());
+        self::assertEquals(
+            'Frais',
+            $zoneStorageUpdated->familyLog()->label()->toString()
+        );
     }
 
     public function testChangeFamilyLogFailWithZoneStorageNotFound(): void
@@ -104,11 +108,11 @@ final class ChangeZoneStorageFamilyLogControllerTest extends BaseFunctionalTestC
         // Arrange
         $faker = Factory::create('fr_FR');
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+        /** @var ZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
         $zoneStorageBuilder = new ZoneStorageDataBuilder();
         $familyLog1 = (new FamilyLogDataBuilder())->create('Surgelé')->build();
         $familyLog2 = (new FamilyLogDataBuilder())->create('Frais')
@@ -135,5 +139,69 @@ final class ChangeZoneStorageFamilyLogControllerTest extends BaseFunctionalTestC
         $title = $response->filter('h1')->text();
 
         self::assertEquals('Page non trouvée', $title);
+    }
+
+    public function testCancelDuringZoneStorageFamilyLogChange(): void
+    {
+        // Arrange
+        $faker = Factory::create('fr_FR');
+
+        /** @var ZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
+
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
+        $zoneStorageBuilder = new ZoneStorageDataBuilder();
+        $familyLogBuilder = new FamilyLogDataBuilder();
+        $familyLog1 = $familyLogBuilder->create('Surgelé')
+            ->withUuid($faker->uuid())
+            ->build()
+        ;
+        $familyLogRepository->save($familyLog1);
+        $familyLog2 = $familyLogBuilder->create('Frais')
+            ->withUuid($faker->uuid())
+            ->build()
+        ;
+        $familyLogRepository->save($familyLog2);
+        $zoneStorage = $zoneStorageBuilder->create('Réserve négative', $familyLog1)->build();
+        $zoneStorageRepository->save($zoneStorage);
+        $zoneStorages = $zoneStorageRepository->findAllZones();
+        self::assertCount(1, $zoneStorages);
+
+        // Act
+        $crawler = $this->client->request(
+            Request::METHOD_GET,
+            \sprintf(self::CHANGE_FAMILY_LOG_URI, $zoneStorage->uuid()->toString())
+        );
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains(
+            'h1',
+            $translator->trans(
+                'admin.zoneStorage.changeFamilyLog.titlePage',
+                ['%zoneLabel%' => $zoneStorage->label()->toString()]
+            )
+        );
+
+        $cancelLink = $crawler->selectLink($translator->trans('cancel'));
+        self::assertCount(1, $cancelLink, 'Cancel link should exist');
+
+        $this->client->click($cancelLink->link());
+
+        // Assert
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertRouteSame(GetZoneStoragesController::ROUTE_NAME);
+
+        /** @var ZoneStorage $zoneStorageAfterCancel */
+        $zoneStorageAfterCancel = $zoneStorageRepository->findBySlug('reserve-negative');
+        self::assertSame('Réserve négative', $zoneStorageAfterCancel->label()->toString());
+        self::assertEquals('Surgelé', $zoneStorageAfterCancel->familyLog()->label()->toString());
+
+        $zoneStorages = $zoneStorageRepository->findAllZones();
+        self::assertCount(1, $zoneStorages);
     }
 }

@@ -125,9 +125,9 @@ Actuellement, plusieurs fichiers utilisent des noms de routes en dur (chaînes d
 
 ### Tests E2E pour l'annulation de formulaires (Cancel)
 
-**Priority** : Medium
+**Priority** : ~~Medium~~ **COMPLETED**
 **Context** : E2E testing coverage
-**Status** : 🟡 **IN PROGRESS**
+**Status** : ✅ **COMPLETED on 2025-12-03**
 
 **Issue** :
 Les tests E2E pour les cas d'annulation (bouton Cancel) lors de la saisie de formulaires ne sont pas complets pour toutes les opérations sur toutes les entités.
@@ -144,13 +144,13 @@ Implémenter des tests Cancel pour toutes les opérations (Create et Update) de 
 - ✅ Supplier : `CreateFirstSupplierTest::testCancelDuringFirstSupplierCreation` + `CreateAnotherSupplierTest::testCancelDuringAnotherSupplierCreation`
 - ✅ Article : `CreateFirstArticleTest::testCancelDuringFirstArticleCreation` + `CreateAnotherArticleTest::testCancelDuringAnotherArticleCreation`
 
-**Tests de modification (Update) - 🟡 EN COURS** :
+**Tests de modification (Update) - ✅ COMPLÉTÉS** :
 
 **Tests fonctionnels (rapides)** :
 - ✅ Unit : test fonctionnel Cancel pour Rename
 - ✅ Tax : tests fonctionnels Cancel pour Rename et ChangeRate
 - ✅ FamilyLog : tests fonctionnels Cancel pour ChangeLabel et AssignParent
-- 🔴 ZoneStorage : tests fonctionnels Cancel pour Rename et ChangeFamilyLog
+- ✅ ZoneStorage : tests fonctionnels Cancel pour ChangeLabel et ChangeFamilyLog
 
 **Tests E2E (validation UX pour entités complexes) - ✅ COMPLÉTÉS** :
 - ✅ Supplier : `RenameSupplierCancelTest`, `ChangeDomiciliationSupplierCancelTest`, `ChangeContactSupplierCancelTest`, `ChangeDeliverySpecificationsSupplierCancelTest`
@@ -175,8 +175,10 @@ Implémenter des tests Cancel pour toutes les opérations (Create et Update) de 
 - Fichiers corrigés : Tax `RenameForm`, `RevaluateForm`
 - Ajout de `turboFrame="_top"` et `{{ 'cancel'|trans }}` sur les boutons Cancel des formulaires FamilyLog Update
 - Fichiers corrigés : FamilyLog `ChangeLabelForm`, `AssignParentForm`
+- Ajout de `turboFrame="_top"` et `{{ 'cancel'|trans }}` sur les boutons Cancel des formulaires ZoneStorage Update
+- Fichiers corrigés : ZoneStorage `ChangeLabelForm`, `ChangeFamilyLogForm`
 - Utilisation de `{{ 'cancel'|trans }}` au lieu de "Annuler" en dur dans tous les templates Supplier pour la cohérence
-- Ajout de constantes `ROUTE_NAME` dans les 12 controllers Update concernés (4 Supplier + 4 Article + 2 Tax + 2 FamilyLog) pour améliorer la maintenabilité
+- Ajout de constantes `ROUTE_NAME` dans les 14 controllers Update concernés (4 Supplier + 4 Article + 2 Tax + 2 FamilyLog + 2 ZoneStorage) pour améliorer la maintenabilité
 
 **Bénéfices** :
 - Couverture complète des scénarios d'annulation pour toutes les opérations

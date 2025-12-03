@@ -13,11 +13,11 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\ZoneStorage\ChangeZoneStorageLabel;
 
-use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineZoneStorageRepository;
+use Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\GetZoneStorages\GetZoneStoragesController;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
+use Admin\UseCases\Gateway\FamilyLogRepository;
+use Admin\UseCases\Gateway\ZoneStorageRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,11 +36,11 @@ final class ChangeZoneStorageLabelControllerTest extends BaseFunctionalTestCase
         // Arrange
         $faker = Factory::create('fr_FR');
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+        /** @var ZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -86,10 +86,10 @@ final class ChangeZoneStorageLabelControllerTest extends BaseFunctionalTestCase
 
         self::assertSame($translator->trans('admin.zoneStorage.changeLabel.success'), $flash);
 
-        /** @var ZoneStorage $zoneStorageUpdated */
-        $zoneStorageUpdated = $zoneStorageRepository->findOneBy(['slug' => 'reserve-positive']);
-        self::assertSame('Réserve positive', $zoneStorageUpdated->label());
-        self::assertEquals('Surgelé', $zoneStorageUpdated->familyLog()->label());
+        /** @var \Admin\Entities\ZoneStorage\ZoneStorage $zoneStorageUpdated */
+        $zoneStorageUpdated = $zoneStorageRepository->findBySlug('reserve-positive');
+        self::assertSame('Réserve positive', $zoneStorageUpdated->label()->toString());
+        self::assertEquals('Surgelé', $zoneStorageUpdated->familyLog()->label()->toString());
         $zoneStorages = $zoneStorageRepository->findAllZones();
         self::assertCount(1, $zoneStorages);
     }
@@ -99,11 +99,11 @@ final class ChangeZoneStorageLabelControllerTest extends BaseFunctionalTestCase
         // Arrange
         $faker = Factory::create('fr_FR');
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+        /** @var ZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
         $zoneStorageBuilder = new ZoneStorageDataBuilder();
         $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')
             ->withUuid($faker->uuid())
@@ -128,5 +128,63 @@ final class ChangeZoneStorageLabelControllerTest extends BaseFunctionalTestCase
         $title = $response->filter('h1')->text();
 
         self::assertEquals('Page non trouvée', $title);
+    }
+
+    public function testCancelDuringZoneStorageLabelChange(): void
+    {
+        // Arrange
+        $faker = Factory::create('fr_FR');
+
+        /** @var ZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
+
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
+        $zoneStorageBuilder = new ZoneStorageDataBuilder();
+        $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')
+            ->withUuid($faker->uuid())
+            ->build()
+        ;
+        $familyLogRepository->save($familyLog);
+        $zoneStorage = $zoneStorageBuilder->create('Réserve négative', $familyLog)->build();
+        $zoneStorageRepository->save($zoneStorage);
+        $zoneStorages = $zoneStorageRepository->findAllZones();
+        self::assertCount(1, $zoneStorages);
+
+        // Act
+        $crawler = $this->client->request(
+            Request::METHOD_GET,
+            \sprintf(self::CHANGE_LABEL_URI, $zoneStorage->uuid()->toString())
+        );
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains(
+            'h1',
+            $translator->trans(
+                'admin.zoneStorage.changeLabel.titlePage',
+                ['%zoneLabel%' => $zoneStorage->label()->toString()]
+            )
+        );
+
+        $cancelLink = $crawler->selectLink($translator->trans('cancel'));
+        self::assertCount(1, $cancelLink, 'Cancel link should exist');
+
+        $this->client->click($cancelLink->link());
+
+        // Assert
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertRouteSame(GetZoneStoragesController::ROUTE_NAME);
+
+        /** @var \Admin\Entities\ZoneStorage\ZoneStorage $zoneStorageAfterCancel */
+        $zoneStorageAfterCancel = $zoneStorageRepository->findBySlug('reserve-negative');
+        self::assertSame('Réserve négative', $zoneStorageAfterCancel->label()->toString());
+        self::assertEquals('Surgelé', $zoneStorageAfterCancel->familyLog()->label()->toString());
+
+        $zoneStorages = $zoneStorageRepository->findAllZones();
+        self::assertCount(1, $zoneStorages);
     }
 }
