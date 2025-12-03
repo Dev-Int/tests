@@ -148,7 +148,7 @@ Implémenter des tests Cancel pour toutes les opérations (Create et Update) de 
 
 **Tests fonctionnels (rapides)** :
 - ✅ Unit : test fonctionnel Cancel pour Rename
-- 🔴 Tax : tests fonctionnels Cancel pour Rename et ChangeRate
+- ✅ Tax : tests fonctionnels Cancel pour Rename et ChangeRate
 - 🔴 FamilyLog : tests fonctionnels Cancel pour Rename et ChangeParent
 - 🔴 ZoneStorage : tests fonctionnels Cancel pour Rename et ChangeFamilyLog
 
@@ -171,8 +171,10 @@ Implémenter des tests Cancel pour toutes les opérations (Create et Update) de 
 - Fichiers corrigés : Article `CreateForm`, `ChangeStorageInformationForm`, `ReassignSupplierForm`, `RenameForm`, `ChangeFinancialInformationForm`
 - Ajout de `turboFrame="_top"` sur tous les boutons Cancel des formulaires Supplier Update
 - Fichiers corrigés : Supplier `RenameForm`, `ChangeDomiciliationForm`, `ChangeContactForm`, `ChangeDeliverySpecificationsForm`
+- Ajout de `turboFrame="_top"` et `{{ 'cancel'|trans }}` sur les boutons Cancel des formulaires Tax Update
+- Fichiers corrigés : Tax `RenameForm`, `RevaluateForm`
 - Utilisation de `{{ 'cancel'|trans }}` au lieu de "Annuler" en dur dans tous les templates Supplier pour la cohérence
-- Ajout de constantes `ROUTE_NAME` dans les 8 controllers Update concernés (4 Supplier + 4 Article) pour améliorer la maintenabilité
+- Ajout de constantes `ROUTE_NAME` dans les 10 controllers Update concernés (4 Supplier + 4 Article + 2 Tax) pour améliorer la maintenabilité
 
 **Bénéfices** :
 - Couverture complète des scénarios d'annulation pour toutes les opérations
@@ -180,7 +182,7 @@ Implémenter des tests Cancel pour toutes les opérations (Create et Update) de 
 - Garantie que les utilisateurs peuvent annuler une saisie en cours sans effet de bord
 
 **Created** : 2025-11-30
-**Updated** : 2025-12-02
+**Updated** : 2025-12-03
 
 ### ~~~Tests E2E pour la pagination des listes~~ ✅
 

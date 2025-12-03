@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Internal communication
 
-Use French and unformal language to communicate with the team.
+Use French and unformal language to communicate with the team. And the name of the developer is Laurent.
 
 ## Project Overview
 

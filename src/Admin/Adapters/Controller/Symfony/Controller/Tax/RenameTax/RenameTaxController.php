@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\Tax\RenameTax;
 
+use Admin\Adapters\Controller\Symfony\Controller\Tax\GetTaxes\GetTaxesController;
 use Admin\Adapters\Form\Type\Tax\RenameTaxType;
 use Admin\Adapters\Gateway\ORM\Entity\Tax;
 use Admin\UseCases\Tax\RenameTax\RenameTax;
@@ -26,13 +27,15 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[AsController]
 final class RenameTaxController extends AbstractController
 {
+    public const ROUTE_NAME = 'admin_taxes_rename';
+
     public function __construct(private readonly RenameTax $useCase, private readonly TranslatorInterface $translator)
     {
     }
 
     #[Route(
         path: 'taxes/{tax}/rename',
-        name: 'admin_taxes_rename',
+        name: self::ROUTE_NAME,
         requirements: ['tax' => '^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$'],
         methods: ['GET', 'POST']
     )]
@@ -40,7 +43,7 @@ final class RenameTaxController extends AbstractController
     {
         $taxToRename = new RenameTaxApiRequest($tax->name(), $tax->uuid());
         $form = $this->createForm(RenameTaxType::class, $taxToRename, [
-            'action' => $this->generateUrl('admin_taxes_rename', ['tax' => $tax->uuid()]),
+            'action' => $this->generateUrl(self::ROUTE_NAME, ['tax' => $tax->uuid()]),
             'attr' => ['data-turbo-frame' => '_top'],
         ]);
 
@@ -54,11 +57,11 @@ final class RenameTaxController extends AbstractController
             } catch (\DomainException $exception) {
                 $this->addFlash('error', $exception->getMessage());
 
-                return $this->redirectToRoute('admin_taxes_index');
+                return $this->redirectToRoute(GetTaxesController::ROUTE_NAME);
             }
             $this->addFlash('success', $this->translator->trans('admin.tax.rename.success'));
 
-            return $this->redirectToRoute('admin_taxes_index');
+            return $this->redirectToRoute(GetTaxesController::ROUTE_NAME);
         }
 
         return $this->render('@admin/taxes/rename.html.twig', [

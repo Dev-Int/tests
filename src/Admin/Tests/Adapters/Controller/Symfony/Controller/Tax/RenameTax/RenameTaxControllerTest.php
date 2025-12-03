@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Tax\RenameTax;
 
+use Admin\Adapters\Controller\Symfony\Controller\Tax\GetTaxes\GetTaxesController;
 use Admin\Entities\Exception\Tax\TaxAlreadyExistsException;
 use Admin\Entities\Tax\Tax;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
@@ -161,5 +162,49 @@ final class RenameTaxControllerTest extends BaseFunctionalTestCase
         $title = $response->filter('h1')->text();
 
         self::assertEquals('Page non trouvée', $title);
+    }
+
+    public function testCancelDuringTaxRename(): void
+    {
+        // Arrange
+        /** @var TaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(TaxRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
+        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
+        $taxRepository->save($tax);
+        $taxes = $taxRepository->findAllTaxes();
+        self::assertCount(1, $taxes);
+
+        // Act
+        $crawler = $this->client->request(
+            Request::METHOD_GET,
+            \sprintf(self::RENAME_TAX_URI, TaxDataBuilder::UUID_VALID)
+        );
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains(
+            'h1',
+            $translator->trans('admin.tax.rename.titlePage', ['%taxName%' => $tax->name()->toString()])
+        );
+
+        $cancelLink = $crawler->selectLink($translator->trans('cancel'));
+        self::assertCount(1, $cancelLink, 'Cancel link should exist');
+
+        $this->client->click($cancelLink->link());
+
+        // Assert
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertRouteSame(GetTaxesController::ROUTE_NAME);
+
+        /** @var Tax $taxAfterCancel */
+        $taxAfterCancel = $taxRepository->findById($tax->uuid()->toString());
+        self::assertSame($tax->name()->toString(), $taxAfterCancel->name()->toString());
+        self::assertSame($tax->rate(), $taxAfterCancel->rate());
+
+        $taxes = $taxRepository->findAllTaxes();
+        self::assertCount(1, $taxes);
     }
 }
