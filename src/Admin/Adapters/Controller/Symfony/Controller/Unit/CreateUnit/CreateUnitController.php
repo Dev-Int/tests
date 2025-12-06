@@ -27,6 +27,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[AsController]
 final class CreateUnitController extends AbstractController
 {
+    public const ROUTE_NAME = 'admin_unit_create';
+
     public function __construct(
         private readonly CreateUnit $useCase,
         private readonly ConfigurationService $configurationService,
@@ -34,7 +36,7 @@ final class CreateUnitController extends AbstractController
     ) {
     }
 
-    #[Route(path: 'units/create', name: 'admin_unit_create', methods: ['GET', 'POST'])]
+    #[Route(path: 'units/create', name: self::ROUTE_NAME, methods: ['GET', 'POST'])]
     public function __invoke(Request $request): Response
     {
         if (!$this->configurationService->isCompanyConfigured()) {

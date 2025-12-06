@@ -13,13 +13,6 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller;
 
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineArticleRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineCompanyRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineSupplierRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineTaxRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineUnitRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineZoneStorageRepository;
 use Admin\Tests\DataBuilder\ArticleDataBuilder;
 use Admin\Tests\DataBuilder\CompanyDataBuilder;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
@@ -27,24 +20,29 @@ use Admin\Tests\DataBuilder\SupplierDataBuilder;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Admin\UseCases\Gateway\ArticleRepository;
+use Admin\UseCases\Gateway\CompanyRepository;
+use Admin\UseCases\Gateway\FamilyLogRepository;
+use Admin\UseCases\Gateway\SupplierRepository;
+use Admin\UseCases\Gateway\TaxRepository;
+use Admin\UseCases\Gateway\UnitRepository;
+use Admin\UseCases\Gateway\ZoneStorageRepository;
+use App\Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @group functionalTest
  */
-final class ApplicationConfigureControllerTest extends WebTestCase
+final class ApplicationConfigureControllerTest extends BaseFunctionalTestCase
 {
     private const APPLICATION_CONFIGURE_URI = '/admin/configure/application';
 
     public function testApplicationConfigurePageWillSucceed(): void
     {
         // Arrange
-        $client = self::createClient();
-
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        /** @var CompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(CompanyRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -53,7 +51,7 @@ final class ApplicationConfigureControllerTest extends WebTestCase
         $companyRepository->save($company);
 
         // Act
-        $client->request(Request::METHOD_GET, self::APPLICATION_CONFIGURE_URI);
+        $this->client->request(Request::METHOD_GET, self::APPLICATION_CONFIGURE_URI);
 
         // Assert
         self::assertResponseIsSuccessful();
@@ -63,28 +61,26 @@ final class ApplicationConfigureControllerTest extends WebTestCase
     public function testApplicationConfigured(): void
     {
         // Arrange
-        $client = self::createClient();
+        /** @var CompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(CompanyRepository::class);
 
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
 
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        /** @var TaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(TaxRepository::class);
 
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        /** @var ZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+        /** @var SupplierRepository $supplierRepository */
+        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
 
-        /** @var DoctrineSupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
-
-        /** @var DoctrineArticleRepository $articleRepository */
-        $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
+        /** @var ArticleRepository $articleRepository */
+        $articleRepository = self::getContainer()->get(ArticleRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -118,7 +114,7 @@ final class ApplicationConfigureControllerTest extends WebTestCase
         $articleRepository->save($article);
 
         // Act
-        $client->request(Request::METHOD_GET, self::APPLICATION_CONFIGURE_URI);
+        $this->client->request(Request::METHOD_GET, self::APPLICATION_CONFIGURE_URI);
 
         // Assert
         self::assertResponseIsSuccessful();
@@ -127,11 +123,8 @@ final class ApplicationConfigureControllerTest extends WebTestCase
 
     public function testApplicationConfigurePageRedirectConfigurePage(): void
     {
-        // Arrange
-        $client = self::createClient();
-
-        // Act
-        $client->request(Request::METHOD_GET, self::APPLICATION_CONFIGURE_URI);
+        // Arrange && Act
+        $this->client->request(Request::METHOD_GET, self::APPLICATION_CONFIGURE_URI);
 
         // Assert
         self::assertResponseRedirects('/admin/configure');

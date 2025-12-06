@@ -13,13 +13,13 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Supplier\ChangeContactSupplier;
 
-use Admin\Adapters\Gateway\ORM\Entity\Supplier;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineSupplierRepository;
+use Admin\Entities\Supplier\Supplier;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\SupplierDataBuilder;
+use Admin\UseCases\Gateway\FamilyLogRepository;
+use Admin\UseCases\Gateway\SupplierRepository;
+use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -27,20 +27,18 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @group functionalTest
  */
-final class ChangeContactControllerTest extends WebTestCase
+final class ChangeContactControllerTest extends BaseFunctionalTestCase
 {
     private const CHANGE_CONTACT_SUPPLIER = '/admin/suppliers/%s/change-contact';
 
     public function testChangeContactSupplierWillSucceed(): void
     {
         // Arrange
-        $client = self::createClient();
+        /** @var SupplierRepository $supplierRepository */
+        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
 
-        /** @var DoctrineSupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
-
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -53,7 +51,7 @@ final class ChangeContactControllerTest extends WebTestCase
         self::assertCount(1, $suppliers);
 
         // Act
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::CHANGE_CONTACT_SUPPLIER, $supplier->uuid()->toString())
         );
@@ -72,34 +70,33 @@ final class ChangeContactControllerTest extends WebTestCase
             'changeContactSupplier[cellphone]' => '+33600000001',
             'changeContactSupplier[slug]' => 'supplier-1',
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/suppliers');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertEquals($translator->trans('admin.supplier.changeContact.success'), $flash);
 
         /** @var Supplier $supplierUpdated */
-        $supplierUpdated = $supplierRepository->findOneBy(['slug' => 'supplier-1']);
+        $supplierUpdated = $supplierRepository->findBySlug('supplier-1');
         self::assertSame('David', $supplierUpdated->contact());
-        self::assertSame('+33600000001', $supplierUpdated->cellphone());
+        self::assertSame('+33600000001', $supplierUpdated->cellphone()->toNumber());
     }
 
     public function testChangeContactSupplierFailWithSupplierNotFound(): void
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
-        /** @var DoctrineSupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
+        /** @var SupplierRepository $supplierRepository */
+        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
         $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
         $familyLogRepository->save($familyLog);
@@ -109,14 +106,14 @@ final class ChangeContactControllerTest extends WebTestCase
         self::assertCount(1, $suppliers);
 
         // Act
-        $client->request(
+        $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::CHANGE_CONTACT_SUPPLIER, $faker->uuid())
         );
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
-        $response = $client->getCrawler();
+        $response = $this->client->getCrawler();
 
         $title = $response->filter('h1')->text();
 

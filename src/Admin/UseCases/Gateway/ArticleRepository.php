@@ -35,4 +35,6 @@ interface ArticleRepository
     public function findAllArticlesPaginated(int $page, int $itemPerPage): ArticleCollection;
 
     public function findByUuid(string $uuid): Article;
+
+    public function findBySlug(string $slug): Article;
 }

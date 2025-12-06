@@ -27,6 +27,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[AsController]
 final class ReAssignArticleSupplierController extends AbstractController
 {
+    public const ROUTE_NAME = 'admin_articles_reassign-supplier';
+
     public function __construct(
         private readonly ReAssignArticleSupplier $useCase,
         private readonly TranslatorInterface $translator
@@ -35,7 +37,7 @@ final class ReAssignArticleSupplierController extends AbstractController
 
     #[Route(
         path: 'articles/{article}/reassign-supplier',
-        name: 'admin_articles_reassign-supplier',
+        name: self::ROUTE_NAME,
         requirements: ['article' => '^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$'],
         methods: ['GET', 'POST']
     )]
@@ -55,7 +57,7 @@ final class ReAssignArticleSupplierController extends AbstractController
             ),
             [
                 'action' => $this->generateUrl(
-                    'admin_articles_reassign-supplier',
+                    self::ROUTE_NAME,
                     ['article' => $article->uuid()]
                 ),
                 'attr' => ['data-turbo-frame' => '_top'],

@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\CreateZoneStorage;
 
+use Admin\Adapters\Controller\Symfony\Controller\ConfigurationController;
+use Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\GetZoneStorages\GetZoneStoragesController;
 use Admin\Adapters\Form\Type\ZoneStorage\ZoneStorageType;
 use Admin\Adapters\Gateway\ConfigurationService;
 use Admin\Entities\Exception\FamilyLog\NoFamilyLogRegisteredException;
@@ -29,6 +31,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[AsController]
 final class CreateZoneStorageController extends AbstractController
 {
+    public const ROUTE_NAME = 'admin_zone_storages_create';
+
     public function __construct(
         private readonly CreateZoneStorage $useCase,
         private readonly ConfigurationService $configurationService,
@@ -36,17 +40,17 @@ final class CreateZoneStorageController extends AbstractController
     ) {
     }
 
-    #[Route(path: 'zone_storages/create', name: 'admin_zone_storages_create', methods: ['GET', 'POST'])]
+    #[Route(path: 'zone_storages/create', name: self::ROUTE_NAME, methods: ['GET', 'POST'])]
     public function __invoke(Request $request): Response
     {
         if (!$this->configurationService->isFamilyLogConfigured()) {
             $this->addFlash('error', NoFamilyLogRegisteredException::MESSAGE);
 
-            return $this->redirectToRoute('admin_configure');
+            return $this->redirectToRoute(ConfigurationController::ROUTE_NAME);
         }
 
         $form = $this->createForm(ZoneStorageType::class, new CreateZoneStorageDto(), [
-            'action' => $this->generateUrl('admin_zone_storages_create'),
+            'action' => $this->generateUrl(self::ROUTE_NAME),
             'attr' => ['data-turbo-frame' => '_top'],
         ]);
 
@@ -71,11 +75,11 @@ final class CreateZoneStorageController extends AbstractController
             } catch (ZoneStorageAlreadyExistsException $exception) {
                 $this->addFlash('error', $exception->getMessage());
 
-                return $this->redirectToRoute('admin_zone_storages_index');
+                return $this->redirectToRoute(GetZoneStoragesController::ROUTE_NAME);
             }
             $this->addFlash('success', $this->translator->trans('admin.zoneStorage.create.success'));
 
-            return $this->redirectToRoute('admin_zone_storages_index', [], Response::HTTP_FOUND);
+            return $this->redirectToRoute(GetZoneStoragesController::ROUTE_NAME, [], Response::HTTP_FOUND);
         }
 
         return $this->render('@admin/zoneStorages/create.html.twig', [

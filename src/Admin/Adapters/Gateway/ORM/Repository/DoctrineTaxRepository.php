@@ -142,4 +142,14 @@ final class DoctrineTaxRepository extends ServiceEntityRepository implements Tax
 
         return $tax->toDomain();
     }
+
+    public function findByName(string $name): TaxDomain
+    {
+        $tax = $this->findOneBy(['name' => $name]);
+        if (!$tax instanceof Tax) {
+            throw new TaxNotFoundException($name);
+        }
+
+        return $tax->toDomain();
+    }
 }

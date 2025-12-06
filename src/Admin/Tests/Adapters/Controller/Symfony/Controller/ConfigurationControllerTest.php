@@ -13,36 +13,33 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller;
 
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineCompanyRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineSupplierRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineTaxRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineUnitRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineZoneStorageRepository;
 use Admin\Tests\DataBuilder\CompanyDataBuilder;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\SupplierDataBuilder;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Admin\UseCases\Gateway\CompanyRepository;
+use Admin\UseCases\Gateway\FamilyLogRepository;
+use Admin\UseCases\Gateway\SupplierRepository;
+use Admin\UseCases\Gateway\TaxRepository;
+use Admin\UseCases\Gateway\UnitRepository;
+use Admin\UseCases\Gateway\ZoneStorageRepository;
+use App\Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @group functionalTest
  */
-final class ConfigurationControllerTest extends WebTestCase
+final class ConfigurationControllerTest extends BaseFunctionalTestCase
 {
     private const CONFIGURATION_URI = '/admin/configure';
 
     public function testConfigurePageWillSucceed(): void
     {
-        // Arrange
-        $client = self::createClient();
-
-        // Act
-        $crawler = $client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
+        // Arrange && Act
+        $crawler = $this->client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
 
         // Assert
         self::assertResponseIsSuccessful();
@@ -56,15 +53,12 @@ final class ConfigurationControllerTest extends WebTestCase
 
     public function testAdminPageWillRedirectToConfigurePage(): void
     {
-        // Arrange
-        $client = self::createClient();
-
-        // Act
-        $client->request(Request::METHOD_GET, '/admin/');
+        // Arrange && Act
+        $this->client->request(Request::METHOD_GET, '/admin/');
 
         // Assert
         self::assertResponseRedirects(self::CONFIGURATION_URI);
-        $crawler = $client->followRedirect();
+        $crawler = $this->client->followRedirect();
 
         $list = $crawler->filter('div.row > aside.col-md-3 > nav#menu > ul');
 
@@ -75,13 +69,11 @@ final class ConfigurationControllerTest extends WebTestCase
     public function testConfigurePageWillGoHomePage(): void
     {
         // Arrange
-        $client = self::createClient();
-
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
 
         // Assert
         self::assertResponseIsSuccessful();
@@ -93,7 +85,7 @@ final class ConfigurationControllerTest extends WebTestCase
         self::assertCount(0, $list->children('li > a.disable-link'));
 
         $home = $crawler->selectLink($translator->trans('admin.returnButton'))->link(Request::METHOD_GET);
-        $client->click($home);
+        $this->client->click($home);
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('home.welcome'));
     }
@@ -101,10 +93,8 @@ final class ConfigurationControllerTest extends WebTestCase
     public function testConfigurePageWithCompany(): void
     {
         // Arrange
-        $client = self::createClient();
-
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        /** @var CompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(CompanyRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -113,7 +103,7 @@ final class ConfigurationControllerTest extends WebTestCase
         $companyRepository->save($company);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
 
         // Assert
         self::assertResponseIsSuccessful();
@@ -128,16 +118,14 @@ final class ConfigurationControllerTest extends WebTestCase
     public function testConfigurePageWithApplicationConfigured(): void
     {
         // Arrange
-        $client = self::createClient();
+        /** @var CompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(CompanyRepository::class);
 
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
 
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
-
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+        /** @var TaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(TaxRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -150,7 +138,7 @@ final class ConfigurationControllerTest extends WebTestCase
         $taxRepository->save($tax);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
 
         // Assert
         self::assertResponseIsSuccessful();
@@ -165,19 +153,17 @@ final class ConfigurationControllerTest extends WebTestCase
     public function testConfigurePageWithFamilyLog(): void
     {
         // Arrange
-        $client = self::createClient();
+        /** @var CompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(CompanyRepository::class);
 
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
 
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        /** @var TaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(TaxRepository::class);
 
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
-
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -192,7 +178,7 @@ final class ConfigurationControllerTest extends WebTestCase
         $familyLogRepository->save($familyLog);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
 
         // Assert
         self::assertResponseIsSuccessful();
@@ -207,22 +193,20 @@ final class ConfigurationControllerTest extends WebTestCase
     public function testConfigurePageWithZoneStorage(): void
     {
         // Arrange
-        $client = self::createClient();
+        /** @var CompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(CompanyRepository::class);
 
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
 
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        /** @var TaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(TaxRepository::class);
 
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
-
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+        /** @var ZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -239,7 +223,7 @@ final class ConfigurationControllerTest extends WebTestCase
         $zoneStorageRepository->save($zoneStorage);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
 
         // Assert
         self::assertResponseIsSuccessful();
@@ -254,25 +238,23 @@ final class ConfigurationControllerTest extends WebTestCase
     public function testConfigurePageWithSupplier(): void
     {
         // Arrange
-        $client = self::createClient();
+        /** @var CompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(CompanyRepository::class);
 
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
 
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        /** @var TaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(TaxRepository::class);
 
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        /** @var ZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
-
-        /** @var DoctrineSupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
+        /** @var SupplierRepository $supplierRepository */
+        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -291,7 +273,7 @@ final class ConfigurationControllerTest extends WebTestCase
         $supplierRepository->save($supplier);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
 
         // Assert
         self::assertResponseIsSuccessful();

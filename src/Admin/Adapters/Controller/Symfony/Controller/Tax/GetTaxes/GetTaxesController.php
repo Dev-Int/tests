@@ -23,11 +23,13 @@ use Symfony\Component\Routing\Attribute\Route;
 #[AsController]
 final class GetTaxesController extends AbstractController
 {
+    public const ROUTE_NAME = 'admin_taxes_index';
+
     public function __construct(private readonly GetTaxes $useCase)
     {
     }
 
-    #[Route(path: '/taxes', name: 'admin_taxes_index', methods: ['GET'])]
+    #[Route(path: '/taxes', name: self::ROUTE_NAME, methods: ['GET'])]
     public function __invoke(): Response
     {
         try {

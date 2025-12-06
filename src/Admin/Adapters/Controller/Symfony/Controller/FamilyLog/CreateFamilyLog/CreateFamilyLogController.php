@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\FamilyLog\CreateFamilyLog;
 
+use Admin\Adapters\Controller\Symfony\Controller\ConfigurationController;
+use Admin\Adapters\Controller\Symfony\Controller\FamilyLog\GetFamilyLogs\GetFamilyLogsController;
 use Admin\Adapters\Form\Type\FamilyLog\CreateFamilyLogType;
 use Admin\Adapters\Gateway\ConfigurationService;
 use Admin\Entities\Exception\FamilyLog\FamilyLogAlreadyExistsException;
@@ -28,6 +30,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[AsController]
 final class CreateFamilyLogController extends AbstractController
 {
+    public const ROUTE_NAME = 'admin_family_logs_create';
+
     public function __construct(
         private readonly CreateFamilyLog $useCase,
         private readonly ConfigurationService $configurationService,
@@ -35,17 +39,17 @@ final class CreateFamilyLogController extends AbstractController
     ) {
     }
 
-    #[Route(path: 'family_logs/create', name: 'admin_family_logs_create', methods: ['GET', 'POST'])]
+    #[Route(path: 'family_logs/create', name: self::ROUTE_NAME, methods: ['GET', 'POST'])]
     public function __invoke(Request $request): Response
     {
         if (!$this->configurationService->isTaxConfigured()) {
             $this->addFlash('error', NoTaxRegisteredException::MESSAGE);
 
-            return $this->redirectToRoute('admin_configure');
+            return $this->redirectToRoute(ConfigurationController::ROUTE_NAME);
         }
 
         $form = $this->createForm(CreateFamilyLogType::class, new CreateFamilyLogApiRequest(), [
-            'action' => $this->generateUrl('admin_family_logs_create'),
+            'action' => $this->generateUrl(self::ROUTE_NAME),
             'attr' => ['data-turbo-frame' => '_top'],
         ]);
 
@@ -59,11 +63,11 @@ final class CreateFamilyLogController extends AbstractController
             } catch (FamilyLogAlreadyExistsException $exception) {
                 $this->addFlash('error', $exception->getMessage());
 
-                return $this->redirectToRoute('admin_family_logs_index');
+                return $this->redirectToRoute(GetFamilyLogsController::ROUTE_NAME);
             }
             $this->addFlash('success', $this->translator->trans('admin.familyLog.create.success'));
 
-            return $this->redirectToRoute('admin_family_logs_index', [], Response::HTTP_FOUND);
+            return $this->redirectToRoute(GetFamilyLogsController::ROUTE_NAME);
         }
 
         return $this->render('@admin/familyLogs/create.html.twig', [

@@ -1,0 +1,84 @@
+<?php
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the Tests package.
+ *
+ * (c) Dev-Int Création <info@developpement-interessant.com>.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Admin\Tests\EndToEnd\Supplier;
+
+use Admin\Adapters\Controller\Symfony\Controller\Supplier\GetSuppliers\GetSuppliersController;
+use App\Shared\Tests\BasePantherTestCase;
+use Symfony\Component\Panther\PantherTestCase;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
+
+/**
+ * @group e2eTest
+ */
+final class ChangeDomiciliationSupplierCancelTest extends BasePantherTestCase
+{
+    public function testCancelDuringSupplierChangeDomiciliation(): void
+    {
+        // Arrange
+        $client = self::createPantherClient(['browser' => PantherTestCase::FIREFOX]);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get('router');
+
+        $config = $this->createMinimalConfiguration();
+        $supplier = $config['supplier'];
+
+        // Act && Assert
+        $client->request('GET', '/');
+        self::assertSelectorTextContains('h1', $translator->trans('home.welcome'));
+
+        $client->clickLink($translator->trans('admin.titlePage'));
+
+        $client->wait(1);
+        $client->waitForElementToContain('h1', $translator->trans('admin.titlePage'));
+        self::assertSelectorTextContains('h1', $translator->trans('admin.titlePage'));
+
+        $client->clickLink($translator->trans('admin.supplier.titlePage'));
+
+        $client->wait(1);
+        $client->waitForElementToContain('h1', $translator->trans('admin.supplier.titlePage'));
+        self::assertSelectorTextContains('h1', $translator->trans('admin.supplier.titlePage'));
+
+        $changeDomiciliationButtonText = $translator->trans('admin.supplier.changeDomiciliation.button');
+        $client->clickLink($changeDomiciliationButtonText);
+
+        $client->wait(1);
+        self::assertSelectorTextContains('h1', $translator->trans('admin.supplier.titlePage'));
+        $client->waitForVisibility(\sprintf('turbo-frame#supplier_%s h3', $supplier->uuid()->toString()));
+        self::assertSelectorTextContains(
+            \sprintf('turbo-frame#supplier_%s h3', $supplier->uuid()->toString()),
+            $translator->trans(
+                'admin.supplier.changeDomiciliation.titlePage',
+                ['%supplierName%' => $supplier->name()->toString()]
+            )
+        );
+
+        $client->waitForVisibility('a[role="button"][aria-label="Cancel"]');
+
+        $cancelButtonSelector = 'a[role="button"][aria-label="Cancel"]';
+        self::assertSelectorExists($cancelButtonSelector);
+        self::assertSelectorTextContains($cancelButtonSelector, $translator->trans('cancel'));
+
+        $client->clickLink($translator->trans('cancel'));
+
+        $client->wait(2);
+        $getSuppliersUrl = $router->generate(GetSuppliersController::ROUTE_NAME);
+        self::assertStringContainsString($getSuppliersUrl, $client->getCurrentURL());
+        self::assertSelectorTextContains('h1', $translator->trans('admin.supplier.titlePage'));
+    }
+}

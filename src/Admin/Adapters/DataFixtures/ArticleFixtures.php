@@ -37,16 +37,9 @@ final class ArticleFixtures extends Fixture implements DependentFixtureInterface
         $faker->addProvider(new Restaurant($faker));
 
         foreach ($this->getData() as $datum) {
-            /** @var Supplier $supplier */
             $supplier = $this->getReference($datum['supplierReference'], Supplier::class);
-
-            /** @var FamilyLog $familyLog */
             $familyLog = $this->getReference($datum['familyLogReference'], FamilyLog::class);
-
-            /** @var Tax $tax */
             $tax = $this->getReference(TaxFixtures::REFERENCE_PREFIX . 'taux-reduit', Tax::class);
-
-            /** @var ZoneStorage $zoneStorage */
             $zoneStorage = $this->getReference($datum['zoneStorageReference'], ZoneStorage::class);
 
             $names = $this->getArticleNames($faker, $datum['familyLogReference']);
@@ -85,6 +78,7 @@ final class ArticleFixtures extends Fixture implements DependentFixtureInterface
             UnitFixtures::class,
             TaxFixtures::class,
             ZoneStorageFixtures::class,
+            SupplierFixtures::class,
         ];
     }
 
@@ -175,7 +169,6 @@ final class ArticleFixtures extends Fixture implements DependentFixtureInterface
                 $unitReference = 'colis';
             }
 
-            /** @var Unit $unit */
             $unit = $this->getReference(UnitFixtures::REFERENCE_PREFIX . $unitReference, Unit::class);
             $quantity = $faker->randomFloat(3, 1, 10);
             $packaging[] = [$unit->toDomain(), $quantity];

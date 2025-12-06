@@ -74,7 +74,7 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
     {
         $alias = self::ALIAS;
         $count = $this->createQueryBuilder($alias)
-            ->select("COUNT({$alias}.uuid)")
+            ->select('COUNT(1)')
             ->getQuery()
             ->getSingleScalarResult()
         ;

@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\Article\GetArticles;
 
+use Admin\Adapters\Controller\Symfony\Controller\ConfigurationController;
 use Admin\Adapters\Gateway\Pagination\Pagination;
 use Admin\Entities\Exception\Article\NoArticleRegisteredException;
 use Admin\UseCases\Article\GetArticles\GetArticles;
@@ -25,13 +26,15 @@ use Symfony\Component\Routing\Attribute\Route;
 #[AsController]
 final class GetArticlesController extends AbstractController
 {
+    public const ROUTE_NAME = 'admin_articles_index';
+
     public function __construct(private readonly GetArticles $useCase)
     {
     }
 
     #[Route(
         path: 'articles',
-        name: 'admin_articles_index',
+        name: self::ROUTE_NAME,
         defaults: ['page' => Pagination::DEFAULT_PAGE, 'itemsPerPage' => Pagination::DEFAULT_ITEMS_PER_PAGE],
         methods: ['GET']
     )]
@@ -45,7 +48,7 @@ final class GetArticlesController extends AbstractController
         } catch (NoArticleRegisteredException $exception) {
             $this->addFlash('error', $exception->getMessage());
 
-            return $this->redirectToRoute('admin_configure');
+            return $this->redirectToRoute(ConfigurationController::ROUTE_NAME);
         }
 
         $response = new GetArticlesWebResponse($articles);

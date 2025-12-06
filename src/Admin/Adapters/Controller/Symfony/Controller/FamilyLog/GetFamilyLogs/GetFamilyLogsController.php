@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\FamilyLog\GetFamilyLogs;
 
+use Admin\Adapters\Controller\Symfony\Controller\ConfigurationController;
 use Admin\Entities\Exception\FamilyLog\NoFamilyLogRegisteredException;
 use Admin\UseCases\FamilyLog\GetFamilyLogs\GetFamilyLogs;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -23,11 +24,13 @@ use Symfony\Component\Routing\Attribute\Route;
 #[AsController]
 final class GetFamilyLogsController extends AbstractController
 {
+    public const ROUTE_NAME = 'admin_family_logs_index';
+
     public function __construct(private readonly GetFamilyLogs $useCase)
     {
     }
 
-    #[Route(path: '/family_logs', name: 'admin_family_logs_index')]
+    #[Route(path: '/family_logs', name: self::ROUTE_NAME, methods: ['GET'])]
     public function __invoke(): Response
     {
         try {
@@ -35,7 +38,7 @@ final class GetFamilyLogsController extends AbstractController
         } catch (NoFamilyLogRegisteredException $exception) {
             $this->addFlash('error', $exception->getMessage());
 
-            return $this->redirectToRoute('admin_configure');
+            return $this->redirectToRoute(ConfigurationController::ROUTE_NAME);
         }
 
         $response = new GetFamilyLogsWebResponse($familyLogs);

@@ -65,7 +65,7 @@ final class DoctrineZoneStorageRepository extends ServiceEntityRepository implem
     {
         $alias = self::ALIAS;
         $count = $this->createQueryBuilder($alias)
-            ->select("COUNT({$alias}.slug)")
+            ->select('COUNT(1)')
             ->getQuery()
             ->getSingleScalarResult()
         ;

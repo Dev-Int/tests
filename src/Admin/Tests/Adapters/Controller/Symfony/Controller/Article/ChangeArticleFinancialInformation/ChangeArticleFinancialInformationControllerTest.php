@@ -13,26 +13,25 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Article\ChangeArticleFinancialInformation;
 
-use Admin\Adapters\Gateway\ORM\Entity\Article\Article;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineArticleRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineSupplierRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineTaxRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineUnitRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineZoneStorageRepository;
 use Admin\Tests\DataBuilder\ArticleDataBuilder;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\SupplierDataBuilder;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
+use Admin\UseCases\Gateway\ArticleRepository;
+use Admin\UseCases\Gateway\FamilyLogRepository;
+use Admin\UseCases\Gateway\SupplierRepository;
+use Admin\UseCases\Gateway\TaxRepository;
+use Admin\UseCases\Gateway\UnitRepository;
+use Admin\UseCases\Gateway\ZoneStorageRepository;
+use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-final class ChangeArticleFinancialInformationControllerTest extends WebTestCase
+final class ChangeArticleFinancialInformationControllerTest extends BaseFunctionalTestCase
 {
     public const CHANGE_ARTICLE_FINANCIAL_INFORMATION_URI = '/admin/articles/%s/change-financial-information';
 
@@ -40,25 +39,24 @@ final class ChangeArticleFinancialInformationControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
 
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+        /** @var TaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(TaxRepository::class);
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+        /** @var ZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
 
-        /** @var DoctrineSupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
+        /** @var SupplierRepository $supplierRepository */
+        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
 
-        /** @var DoctrineArticleRepository $articleRepository */
-        $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
+        /** @var ArticleRepository $articleRepository */
+        $articleRepository = self::getContainer()->get(ArticleRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -103,7 +101,7 @@ final class ChangeArticleFinancialInformationControllerTest extends WebTestCase
         $articleRepository->save($article);
 
         // Act
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::CHANGE_ARTICLE_FINANCIAL_INFORMATION_URI, $article->uuid()->toString())
         );
@@ -121,20 +119,19 @@ final class ChangeArticleFinancialInformationControllerTest extends WebTestCase
             'changeArticleFinancialInformation[unitPrice]' => 7.25,
             'changeArticleFinancialInformation[tax]' => $tax55->uuid()->toString(),
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/articles');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertEquals($translator->trans('admin.article.changeFinancialInformation.success'), $flash);
 
-        $articleUpdated = $articleRepository->findOneBy(['slug' => 'jambon-trad-6kg']);
-        self::assertInstanceOf(Article::class, $articleUpdated);
-        self::assertSame(725, $articleUpdated->unitPrice());
+        $articleUpdated = $articleRepository->findByUuid($article->uuid()->toString());
+        self::assertSame(725, $articleUpdated->unitPrice()->toInt());
         self::assertSame(0.055, $articleUpdated->tax()->rate());
     }
 
@@ -142,25 +139,24 @@ final class ChangeArticleFinancialInformationControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
 
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+        /** @var TaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(TaxRepository::class);
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+        /** @var ZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
 
-        /** @var DoctrineSupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
+        /** @var SupplierRepository $supplierRepository */
+        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
 
-        /** @var DoctrineArticleRepository $articleRepository */
-        $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
+        /** @var ArticleRepository $articleRepository */
+        $articleRepository = self::getContainer()->get(ArticleRepository::class);
 
         $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
         $unitRepository->save($colis);
@@ -202,14 +198,14 @@ final class ChangeArticleFinancialInformationControllerTest extends WebTestCase
         $articleRepository->save($article);
 
         // Act
-        $client->request(
+        $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::CHANGE_ARTICLE_FINANCIAL_INFORMATION_URI, $faker->uuid())
         );
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
-        $response = $client->getCrawler();
+        $response = $this->client->getCrawler();
         $title = $response->filter('h1')->text();
 
         self::assertEquals('Page non trouvée', $title);

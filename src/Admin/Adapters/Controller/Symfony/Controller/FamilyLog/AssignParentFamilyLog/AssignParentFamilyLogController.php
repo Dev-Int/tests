@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\FamilyLog\AssignParentFamilyLog;
 
+use Admin\Adapters\Controller\Symfony\Controller\FamilyLog\GetFamilyLogs\GetFamilyLogsController;
 use Admin\Adapters\Form\Type\FamilyLog\AssignParentFamilyLogType;
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Admin\UseCases\FamilyLog\ChangeParentFamilyLog\AssignParentFamilyLog;
@@ -26,6 +27,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[AsController]
 final class AssignParentFamilyLogController extends AbstractController
 {
+    public const ROUTE_NAME = 'admin_family_logs_assign-parent';
+
     public function __construct(
         private readonly AssignParentFamilyLog $useCase,
         private readonly TranslatorInterface $translator
@@ -34,7 +37,7 @@ final class AssignParentFamilyLogController extends AbstractController
 
     #[Route(
         path: '/family_logs/{familyLog}/assign-parent',
-        name: 'admin_family_logs_assign-parent',
+        name: self::ROUTE_NAME,
         requirements: ['familyLog' => '^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$'],
         methods: ['GET', 'POST']
     )]
@@ -44,7 +47,7 @@ final class AssignParentFamilyLogController extends AbstractController
             AssignParentFamilyLogType::class,
             ['parent' => $familyLog->parent(), 'uuid' => $familyLog->uuid()],
             [
-                'action' => $this->generateUrl('admin_family_logs_assign-parent', ['familyLog' => $familyLog->uuid()]),
+                'action' => $this->generateUrl(self::ROUTE_NAME, ['familyLog' => $familyLog->uuid()]),
                 'attr' => ['data-turbo-frame' => '_top'],
             ]
         );
@@ -63,11 +66,11 @@ final class AssignParentFamilyLogController extends AbstractController
             } catch (\DomainException $exception) {
                 $this->addFlash('error', $exception->getMessage());
 
-                return $this->redirectToRoute('admin_family_logs_index');
+                return $this->redirectToRoute(GetFamilyLogsController::ROUTE_NAME);
             }
             $this->addFlash('success', $this->translator->trans('admin.familyLog.assignParent.success'));
 
-            return $this->redirectToRoute('admin_family_logs_index');
+            return $this->redirectToRoute(GetFamilyLogsController::ROUTE_NAME);
         }
 
         return $this->render('@admin/familyLogs/assign-parent.html.twig', [

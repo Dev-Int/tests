@@ -26,6 +26,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[AsController]
 final class ChangeDeliverySpecificationsSupplierController extends AbstractController
 {
+    public const ROUTE_NAME = 'admin_suppliers_change-delivery-specifications';
+
     public function __construct(
         private readonly ChangeDeliverySpecificationsSupplier $useCase,
         private readonly TranslatorInterface $translator
@@ -34,7 +36,7 @@ final class ChangeDeliverySpecificationsSupplierController extends AbstractContr
 
     #[Route(
         path: 'suppliers/{supplier}/change-delivery-specifications',
-        name: 'admin_suppliers_change-delivery-specifications',
+        name: self::ROUTE_NAME,
         requirements: ['supplier' => '^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$'],
         methods: ['GET', 'POST']
     )]
@@ -50,7 +52,7 @@ final class ChangeDeliverySpecificationsSupplierController extends AbstractContr
             ),
             [
                 'action' => $this->generateUrl(
-                    'admin_suppliers_change-delivery-specifications',
+                    self::ROUTE_NAME,
                     ['supplier' => $supplier->uuid()]
                 ),
                 'attr' => ['data-turbo-frame' => '_top'],

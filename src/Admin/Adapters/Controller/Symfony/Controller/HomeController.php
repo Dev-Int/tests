@@ -22,11 +22,13 @@ use Symfony\Component\Routing\Attribute\Route;
 #[AsController]
 final class HomeController extends AbstractController
 {
+    public const ROUTE_NAME = 'admin_index';
+
     public function __construct(private readonly ConfigurationService $configurationService)
     {
     }
 
-    #[Route(path: '/', name: 'admin_index')]
+    #[Route(path: '/', name: self::ROUTE_NAME)]
     public function __invoke(): Response
     {
         $isConfigured = $this->configurationService->isConfigured();

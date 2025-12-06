@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\FamilyLog\ChangeLabelFamilyLog;
 
+use Admin\Adapters\Controller\Symfony\Controller\FamilyLog\GetFamilyLogs\GetFamilyLogsController;
 use Admin\Adapters\Form\Type\FamilyLog\ChangeLabelFamilyLogType;
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Admin\UseCases\FamilyLog\ChangeLabelFamilyLog\ChangeLabelFamilyLog;
@@ -26,6 +27,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[AsController]
 final class ChangeLabelFamilyLogController extends AbstractController
 {
+    public const ROUTE_NAME = 'admin_family_logs_change-label';
+
     public function __construct(
         private readonly ChangeLabelFamilyLog $useCase,
         private readonly TranslatorInterface $translator
@@ -34,7 +37,7 @@ final class ChangeLabelFamilyLogController extends AbstractController
 
     #[Route(
         path: 'family_logs/{familyLog}/change-label',
-        name: 'admin_family_logs_change-label',
+        name: self::ROUTE_NAME,
         requirements: ['familyLog' => '^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$'],
         methods: ['GET', 'POST']
     )]
@@ -44,7 +47,7 @@ final class ChangeLabelFamilyLogController extends AbstractController
             ChangeLabelFamilyLogType::class,
             new ChangeLabelFamilyLogApiRequest($familyLog->uuid(), $familyLog->label()),
             [
-                'action' => $this->generateUrl('admin_family_logs_change-label', ['familyLog' => $familyLog->uuid()]),
+                'action' => $this->generateUrl(self::ROUTE_NAME, ['familyLog' => $familyLog->uuid()]),
                 'attr' => ['data-turbo-frame' => '_top'],
             ]
         );
@@ -59,11 +62,11 @@ final class ChangeLabelFamilyLogController extends AbstractController
             } catch (\DomainException $exception) {
                 $this->addFlash('error', $exception->getMessage());
 
-                return $this->redirectToRoute('admin_family_logs_index');
+                return $this->redirectToRoute(GetFamilyLogsController::ROUTE_NAME);
             }
             $this->addFlash('success', $this->translator->trans('admin.familyLog.changeLabel.success'));
 
-            return $this->redirectToRoute('admin_family_logs_index');
+            return $this->redirectToRoute(GetFamilyLogsController::ROUTE_NAME);
         }
 
         return $this->render('@admin/familyLogs/change-label.html.twig', [

@@ -13,10 +13,10 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Company\CreateCompany;
 
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineCompanyRepository;
 use Admin\Entities\Exception\Company\CompanyAlreadyExistsException;
 use Admin\Tests\DataBuilder\CompanyDataBuilder;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Admin\UseCases\Gateway\CompanyRepository;
+use App\Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -24,28 +24,26 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @group functionalTest
  */
-final class CreateCompanyControllerTest extends WebTestCase
+final class CreateCompanyControllerTest extends BaseFunctionalTestCase
 {
     private const CREATE_COMPANY_URI = '/admin/company/create';
 
     public function testCreateCompanyControllerWillSucceed(): void
     {
         // Arrange
-        $client = self::createClient();
-
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        /** @var CompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(CompanyRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::CREATE_COMPANY_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_COMPANY_URI);
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.company.create.titlePage'));
 
-        $form = $crawler->selectButton('Create')->form([
+        $form = $crawler->selectButton($translator->trans('add'))->form([
             'createCompany[name]' => 'Dev-Int Création',
             'createCompany[address]' => '5, rue des Plantes',
             'createCompany[postalCode]' => '75000',
@@ -55,7 +53,7 @@ final class CreateCompanyControllerTest extends WebTestCase
             'createCompany[email]' => 'test@test.fr',
             'createCompany[contact]' => 'Laurent',
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
@@ -64,9 +62,9 @@ final class CreateCompanyControllerTest extends WebTestCase
         $companyCreated = $companyRepository->findByName('Dev-Int Création');
         self::assertSame('dev-int-creation', $companyCreated->slug());
 
-        // The configuration only begin. The admin page is redirected throw admin configure.
-        $client->followRedirect(); // Admin page
-        $admin = $client->followRedirect(); // Configure page
+        // The configuration only begins. The admin page is redirected throw admin configure.
+        $this->client->followRedirect(); // Admin page
+        $admin = $this->client->followRedirect(); // Configure page
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertEquals($translator->trans('admin.company.create.success'), $flash);
@@ -75,10 +73,8 @@ final class CreateCompanyControllerTest extends WebTestCase
     public function testCreateCompanyControllerWillThrowAlreadyExistsException(): void
     {
         // Arrange
-        $client = self::createClient();
-
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        /** @var CompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(CompanyRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -87,12 +83,12 @@ final class CreateCompanyControllerTest extends WebTestCase
         $companyRepository->save($company);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::CREATE_COMPANY_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_COMPANY_URI);
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.company.create.titlePage'));
 
-        $form = $crawler->selectButton('Create')->form([
+        $form = $crawler->selectButton($translator->trans('add'))->form([
             'createCompany[name]' => 'Dev-Int Création',
             'createCompany[address]' => '5, rue des Plantes',
             'createCompany[postalCode]' => '75000',
@@ -103,15 +99,15 @@ final class CreateCompanyControllerTest extends WebTestCase
             'createCompany[contact]' => 'Laurent',
         ]);
 
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/');
 
-        // The configuration only begin. The admin page is redirected throw admin configure.
-        $client->followRedirect(); // Admin page
-        $admin = $client->followRedirect(); // Configure page
+        // The configuration only begins. The admin page is redirected throw admin configure.
+        $this->client->followRedirect(); // Admin page
+        $admin = $this->client->followRedirect(); // Configure page
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertEquals(CompanyAlreadyExistsException::MESSAGE, $flash);
@@ -120,10 +116,8 @@ final class CreateCompanyControllerTest extends WebTestCase
     public function testCreateCompanyControllerWillThrowBadRequestException(): void
     {
         // Arrange
-        $client = self::createClient();
-
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        /** @var CompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(CompanyRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -132,12 +126,12 @@ final class CreateCompanyControllerTest extends WebTestCase
         $companyRepository->save($company);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::CREATE_COMPANY_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_COMPANY_URI);
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans('admin.company.create.titlePage'));
 
-        $form = $crawler->selectButton('Create')->form([
+        $form = $crawler->selectButton($translator->trans('add'))->form([
             'createCompany[name]' => 'Dev-Int Création',
             'createCompany[address]' => '5, rue des Plantes',
             'createCompany[postalCode]' => '75000',
@@ -148,11 +142,11 @@ final class CreateCompanyControllerTest extends WebTestCase
             'createCompany[contact]' => 'Laurent',
         ]);
 
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
-        $response = $client->getCrawler();
+        $response = $this->client->getCrawler();
 
         $groupField = $response->filter('form')->children('div')->eq(4);
         $phoneField = $groupField->children('div')->first();

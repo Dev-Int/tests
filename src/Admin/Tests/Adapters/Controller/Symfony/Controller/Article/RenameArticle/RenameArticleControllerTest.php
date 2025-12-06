@@ -13,13 +13,6 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Article\RenameArticle;
 
-use Admin\Adapters\Gateway\ORM\Entity\Article\Article;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineArticleRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineSupplierRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineTaxRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineUnitRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineZoneStorageRepository;
 use Admin\Entities\Exception\Article\ArticleAlreadyExistsException;
 use Admin\Tests\DataBuilder\ArticleDataBuilder;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
@@ -27,8 +20,14 @@ use Admin\Tests\DataBuilder\SupplierDataBuilder;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
+use Admin\UseCases\Gateway\ArticleRepository;
+use Admin\UseCases\Gateway\FamilyLogRepository;
+use Admin\UseCases\Gateway\SupplierRepository;
+use Admin\UseCases\Gateway\TaxRepository;
+use Admin\UseCases\Gateway\UnitRepository;
+use Admin\UseCases\Gateway\ZoneStorageRepository;
+use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -36,7 +35,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @group functionalTest
  */
-final class RenameArticleControllerTest extends WebTestCase
+final class RenameArticleControllerTest extends BaseFunctionalTestCase
 {
     private const RENAME_ARTICLE_URI = '/admin/articles/%s/rename';
 
@@ -44,25 +43,24 @@ final class RenameArticleControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
 
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+        /** @var TaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(TaxRepository::class);
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+        /** @var ZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
 
-        /** @var DoctrineSupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
+        /** @var SupplierRepository $supplierRepository */
+        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
 
-        /** @var DoctrineArticleRepository $articleRepository */
-        $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
+        /** @var ArticleRepository $articleRepository */
+        $articleRepository = self::getContainer()->get(ArticleRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -96,7 +94,7 @@ final class RenameArticleControllerTest extends WebTestCase
         $articleRepository->save($article);
 
         // Act
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::RENAME_ARTICLE_URI, $article->uuid()->toString())
         );
@@ -111,45 +109,43 @@ final class RenameArticleControllerTest extends WebTestCase
             'renameArticle[name]' => 'Jambon 6kg',
             'renameArticle[uuid]' => $article->uuid()->toString(),
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/articles');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertEquals($translator->trans('admin.article.rename.success'), $flash);
 
-        $articleUpdated = $articleRepository->find($article->uuid()->toString());
-        self::assertInstanceOf(Article::class, $articleUpdated);
-        self::assertSame('Jambon 6kg', $articleUpdated->name());
+        $articleUpdated = $articleRepository->findByUuid($article->uuid()->toString());
+        self::assertSame('Jambon 6kg', $articleUpdated->name()->toString());
     }
 
     public function testRenameArticleFailWithAlreadyExistsException(): void
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
 
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+        /** @var TaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(TaxRepository::class);
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+        /** @var ZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
 
-        /** @var DoctrineSupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
+        /** @var SupplierRepository $supplierRepository */
+        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
 
-        /** @var DoctrineArticleRepository $articleRepository */
-        $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
+        /** @var ArticleRepository $articleRepository */
+        $articleRepository = self::getContainer()->get(ArticleRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -195,7 +191,7 @@ final class RenameArticleControllerTest extends WebTestCase
         $articleRepository->save($article2);
 
         // Act
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::RENAME_ARTICLE_URI, $article1->uuid()->toString())
         );
@@ -210,13 +206,13 @@ final class RenameArticleControllerTest extends WebTestCase
             'renameArticle[name]' => 'Jambon 6kg',
             'renameArticle[uuid]' => $article1->uuid()->toString(),
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/articles');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertEquals(ArticleAlreadyExistsException::MESSAGE, $flash);
@@ -226,25 +222,24 @@ final class RenameArticleControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
 
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+        /** @var TaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(TaxRepository::class);
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+        /** @var ZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
 
-        /** @var DoctrineSupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
+        /** @var SupplierRepository $supplierRepository */
+        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
 
-        /** @var DoctrineArticleRepository $articleRepository */
-        $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
+        /** @var ArticleRepository $articleRepository */
+        $articleRepository = self::getContainer()->get(ArticleRepository::class);
 
         $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
         $unitRepository->save($colis);
@@ -275,14 +270,14 @@ final class RenameArticleControllerTest extends WebTestCase
         $articleRepository->save($article);
 
         // Act
-        $client->request(
+        $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::RENAME_ARTICLE_URI, $faker->uuid())
         );
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
-        $response = $client->getCrawler();
+        $response = $this->client->getCrawler();
 
         $title = $response->filter('h1')->text();
 

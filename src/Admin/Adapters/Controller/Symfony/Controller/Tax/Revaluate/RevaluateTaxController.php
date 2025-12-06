@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\Tax\Revaluate;
 
+use Admin\Adapters\Controller\Symfony\Controller\Tax\GetTaxes\GetTaxesController;
 use Admin\Adapters\Form\Type\Tax\RevaluateTaxType;
 use Admin\Adapters\Gateway\ORM\Entity\Tax;
 use Admin\UseCases\Tax\RevaluateTax\RevaluateTax;
@@ -26,6 +27,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[AsController]
 final class RevaluateTaxController extends AbstractController
 {
+    public const ROUTE_NAME = 'admin_taxes_revaluate';
+
     public function __construct(
         private readonly RevaluateTax $useCase,
         private readonly TranslatorInterface $translator
@@ -34,7 +37,7 @@ final class RevaluateTaxController extends AbstractController
 
     #[Route(
         path: 'taxes/{tax}/revaluate',
-        name: 'admin_taxes_revaluate',
+        name: self::ROUTE_NAME,
         requirements: ['tax' => '^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$'],
         methods: ['GET', 'POST']
     )]
@@ -42,7 +45,7 @@ final class RevaluateTaxController extends AbstractController
     {
         $taxToRevaluate = new RevaluateTaxApiRequest($tax->rate(), $tax->uuid());
         $form = $this->createForm(RevaluateTaxType::class, $taxToRevaluate, [
-            'action' => $this->generateUrl('admin_taxes_revaluate', ['tax' => $tax->uuid()]),
+            'action' => $this->generateUrl(self::ROUTE_NAME, ['tax' => $tax->uuid()]),
             'attr' => ['data-turbo-frame' => '_top'],
         ]);
 
@@ -56,11 +59,11 @@ final class RevaluateTaxController extends AbstractController
             } catch (\DomainException $exception) {
                 $this->addFlash('error', $exception->getMessage());
 
-                return $this->redirectToRoute('admin_taxes_index');
+                return $this->redirectToRoute(GetTaxesController::ROUTE_NAME);
             }
             $this->addFlash('success', $this->translator->trans('admin.tax.revaluate.success'));
 
-            return $this->redirectToRoute('admin_taxes_index');
+            return $this->redirectToRoute(GetTaxesController::ROUTE_NAME);
         }
 
         return $this->render('@admin/taxes/revaluate.html.twig', [

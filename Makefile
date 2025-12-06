@@ -75,7 +75,7 @@ unserve: ## Stop the webserver
 .PHONY: bin-install cert-install serve unserve
 
 ## —— Database —————————————————————————————————————————————————————————————————
-clean-db: cc ## Reset database (env : test)
+clean-db: cc ## Reset database (env : dev)
 	- $(SYMFONY) doctrine:database:drop --force
 	$(SYMFONY) doctrine:database:create
 	$(SYMFONY) doctrine:migration:migrate --no-interaction
@@ -108,11 +108,13 @@ tu: phpunit.xml ## Launch unit tests
 tf: phpunit.xml clean-db-test ## Launch functional tests implying external resources (API, services...)
 	php bin/phpunit --group=functionalTest --stop-on-failure
 
-ta: phpunit.xml clean-db-test ## Launch functional and unit tests
-	php bin/phpunit --stop-on-failure
+ta: phpunit.xml tu tf ## Launch functional and unit tests
+
+e2e: phpunit.xml clean-db-test ## Launch end-to-end tests
+	php ./vendor/bin/phpunit --group=e2eTest --stop-on-failure
 
 tc: phpunit.xml clean-db-test ## Launch all tests with coverage
-	XDEBUG_MODE=coverage php bin/phpunit --coverage-html=coverage
+	XDEBUG_MODE=coverage php bin/phpunit --group=unitTest --group=functionalTest --coverage-html=coverage
 .PHONY: cc-test clean-db-test tu tf ta tc
 
 
@@ -138,6 +140,11 @@ rector: ## Run rector analysis
 schema-validate: ## Run schema validation
 	bin/console doctrine:schema:validate
 .PHONY: qa phpcs cs-fixer stan stan-baseline rector schema-validate
+
+
+## —— Github 🐙 ———————————————————————————————————————————————————————————————————
+ci: qa ta e2e ## Run all tools like the CI
+.PHONY: ci
 
 
 ## —— Docker 🐳 ———————————————————————————————————————————————————————————————————

@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Company\UpdateCompany;
 
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineCompanyRepository;
 use Admin\Tests\DataBuilder\CompanyDataBuilder;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Admin\UseCases\Gateway\CompanyRepository;
+use App\Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -23,17 +23,15 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @group functionalTest
  */
-final class UpdateCompanyControllerTest extends WebTestCase
+final class UpdateCompanyControllerTest extends BaseFunctionalTestCase
 {
     private const UPDATE_COMPANY_URI = '/admin/company/%s/update';
 
     public function testUpdateCompanyControllerWillSucceed(): void
     {
         // Arrange
-        $client = self::createClient();
-
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        /** @var CompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(CompanyRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -47,7 +45,7 @@ final class UpdateCompanyControllerTest extends WebTestCase
         self::assertSame('Paris', $companyCreated->address()->city());
 
         // Act
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::UPDATE_COMPANY_URI, $company->slug())
         );
@@ -58,7 +56,7 @@ final class UpdateCompanyControllerTest extends WebTestCase
             $translator->trans('admin.company.update.titlePage', ['%companyName%' => 'Dev-Int Création'])
         );
 
-        $form = $crawler->selectButton('Update')->form([
+        $form = $crawler->selectButton($translator->trans('admin.company.update.button'))->form([
             'updateCompany[address]' => '12, rue des Singes',
             'updateCompany[postalCode]' => '56000',
             'updateCompany[city]' => 'Vannes',
@@ -67,7 +65,7 @@ final class UpdateCompanyControllerTest extends WebTestCase
             'updateCompany[email]' => 'test@test.fr',
             'updateCompany[contact]' => 'Laurent',
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
@@ -82,22 +80,20 @@ final class UpdateCompanyControllerTest extends WebTestCase
     public function testUpdateCompanyControllerWillFailWithCompanyNotFound(): void
     {
         // Arrange
-        $client = self::createClient();
-
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        /** @var CompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(CompanyRepository::class);
         $company = (new CompanyDataBuilder())->create('Dev-Int Création')->build();
         $companyRepository->save($company);
 
         // Act
-        $client->request(
+        $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::UPDATE_COMPANY_URI, 'Test company')
         );
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
-        $response = $client->getCrawler();
+        $response = $this->client->getCrawler();
 
         $title = $response->filter('h1')->text();
 

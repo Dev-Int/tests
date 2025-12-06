@@ -13,22 +13,20 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Article\ReAssignArticleSupplier;
 
-use Admin\Adapters\Gateway\ORM\Entity\Article\Article;
-use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineArticleRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineSupplierRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineTaxRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineUnitRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineZoneStorageRepository;
 use Admin\Tests\DataBuilder\ArticleDataBuilder;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\SupplierDataBuilder;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
+use Admin\UseCases\Gateway\ArticleRepository;
+use Admin\UseCases\Gateway\FamilyLogRepository;
+use Admin\UseCases\Gateway\SupplierRepository;
+use Admin\UseCases\Gateway\TaxRepository;
+use Admin\UseCases\Gateway\UnitRepository;
+use Admin\UseCases\Gateway\ZoneStorageRepository;
+use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -36,7 +34,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @group functionalTest
  */
-final class ReAssignArticleSupplierControllerTest extends WebTestCase
+final class ReAssignArticleSupplierControllerTest extends BaseFunctionalTestCase
 {
     private const REASSIGN_ARTICLE_SUPPLIER_URI = '/admin/articles/%s/reassign-supplier';
 
@@ -44,25 +42,24 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
 
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+        /** @var TaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(TaxRepository::class);
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+        /** @var ZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
 
-        /** @var DoctrineSupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
+        /** @var SupplierRepository $supplierRepository */
+        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
 
-        /** @var DoctrineArticleRepository $articleRepository */
-        $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
+        /** @var ArticleRepository $articleRepository */
+        $articleRepository = self::getContainer()->get(ArticleRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -114,7 +111,7 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
         $articleRepository->save($article);
 
         // Act
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::REASSIGN_ARTICLE_SUPPLIER_URI, $article->uuid()->toString())
         );
@@ -134,50 +131,48 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
             'reAssignArticleSupplier[zoneStorages]' => [$storageSurgele->uuid()->toString()],
             'reAssignArticleSupplier[uuid]' => $article->uuid()->toString(),
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/articles');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertEquals($translator->trans('admin.article.reassignSupplier.success'), $flash);
 
-        $articleUpdated = $articleRepository->find($article->uuid()->toString());
-        self::assertInstanceOf(Article::class, $articleUpdated);
-        self::assertSame('Supplier Surgelé', $articleUpdated->supplier()->name());
-        $zoneStorages = $articleUpdated->zoneStorages();
+        $articleUpdated = $articleRepository->findByUuid($article->uuid()->toString());
+
+        self::assertSame('Supplier Surgelé', $articleUpdated->supplier()->name()->toString());
+        $zoneStorages = $articleUpdated->zoneStorages()->toArray();
         $firstZoneStorage = $zoneStorages[0];
-        self::assertInstanceOf(ZoneStorage::class, $firstZoneStorage);
-        self::assertSame('Réserve négative', $firstZoneStorage->label());
-        self::assertSame('Surgelé', $articleUpdated->familyLog()->label());
+        self::assertSame('Réserve négative', $firstZoneStorage->label()->toString());
+        self::assertSame('Surgelé', $articleUpdated->familyLog()->label()->toString());
     }
 
     public function testReAssignArticleSupplierFailWithBadFamilyLogExceptionFromZoneStorage(): void
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
 
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+        /** @var TaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(TaxRepository::class);
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+        /** @var ZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
 
-        /** @var DoctrineSupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
+        /** @var SupplierRepository $supplierRepository */
+        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
 
-        /** @var DoctrineArticleRepository $articleRepository */
-        $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
+        /** @var ArticleRepository $articleRepository */
+        $articleRepository = self::getContainer()->get(ArticleRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -223,7 +218,7 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
         $articleRepository->save($article);
 
         // Act
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::REASSIGN_ARTICLE_SUPPLIER_URI, $article->uuid()->toString())
         );
@@ -246,11 +241,11 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
             ],
             'reAssignArticleSupplier[uuid]' => $article->uuid()->toString(),
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
-        $crawler = $client->getCrawler();
+        $crawler = $this->client->getCrawler();
 
         $supplierField = $crawler->filter('form')->children('div')->first();
 
@@ -274,25 +269,24 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
 
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+        /** @var TaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(TaxRepository::class);
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+        /** @var ZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
 
-        /** @var DoctrineSupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
+        /** @var SupplierRepository $supplierRepository */
+        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
 
-        /** @var DoctrineArticleRepository $articleRepository */
-        $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
+        /** @var ArticleRepository $articleRepository */
+        $articleRepository = self::getContainer()->get(ArticleRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -338,7 +332,7 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
         $articleRepository->save($article);
 
         // Act
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::REASSIGN_ARTICLE_SUPPLIER_URI, $article->uuid()->toString())
         );
@@ -360,11 +354,11 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
             ],
             'reAssignArticleSupplier[uuid]' => $article->uuid()->toString(),
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
-        $crawler = $client->getCrawler();
+        $crawler = $this->client->getCrawler();
 
         $supplierField = $crawler->filter('form')->children('div')->first();
 
@@ -393,25 +387,24 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
 
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+        /** @var TaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(TaxRepository::class);
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+        /** @var ZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
 
-        /** @var DoctrineSupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
+        /** @var SupplierRepository $supplierRepository */
+        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
 
-        /** @var DoctrineArticleRepository $articleRepository */
-        $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
+        /** @var ArticleRepository $articleRepository */
+        $articleRepository = self::getContainer()->get(ArticleRepository::class);
 
         $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
         $unitRepository->save($colis);
@@ -460,14 +453,14 @@ final class ReAssignArticleSupplierControllerTest extends WebTestCase
         $articleRepository->save($article);
 
         // Act
-        $client->request(
+        $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::REASSIGN_ARTICLE_SUPPLIER_URI, $faker->uuid())
         );
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
-        $response = $client->getCrawler();
+        $response = $this->client->getCrawler();
 
         $title = $response->filter('h1')->text();
 

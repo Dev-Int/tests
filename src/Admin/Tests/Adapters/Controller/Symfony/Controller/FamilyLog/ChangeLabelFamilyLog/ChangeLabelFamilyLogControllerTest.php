@@ -13,11 +13,15 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\FamilyLog\ChangeLabelFamilyLog;
 
+use Admin\Adapters\Controller\Symfony\Controller\FamilyLog\GetFamilyLogs\GetFamilyLogsController;
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
+use Admin\Entities\FamilyLog\FamilyLog as FamilyLogDomain;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
+use Admin\UseCases\Gateway\FamilyLogRepository;
+use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Shared\Entities\ResourceUuid;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -25,7 +29,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @group functionalTest
  */
-final class ChangeLabelFamilyLogControllerTest extends WebTestCase
+final class ChangeLabelFamilyLogControllerTest extends BaseFunctionalTestCase
 {
     private const CHANGE_LABEL_FAMILY_LOG_URI = '/admin/family_logs/%s/change-label';
 
@@ -33,10 +37,9 @@ final class ChangeLabelFamilyLogControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -53,11 +56,11 @@ final class ChangeLabelFamilyLogControllerTest extends WebTestCase
             ->build()
         ;
         $familyLogRepository->save($familyLog);
-        $familyLogs = $familyLogRepository->findAll();
+        $familyLogs = $familyLogRepository->findFamilyLogsOrderingBySlug();
         self::assertCount(2, $familyLogs);
 
         // Act
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::CHANGE_LABEL_FAMILY_LOG_URI, $familyLog->uuid()->toString())
         );
@@ -71,31 +74,32 @@ final class ChangeLabelFamilyLogControllerTest extends WebTestCase
         $form = $crawler->selectButton($translator->trans('admin.familyLog.changeLabel.button'))->form([
             'changeLabelFamilyLog[label]' => 'Viandes',
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/family_logs');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertSame($translator->trans('admin.familyLog.changeLabel.success'), $flash);
 
-        /** @var FamilyLog $familyLogUpdated */
-        $familyLogUpdated = $familyLogRepository->find(FamilyLogDataBuilder::VALID_UUID);
-        $familyLogs = $familyLogRepository->findAll();
-        self::assertCount(2, $familyLogs);
-        self::assertSame('Viandes', $familyLogUpdated->label());
+        /** @var FamilyLogDomain $familyLogUpdated */
+        $familyLogUpdated = $familyLogRepository->findByUuid(
+            ResourceUuid::fromString(FamilyLogDataBuilder::VALID_UUID)
+        );
+        $familyLogs = $familyLogRepository->findFamilyLogsOrderingBySlug();
+        self::assertCount(2, $familyLogs->toArray());
+        self::assertSame('Viandes', $familyLogUpdated->label()->toString());
         self::assertSame('surgele_viandes', $familyLogUpdated->slug());
-        self::assertSame('Surgelé', $familyLogUpdated->parent()?->label());
+        self::assertSame('Surgelé', $familyLogUpdated->parent()?->label()->toString());
     }
 
     public function testChangeLabelFamilyLogWithChildrenWillSucceed(): void
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
@@ -126,7 +130,7 @@ final class ChangeLabelFamilyLogControllerTest extends WebTestCase
         self::assertCount(3, $familyLogs);
 
         // Act
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::CHANGE_LABEL_FAMILY_LOG_URI, $familyLogParent->uuid()->toString())
         );
@@ -140,13 +144,13 @@ final class ChangeLabelFamilyLogControllerTest extends WebTestCase
         $form = $crawler->selectButton($translator->trans('admin.familyLog.changeLabel.button'))->form([
             'changeLabelFamilyLog[label]' => 'Surgelés',
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/family_logs');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
 
         self::assertSame($translator->trans('admin.familyLog.changeLabel.success'), $flash);
@@ -177,10 +181,9 @@ final class ChangeLabelFamilyLogControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -205,7 +208,7 @@ final class ChangeLabelFamilyLogControllerTest extends WebTestCase
         $familyLogRepository->save($familyLog);
 
         // Act
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::CHANGE_LABEL_FAMILY_LOG_URI, $familyLog->uuid()->toString())
         );
@@ -219,13 +222,13 @@ final class ChangeLabelFamilyLogControllerTest extends WebTestCase
         $form = $crawler->selectButton($translator->trans('admin.familyLog.changeLabel.button'))->form([
             'changeLabelFamilyLog[label]' => 'Produits carnés',
         ]);
-        $client->submit($form);
+        $this->client->submit($form);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/family_logs');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame('FamilyLog already exists.', $flash);
@@ -235,10 +238,9 @@ final class ChangeLabelFamilyLogControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
         $familyLogBuilder = new FamilyLogDataBuilder();
 
         $familyLogParent = $familyLogBuilder->create('Surgelé')
@@ -252,21 +254,79 @@ final class ChangeLabelFamilyLogControllerTest extends WebTestCase
             ->build()
         ;
         $familyLogRepository->save($familyLog);
-        $familyLogs = $familyLogRepository->findAll();
-        self::assertCount(2, $familyLogs);
+        $familyLogs = $familyLogRepository->findFamilyLogsOrderingBySlug();
+        self::assertCount(2, $familyLogs->toArray());
 
         // Act
-        $client->request(
+        $this->client->request(
             Request::METHOD_GET,
             \sprintf(self::CHANGE_LABEL_FAMILY_LOG_URI, $faker->uuid())
         );
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
-        $response = $client->getCrawler();
+        $response = $this->client->getCrawler();
 
         $title = $response->filter('h1')->text();
 
         self::assertEquals('Page non trouvée', $title);
+    }
+
+    public function testCancelDuringFamilyLogLabelChange(): void
+    {
+        // Arrange
+        $faker = Factory::create('fr_FR');
+
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+        $familyLogBuilder = new FamilyLogDataBuilder();
+
+        $familyLogParent = $familyLogBuilder->create('Surgelé')
+            ->withUuid($faker->uuid())
+            ->build()
+        ;
+        $familyLogRepository->save($familyLogParent);
+
+        $familyLog = $familyLogBuilder->create('Viande')
+            ->withParent($familyLogParent)
+            ->build()
+        ;
+        $familyLogRepository->save($familyLog);
+        $familyLogs = $familyLogRepository->findFamilyLogsOrderingBySlug();
+        self::assertCount(2, $familyLogs->toArray());
+
+        // Act
+        $crawler = $this->client->request(
+            Request::METHOD_GET,
+            \sprintf(self::CHANGE_LABEL_FAMILY_LOG_URI, $familyLog->uuid()->toString())
+        );
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains(
+            'h1',
+            $translator->trans('admin.familyLog.changeLabel.titlePage', ['%familyLabel%' => 'Viande'])
+        );
+
+        $cancelLink = $crawler->selectLink($translator->trans('cancel'));
+        self::assertCount(1, $cancelLink, 'Cancel link should exist');
+
+        $this->client->click($cancelLink->link());
+
+        // Assert
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertRouteSame(GetFamilyLogsController::ROUTE_NAME);
+
+        /** @var FamilyLogDomain $familyLogAfterCancel */
+        $familyLogAfterCancel = $familyLogRepository->findByUuid(
+            ResourceUuid::fromString(FamilyLogDataBuilder::VALID_UUID)
+        );
+        self::assertSame('Viande', $familyLogAfterCancel->label()->toString());
+        self::assertSame('surgele_viande', $familyLogAfterCancel->slug());
+
+        $familyLogs = $familyLogRepository->findFamilyLogsOrderingBySlug();
+        self::assertCount(2, $familyLogs->toArray());
     }
 }

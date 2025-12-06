@@ -26,13 +26,15 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[AsController]
 final class CreateCompanyController extends AbstractController
 {
+    public const ROUTE_NAME = 'admin_company_create';
+
     public function __construct(
         private readonly CreateCompany $useCase,
         private readonly TranslatorInterface $translator
     ) {
     }
 
-    #[Route(path: '/company/create', name: 'admin_company_create', methods: ['GET', 'POST'])]
+    #[Route(path: '/company/create', name: self::ROUTE_NAME, methods: ['GET', 'POST'])]
     public function __invoke(Request $request): Response
     {
         $form = $this->createForm(CompanyType::class);

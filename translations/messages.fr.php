@@ -3,6 +3,8 @@
 return [
     'connection' => 'Connexion',
     'actions' => 'Actions',
+    'cancel' => 'Annuler',
+    'add' => 'Ajouter',
     'name' => 'Nom',
     'address' => 'Adresse',
     'postalCode' => 'Code postal',
@@ -56,6 +58,7 @@ return [
                 'success' => 'Compagnie créée avec succès.',
             ],
             'update' => [
+                'button' => 'Modifier',
                 'titlePage' => 'Modification de la compagnie "%companyName%"',
                 'titleShort' => 'Modifier "%companyName%"',
                 'success' => 'Compagnie modifiée avec succès.'

@@ -17,9 +17,9 @@ use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
 use Admin\Entities\FamilyLog\FamilyLog as FamilyLogDomain;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use App\Shared\Tests\BaseFunctionalTestCase;
 
-class FamilyLogTest extends WebTestCase
+class FamilyLogTest extends BaseFunctionalTestCase
 {
     public function testFamilyLogORMToDomain(): void
     {

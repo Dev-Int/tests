@@ -9,7 +9,7 @@
     {{ form_row(form.abbreviation) }}
 
     <div class="grid">
-        <twig:Form:Button:Cancel href="{{ path('admin_units_index') }}" label="Annuler" />
+        <twig:Form:Button:Cancel href="{{ path('admin_units_index') }}" label="{{ 'cancel'|trans }}" turboFrame="_top" />
         <twig:Form:Button:Submit label="{{ 'admin.unit.changeLabel.button'|trans }}" icon="fa-pen-to-square" />
     </div>
 

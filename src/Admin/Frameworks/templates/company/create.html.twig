@@ -25,8 +25,8 @@
     {{ form_row(form.contact) }}
 
     <div class="grid">
-        <twig:Form:Button:Cancel href="{{ path('admin_index') }}" label="Annuler" />
-        <twig:Form:Button:Submit label="Create" icon="fa-plus" />
+        <twig:Form:Button:Cancel href="{{ path('admin_index') }}" label="{{ 'cancel'|trans }}" />
+        <twig:Form:Button:Submit label="{{ 'add'|trans }}" icon="fa-plus" />
     </div>
 
     {{ form_end(form) }}

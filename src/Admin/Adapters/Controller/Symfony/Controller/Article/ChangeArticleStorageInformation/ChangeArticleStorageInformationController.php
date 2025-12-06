@@ -31,6 +31,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[AsController]
 final class ChangeArticleStorageInformationController extends AbstractController
 {
+    public const ROUTE_NAME = 'admin_articles_change-storage-information';
+
     public function __construct(
         private readonly ChangeArticleStorageInformation $useCase,
         private readonly TranslatorInterface $translator
@@ -39,7 +41,7 @@ final class ChangeArticleStorageInformationController extends AbstractController
 
     #[Route(
         path: 'articles/{article}/change-article-storage-information',
-        name: 'admin_articles_change-storage-information',
+        name: self::ROUTE_NAME,
         requirements: ['article' => '^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$'],
         methods: ['GET', 'POST']
     )]
@@ -67,7 +69,7 @@ final class ChangeArticleStorageInformationController extends AbstractController
             ),
             [
                 'action' => $this->generateUrl(
-                    'admin_articles_change-storage-information',
+                    self::ROUTE_NAME,
                     ['article' => $article->uuid()]
                 ),
                 'attr' => ['data-turbo-frame' => '_top'],

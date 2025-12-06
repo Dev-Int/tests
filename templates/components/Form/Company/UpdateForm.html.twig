@@ -18,8 +18,8 @@
     {{ form_row(form.contact) }}
 
     <div class="grid">
-        <twig:Form:Button:Cancel href="{{ path('admin_company_index') }}" label="Annuler" />
-        <twig:Form:Button:Submit label="Update" icon="fa-pen-to-square" />
+        <twig:Form:Button:Cancel href="{{ path('admin_company_index') }}" label="{{ 'cancel'|trans }}" />
+        <twig:Form:Button:Submit label="{{ 'admin.company.update.button'|trans }}" icon="fa-pen-to-square" />
     </div>
 
     {{ form_end(form) }}

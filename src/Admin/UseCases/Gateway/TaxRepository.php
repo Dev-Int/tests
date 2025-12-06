@@ -30,5 +30,7 @@ interface TaxRepository
 
     public function findById(string $uuid): Tax;
 
+    public function findByName(string $name): Tax;
+
     public function findAllTaxes(): TaxCollection;
 }

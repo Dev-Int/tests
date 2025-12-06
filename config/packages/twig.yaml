@@ -2,8 +2,6 @@ twig:
     file_name_pattern: '*.twig'
     default_path: '%kernel.project_dir%/templates'
     form_themes: ['form/form_theme.html.twig']
-    paths:
-        'src/Admin/Frameworks/templates': 'admin'
 
 when@test:
     twig:

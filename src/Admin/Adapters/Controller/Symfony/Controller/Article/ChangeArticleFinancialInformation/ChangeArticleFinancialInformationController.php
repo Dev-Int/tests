@@ -27,6 +27,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[AsController]
 final class ChangeArticleFinancialInformationController extends AbstractController
 {
+    public const ROUTE_NAME = 'admin_articles_change_financial-information';
+
     public function __construct(
         private readonly ChangeArticleFinancialInformation $useCase,
         private readonly TranslatorInterface $translator
@@ -35,7 +37,7 @@ final class ChangeArticleFinancialInformationController extends AbstractControll
 
     #[Route(
         path: 'articles/{article}/change-financial-information',
-        name: 'admin_articles_change_financial-information',
+        name: self::ROUTE_NAME,
         requirements: ['article' => '^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$'],
         methods: [Request::METHOD_GET, Request::METHOD_POST],
     )]
@@ -50,7 +52,7 @@ final class ChangeArticleFinancialInformationController extends AbstractControll
             ),
             [
                 'action' => $this->generateUrl(
-                    'admin_articles_change_financial-information',
+                    self::ROUTE_NAME,
                     ['article' => $article->uuid()]
                 ),
                 'attr' => ['data-turbo-frame' => '_top'],

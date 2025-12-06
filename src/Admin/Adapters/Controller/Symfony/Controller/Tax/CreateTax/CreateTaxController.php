@@ -27,6 +27,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[AsController]
 final class CreateTaxController extends AbstractController
 {
+    public const ROUTE_NAME = 'admin_taxes_create';
+
     public function __construct(
         private readonly CreateTax $useCase,
         private readonly ConfigurationService $configurationService,
@@ -34,7 +36,7 @@ final class CreateTaxController extends AbstractController
     ) {
     }
 
-    #[Route(path: 'taxes/create', name: 'admin_taxes_create', methods: ['GET', 'POST'])]
+    #[Route(path: 'taxes/create', name: self::ROUTE_NAME, methods: ['GET', 'POST'])]
     public function __invoke(Request $request): Response
     {
         if (!$this->configurationService->isUnitConfigured()) {

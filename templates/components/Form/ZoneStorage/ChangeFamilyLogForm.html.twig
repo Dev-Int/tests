@@ -8,7 +8,7 @@
     {{ include('partials/components/form/_familyLogs-select.html.twig', {familyLog: form.familyLog}) }}
 
     <div class="grid">
-        <twig:Form:Button:Cancel href="{{ path('admin_zone_storages_index') }}" label="Annuler" />
+        <twig:Form:Button:Cancel href="{{ path('admin_zone_storages_index') }}" label="{{ 'cancel'|trans }}" turboFrame="_top" />
         <twig:Form:Button:Submit label="{{ 'admin.zoneStorage.changeFamilyLog.button'|trans }}" icon="fa-pen-to-square" />
     </div>
 

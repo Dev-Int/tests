@@ -66,7 +66,7 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
     {
         $alias = self::ALIAS;
         $count = $this->createQueryBuilder($alias)
-            ->select("COUNT({$alias}.slug)")
+            ->select('COUNT(1)')
             ->getQuery()
             ->getSingleScalarResult()
         ;

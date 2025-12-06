@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\Article\CreateArticle;
 
+use Admin\Adapters\Controller\Symfony\Controller\Article\GetArticles\GetArticlesController;
+use Admin\Adapters\Controller\Symfony\Controller\ConfigurationController;
 use Admin\Adapters\Form\Type\Article\CreateArticleType;
 use Admin\Adapters\Gateway\ConfigurationService;
 use Admin\Adapters\Gateway\ORM\Entity\ReadModel\Packaging;
@@ -33,6 +35,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[AsController]
 final class CreateArticleController extends AbstractController
 {
+    public const ROUTE_NAME = 'admin_article_create';
+
     public function __construct(
         private readonly CreateArticle $useCase,
         private readonly ConfigurationService $configurationService,
@@ -43,16 +47,16 @@ final class CreateArticleController extends AbstractController
     ) {
     }
 
-    #[Route(path: 'articles/create', name: 'admin_article_create', methods: ['GET', 'POST'])]
+    #[Route(path: 'articles/create', name: self::ROUTE_NAME, methods: ['GET', 'POST'])]
     public function __invoke(Request $request): Response
     {
         if (!$this->configurationService->isSupplierConfigured()) {
             $this->addFlash('error', NoSupplierRegisteredException::MESSAGE);
 
-            return $this->redirectToRoute('admin_configure');
+            return $this->redirectToRoute(ConfigurationController::ROUTE_NAME);
         }
         $form = $this->createForm(CreateArticleType::class, new CreateArticleInput(), [
-            'action' => $this->generateUrl('admin_article_create'),
+            'action' => $this->generateUrl(self::ROUTE_NAME),
             'attr' => ['data-turbo-frame' => '_top'],
         ]);
 
@@ -107,11 +111,11 @@ final class CreateArticleController extends AbstractController
             } catch (\DomainException $exception) {
                 $this->addFlash('error', $exception->getMessage());
 
-                return $this->redirectToRoute('admin_articles_index');
+                return $this->redirectToRoute(GetArticlesController::ROUTE_NAME);
             }
             $this->addFlash('success', $this->translator->trans('admin.article.create.success'));
 
-            return $this->redirectToRoute('admin_articles_index');
+            return $this->redirectToRoute(GetArticlesController::ROUTE_NAME);
         }
 
         return $this->render('@admin/articles/create.html.twig', [

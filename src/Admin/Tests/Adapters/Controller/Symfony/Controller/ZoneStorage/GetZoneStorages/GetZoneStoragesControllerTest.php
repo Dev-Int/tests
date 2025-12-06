@@ -13,13 +13,13 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\ZoneStorage\GetZoneStorages;
 
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineZoneStorageRepository;
 use Admin\Entities\Exception\ZoneStorage\NoZoneStorageRegisteredException;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
+use Admin\UseCases\Gateway\FamilyLogRepository;
+use Admin\UseCases\Gateway\ZoneStorageRepository;
+use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -27,7 +27,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @group functionalTest
  */
-final class GetZoneStoragesControllerTest extends WebTestCase
+final class GetZoneStoragesControllerTest extends BaseFunctionalTestCase
 {
     private const GET_ZONE_STORAGES_URI = '/admin/zone_storages';
 
@@ -35,13 +35,12 @@ final class GetZoneStoragesControllerTest extends WebTestCase
     {
         // Arrange
         $faker = Factory::create('fr_FR');
-        $client = self::createClient();
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+        /** @var ZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -62,7 +61,7 @@ final class GetZoneStoragesControllerTest extends WebTestCase
         $zoneStorageRepository->save($zoneStorage2);
 
         // Act
-        $crawler = $client->request(Request::METHOD_GET, self::GET_ZONE_STORAGES_URI);
+        $crawler = $this->client->request(Request::METHOD_GET, self::GET_ZONE_STORAGES_URI);
 
         // Assert
         self::assertResponseIsSuccessful();
@@ -76,17 +75,14 @@ final class GetZoneStoragesControllerTest extends WebTestCase
 
     public function testGetZoneStoragesFailWithNoZoneStorageRegisteredException(): void
     {
-        // Arrange
-        $client = self::createClient();
-
-        // Act
-        $client->request(Request::METHOD_GET, self::GET_ZONE_STORAGES_URI);
+        // Arrange && Act
+        $this->client->request(Request::METHOD_GET, self::GET_ZONE_STORAGES_URI);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/configure');
 
-        $admin = $client->followRedirect();
+        $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame(NoZoneStorageRegisteredException::MESSAGE, $flash);

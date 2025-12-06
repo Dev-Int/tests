@@ -84,7 +84,7 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
     {
         $alias = self::ALIAS;
         $count = $this->createQueryBuilder($alias)
-            ->select("COUNT({$alias}.slug)")
+            ->select('COUNT(1)')
             ->getQuery()
             ->getSingleScalarResult()
         ;
@@ -271,6 +271,16 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
             // @codeCoverageIgnoreStart
             throw new ArticleNotFoundException($uuid);
             // @codeCoverageIgnoreEnd
+        }
+
+        return $article->toDomain();
+    }
+
+    public function findBySlug(string $slug): ArticleDomain
+    {
+        $article = $this->findOneBy(['slug' => $slug]);
+        if (!$article instanceof Article) {
+            throw new ArticleNotFoundException($slug);
         }
 
         return $article->toDomain();
