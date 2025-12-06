@@ -25,6 +25,10 @@ use Admin\Tests\DataBuilder\CompanyDataBuilder;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
+use Admin\UseCases\Gateway\CompanyRepository;
+use Admin\UseCases\Gateway\FamilyLogRepository;
+use Admin\UseCases\Gateway\TaxRepository;
+use Admin\UseCases\Gateway\UnitRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,17 +48,17 @@ final class CreateFamilyLogControllerTest extends BaseFunctionalTestCase
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        /** @var CompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(CompanyRepository::class);
 
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
 
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+        /** @var TaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(TaxRepository::class);
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
         $company = (new CompanyDataBuilder())->create('Test company')->build();
         $companyRepository->save($company);

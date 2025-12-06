@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\FamilyLog\GetFamilyLogs;
 
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
 use Admin\Entities\Exception\FamilyLog\NoFamilyLogRegisteredException;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
+use Admin\UseCases\Gateway\FamilyLogRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,8 +31,8 @@ final class GetFamilyLogsControllerTest extends BaseFunctionalTestCase
     public function testGetFamilyLogsWillSucceed(): void
     {
         // Arrange
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');

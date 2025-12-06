@@ -55,7 +55,7 @@ class Supplier
     private int $delayDelivery;
 
     /** @var array<int> */
-    #[ORM\Column(name: 'order_days', type: 'simple_array')]
+    #[ORM\Column(name: 'order_days', type: 'json')]
     private array $orderDays = [];
     #[ORM\Column(name: 'active', type: 'boolean')]
     private bool $active;
@@ -263,9 +263,7 @@ class Supplier
      */
     public function orderDays(): array
     {
-        return array_map(static function (int $orderDay) {
-            return $orderDay;
-        }, $this->orderDays);
+        return $this->orderDays;
     }
 
     public function active(): bool

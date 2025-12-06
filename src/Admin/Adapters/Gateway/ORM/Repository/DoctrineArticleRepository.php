@@ -276,6 +276,16 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         return $article->toDomain();
     }
 
+    public function findBySlug(string $slug): ArticleDomain
+    {
+        $article = $this->findOneBy(['slug' => $slug]);
+        if (!$article instanceof Article) {
+            throw new ArticleNotFoundException($slug);
+        }
+
+        return $article->toDomain();
+    }
+
     public function updateArticlePackaging(
         PackagingDomain $packagingDomain,
         Article $articleToUpdate,

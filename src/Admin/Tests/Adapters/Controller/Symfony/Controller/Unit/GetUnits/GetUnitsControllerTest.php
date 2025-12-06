@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Unit\GetUnits;
 
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineUnitRepository;
 use Admin\Entities\Exception\Unit\NoUnitRegisteredException;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
+use Admin\UseCases\Gateway\UnitRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,8 +34,8 @@ final class GetUnitsControllerTest extends BaseFunctionalTestCase
         // Arrange
         $faker = Factory::create('fr_FR');
 
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');

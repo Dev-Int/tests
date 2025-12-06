@@ -13,17 +13,8 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Article\CreateArticle;
 
-use Admin\Adapters\Gateway\ORM\Entity\Article\Article;
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
-use Admin\Adapters\Gateway\ORM\Entity\Unit;
-use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineArticleRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineCompanyRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineSupplierRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineTaxRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineUnitRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineZoneStorageRepository;
 use Admin\Entities\Exception\Article\ArticleAlreadyExistsException;
 use Admin\Entities\Exception\Supplier\NoSupplierRegisteredException;
 use Admin\Tests\DataBuilder\ArticleDataBuilder;
@@ -33,6 +24,13 @@ use Admin\Tests\DataBuilder\SupplierDataBuilder;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
+use Admin\UseCases\Gateway\ArticleRepository;
+use Admin\UseCases\Gateway\CompanyRepository;
+use Admin\UseCases\Gateway\FamilyLogRepository;
+use Admin\UseCases\Gateway\SupplierRepository;
+use Admin\UseCases\Gateway\TaxRepository;
+use Admin\UseCases\Gateway\UnitRepository;
+use Admin\UseCases\Gateway\ZoneStorageRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
@@ -53,26 +51,26 @@ final class CreateArticleControllerTest extends BaseFunctionalTestCase
         // Arrange
         $faker = Factory::create('fr_FR');
 
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        /** @var CompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(CompanyRepository::class);
 
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
 
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+        /** @var TaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(TaxRepository::class);
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+        /** @var ZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
 
-        /** @var DoctrineSupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
+        /** @var SupplierRepository $supplierRepository */
+        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
 
-        /** @var DoctrineArticleRepository $articleRepository */
-        $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
+        /** @var ArticleRepository $articleRepository */
+        $articleRepository = self::getContainer()->get(ArticleRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -152,34 +150,23 @@ final class CreateArticleControllerTest extends BaseFunctionalTestCase
 
         self::assertEquals($translator->trans('admin.article.create.success'), $flash);
 
-        $articleCreated = $articleRepository->findOneBy(['slug' => 'jambon-trad-6kg']);
-        self::assertInstanceOf(Article::class, $articleCreated);
-        self::assertSame('Jambon Trad 6kg', $articleCreated->name());
-        self::assertSame('Supplier 1', $articleCreated->supplier()->name());
-        self::assertSame('Alimentaire', $articleCreated->supplier()->familyLog()->label());
-        $colisOrm = $unitRepository->findOneBy(['slug' => $colis->slug()]);
-        self::assertInstanceOf(Unit::class, $colisOrm);
-        $pieceOrm = $unitRepository->findOneBy(['slug' => $piece->slug()]);
-        self::assertInstanceOf(Unit::class, $pieceOrm);
-        $kilogrammeOrm = $unitRepository->findOneBy(['slug' => $kilogramme->slug()]);
-        self::assertInstanceOf(Unit::class, $kilogrammeOrm);
-        self::assertSame($colisOrm, $articleCreated->packaging()->parcelUnit());
-        self::assertSame(1.0, $articleCreated->packaging()->parcelQuantity());
-        self::assertSame($pieceOrm, $articleCreated->packaging()->subPackageUnit());
-        self::assertSame(2.0, $articleCreated->packaging()->subPackageQuantity());
-        self::assertSame($kilogrammeOrm, $articleCreated->packaging()->consumeUnitUnit());
-        self::assertSame(6.800, $articleCreated->packaging()->consumeUnitQuantity());
-        self::assertSame(682, $articleCreated->unitPrice());
+        $articleCreated = $articleRepository->findBySlug('jambon-trad-6kg');
+        self::assertSame('Jambon Trad 6kg', $articleCreated->name()->toString());
+        self::assertSame('Supplier 1', $articleCreated->supplier()->name()->toString());
+        self::assertSame('Alimentaire', $articleCreated->supplier()->familyLog()->label()->toString());
+        self::assertEquals([$colis, 1.0], $articleCreated->packaging()->parcel());
+        self::assertEquals([$piece, 2.0], $articleCreated->packaging()->subPackage());
+        self::assertEquals([$kilogramme, 6.800], $articleCreated->packaging()->consumerUnit());
+        self::assertSame(682, $articleCreated->unitPrice()->toInt());
         self::assertSame(0.055, $articleCreated->tax()->rate());
-        self::assertSame('TVA taux réduit', $articleCreated->tax()->name());
+        self::assertSame('TVA taux réduit', $articleCreated->tax()->name()->toString());
         self::assertSame(8.8, $articleCreated->minStock());
-        $zoneStorages = $articleCreated->zoneStorages();
+        $zoneStorages = $articleCreated->zoneStorages()->toArray();
         $firstZoneStorage = $zoneStorages[0];
-        self::assertInstanceOf(ZoneStorage::class, $firstZoneStorage);
-        self::assertSame('Réserve froide', $firstZoneStorage->label());
-        self::assertSame('Frais', $firstZoneStorage->familyLog()->label());
-        self::assertSame('Viande', $articleCreated->familyLog()->label());
-        self::assertSame(12.500, $articleCreated->quantity());
+        self::assertSame('Réserve froide', $firstZoneStorage->label()->toString());
+        self::assertSame('Frais', $firstZoneStorage->familyLog()->label()->toString());
+        self::assertSame('Viande', $articleCreated->familyLog()->label()->toString());
+        self::assertSame(12.500, $articleCreated->quantity()->toFloat());
         self::assertSame('jambon-trad-6kg', $articleCreated->slug());
         self::assertTrue($articleCreated->active());
     }
@@ -189,26 +176,26 @@ final class CreateArticleControllerTest extends BaseFunctionalTestCase
         // Arrange
         $faker = Factory::create('fr_FR');
 
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        /** @var CompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(CompanyRepository::class);
 
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
 
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+        /** @var TaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(TaxRepository::class);
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+        /** @var ZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
 
-        /** @var DoctrineSupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
+        /** @var SupplierRepository $supplierRepository */
+        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
 
-        /** @var DoctrineArticleRepository $articleRepository */
-        $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
+        /** @var ArticleRepository $articleRepository */
+        $articleRepository = self::getContainer()->get(ArticleRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -295,20 +282,20 @@ final class CreateArticleControllerTest extends BaseFunctionalTestCase
         // Arrange
         $faker = Factory::create('fr_FR');
 
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        /** @var CompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(CompanyRepository::class);
 
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
 
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+        /** @var TaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(TaxRepository::class);
 
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+        /** @var ZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
 
         $company = (new CompanyDataBuilder())->create('Test company')->build();
         $companyRepository->save($company);
@@ -358,23 +345,23 @@ final class CreateArticleControllerTest extends BaseFunctionalTestCase
         // Arrange
         $faker = Factory::create('fr_FR');
 
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        /** @var CompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(CompanyRepository::class);
 
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
 
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+        /** @var TaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(TaxRepository::class);
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+        /** @var ZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
 
-        /** @var DoctrineSupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
+        /** @var SupplierRepository $supplierRepository */
+        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -466,23 +453,23 @@ final class CreateArticleControllerTest extends BaseFunctionalTestCase
         // Arrange
         $faker = Factory::create('fr_FR');
 
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        /** @var CompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(CompanyRepository::class);
 
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
 
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+        /** @var TaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(TaxRepository::class);
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+        /** @var ZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
 
-        /** @var DoctrineSupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
+        /** @var SupplierRepository $supplierRepository */
+        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');

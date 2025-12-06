@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Tax\GetTaxes;
 
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineTaxRepository;
 use Admin\Entities\Exception\Tax\NoTaxRegisteredException;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
+use Admin\UseCases\Gateway\TaxRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,8 +34,8 @@ final class GetTaxesControllerTest extends BaseFunctionalTestCase
         // Arrange
         $faker = Factory::create('fr_FR');
 
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+        /** @var TaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(TaxRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');

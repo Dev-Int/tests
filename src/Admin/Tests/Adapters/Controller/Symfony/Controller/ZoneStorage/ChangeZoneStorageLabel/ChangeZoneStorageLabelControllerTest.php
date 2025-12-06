@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\ZoneStorage\ChangeZoneStorageLabel;
 
 use Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\GetZoneStorages\GetZoneStoragesController;
+use Admin\Entities\ZoneStorage\ZoneStorage;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
 use Admin\UseCases\Gateway\FamilyLogRepository;
@@ -86,7 +87,7 @@ final class ChangeZoneStorageLabelControllerTest extends BaseFunctionalTestCase
 
         self::assertSame($translator->trans('admin.zoneStorage.changeLabel.success'), $flash);
 
-        /** @var \Admin\Entities\ZoneStorage\ZoneStorage $zoneStorageUpdated */
+        /** @var ZoneStorage $zoneStorageUpdated */
         $zoneStorageUpdated = $zoneStorageRepository->findBySlug('reserve-positive');
         self::assertSame('Réserve positive', $zoneStorageUpdated->label()->toString());
         self::assertEquals('Surgelé', $zoneStorageUpdated->familyLog()->label()->toString());
@@ -179,7 +180,7 @@ final class ChangeZoneStorageLabelControllerTest extends BaseFunctionalTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
         self::assertRouteSame(GetZoneStoragesController::ROUTE_NAME);
 
-        /** @var \Admin\Entities\ZoneStorage\ZoneStorage $zoneStorageAfterCancel */
+        /** @var ZoneStorage $zoneStorageAfterCancel */
         $zoneStorageAfterCancel = $zoneStorageRepository->findBySlug('reserve-negative');
         self::assertSame('Réserve négative', $zoneStorageAfterCancel->label()->toString());
         self::assertEquals('Surgelé', $zoneStorageAfterCancel->familyLog()->label()->toString());

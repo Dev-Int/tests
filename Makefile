@@ -75,7 +75,7 @@ unserve: ## Stop the webserver
 .PHONY: bin-install cert-install serve unserve
 
 ## —— Database —————————————————————————————————————————————————————————————————
-clean-db: cc ## Reset database (env : test)
+clean-db: cc ## Reset database (env : dev)
 	- $(SYMFONY) doctrine:database:drop --force
 	$(SYMFONY) doctrine:database:create
 	$(SYMFONY) doctrine:migration:migrate --no-interaction

@@ -13,12 +13,6 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Article\GetArticles;
 
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineArticleRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineSupplierRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineTaxRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineUnitRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineZoneStorageRepository;
 use Admin\Adapters\Gateway\Pagination\Pagination;
 use Admin\Entities\Exception\Article\NoArticleRegisteredException;
 use Admin\Tests\DataBuilder\ArticleDataBuilder;
@@ -27,6 +21,12 @@ use Admin\Tests\DataBuilder\SupplierDataBuilder;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
+use Admin\UseCases\Gateway\ArticleRepository;
+use Admin\UseCases\Gateway\FamilyLogRepository;
+use Admin\UseCases\Gateway\SupplierRepository;
+use Admin\UseCases\Gateway\TaxRepository;
+use Admin\UseCases\Gateway\UnitRepository;
+use Admin\UseCases\Gateway\ZoneStorageRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use FakerRestaurant\Provider\fr_FR\Restaurant;
@@ -47,23 +47,23 @@ final class GetArticlesControllerTest extends BaseFunctionalTestCase
         $faker = Factory::create('fr_FR');
         $faker->addProvider(new Restaurant($faker));
 
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
 
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+        /** @var TaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(TaxRepository::class);
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+        /** @var ZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
 
-        /** @var DoctrineSupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
+        /** @var SupplierRepository $supplierRepository */
+        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
 
-        /** @var DoctrineArticleRepository $articleRepository */
-        $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
+        /** @var ArticleRepository $articleRepository */
+        $articleRepository = self::getContainer()->get(ArticleRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');

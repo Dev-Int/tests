@@ -65,11 +65,11 @@ final class ZoneStorageCollection implements Collection
     }
 
     /**
-     * @return iterable<ZoneStorage>
+     * @return array<ZoneStorage>
      *
      * @codeCoverageIgnore
      */
-    public function toArray(): iterable
+    public function toArray(): array
     {
         return $this->zoneStorages;
     }

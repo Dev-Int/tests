@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Company\CreateCompany;
 
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineCompanyRepository;
 use Admin\Entities\Exception\Company\CompanyAlreadyExistsException;
 use Admin\Tests\DataBuilder\CompanyDataBuilder;
+use Admin\UseCases\Gateway\CompanyRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,8 +31,8 @@ final class CreateCompanyControllerTest extends BaseFunctionalTestCase
     public function testCreateCompanyControllerWillSucceed(): void
     {
         // Arrange
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        /** @var CompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(CompanyRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -62,7 +62,7 @@ final class CreateCompanyControllerTest extends BaseFunctionalTestCase
         $companyCreated = $companyRepository->findByName('Dev-Int Création');
         self::assertSame('dev-int-creation', $companyCreated->slug());
 
-        // The configuration only begin. The admin page is redirected throw admin configure.
+        // The configuration only begins. The admin page is redirected throw admin configure.
         $this->client->followRedirect(); // Admin page
         $admin = $this->client->followRedirect(); // Configure page
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
@@ -73,8 +73,8 @@ final class CreateCompanyControllerTest extends BaseFunctionalTestCase
     public function testCreateCompanyControllerWillThrowAlreadyExistsException(): void
     {
         // Arrange
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        /** @var CompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(CompanyRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -105,7 +105,7 @@ final class CreateCompanyControllerTest extends BaseFunctionalTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/');
 
-        // The configuration only begin. The admin page is redirected throw admin configure.
+        // The configuration only begins. The admin page is redirected throw admin configure.
         $this->client->followRedirect(); // Admin page
         $admin = $this->client->followRedirect(); // Configure page
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
@@ -116,8 +116,8 @@ final class CreateCompanyControllerTest extends BaseFunctionalTestCase
     public function testCreateCompanyControllerWillThrowBadRequestException(): void
     {
         // Arrange
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        /** @var CompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(CompanyRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');

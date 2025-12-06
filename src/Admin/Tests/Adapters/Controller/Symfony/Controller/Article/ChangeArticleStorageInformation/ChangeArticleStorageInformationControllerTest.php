@@ -13,20 +13,18 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Article\ChangeArticleStorageInformation;
 
-use Admin\Adapters\Gateway\ORM\Entity\Article\Article;
-use Admin\Adapters\Gateway\ORM\Entity\Unit;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineArticleRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineSupplierRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineTaxRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineUnitRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineZoneStorageRepository;
 use Admin\Tests\DataBuilder\ArticleDataBuilder;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\SupplierDataBuilder;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
+use Admin\UseCases\Gateway\ArticleRepository;
+use Admin\UseCases\Gateway\FamilyLogRepository;
+use Admin\UseCases\Gateway\SupplierRepository;
+use Admin\UseCases\Gateway\TaxRepository;
+use Admin\UseCases\Gateway\UnitRepository;
+use Admin\UseCases\Gateway\ZoneStorageRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,23 +43,23 @@ class ChangeArticleStorageInformationControllerTest extends BaseFunctionalTestCa
         // Arrange
         $faker = Factory::create('fr_FR');
 
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
 
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+        /** @var TaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(TaxRepository::class);
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+        /** @var ZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
 
-        /** @var DoctrineSupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
+        /** @var SupplierRepository $supplierRepository */
+        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
 
-        /** @var DoctrineArticleRepository $articleRepository */
-        $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
+        /** @var ArticleRepository $articleRepository */
+        $articleRepository = self::getContainer()->get(ArticleRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -147,21 +145,11 @@ class ChangeArticleStorageInformationControllerTest extends BaseFunctionalTestCa
 
         static::assertEquals($translator->trans('admin.article.changeStorageInformation.success'), $flash);
 
-        $articleUpdated = $articleRepository->findOneBy(['slug' => 'jambon-trad-6kg']);
-        static::assertInstanceOf(Article::class, $articleUpdated);
-        $colisOrm = $unitRepository->findOneBy(['slug' => $colis->slug()]);
-        static::assertInstanceOf(Unit::class, $colisOrm);
-        $pieceOrm = $unitRepository->findOneBy(['slug' => $piece->slug()]);
-        static::assertInstanceOf(Unit::class, $pieceOrm);
-        $kilogrammeOrm = $unitRepository->findOneBy(['slug' => $kilogramme->slug()]);
-        static::assertInstanceOf(Unit::class, $kilogrammeOrm);
-        static::assertSame($colisOrm, $articleUpdated->packaging()->parcelUnit());
-        static::assertSame(1.0, $articleUpdated->packaging()->parcelQuantity());
-        static::assertSame($pieceOrm, $articleUpdated->packaging()->subPackageUnit());
-        static::assertSame(2.0, $articleUpdated->packaging()->subPackageQuantity());
-        static::assertSame($kilogrammeOrm, $articleUpdated->packaging()->consumeUnitUnit());
-        static::assertSame(6.800, $articleUpdated->packaging()->consumeUnitQuantity());
-        static::assertSame(6.8, $articleUpdated->minStock());
+        $articleUpdated = $articleRepository->findByUuid($article->uuid()->toString());
+        static::assertEquals([$colis, 1.0], $articleUpdated->packaging()->parcel());
+        static::assertEquals([$piece, 2.0], $articleUpdated->packaging()->subPackage());
+        static::assertEquals([$kilogramme, 6.800], $articleUpdated->packaging()->consumerUnit());
+        static::assertEquals(6.8, $articleUpdated->minStock());
     }
 
     public function testChangeArticleStorageInformationFailWithArticleNotfoundException(): void
@@ -169,23 +157,23 @@ class ChangeArticleStorageInformationControllerTest extends BaseFunctionalTestCa
         // Arrange
         $faker = Factory::create('fr_FR');
 
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
 
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+        /** @var TaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(TaxRepository::class);
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+        /** @var ZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
 
-        /** @var DoctrineSupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
+        /** @var SupplierRepository $supplierRepository */
+        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
 
-        /** @var DoctrineArticleRepository $articleRepository */
-        $articleRepository = self::getContainer()->get(DoctrineArticleRepository::class);
+        /** @var ArticleRepository $articleRepository */
+        $articleRepository = self::getContainer()->get(ArticleRepository::class);
 
         $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
         $piece = (new UnitDataBuilder())

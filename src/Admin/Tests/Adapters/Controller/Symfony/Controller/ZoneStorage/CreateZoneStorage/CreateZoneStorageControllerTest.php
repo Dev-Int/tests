@@ -13,19 +13,19 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\ZoneStorage\CreateZoneStorage;
 
-use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineCompanyRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineTaxRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineUnitRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineZoneStorageRepository;
 use Admin\Entities\Exception\FamilyLog\NoFamilyLogRegisteredException;
 use Admin\Entities\Exception\ZoneStorage\ZoneStorageAlreadyExistsException;
+use Admin\Entities\ZoneStorage\ZoneStorage;
 use Admin\Tests\DataBuilder\CompanyDataBuilder;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
+use Admin\UseCases\Gateway\CompanyRepository;
+use Admin\UseCases\Gateway\FamilyLogRepository;
+use Admin\UseCases\Gateway\TaxRepository;
+use Admin\UseCases\Gateway\UnitRepository;
+use Admin\UseCases\Gateway\ZoneStorageRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,20 +44,20 @@ final class CreateZoneStorageControllerTest extends BaseFunctionalTestCase
         // Arrange
         $faker = Factory::create('fr_FR');
 
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        /** @var CompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(CompanyRepository::class);
 
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
 
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+        /** @var TaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(TaxRepository::class);
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+        /** @var ZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -76,7 +76,6 @@ final class CreateZoneStorageControllerTest extends BaseFunctionalTestCase
             ->build()
         ;
         $familyLogRepository->save($familyLog);
-        $familyLogOrm = $familyLogRepository->find($familyLog->uuid()->toString());
 
         // Act
         $crawler = $this->client->request(Request::METHOD_POST, self::CREATE_ZONE_STORAGE_URI);
@@ -86,7 +85,7 @@ final class CreateZoneStorageControllerTest extends BaseFunctionalTestCase
 
         $form = $crawler->selectButton($translator->trans('add'))->form([
             'createZoneStorage[label]' => 'Réserve négative',
-            'createZoneStorage[familyLog]' => $familyLogOrm?->uuid(),
+            'createZoneStorage[familyLog]' => $familyLog->uuid()->toString(),
         ]);
         $this->client->submit($form);
 
@@ -100,29 +99,29 @@ final class CreateZoneStorageControllerTest extends BaseFunctionalTestCase
         self::assertSame($translator->trans('admin.zoneStorage.create.success'), $flash);
 
         /** @var ZoneStorage $zoneStorageCreated */
-        $zoneStorageCreated = $zoneStorageRepository->findOneBy(['slug' => 'reserve-negative']);
-        self::assertSame('Réserve négative', $zoneStorageCreated->label());
-        self::assertEquals('Surgelé', $zoneStorageCreated->familyLog()->label());
+        $zoneStorageCreated = $zoneStorageRepository->findBySlug('reserve-negative');
+        self::assertSame('Réserve négative', $zoneStorageCreated->label()->toString());
+        self::assertEquals('Surgelé', $zoneStorageCreated->familyLog()->label()->toString());
     }
 
     public function testCreateZoneStorageFailWithAlreadyExistsLabelException(): void
     {
         // Arrange
 
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        /** @var CompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(CompanyRepository::class);
 
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
 
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
+        /** @var TaxRepository $taxRepository */
+        $taxRepository = self::getContainer()->get(TaxRepository::class);
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
+        /** @var ZoneStorageRepository $zoneStorageRepository */
+        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -145,8 +144,6 @@ final class CreateZoneStorageControllerTest extends BaseFunctionalTestCase
         ;
         $zoneStorageRepository->save($zoneStorage);
 
-        $familyLogOrm = $familyLogRepository->find($familyLog->uuid()->toString());
-
         // Act
         $crawler = $this->client->request(Request::METHOD_POST, self::CREATE_ZONE_STORAGE_URI);
 
@@ -155,7 +152,7 @@ final class CreateZoneStorageControllerTest extends BaseFunctionalTestCase
 
         $form = $crawler->selectButton($translator->trans('add'))->form([
             'createZoneStorage[label]' => 'Réserve négative',
-            'createZoneStorage[familyLog]' => $familyLogOrm?->uuid(),
+            'createZoneStorage[familyLog]' => $familyLog->uuid()->toString(),
         ]);
         $this->client->submit($form);
 

@@ -111,7 +111,9 @@ final class Article
             $this->tax->toDomain(),
             $this->minStock,
             $zoneStorages,
-            $this->familyLog->toDomain()
+            $this->familyLog->toDomain(),
+            $this->active(),
+            $this->quantity
         );
     }
 

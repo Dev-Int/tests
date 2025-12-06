@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Company\GetCompany;
 
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineCompanyRepository;
 use Admin\Entities\Exception\Company\NoCompanyRegisteredException;
 use Admin\Tests\DataBuilder\CompanyDataBuilder;
+use Admin\UseCases\Gateway\CompanyRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,8 +31,8 @@ final class GetCompanyControllerTest extends BaseFunctionalTestCase
     public function testGetCompanyWillSucceed(): void
     {
         // Arrange
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        /** @var CompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(CompanyRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');

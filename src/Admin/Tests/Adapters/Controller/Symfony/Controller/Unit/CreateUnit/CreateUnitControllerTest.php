@@ -13,12 +13,12 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Unit\CreateUnit;
 
-use Admin\Adapters\Gateway\ORM\Entity\Unit;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineCompanyRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineUnitRepository;
 use Admin\Entities\Exception\Company\NoCompanyRegisteredException;
+use Admin\Entities\Unit\Unit;
 use Admin\Tests\DataBuilder\CompanyDataBuilder;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
+use Admin\UseCases\Gateway\CompanyRepository;
+use Admin\UseCases\Gateway\UnitRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,17 +34,17 @@ final class CreateUnitControllerTest extends BaseFunctionalTestCase
     public function testCreateUnitWillSucceed(): void
     {
         // Arrange
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        /** @var CompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(CompanyRepository::class);
+
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
         $company = (new CompanyDataBuilder())->create('Test company')->build();
         $companyRepository->save($company);
-
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
 
         // Act
         $crawler = $this->client->request(Request::METHOD_POST, self::CREATE_UNIT_URI);
@@ -68,8 +68,8 @@ final class CreateUnitControllerTest extends BaseFunctionalTestCase
         self::assertSame($translator->trans('admin.unit.create.success'), $flash);
 
         /** @var Unit $unitCreated */
-        $unitCreated = $unitRepository->findOneBy(['slug' => 'kilogramme']);
-        self::assertSame('Kilogramme', $unitCreated->label());
+        $unitCreated = $unitRepository->findBySlug('kilogramme');
+        self::assertSame('Kilogramme', $unitCreated->label()->toString());
         self::assertSame('kilogramme', $unitCreated->slug());
         self::assertSame('kg', $unitCreated->abbreviation());
     }
@@ -77,17 +77,17 @@ final class CreateUnitControllerTest extends BaseFunctionalTestCase
     public function testCreateUnitFailWithAlreadyExistsException(): void
     {
         // Arrange
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        /** @var CompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(CompanyRepository::class);
+
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
         $company = (new CompanyDataBuilder())->create('Test company')->build();
         $companyRepository->save($company);
-
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
         $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
         $unitRepository->save($unit);
 
@@ -113,25 +113,25 @@ final class CreateUnitControllerTest extends BaseFunctionalTestCase
         self::assertSame('Unit already exists.', $flash);
 
         /** @var Unit $unitCreated */
-        $unitCreated = $unitRepository->findOneBy(['slug' => 'kilogramme']);
-        self::assertSame('Kilogramme', $unitCreated->label());
+        $unitCreated = $unitRepository->findBySlug('kilogramme');
+        self::assertSame('Kilogramme', $unitCreated->label()->toString());
         self::assertSame('kg', $unitCreated->abbreviation());
     }
 
     public function testCreateUnitFailWithBadRequestException(): void
     {
         // Arrange
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        /** @var CompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(CompanyRepository::class);
+
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
         $company = (new CompanyDataBuilder())->create('Test company')->build();
         $companyRepository->save($company);
-
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
         $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
         $unitRepository->save($unit);
 
@@ -161,16 +161,16 @@ final class CreateUnitControllerTest extends BaseFunctionalTestCase
         self::assertSame('Cette valeur ne doit pas être vide.', $abbreviationField->children('ul > li')->text());
 
         /** @var Unit $unitCreated */
-        $unitCreated = $unitRepository->findOneBy(['slug' => 'kilogramme']);
-        self::assertSame('Kilogramme', $unitCreated->label());
+        $unitCreated = $unitRepository->findBySlug('kilogramme');
+        self::assertSame('Kilogramme', $unitCreated->label()->toString());
         self::assertSame('kg', $unitCreated->abbreviation());
     }
 
     public function testCreateUnitFailWithNoCompanyRegisteredException(): void
     {
         // Arrange
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        /** @var UnitRepository $unitRepository */
+        $unitRepository = self::getContainer()->get(UnitRepository::class);
         $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
         $unitRepository->save($unit);
 

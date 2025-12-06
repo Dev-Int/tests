@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Company\UpdateCompany;
 
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineCompanyRepository;
 use Admin\Tests\DataBuilder\CompanyDataBuilder;
+use Admin\UseCases\Gateway\CompanyRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,8 +30,8 @@ final class UpdateCompanyControllerTest extends BaseFunctionalTestCase
     public function testUpdateCompanyControllerWillSucceed(): void
     {
         // Arrange
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        /** @var CompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(CompanyRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -80,8 +80,8 @@ final class UpdateCompanyControllerTest extends BaseFunctionalTestCase
     public function testUpdateCompanyControllerWillFailWithCompanyNotFound(): void
     {
         // Arrange
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        /** @var CompanyRepository $companyRepository */
+        $companyRepository = self::getContainer()->get(CompanyRepository::class);
         $company = (new CompanyDataBuilder())->create('Dev-Int Création')->build();
         $companyRepository->save($company);
 
