@@ -1,0 +1,101 @@
+name: Bug Report
+description: Signaler un bug
+title: "[scope] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci de signaler ce bug !
+
+        **Important** : Le titre doit commencer par `[scope]` (ex: `[Article]`, `[Tests]`, `[Admin]`, etc.)
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      description: Quel module/entité est concerné ?
+      options:
+        - Admin (Module)
+        - Shared (Module)
+        - Article (Entité)
+        - Supplier (Entité)
+        - Tax (Entité)
+        - Unit (Entité)
+        - FamilyLog (Entité)
+        - ZoneStorage (Entité)
+        - Company (Entité)
+        - Tests (Unit/Functional/E2E)
+        - DX (Developer Experience)
+        - UX (User Experience)
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Description du bug
+      description: Décris clairement le problème rencontré
+      placeholder: Qu'est-ce qui ne fonctionne pas comme attendu ?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Étapes pour reproduire
+      description: Comment reproduire le bug ?
+      placeholder: |
+        1. Aller sur '...'
+        2. Cliquer sur '...'
+        3. Voir l'erreur
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Comportement attendu
+      description: Que devrait-il se passer ?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Comportement actuel
+      description: Que se passe-t-il actuellement ?
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / Messages d'erreur
+      description: Copie-colle les logs ou messages d'erreur pertinents
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Contexte
+      description: Informations supplémentaires (environnement, version PHP, etc.)
+      placeholder: |
+        - PHP version: 8.2
+        - Symfony version: 7.4
+        - Environnement: dev / test / prod
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: labels-suggestions
+    attributes:
+      label: Labels suggérés
+      options:
+        - label: backend
+        - label: frontend
+        - label: quality
+        - label: help wanted

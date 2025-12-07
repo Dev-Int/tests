@@ -143,6 +143,16 @@ make assets      # Install assets with symlinks
 
 **For detailed testing strategy, best practices, and E2E guidelines, see [.claude/TESTING_STRATEGY.md](.claude/TESTING_STRATEGY.md)**
 
+## GitHub Issues & Project Management
+
+- **Issue naming convention**: `[scope] Description` (see [.claude/GITHUB_ISSUES.md](.claude/GITHUB_ISSUES.md))
+- **Issue templates**: Available in `.github/ISSUE_TEMPLATE/` (feature.yml, bug.yml)
+- **Sub-issues**: Use GitHub tasklists to break down complex issues into smaller PRs
+- **Labels**: backend, frontend, quality, use case, bug, documentation, DX, UX, dependencies
+- **Main branch**: `develop` (PRs should target this branch)
+
+**For detailed GitHub workflow, issue conventions, and examples, see [.claude/GITHUB_ISSUES.md](.claude/GITHUB_ISSUES.md)**
+
 ## Autoloading
 
 PSR-4 autoloading with module namespaces:

@@ -24,6 +24,8 @@ use Symfony\Component\Routing\Attribute\Route;
 #[AsController]
 final class GetCompanyController extends AbstractController
 {
+    public const ROUTE_NAME = 'admin_company_index';
+
     public function __construct(private readonly DoctrineCompanyRepository $repository)
     {
     }

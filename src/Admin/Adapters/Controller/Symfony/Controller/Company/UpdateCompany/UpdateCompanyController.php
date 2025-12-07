@@ -26,6 +26,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[AsController]
 final class UpdateCompanyController extends AbstractController
 {
+    public const ROUTE_NAME = 'admin_company_update';
+
     public function __construct(
         private readonly UpdateCompany $useCase,
         private readonly TranslatorInterface $translator
