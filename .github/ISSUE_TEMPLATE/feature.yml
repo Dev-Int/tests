@@ -1,0 +1,125 @@
+name: Feature / Refactoring
+description: Nouvelle fonctionnalité, refactoring ou amélioration
+title: "[scope] "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci de créer une issue !
+
+        **Important** : Le titre doit commencer par `[scope]` où scope peut être :
+        - `[Admin]` - Module Admin
+        - `[Shared]` - Module partagé
+        - `[Article]` - Entité Article
+        - `[Supplier]` - Entité Supplier
+        - `[Tax]`, `[Unit]`, `[FamilyLog]`, `[ZoneStorage]` - Autres entités
+        - `[DDD]` - Architecture DDD
+        - `[Tests]` - Tests (Unit, Functional, E2E)
+        - `[DX]` - Developer Experience
+        - `[UX]` - User Experience
+        - `[chore]` - Tâches techniques (deps, config, etc.)
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      description: Quel est le périmètre de cette issue ?
+      options:
+        - Admin (Module)
+        - Shared (Module)
+        - Article (Entité)
+        - Supplier (Entité)
+        - Tax (Entité)
+        - Unit (Entité)
+        - FamilyLog (Entité)
+        - ZoneStorage (Entité)
+        - Company (Entité)
+        - DDD (Architecture)
+        - Tests (Unit/Functional/E2E)
+        - DX (Developer Experience)
+        - UX (User Experience)
+        - chore (Technique)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priorité
+      options:
+        - High
+        - Medium
+        - Low
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Décris le problème ou la fonctionnalité demandée
+      placeholder: |
+        ## Contexte
+        Pourquoi cette issue est-elle nécessaire ?
+
+        ## Objectif
+        Qu'est-ce qui doit être fait ?
+
+        ## Proposition
+        Comment pourrait-on le faire ?
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Critères d'acceptance
+      description: Comment savoir que cette issue est terminée ?
+      placeholder: |
+        - [ ] Critère 1
+        - [ ] Critère 2
+        - [ ] Tests ajoutés/mis à jour
+        - [ ] Documentation mise à jour (si nécessaire)
+    validations:
+      required: false
+
+  - type: textarea
+    id: sub-issues
+    attributes:
+      label: Sub-issues (optionnel)
+      description: Si cette issue est complexe, liste les sous-tâches à créer
+      placeholder: |
+        - [ ] #XX - Sous-tâche 1
+        - [ ] #YY - Sous-tâche 2
+        - [ ] #ZZ - Sous-tâche 3
+    validations:
+      required: false
+
+  - type: textarea
+    id: files
+    attributes:
+      label: Fichiers concernés
+      description: Liste des fichiers qui seront probablement modifiés
+      placeholder: |
+        - src/Admin/Entities/...
+        - src/Admin/UseCases/...
+        - src/Admin/Tests/...
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: labels-suggestions
+    attributes:
+      label: Labels suggérés
+      description: Sélectionne les labels pertinents
+      options:
+        - label: backend
+        - label: frontend
+        - label: quality (refactoring, amélioration code)
+        - label: use case (nouveau cas d'usage)
+        - label: bug
+        - label: documentation
+        - label: dependencies
+        - label: DX (Developer Experience)
+        - label: UX (User Experience)
