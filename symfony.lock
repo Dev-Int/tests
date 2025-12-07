@@ -323,6 +323,15 @@
             "config/packages/mailer.yaml"
         ]
     },
+    "symfony/maker-bundle": {
+        "version": "1.65",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "1.0",
+            "ref": "fadbfe33303a76e25cb63401050439aa9b1a9c7f"
+        }
+    },
     "symfony/messenger": {
         "version": "6.3",
         "recipe": {
@@ -590,5 +599,18 @@
             "version": "1.9",
             "ref": "66c5290398734ff02cedddf44dce6eb2002d958c"
         }
+    },
+    "zenstruck/foundry": {
+        "version": "2.8",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "2.7",
+            "ref": "7fc98f546dfeaa83cc2110634f8ff078d070b965"
+        },
+        "files": [
+            "config/packages/zenstruck_foundry.yaml",
+            "src/Story/AppStory.php"
+        ]
     }
 }

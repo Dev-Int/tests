@@ -13,11 +13,9 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\DataFixtures;
 
-use Admin\Adapters\Gateway\ORM\Entity\Tax;
-use Admin\Tests\DataBuilder\TaxDataBuilder;
+use Admin\Tests\Factory\TaxFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-use Faker\Factory;
 
 final class TaxFixtures extends Fixture
 {
@@ -25,19 +23,15 @@ final class TaxFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        $faker = Factory::create('fr_FR');
-
         foreach ($this->getData() as $datum) {
-            $tax = (new TaxDataBuilder())->create($datum['name'], $datum['rate'])
-                ->withUuid($faker->uuid())
-                ->build()
-            ;
-            $taxOrm = (new Tax())->fromDomain($tax);
-            $this->setReference(self::REFERENCE_PREFIX . $datum['slug'], $taxOrm);
-            $manager->persist($taxOrm);
-        }
+            $tax = TaxFactory::createOne([
+                'name' => $datum['name'],
+                'rate' => $datum['rate'],
+                'slug' => $datum['slug'],
+            ]);
 
-        $manager->flush();
+            $this->setReference(self::REFERENCE_PREFIX . $datum['slug'], $tax->_real());
+        }
     }
 
     /**
