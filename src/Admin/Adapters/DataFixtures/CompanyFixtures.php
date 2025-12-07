@@ -13,9 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\DataFixtures;
 
-use Admin\Adapters\Gateway\ORM\Entity\Company;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineCompanyRepository;
-use Admin\Tests\DataBuilder\CompanyDataBuilder;
+use Admin\Tests\Factory\CompanyFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
@@ -23,14 +21,8 @@ final class CompanyFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        $company = (new CompanyDataBuilder())->create('Dev-Int Création')
-            ->build()
-        ;
-
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = $manager->getRepository(Company::class);
-        $companyRepository->save($company);
-
-        $manager->flush();
+        CompanyFactory::createOne([
+            'name' => 'Dev-Int Création',
+        ]);
     }
 }
