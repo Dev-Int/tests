@@ -209,18 +209,6 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
         return $this->toDomainWithChildren($familyLogOrm, $familyLogOrm->parent());
     }
 
-    private function toDomainWithChildren(FamilyLog $familyLogOrm, ?FamilyLog $parentOrm): FamilyLogDomain
-    {
-        $familyLogDomain = $familyLogOrm->toDomain($parentOrm);
-
-        foreach ($familyLogOrm->children() as $childOrm) {
-            $childDomain = $this->toDomainWithChildren($childOrm, $familyLogOrm);
-            $familyLogDomain->addChild($childDomain);
-        }
-
-        return $familyLogDomain;
-    }
-
     /**
      * @throws NonUniqueResultException
      */
@@ -274,5 +262,17 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
         }
 
         return $collection;
+    }
+
+    private function toDomainWithChildren(FamilyLog $familyLogOrm, ?FamilyLog $parentOrm): FamilyLogDomain
+    {
+        $familyLogDomain = $familyLogOrm->toDomain($parentOrm);
+
+        foreach ($familyLogOrm->children() as $childOrm) {
+            $childDomain = $this->toDomainWithChildren($childOrm, $familyLogOrm);
+            $familyLogDomain->addChild($childDomain);
+        }
+
+        return $familyLogDomain;
     }
 }
