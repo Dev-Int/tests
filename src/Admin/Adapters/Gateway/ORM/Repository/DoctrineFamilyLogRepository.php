@@ -190,6 +190,37 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
         return $familyLog->toDomain($familyLog->parent());
     }
 
+    public function findByUuidWithChildren(ResourceUuid $uuid): FamilyLogDomain
+    {
+        $alias = self::ALIAS;
+        $familyLogOrm = $this->createQueryBuilder($alias)
+            ->where("{$alias}.uuid = :uuid")
+            ->setParameter('uuid', $uuid->toString())
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+
+        if (!$familyLogOrm instanceof FamilyLog) {
+            // @codeCoverageIgnoreStart
+            throw new FamilyLogNotFoundException($uuid->toString());
+            // @codeCoverageIgnoreEnd
+        }
+
+        return $this->toDomainWithChildren($familyLogOrm, $familyLogOrm->parent());
+    }
+
+    private function toDomainWithChildren(FamilyLog $familyLogOrm, ?FamilyLog $parentOrm): FamilyLogDomain
+    {
+        $familyLogDomain = $familyLogOrm->toDomain($parentOrm);
+
+        foreach ($familyLogOrm->children() as $childOrm) {
+            $childDomain = $this->toDomainWithChildren($childOrm, $familyLogOrm);
+            $familyLogDomain->addChild($childDomain);
+        }
+
+        return $familyLogDomain;
+    }
+
     /**
      * @throws NonUniqueResultException
      */

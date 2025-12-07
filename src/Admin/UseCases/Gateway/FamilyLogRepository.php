@@ -31,6 +31,8 @@ interface FamilyLogRepository
 
     public function findByUuid(ResourceUuid $uuid): FamilyLog;
 
+    public function findByUuidWithChildren(ResourceUuid $uuid): FamilyLog;
+
     public function findBySlug(string $slug): FamilyLog;
 
     public function findFamilyLogsOrderingBySlug(): FamilyLogCollection;
