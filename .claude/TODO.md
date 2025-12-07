@@ -6,44 +6,36 @@
 
 ## Domain Entities & Repository
 
-### Récupération des FamilyLog avec leurs enfants depuis le domaine
+### ✅ Récupération des FamilyLog avec leurs enfants depuis le domaine
 
 **Priority** : Medium
 **Context** : Domain Repository pattern
-**Status** : 🔴 **TO DO**
+**Status** : ✅ **DONE** (2025-12-07)
 **GitHub Issue** : [#113](https://github.com/Dev-Int/tests/issues/113)
 
-**Issue** :
-Actuellement, lorsqu'on récupère une `FamilyLog` via le `FamilyLogRepository` (interface du domaine), la méthode `children()` de l'entité retourne `null` au lieu de charger les enfants de l'arborescence.
+**Solution implémentée** : Option A - Méthode dédiée dans le repository
 
-Avec l'implémentation ORM (`DoctrineFamilyLogRepository`), les enfants étaient chargés automatiquement grâce aux relations Doctrine. Mais avec l'interface du domaine, ce chargement automatique n'existe pas.
+**Modifications apportées** :
+1. Ajout de `findByUuidWithChildren(ResourceUuid $uuid): FamilyLog` dans l'interface `FamilyLogRepository`
+2. Implémentation avec chargement récursif de tous les niveaux de l'arborescence dans `DoctrineFamilyLogRepository`
+3. Méthode privée `toDomainWithChildren()` pour convertir récursivement ORM → Domaine
+4. Refactoring des 2 tests fonctionnels concernés pour utiliser la nouvelle méthode
 
-**Impact** :
-Plusieurs tests fonctionnels échouent, car ils s'attendent à ce que `children()` retourne un tableau :
-- `AssignParentFamilyLogControllerTest::testAssignParentWithoutParentWithChildrenWillSucceed` (ligne 147)
-- `ChangeLabelFamilyLogControllerTest::testChangeLabelFamilyLogWithChildrenWillSucceed` (ligne 161)
-
-**Action recommandée** :
-1. Décider d'une stratégie pour gérer les relations parent/enfant dans le domaine :
-   - Option A : Ajouter une méthode `findByUuidWithChildren(ResourceUuid $uuid): FamilyLog` dans `FamilyLogRepository`
-   - Option B : Charger explicitement les enfants dans le repository quand nécessaire
-   - Option C : Modifier l'entité du domaine pour ne pas exposer `children()` directement (CQRS pattern)
-
-2. Refactorer les tests concernés pour utiliser la nouvelle approche
-
-3. S'assurer que tous les tests FamilyLog passent avec l'interface du domaine
-
-**Fichiers concernés** :
-- `src/Admin/UseCases/Gateway/FamilyLogRepository.php` (interface)
-- `src/Admin/Entities/FamilyLog/FamilyLog.php` (entité domaine)
-- `src/Admin/Adapters/Gateway/ORM/Repository/DoctrineFamilyLogRepository.php` (implémentation)
+**Fichiers modifiés** :
+- `src/Admin/UseCases/Gateway/FamilyLogRepository.php` (ligne 34)
+- `src/Admin/Adapters/Gateway/ORM/Repository/DoctrineFamilyLogRepository.php` (lignes 193-295)
 - `src/Admin/Tests/Adapters/Controller/Symfony/Controller/FamilyLog/AssignParentFamilyLog/AssignParentFamilyLogControllerTest.php`
 - `src/Admin/Tests/Adapters/Controller/Symfony/Controller/FamilyLog/ChangeLabelFamilyLog/ChangeLabelFamilyLogControllerTest.php`
 
-**Contexte** :
-Les tests Cancel pour FamilyLog ont été refactorisés pour utiliser les interfaces du domaine, mais les tests concernant les relations parent/enfant ont été revert car ils nécessitent une solution architecturale pour le chargement des enfants.
+**Résultats** :
+- ✅ 17 tests FamilyLog passent (146 assertions)
+- ✅ 119 tests fonctionnels passent (799 assertions)
+- ✅ PHPStan : aucune erreur
+- ✅ Architecture DDD respectée (pas de fuite Doctrine dans le domaine)
+- ✅ Chargement récursif fonctionnel (parent → enfant → petit-enfant)
 
 **Created** : 2025-12-04
+**Completed** : 2025-12-07
 
 ---
 
@@ -213,55 +205,46 @@ Ce mix de stratégies cause des problèmes lors de l'utilisation de `loadFixture
 
 ## Routes Refactoring
 
-### Refactorer les noms de routes en dur en constantes de controller
+### ✅ Refactorer les noms de routes en dur en constantes de controller
 
 **Priority** : Medium
 **Context** : Code maintainability and refactoring
-**Status** : 🔴 **TO DO**
+**Status** : ✅ **DONE** (2025-12-07)
 **GitHub Issue** : [#105](https://github.com/Dev-Int/tests/issues/105)
 
-**Issue** :
-Actuellement, plusieurs fichiers utilisent des noms de routes en dur (chaînes de caractères) au lieu de constantes définies dans les controllers. Cela rend le code moins maintenable et plus sujet aux erreurs lors de renommages de routes.
+**Travaux réalisés** :
 
-**Examples de routes en dur** :
-- Tests E2E : `'admin_family_logs_index'`, `'admin_family_logs_create'`
-- Tests fonctionnels : `'admin_units_index'`, `'admin_taxes_index'`
-- Templates : `path('admin_family_logs_index')`, `path('admin_units_index')`
+**Sub-issue #108** - Ajout des constantes ROUTE_NAME manquantes :
+- ✅ `ApplicationConfigureController::ROUTE_NAME = 'admin_configure_application'`
+- ✅ `GetCompanyController::ROUTE_NAME = 'admin_company_index'`
+- ✅ `UpdateCompanyController::ROUTE_NAME = 'admin_company_update'`
+- **Résultat** : 33/33 controllers ont maintenant une constante `ROUTE_NAME`
 
-**Action recommandée** :
-1. Identifier tous les fichiers utilisant des noms de routes en dur
-2. Créer/vérifier que chaque controller expose une constante `ROUTE_NAME` (ex: `GetFamilyLogsController::ROUTE_NAME`)
-3. Remplacer progressivement les chaînes en dur par les constantes
-4. Mettre à jour les templates Twig pour utiliser les constantes via des variables passées au contexte si nécessaire
+**Sub-issue #109** - Refactoring tests E2E :
+- ✅ Audit complet : 76 occurrences de routes dans les tests E2E
+- ✅ **Constat** : Tous les tests E2E utilisent déjà les constantes `ROUTE_NAME` !
+- **Résultat** : Aucune modification nécessaire
 
-**Fichiers à auditer** :
-- `src/Admin/Tests/EndToEnd/**/*Test.php`
-- `src/Admin/Tests/Adapters/Controller/**/*Test.php`
-- `src/Admin/Adapters/Controller/**/*Controller.php`
+**Sub-issue #111** - Refactoring tests fonctionnels :
+- ✅ Audit complet des tests fonctionnels
+- ✅ 1 occurrence de route en dur trouvée et corrigée :
+  - `ChangeUnitLabelControllerTest.php:295` : `'admin_units_index'` → `GetUnitsController::ROUTE_NAME`
+- **Résultat** : 119 tests fonctionnels passent (797 assertions)
 
-**Controllers ayant déjà des constantes ROUTE_NAME** :
-- `ConfigurationController::ROUTE_NAME`
-- `GetUnitsController::ROUTE_NAME`
-- `CreateUnitController::ROUTE_NAME`
-- `GetTaxesController::ROUTE_NAME`
-- `CreateTaxController::ROUTE_NAME`
-- `GetFamilyLogsController::ROUTE_NAME`
-- `CreateFamilyLogController::ROUTE_NAME`
-- `GetZoneStoragesController::ROUTE_NAME`
-- `CreateZoneStorageController::ROUTE_NAME`
-- `GetSuppliersController::ROUTE_NAME`
-- `CreateSupplierController::ROUTE_NAME`
-- 14 controllers Update (4 Supplier + 4 Article + 2 Tax + 2 FamilyLog + 2 ZoneStorage)
-- (À compléter lors de l'audit)
+**Sub-issue #112** - Templates Twig :
+- ✅ Audit : 46 occurrences de routes trouvées dans les templates
+- ✅ **Décision architecturale** : Garder les routes en dur dans Twig pour des raisons de lisibilité
+- **Justification** : Les templates sont déjà couplés aux routes par nature, utiliser `constant()` serait trop verbeux
 
-**Bénéfices** :
-- Meilleure maintenabilité du code
-- Refactoring plus sûr (erreur de compilation si route renommée)
-- Autocomplétion IDE
-- Centralisation de la définition des routes
-- Évite les typos dans les noms de routes
+**Résultats finaux** :
+- ✅ 33/33 controllers avec constantes `ROUTE_NAME`
+- ✅ 0 route en dur dans les tests E2E
+- ✅ 0 route en dur dans les tests fonctionnels
+- ✅ Templates Twig : routes en dur conservées (décision architecturale)
+- ✅ PHPStan : OK
 
 **Created** : 2025-11-30
+**Completed** : 2025-12-07
 
 ---
 

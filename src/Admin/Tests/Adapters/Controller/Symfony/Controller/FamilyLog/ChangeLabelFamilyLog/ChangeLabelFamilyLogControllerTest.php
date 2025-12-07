@@ -14,9 +14,7 @@ declare(strict_types=1);
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\FamilyLog\ChangeLabelFamilyLog;
 
 use Admin\Adapters\Controller\Symfony\Controller\FamilyLog\GetFamilyLogs\GetFamilyLogsController;
-use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
-use Admin\Entities\FamilyLog\FamilyLog as FamilyLogDomain;
+use Admin\Entities\FamilyLog\FamilyLog;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\UseCases\Gateway\FamilyLogRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
@@ -85,7 +83,7 @@ final class ChangeLabelFamilyLogControllerTest extends BaseFunctionalTestCase
 
         self::assertSame($translator->trans('admin.familyLog.changeLabel.success'), $flash);
 
-        /** @var FamilyLogDomain $familyLogUpdated */
+        /** @var FamilyLog $familyLogUpdated */
         $familyLogUpdated = $familyLogRepository->findByUuid(
             ResourceUuid::fromString(FamilyLogDataBuilder::VALID_UUID)
         );
@@ -101,8 +99,8 @@ final class ChangeLabelFamilyLogControllerTest extends BaseFunctionalTestCase
         // Arrange
         $faker = Factory::create('fr_FR');
 
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
@@ -126,7 +124,7 @@ final class ChangeLabelFamilyLogControllerTest extends BaseFunctionalTestCase
             ->build()
         ;
         $familyLogRepository->save($familyLogChild);
-        $familyLogs = $familyLogRepository->findAll();
+        $familyLogs = $familyLogRepository->findFamilyLogsOrderingBySlug();
         self::assertCount(3, $familyLogs);
 
         // Act
@@ -156,23 +154,29 @@ final class ChangeLabelFamilyLogControllerTest extends BaseFunctionalTestCase
         self::assertSame($translator->trans('admin.familyLog.changeLabel.success'), $flash);
 
         /** @var FamilyLog $familyLogUpdated */
-        $familyLogUpdated = $familyLogRepository->find(FamilyLogDataBuilder::VALID_UUID);
-        $familyLogs = $familyLogRepository->findAll();
+        $familyLogUpdated = $familyLogRepository->findByUuidWithChildren(
+            uuid: ResourceUuid::fromString(FamilyLogDataBuilder::VALID_UUID)
+        );
+        $familyLogs = $familyLogRepository->findFamilyLogsOrderingBySlug();
         self::assertCount(3, $familyLogs);
-        self::assertSame('Surgelés', $familyLogUpdated->label());
+        self::assertSame('Surgelés', $familyLogUpdated->label()->toString());
         self::assertSame('surgeles', $familyLogUpdated->slug());
         self::assertNull($familyLogUpdated->parent());
-        self::assertCount(1, $familyLogUpdated->children());
+        $children = $familyLogUpdated->children();
+        self::assertNotNull($children);
+        self::assertCount(1, $children);
 
         /** @var FamilyLog $familyLogChild */
-        $familyLogChild = $familyLogUpdated->children()->first();
+        $familyLogChild = $children[0];
 
         self::assertSame('surgeles_viande', $familyLogChild->slug());
 
-        self::assertCount(1, $familyLogChild->children());
+        $grandChildren = $familyLogChild->children();
+        self::assertNotNull($grandChildren);
+        self::assertCount(1, $grandChildren);
 
         /** @var FamilyLog $grandChild */
-        $grandChild = $familyLogChild->children()->first();
+        $grandChild = $grandChildren[0];
 
         self::assertSame('surgeles_viande_pate', $grandChild->slug());
     }
@@ -319,7 +323,7 @@ final class ChangeLabelFamilyLogControllerTest extends BaseFunctionalTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
         self::assertRouteSame(GetFamilyLogsController::ROUTE_NAME);
 
-        /** @var FamilyLogDomain $familyLogAfterCancel */
+        /** @var FamilyLog $familyLogAfterCancel */
         $familyLogAfterCancel = $familyLogRepository->findByUuid(
             ResourceUuid::fromString(FamilyLogDataBuilder::VALID_UUID)
         );
