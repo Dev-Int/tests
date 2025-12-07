@@ -13,11 +13,9 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\DataFixtures;
 
-use Admin\Adapters\Gateway\ORM\Entity\Unit;
-use Admin\Tests\DataBuilder\UnitDataBuilder;
+use Admin\Tests\Factory\UnitFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-use Faker\Factory;
 
 final class UnitFixtures extends Fixture
 {
@@ -25,19 +23,15 @@ final class UnitFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        $faker = Factory::create('fr_FR');
-
         foreach ($this->getData() as $datum) {
-            $unit = (new UnitDataBuilder())->create($datum['label'], $datum['abbreviation'])
-                ->withUuid($faker->uuid())
-                ->build()
-            ;
-            $unitOrm = (new Unit())->fromDomain($unit);
-            $this->setReference(self::REFERENCE_PREFIX . $datum['slug'], $unitOrm);
-            $manager->persist($unitOrm);
-        }
+            $unit = UnitFactory::createOne([
+                'label' => $datum['label'],
+                'abbreviation' => $datum['abbreviation'],
+                'slug' => $datum['slug'],
+            ]);
 
-        $manager->flush();
+            $this->setReference(self::REFERENCE_PREFIX . $datum['slug'], $unit->_real());
+        }
     }
 
     /**

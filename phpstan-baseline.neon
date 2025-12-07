@@ -44,3 +44,8 @@ parameters:
 			message: "#^Parameter \\#1 \\$instantiator of method Zenstruck\\\\Foundry\\\\ObjectFactory\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Tax&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Tax\\>\\>\\:\\:instantiateWith\\(\\) expects callable\\(array\\<string, mixed\\>, class\\-string\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Tax&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Tax\\>\\>\\)\\: \\(Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Tax&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Tax\\>\\), Closure\\(array\\)\\: Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Tax given\\.$#"
 			count: 1
 			path: src/Admin/Tests/Factory/TaxFactory.php
+
+		-
+			message: "#^Parameter \\#1 \\$instantiator of method Zenstruck\\\\Foundry\\\\ObjectFactory\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Unit&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Unit\\>\\>\\:\\:instantiateWith\\(\\) expects callable\\(array\\<string, mixed\\>, class\\-string\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Unit&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Unit\\>\\>\\)\\: \\(Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Unit&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Unit\\>\\), Closure\\(array\\)\\: Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Unit given\\.$#"
+			count: 1
+			path: src/Admin/Tests/Factory/UnitFactory.php
