@@ -46,6 +46,11 @@ parameters:
 			path: src/Admin/Tests/Factory/CompanyFactory.php
 
 		-
+			message: "#^Parameter \\#1 \\$instantiator of method Zenstruck\\\\Foundry\\\\ObjectFactory\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\FamilyLog\\\\FamilyLog&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\FamilyLog\\\\FamilyLog\\>\\>\\:\\:instantiateWith\\(\\) expects callable\\(array\\<string, mixed\\>, class\\-string\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\FamilyLog\\\\FamilyLog&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\FamilyLog\\\\FamilyLog\\>\\>\\)\\: \\(Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\FamilyLog\\\\FamilyLog&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\FamilyLog\\\\FamilyLog\\>\\), Closure\\(array\\)\\: Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\FamilyLog\\\\FamilyLog given\\.$#"
+			count: 1
+			path: src/Admin/Tests/Factory/FamilyLogFactory.php
+
+		-
 			message: "#^Parameter \\#1 \\$instantiator of method Zenstruck\\\\Foundry\\\\ObjectFactory\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Tax&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Tax\\>\\>\\:\\:instantiateWith\\(\\) expects callable\\(array\\<string, mixed\\>, class\\-string\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Tax&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Tax\\>\\>\\)\\: \\(Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Tax&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Tax\\>\\), Closure\\(array\\)\\: Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Tax given\\.$#"
 			count: 1
 			path: src/Admin/Tests/Factory/TaxFactory.php
