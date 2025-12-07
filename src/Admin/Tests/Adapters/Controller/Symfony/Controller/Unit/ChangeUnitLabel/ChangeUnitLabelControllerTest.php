@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Unit\ChangeUnitLabel;
 
+use Admin\Adapters\Controller\Symfony\Controller\Unit\GetUnits\GetUnitsController;
 use Admin\Entities\Unit\Unit;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\UseCases\Gateway\UnitRepository;
@@ -292,7 +293,7 @@ final class ChangeUnitLabelControllerTest extends BaseFunctionalTestCase
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
-        self::assertRouteSame('admin_units_index');
+        self::assertRouteSame(GetUnitsController::ROUTE_NAME);
 
         /** @var Unit $unitAfterCancel */
         $unitAfterCancel = $unitRepository->findBySlug($unit->slug());
