@@ -14,9 +14,7 @@ declare(strict_types=1);
 namespace Admin\Adapters\DataFixtures;
 
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
-use Admin\Adapters\Gateway\ORM\Entity\Supplier;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineSupplierRepository;
-use Admin\Tests\DataBuilder\SupplierDataBuilder;
+use Admin\Tests\Factory\SupplierFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -34,29 +32,23 @@ final class SupplierFixtures extends Fixture implements DependentFixtureInterfac
         $faker = Factory::create('fr_FR');
         foreach ($this->getData() as $datum) {
             $familyLog = $this->getReference($datum['familyLogReference'], FamilyLog::class);
-            $supplier = (new SupplierDataBuilder())
-                ->create($faker->company(), $familyLog->toDomain($familyLog->parent()))
-                ->withUuid($faker->uuid())
-                ->withAddress($faker->streetAddress())
-                ->withPostalCode($faker->postcode())
-                ->withTown($faker->city())
-                ->withPhone($this->getValidPhoneNumber($faker))
-                ->withCellphone($this->getValidPhoneNumber($faker))
-                ->withEmail($faker->email())
-                ->withContact($faker->name())
-                ->withDelayDelivery($datum['delayDelivery'])
-                ->withOrderDays($datum['orderDays'])
-                ->build()
-            ;
-            $supplierOrm = (new Supplier())->fromDomain($supplier, $familyLog);
-            $this->setReference(self::REFERENCE_PREFIX . $datum['reference'], $supplierOrm);
 
-            /** @var DoctrineSupplierRepository $supplierRepository */
-            $supplierRepository = $manager->getRepository(Supplier::class);
-            $supplierRepository->save($supplier);
+            $supplier = SupplierFactory::createOne([
+                'name' => $faker->company(),
+                'familyLog' => $familyLog,
+                'address' => $faker->streetAddress(),
+                'postalCode' => $faker->postcode(),
+                'town' => $faker->city(),
+                'phone' => $this->getValidPhoneNumber($faker),
+                'cellphone' => $this->getValidPhoneNumber($faker),
+                'email' => $faker->email(),
+                'contact' => $faker->name(),
+                'delayDelivery' => $datum['delayDelivery'],
+                'orderDays' => $datum['orderDays'],
+            ]);
+
+            $this->setReference(self::REFERENCE_PREFIX . $datum['reference'], $supplier->_real());
         }
-
-        $manager->flush();
     }
 
     public function getDependencies(): array
