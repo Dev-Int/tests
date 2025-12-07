@@ -14,11 +14,9 @@ declare(strict_types=1);
 namespace Admin\Adapters\DataFixtures;
 
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
-use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
+use Admin\Tests\Factory\FamilyLogFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-use Faker\Factory;
 
 final class FamilyLogFixtures extends Fixture
 {
@@ -26,30 +24,20 @@ final class FamilyLogFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        $faker = Factory::create('fr_FR');
-
         /** @var array<string, FamilyLog> $familyLogs */
         $familyLogs = [];
 
         foreach ($this->getData() as $datum) {
             $parent = $datum['parent'] !== null ? $familyLogs[$datum['parent']] : null;
-            $familyLog = (new FamilyLogDataBuilder())
-                ->create($datum['label'])
-                ->withUuid($faker->uuid())
-                ->withParent($parent !== null ? $parent->toDomain($parent->parent()) : $parent)
-                ->build()
-            ;
 
-            $familyLogOrm = (new FamilyLog())->fromDomain($familyLog);
-            $familyLogs[$datum['name']] = $familyLogOrm;
-            $this->setReference(self::REFERENCE_PREFIX . $datum['name'], $familyLogOrm);
+            $familyLog = FamilyLogFactory::createOne([
+                'label' => $datum['label'],
+                'parent' => $parent,
+            ]);
 
-            /** @var DoctrineFamilyLogRepository $familyLogRepository */
-            $familyLogRepository = $manager->getRepository(FamilyLog::class);
-            $familyLogRepository->save($familyLog);
+            $familyLogs[$datum['name']] = $familyLog->_real();
+            $this->setReference(self::REFERENCE_PREFIX . $datum['name'], $familyLog->_real());
         }
-
-        $manager->flush();
     }
 
     /**

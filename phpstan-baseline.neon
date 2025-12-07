@@ -46,6 +46,16 @@ parameters:
 			path: src/Admin/Tests/Factory/CompanyFactory.php
 
 		-
+			message: "#^Parameter \\#1 \\$instantiator of method Zenstruck\\\\Foundry\\\\ObjectFactory\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\FamilyLog\\\\FamilyLog&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\FamilyLog\\\\FamilyLog\\>\\>\\:\\:instantiateWith\\(\\) expects callable\\(array\\<string, mixed\\>, class\\-string\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\FamilyLog\\\\FamilyLog&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\FamilyLog\\\\FamilyLog\\>\\>\\)\\: \\(Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\FamilyLog\\\\FamilyLog&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\FamilyLog\\\\FamilyLog\\>\\), Closure\\(array\\)\\: Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\FamilyLog\\\\FamilyLog given\\.$#"
+			count: 1
+			path: src/Admin/Tests/Factory/FamilyLogFactory.php
+
+		-
+			message: "#^Parameter \\#1 \\$instantiator of method Zenstruck\\\\Foundry\\\\ObjectFactory\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Supplier&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Supplier\\>\\>\\:\\:instantiateWith\\(\\) expects callable\\(array\\<string, mixed\\>, class\\-string\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Supplier&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Supplier\\>\\>\\)\\: \\(Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Supplier&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Supplier\\>\\), Closure\\(array\\)\\: Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Supplier given\\.$#"
+			count: 1
+			path: src/Admin/Tests/Factory/SupplierFactory.php
+
+		-
 			message: "#^Parameter \\#1 \\$instantiator of method Zenstruck\\\\Foundry\\\\ObjectFactory\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Tax&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Tax\\>\\>\\:\\:instantiateWith\\(\\) expects callable\\(array\\<string, mixed\\>, class\\-string\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Tax&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Tax\\>\\>\\)\\: \\(Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Tax&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Tax\\>\\), Closure\\(array\\)\\: Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Tax given\\.$#"
 			count: 1
 			path: src/Admin/Tests/Factory/TaxFactory.php
@@ -54,3 +64,8 @@ parameters:
 			message: "#^Parameter \\#1 \\$instantiator of method Zenstruck\\\\Foundry\\\\ObjectFactory\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Unit&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Unit\\>\\>\\:\\:instantiateWith\\(\\) expects callable\\(array\\<string, mixed\\>, class\\-string\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Unit&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Unit\\>\\>\\)\\: \\(Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Unit&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Unit\\>\\), Closure\\(array\\)\\: Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Unit given\\.$#"
 			count: 1
 			path: src/Admin/Tests/Factory/UnitFactory.php
+
+		-
+			message: "#^Parameter \\#1 \\$instantiator of method Zenstruck\\\\Foundry\\\\ObjectFactory\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\ZoneStorage&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\ZoneStorage\\>\\>\\:\\:instantiateWith\\(\\) expects callable\\(array\\<string, mixed\\>, class\\-string\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\ZoneStorage&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\ZoneStorage\\>\\>\\)\\: \\(Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\ZoneStorage&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\ZoneStorage\\>\\), Closure\\(array\\)\\: Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\ZoneStorage given\\.$#"
+			count: 1
+			path: src/Admin/Tests/Factory/ZoneStorageFactory.php
