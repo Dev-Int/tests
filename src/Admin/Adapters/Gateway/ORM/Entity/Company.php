@@ -22,7 +22,7 @@ use Shared\Entities\VO\NameField;
 use Shared\Entities\VO\PhoneField;
 
 #[ORM\Entity(repositoryClass: DoctrineCompanyRepository::class)]
-final class Company
+class Company
 {
     #[ORM\Id]
     #[ORM\Column]
