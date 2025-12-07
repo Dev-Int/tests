@@ -1,5 +1,9 @@
 # TODO List
 
+**Dernière mise à jour** : 2025-12-06
+
+---
+
 ## Domain Entities & Repository
 
 ### Récupération des FamilyLog avec leurs enfants depuis le domaine
@@ -7,6 +11,7 @@
 **Priority** : Medium
 **Context** : Domain Repository pattern
 **Status** : 🔴 **TO DO**
+**GitHub Issue** : [#113](https://github.com/Dev-Int/tests/issues/113)
 
 **Issue** :
 Actuellement, lorsqu'on récupère une `FamilyLog` via le `FamilyLogRepository` (interface du domaine), la méthode `children()` de l'entité retourne `null` au lieu de charger les enfants de l'arborescence.
@@ -40,6 +45,123 @@ Les tests Cancel pour FamilyLog ont été refactorisés pour utiliser les interf
 
 **Created** : 2025-12-04
 
+---
+
+## End-to-End Tests Coverage
+
+### État actuel de la couverture E2E
+
+**Priority** : Low
+**Context** : E2E testing coverage
+**Status** : 🟢 **BONNE COUVERTURE** (améliorations optionnelles possibles)
+
+#### ✅ Tests E2E créés et fonctionnels
+
+**Company** :
+- ✅ `CreateACompanyTest` - Création d'une entreprise
+- ✅ `UpdateACompanyTest` - Modification d'une entreprise
+
+**Article** :
+- ✅ `CreateFirstArticleTest` - Création du premier article (workflow complet avec packaging)
+- ✅ `CreateAnotherArticleTest` - Création d'un autre article
+- ✅ `ArticlesPaginationTest` - Test de pagination (10 scénarios complets)
+
+**Supplier** :
+- ✅ `CreateFirstSupplierTest` - Création du premier fournisseur
+- ✅ `CreateAnotherSupplierTest` - Création d'un autre fournisseur
+- ✅ `SuppliersPaginationTest` - Test de pagination (13 scénarios complets)
+
+**Tax** :
+- ✅ `CreateFirstTaxTest` - Création de la première taxe avec cas d'annulation
+- ✅ `CreateAnotherTaxTest` - Création d'une autre taxe avec cas d'annulation
+
+**Unit** :
+- ✅ `CreateFirstUnitTest` - Création de la première unité avec cas d'annulation
+- ✅ `CreateAnotherUnitTest` - Création d'une autre unité avec cas d'annulation
+
+**FamilyLog** :
+- ✅ `CreateFirstFamilyLogTest` - Création de la première famille logistique avec cas d'annulation
+- ✅ `CreateAnotherFamilyLogTest` - Création d'une autre famille logistique avec cas d'annulation
+
+**ZoneStorage** :
+- ✅ `CreateFirstZoneStorageTest` - Création de la première zone de stockage avec cas d'annulation
+- ✅ `CreateAnotherZoneStorageTest` - Création d'une autre zone de stockage avec cas d'annulation
+
+**Configuration Workflow** :
+- ✅ `ConfigurationControllerTest` (tests fonctionnels) - 7 tests couvrant le workflow de configuration
+  - Test page configuration vide (toutes les étapes actives)
+  - Test redirection depuis `/admin/` vers `/admin/configure`
+  - Test bouton retour vers home
+  - Test déblocage progressif des étapes (Company → Unit → Tax → FamilyLog → ZoneStorage → Supplier)
+  - Valide le verrouillage des étapes avec classe `disable-link`
+
+#### 📝 Tests Cancel - Implémentés en tests fonctionnels
+
+**Note importante** : Les tests d'annulation de formulaires (Cancel) ont été implémentés comme **tests fonctionnels** plutôt qu'E2E, ce qui est plus rapide et suffisant pour valider la logique de redirection.
+
+**Tests fonctionnels Cancel pour entités simples** :
+- ✅ Unit : 1 test Cancel (Rename)
+- ✅ Tax : 2 tests Cancel (Rename, ChangeRate)
+- ✅ FamilyLog : 2 tests Cancel (ChangeLabel, AssignParent)
+- ✅ ZoneStorage : 2 tests Cancel (ChangeLabel, ChangeFamilyLog)
+
+**Tests E2E Cancel pour entités complexes** (validation UX avec Turbo Frame) :
+- ✅ Article : `RenameArticleCancelTest`, `ChangeFinancialInformationArticleCancelTest`, `ChangeStorageInformationArticleCancelTest`, `ReassignSupplierArticleCancelTest`
+- ✅ Supplier : `RenameSupplierCancelTest`, `ChangeDomiciliationSupplierCancelTest`, `ChangeContactSupplierCancelTest`, `ChangeDeliverySpecificationsSupplierCancelTest`
+
+**Corrections apportées** :
+- Ajout de `turboFrame="_top"` sur tous les boutons Cancel pour garantir une navigation correcte hors du contexte Turbo Frame
+- Fichiers corrigés : Formulaires Update pour Article, Supplier, Tax, FamilyLog, ZoneStorage
+- Utilisation de `{{ 'cancel'|trans }}` au lieu de texte en dur pour la cohérence i18n
+- Ajout de constantes `ROUTE_NAME` dans les 14 controllers Update concernés
+
+#### ❌ Tests E2E manquants (optionnels)
+
+**Article - Tests nominaux Update** (seuls les tests Cancel existent) :
+- ❌ `ChangeArticleFinancialInformationTest` - Test nominal de modification prix/taxe réussie
+- ❌ `ChangeArticleStorageInformationTest` - Test nominal de modification stockage réussie
+- ❌ `ReAssignArticleSupplierTest` - Test nominal de réassignation fournisseur réussie
+- ❌ `RenameArticleTest` - Test nominal de renommage réussi
+
+**Article - Listing** :
+- ❌ `GetArticlesTest` - Navigation dans la liste, recherche/filtres (pagination déjà testée)
+
+**Supplier - Tests nominaux Update** (seuls les tests Cancel existent) :
+- ❌ `RenameSupplierTest` - Test nominal de renommage réussi
+- ❌ `ChangeDomiciliationSupplierTest` - Test nominal de modification domiciliation réussie
+- ❌ `ChangeContactSupplierTest` - Test nominal de modification contact réussie
+- ❌ `ChangeDeliverySpecificationsSupplierTest` - Test nominal de modification specs livraison réussie
+
+**Supplier - Listing** :
+- ❌ `GetSuppliersTest` - Navigation dans la liste, recherche (pagination déjà testée)
+
+#### 🎯 Recommandations
+
+**Priorité 1 - Tests nominaux Article Update** (si temps disponible) :
+Les tests nominaux de modification d'Article (workflow complet qui réussit, pas juste Cancel) seraient les plus pertinents pour compléter la couverture. Cependant, ces workflows sont déjà testés au niveau fonctionnel.
+
+**Priorité 2 - Tests nominaux Supplier Update** (optionnel) :
+Moins critique car Supplier est plus simple qu'Article et déjà bien couvert par les tests fonctionnels.
+
+**Priorité 3 - Tests de listing** (optionnel) :
+`GetArticlesTest` et `GetSuppliersTest` pour la navigation/recherche (la pagination est déjà exhaustivement testée).
+
+**Non prioritaire** :
+- Tests E2E pour Tax, Unit, FamilyLog, ZoneStorage Update : les tests fonctionnels sont suffisants (CRUD simple)
+- Workflow de configuration E2E : déjà couvert par `ConfigurationControllerTest` (tests fonctionnels)
+
+**Conclusion** : La couverture E2E actuelle est **très bonne**. Les workflows critiques (création, pagination, annulation, configuration) sont tous testés. Les tests manquants concernent principalement les workflows de modification réussie qui sont déjà couverts par les tests fonctionnels.
+
+**Fichiers concernés** :
+- Tests E2E : `src/Admin/Tests/EndToEnd/**/*Test.php`
+- Tests fonctionnels : `src/Admin/Tests/Adapters/Controller/**/*Test.php`
+- Configuration workflow : `src/Admin/Tests/Adapters/Controller/Symfony/Controller/ConfigurationControllerTest.php`
+
+**Created** : 2025-11-26
+**Updated** : 2025-12-06
+
+---
+
 ## Fixtures Architecture
 
 ### Uniformiser l'enregistrement des fixtures
@@ -47,6 +169,7 @@ Les tests Cancel pour FamilyLog ont été refactorisés pour utiliser les interf
 **Priority** : Medium
 **Context** : DataFixtures consistency
 **Status** : 🔴 **TO DO**
+**GitHub Issue** : [#110](https://github.com/Dev-Int/tests/issues/110)
 
 **Issue** :
 Les fixtures utilisent actuellement deux stratégies différentes pour persister les entités :
@@ -76,8 +199,8 @@ Ce mix de stratégies cause des problèmes lors de l'utilisation de `loadFixture
 - `src/Admin/Adapters/DataFixtures/CompanyFixtures.php` (utilise repository)
 - `src/Admin/Adapters/DataFixtures/ArticleFixtures.php` (utilise repository)
 - `src/Admin/Adapters/DataFixtures/FamilyLogFixtures.php` (utilise repository)
-- `src/Admin/Adapters/DataFixtures/SupplierFixtures.php` (probablement repository)
-- `src/Admin/Adapters/DataFixtures/ZoneStorageFixtures.php` (probablement repository)
+- `src/Admin/Adapters/DataFixtures/SupplierFixtures.php` (utilise repository)
+- `src/Admin/Adapters/DataFixtures/ZoneStorageFixtures.php` (utilise repository)
 
 **Bénéfices** :
 - Fixtures réutilisables dans les tests E2E
@@ -86,7 +209,63 @@ Ce mix de stratégies cause des problèmes lors de l'utilisation de `loadFixture
 
 **Created** : 2025-11-29
 
-## PHPStan Configuration
+---
+
+## Routes Refactoring
+
+### Refactorer les noms de routes en dur en constantes de controller
+
+**Priority** : Medium
+**Context** : Code maintainability and refactoring
+**Status** : 🔴 **TO DO**
+**GitHub Issue** : [#105](https://github.com/Dev-Int/tests/issues/105)
+
+**Issue** :
+Actuellement, plusieurs fichiers utilisent des noms de routes en dur (chaînes de caractères) au lieu de constantes définies dans les controllers. Cela rend le code moins maintenable et plus sujet aux erreurs lors de renommages de routes.
+
+**Examples de routes en dur** :
+- Tests E2E : `'admin_family_logs_index'`, `'admin_family_logs_create'`
+- Tests fonctionnels : `'admin_units_index'`, `'admin_taxes_index'`
+- Templates : `path('admin_family_logs_index')`, `path('admin_units_index')`
+
+**Action recommandée** :
+1. Identifier tous les fichiers utilisant des noms de routes en dur
+2. Créer/vérifier que chaque controller expose une constante `ROUTE_NAME` (ex: `GetFamilyLogsController::ROUTE_NAME`)
+3. Remplacer progressivement les chaînes en dur par les constantes
+4. Mettre à jour les templates Twig pour utiliser les constantes via des variables passées au contexte si nécessaire
+
+**Fichiers à auditer** :
+- `src/Admin/Tests/EndToEnd/**/*Test.php`
+- `src/Admin/Tests/Adapters/Controller/**/*Test.php`
+- `src/Admin/Adapters/Controller/**/*Controller.php`
+
+**Controllers ayant déjà des constantes ROUTE_NAME** :
+- `ConfigurationController::ROUTE_NAME`
+- `GetUnitsController::ROUTE_NAME`
+- `CreateUnitController::ROUTE_NAME`
+- `GetTaxesController::ROUTE_NAME`
+- `CreateTaxController::ROUTE_NAME`
+- `GetFamilyLogsController::ROUTE_NAME`
+- `CreateFamilyLogController::ROUTE_NAME`
+- `GetZoneStoragesController::ROUTE_NAME`
+- `CreateZoneStorageController::ROUTE_NAME`
+- `GetSuppliersController::ROUTE_NAME`
+- `CreateSupplierController::ROUTE_NAME`
+- 14 controllers Update (4 Supplier + 4 Article + 2 Tax + 2 FamilyLog + 2 ZoneStorage)
+- (À compléter lors de l'audit)
+
+**Bénéfices** :
+- Meilleure maintenabilité du code
+- Refactoring plus sûr (erreur de compilation si route renommée)
+- Autocomplétion IDE
+- Centralisation de la définition des routes
+- Évite les typos dans les noms de routes
+
+**Created** : 2025-11-30
+
+---
+
+## ✅ COMPLETED TASKS
 
 ### ~~Warning: Deprecated config option `checkGenericClassInNonGenericObjectType`~~ ✅
 
@@ -120,66 +299,13 @@ To: `@implements Collection<EntityType>`
 **Created** : 2025-11-25
 **Resolved** : 2025-11-29
 
-## Routes Refactoring
+---
 
-### Refactorer les noms de routes en dur en constantes de controller
-
-**Priority** : Medium
-**Context** : Code maintainability and refactoring
-**Status** : 🔴 **TO DO**
-
-**Issue** :
-Actuellement, plusieurs fichiers utilisent des noms de routes en dur (chaînes de caractères) au lieu de constantes définies dans les controllers. Cela rend le code moins maintenable et plus sujet aux erreurs lors de renommages de routes.
-
-**Examples de routes en dur** :
-- Tests E2E : `'admin_family_logs_index'`, `'admin_family_logs_create'`
-- Tests fonctionnels : `'admin_units_index'`, `'admin_taxes_index'`
-- Templates : `path('admin_family_logs_index')`, `path('admin_units_index')`
-
-**Action recommandée** :
-1. Identifier tous les fichiers utilisant des noms de routes en dur
-2. Créer/vérifier que chaque controller expose une constante `ROUTE_NAME` (ex: `GetFamilyLogsController::ROUTE_NAME`)
-3. Remplacer progressivement les chaînes en dur par les constantes
-4. Mettre à jour les templates Twig pour utiliser les constantes via des variables passées au contexte si nécessaire
-
-**Fichiers à auditer** :
-- `src/Admin/Tests/EndToEnd/**/*Test.php`
-- `src/Admin/Tests/Adapters/Controller/**/*Test.php`
-- `src/Admin/Adapters/Controller/**/*Controller.php`
-
-**Controllers ayant déjà des constantes ROUTE_NAME** :
-- `ConfigurationController::ROUTE_NAME`
-- `GetUnitsController::ROUTE_NAME`
-- `CreateUnitController::ROUTE_NAME`
-- `GetTaxesController::ROUTE_NAME`
-- `CreateTaxController::ROUTE_NAME`
-- `GetFamilyLogsController::ROUTE_NAME`
-- `CreateFamilyLogController::ROUTE_NAME`
-- `GetZoneStoragesController::ROUTE_NAME`
-- `CreateZoneStorageController::ROUTE_NAME`
-- `GetSuppliersController::ROUTE_NAME`
-- `CreateSupplierController::ROUTE_NAME`
-- (À compléter lors de l'audit)
-
-**Bénéfices** :
-- Meilleure maintenabilité du code
-- Refactoring plus sûr (erreur de compilation si route renommée)
-- Autocomplétion IDE
-- Centralisation de la définition des routes
-- Évite les typos dans les noms de routes
-
-**Created** : 2025-11-30
-
-## End-to-End Tests Coverage
-
-### Tests E2E pour l'annulation de formulaires (Cancel)
+### ~~Tests E2E pour l'annulation de formulaires (Cancel)~~ ✅
 
 **Priority** : ~~Medium~~ **COMPLETED**
 **Context** : E2E testing coverage
 **Status** : ✅ **COMPLETED on 2025-12-03**
-
-**Issue** :
-Les tests E2E pour les cas d'annulation (bouton Cancel) lors de la saisie de formulaires ne sont pas complets pour toutes les opérations sur toutes les entités.
 
 **Objectif** :
 Implémenter des tests Cancel pour toutes les opérations (Create et Update) de toutes les entités principales de configuration.
@@ -201,127 +327,43 @@ Implémenter des tests Cancel pour toutes les opérations (Create et Update) de 
 - ✅ FamilyLog : tests fonctionnels Cancel pour ChangeLabel et AssignParent
 - ✅ ZoneStorage : tests fonctionnels Cancel pour ChangeLabel et ChangeFamilyLog
 
-**Tests E2E (validation UX pour entités complexes) - ✅ COMPLÉTÉS** :
+**Tests E2E (validation UX pour entités complexes)** :
 - ✅ Supplier : `RenameSupplierCancelTest`, `ChangeDomiciliationSupplierCancelTest`, `ChangeContactSupplierCancelTest`, `ChangeDeliverySpecificationsSupplierCancelTest`
 - ✅ Article : `RenameArticleCancelTest`, `ChangeFinancialInformationArticleCancelTest`, `ChangeStorageInformationArticleCancelTest`, `ReassignSupplierArticleCancelTest`
 
 **Stratégie** :
-1. **Tests fonctionnels** pour les entités simples (Unit, Tax, FamilyLog, ZoneStorage, Company) :
-   - Plus rapides et suffisants pour tester la logique de redirection
-   - Vérifier qu'aucune donnée n'est persistée
-   - Confirmer que l'annulation redirige vers la bonne URL
-2. **Tests E2E** pour les entités complexes (Supplier, Article) :
-   - Valider l'expérience utilisateur complète avec Turbo Frame
-   - Détecter les problèmes de navigation (`turboFrame="_top"` manquant)
-   - S'assurer que les boutons Cancel ont bien `turboFrame="_top"` dans les templates
+1. **Tests fonctionnels** pour les entités simples (Unit, Tax, FamilyLog, ZoneStorage, Company) - Plus rapides et suffisants
+2. **Tests E2E** pour les entités complexes (Supplier, Article) - Validation UX complète avec Turbo Frame
 
 **Corrections apportées** :
-- Ajout de `turboFrame="_top"` sur tous les boutons Cancel des formulaires Article pour garantir une navigation correcte hors du contexte Turbo Frame
-- Fichiers corrigés : Article `CreateForm`, `ChangeStorageInformationForm`, `ReassignSupplierForm`, `RenameForm`, `ChangeFinancialInformationForm`
-- Ajout de `turboFrame="_top"` sur tous les boutons Cancel des formulaires Supplier Update
-- Fichiers corrigés : Supplier `RenameForm`, `ChangeDomiciliationForm`, `ChangeContactForm`, `ChangeDeliverySpecificationsForm`
-- Ajout de `turboFrame="_top"` et `{{ 'cancel'|trans }}` sur les boutons Cancel des formulaires Tax Update
-- Fichiers corrigés : Tax `RenameForm`, `RevaluateForm`
-- Ajout de `turboFrame="_top"` et `{{ 'cancel'|trans }}` sur les boutons Cancel des formulaires FamilyLog Update
-- Fichiers corrigés : FamilyLog `ChangeLabelForm`, `AssignParentForm`
-- Ajout de `turboFrame="_top"` et `{{ 'cancel'|trans }}` sur les boutons Cancel des formulaires ZoneStorage Update
-- Fichiers corrigés : ZoneStorage `ChangeLabelForm`, `ChangeFamilyLogForm`
-- Utilisation de `{{ 'cancel'|trans }}` au lieu de "Annuler" en dur dans tous les templates Supplier pour la cohérence
-- Ajout de constantes `ROUTE_NAME` dans les 14 controllers Update concernés (4 Supplier + 4 Article + 2 Tax + 2 FamilyLog + 2 ZoneStorage) pour améliorer la maintenabilité
-
-**Bénéfices** :
-- Couverture complète des scénarios d'annulation pour toutes les opérations
-- Détection précoce des bugs de navigation Turbo Frame
-- Garantie que les utilisateurs peuvent annuler une saisie en cours sans effet de bord
+- Ajout de `turboFrame="_top"` sur tous les boutons Cancel des formulaires
+- Utilisation de `{{ 'cancel'|trans }}` au lieu de texte en dur
+- Ajout de constantes `ROUTE_NAME` dans les 14 controllers Update concernés
 
 **Created** : 2025-11-30
-**Updated** : 2025-12-03
+**Resolved** : 2025-12-03
 
-### ~~~Tests E2E pour la pagination des listes~~ ✅
+---
+
+### ~~Tests E2E pour la pagination des listes~~ ✅
 
 **Priority** : ~~Medium~~ **COMPLETED**
 **Context** : E2E testing coverage
 **Status** : ✅ **RESOLVED on 2025-12-01**
 
-**Issue** :
-Les tests E2E pour la pagination des listes d'articles et de fournisseurs n'existent pas encore. La pagination est implémentée avec 25 items par page par défaut, et il est important de valider que la navigation entre les pages fonctionne correctement.
-
 **Objectif** :
 Créer des tests E2E complets pour valider tous les aspects de la pagination sur les pages de liste des entités principales.
 
-**Scénarios à tester - Article (`ArticlesPaginationTest.php`)** :
+**Scénarios testés - Article (`ArticlesPaginationTest.php`)** :
+- ✅ 10 tests complets couvrant navigation, boutons, affichage items, changement items/page, informations pagination
 
-**Navigation entre pages** :
-- ✅ `testNavigateToSecondPage` : Naviguer vers la page 2
-- ✅ `testNavigateToThirdPage` : Naviguer vers la page 3 (nécessite de cliquer sur '>' d'abord car seuls 1-2 sont visibles)
-- ✅ `testNavigateToLastPage` : Naviguer vers la dernière page
-- ✅ `testNavigateBackToFirstPage` : Retourner à la page 1 depuis une autre page
-
-**Boutons de navigation** :
-- ✅ `testNextButtonNavigation` : Utiliser le bouton "Suivant" pour naviguer (page 1 -> 2 -> 3)
-- ✅ `testPreviousButtonNavigation` : Utiliser le bouton "Précédent" pour naviguer (page 3 -> 2 -> 1)
-- ✅ `testNextButtonDisabledOnLastPage` : Vérifier que "Suivant" a la classe "disable-link" sur la dernière page
-- ✅ `testPreviousButtonDisabledOnFirstPage` : Vérifier que "Précédent" a la classe "disable-link" sur la première page
-
-**Affichage des items** :
-- ✅ `testCorrectNumberOfItemsPerPage` : Vérifier qu'il y a bien 25 items par page sur les pages 1, 2 et 3
-- ✅ `testLastPageWithPartialItems` : Vérifier l'affichage correct de la dernière page avec 15 items (65 total)
-
-**Changement du nombre d'items par page** :
-- ✅ `testChangeItemsPerPageTo50` : Changer le nombre d'items par page à 50
-- ✅ `testItemsPerPagePersistsAcrossPages` : Vérifier que le paramètre persiste lors de la navigation
-- ✅ Solution : Traiter simplement comme un formulaire classique avec `$form['itemsPerPage']->select('50')` et `$client->submit($form)`
-
-**Informations de pagination** :
-- ✅ `testPaginationInfoDisplay` : Vérifier l'affichage des informations "X-Y sur Z items"
-- ✅ `testTotalPagesCalculation` : Vérifier que le nombre total de pages est correct
-
-**Scénarios à tester - Supplier (`SuppliersPaginationTest.php`)** :
-
-**Navigation entre pages** :
-- ✅ `testNavigateToSecondPage` : Naviguer vers la page 2
-- ✅ `testNavigateToThirdPage` : Naviguer vers la page 3
-- ✅ `testNavigateToLastPage` : Naviguer vers la dernière page
-- ✅ `testNavigateBackToFirstPage` : Retourner à la page 1 depuis une autre page
-
-**Boutons de navigation** :
-- ✅ `testNextButtonNavigation` : Utiliser le bouton "Suivant" pour naviguer
-- ✅ `testPreviousButtonNavigation` : Utiliser le bouton "Précédent" pour naviguer
-- ✅ `testNextButtonDisabledOnLastPage` : Vérifier que "Suivant" est désactivé sur la dernière page
-- ✅ `testPreviousButtonDisabledOnFirstPage` : Vérifier que "Précédent" est désactivé sur la première page
-
-**Affichage des items** :
-- ✅ `testCorrectNumberOfItemsPerPage` : Vérifier qu'il y a bien 25 items par page (ou moins sur la dernière page)
-- ✅ `testCorrectItemsDisplayedOnEachPage` : Vérifier que les bons fournisseurs sont affichés sur chaque page
-- ✅ `testLastPageWithPartialItems` : Vérifier l'affichage correct de la dernière page avec moins de 25 items
-
-**Changement du nombre d'items par page** (si implémenté) :
-- ✅ `testChangeItemsPerPageTo10` : Changer le nombre d'items par page à 10
-- ✅ `testChangeItemsPerPageTo50` : Changer le nombre d'items par page à 50
-- ✅ `testChangeItemsPerPageTo100` : Changer le nombre d'items par page à 100
-
-**Informations de pagination** :
-- ✅ `testPaginationInfoDisplay` : Vérifier l'affichage des informations "X-Y sur Z items"
-- ✅ `testTotalPagesCalculation` : Vérifier que le nombre total de pages est correct
-
-**Prérequis pour les tests** :
-1. Créer suffisamment d'articles/fournisseurs pour avoir au moins 3-4 pages (75-100 items)
-2. Utiliser `createMinimalConfiguration()` comme base
-3. Ajouter les articles/fournisseurs via des boucles dans le test
-4. Donner des noms identifiables aux items pour vérifier qu'ils apparaissent sur les bonnes pages
-
-**Action recommandée** :
-1. Examiner le template de pagination pour identifier les sélecteurs CSS/ARIA
-2. Créer `ArticlesPaginationTest.php` dans `src/Admin/Tests/EndToEnd/Article/`
-3. Créer `SuppliersPaginationTest.php` dans `src/Admin/Tests/EndToEnd/Supplier/`
-4. Implémenter les tests un par un en suivant la liste ci-dessus
-5. Mettre à jour cette TODO au fur et à mesure de l'avancement
+**Scénarios testés - Supplier (`SuppliersPaginationTest.php`)** :
+- ✅ 13 tests complets couvrant navigation, boutons, affichage items, changement items/page (10/50/100), informations pagination
 
 **Bénéfices** :
-- Garantie que la pagination fonctionne correctement pour les utilisateurs
-- Détection précoce des régressions sur la navigation
+- Garantie que la pagination fonctionne correctement
+- Détection précoce des régressions
 - Validation du calcul du nombre de pages
-- Assurance que tous les items sont accessibles via la pagination
 
 **Created** : 2025-12-01
 **Resolved** : 2025-12-01

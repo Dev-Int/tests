@@ -22,6 +22,8 @@ use Symfony\Component\Routing\Attribute\Route;
 #[AsController]
 final class ApplicationConfigureController extends AbstractController
 {
+    public const ROUTE_NAME = 'admin_configure_application';
+
     public function __construct(private readonly ConfigurationService $configurationService)
     {
     }
