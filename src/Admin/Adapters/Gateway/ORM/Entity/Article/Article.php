@@ -87,7 +87,7 @@ class Article
         #[ORM\JoinColumn(name: 'family_log_id', referencedColumnName: 'uuid')]
         private FamilyLog $familyLog,
         #[ORM\Column(name: 'quantity', type: 'float', scale: 3)]
-        private float $quantity,
+        private readonly float $quantity,
         #[ORM\Column(name: 'slug', type: 'string')]
         private string $slug,
         #[ORM\Column(name: 'active', type: 'boolean')]

@@ -14,13 +14,18 @@ declare(strict_types=1);
 namespace Admin\Tests\Factory;
 
 use Admin\Adapters\Gateway\ORM\Entity\Article\Article;
+use Admin\Adapters\Gateway\ORM\Entity\Article\Packaging;
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Admin\Adapters\Gateway\ORM\Entity\Supplier;
 use Admin\Adapters\Gateway\ORM\Entity\Tax;
 use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
+use Admin\Entities\Unit\Unit;
+use Admin\Entities\ZoneStorage\ZoneStorage as ZoneStorageDomain;
 use Admin\Tests\DataBuilder\ArticleDataBuilder;
 use Doctrine\Common\Collections\ArrayCollection;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
+
+use function PHPUnit\Framework\assertNotNull;
 
 /**
  * @extends PersistentProxyObjectFactory<Article>
@@ -55,7 +60,7 @@ final class ArticleFactory extends PersistentProxyObjectFactory
     {
         return $this->instantiateWith(
             /**
-             * @param array{name: string, uuid: string, supplier: Supplier, tax: Tax, zoneStorages: array<ZoneStorage>, familyLog: FamilyLog, packaging: array{array{\Admin\Entities\Unit\Unit, float}, array{\Admin\Entities\Unit\Unit, float}|null, array{\Admin\Entities\Unit\Unit, float}|null}, unitPrice: int, minStock: float, quantity: float} $attributes
+             * @param array{name: string, uuid: string, supplier: Supplier, tax: Tax, zoneStorages: array<ZoneStorage>, familyLog: FamilyLog, packaging: array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null}, unitPrice: int, minStock: float, quantity: float} $attributes
              */
             static function (array $attributes): Article {
                 \assert(\is_string($attributes['name']));
@@ -70,11 +75,11 @@ final class ArticleFactory extends PersistentProxyObjectFactory
 
                 $familyLogDomain = $attributes['familyLog']->toDomain($attributes['familyLog']->parent());
                 $zoneStoragesDomain = array_map(
-                    static fn (ZoneStorage $zoneStorage): \Admin\Entities\ZoneStorage\ZoneStorage => $zoneStorage->toDomain(),
+                    static fn (ZoneStorage $zoneStorage): ZoneStorageDomain => $zoneStorage->toDomain(),
                     $attributes['zoneStorages']
                 );
 
-                /** @var array{array{\Admin\Entities\Unit\Unit, float}, array{\Admin\Entities\Unit\Unit, float}|null, array{\Admin\Entities\Unit\Unit, float}|null} $packaging */
+                /** @var array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null} $packaging */
                 $packaging = $attributes['packaging'];
 
                 $articleDomain = (new ArticleDataBuilder())
@@ -95,19 +100,57 @@ final class ArticleFactory extends PersistentProxyObjectFactory
 
                 $zoneStoragesCollection = new ArrayCollection($attributes['zoneStorages']);
 
-                return Article::fromDomain(
+                $articleOrm = Article::fromDomain(
                     $articleDomain,
                     $attributes['supplier'],
                     $attributes['tax'],
                     $zoneStoragesCollection,
                     $attributes['familyLog']
                 );
+
+                // Créer le Packaging ORM à partir du packaging domain
+                [$parcelUnitDomain, $parcelQuantity] = $packaging[0];
+                $parcelUnitProxy = UnitFactory::repository()->findOneBy(['slug' => $parcelUnitDomain->slug()]);
+                assertNotNull($parcelUnitProxy);
+                $parcelUnitOrm = $parcelUnitProxy->_real();
+
+                $subPackageUnitOrm = null;
+                $subPackageQuantity = null;
+                if ($packaging[1] !== null) {
+                    [$subPackageUnitDomain, $subPackageQuantity] = $packaging[1];
+                    $subPackageUnitProxy = UnitFactory::repository()
+                        ->findOneBy(['slug' => $subPackageUnitDomain->slug()])
+                    ;
+                    $subPackageUnitOrm = $subPackageUnitProxy?->_real();
+                }
+
+                $consumeUnitOrm = null;
+                $consumeUnitQuantity = null;
+                if ($packaging[2] !== null) {
+                    [$consumeUnitDomain, $consumeUnitQuantity] = $packaging[2];
+                    $consumeUnitProxy = UnitFactory::repository()->findOneBy(['slug' => $consumeUnitDomain->slug()]);
+                    $consumeUnitOrm = $consumeUnitProxy?->_real();
+                }
+
+                $packagingOrm = new Packaging(
+                    $articleOrm,
+                    $parcelUnitOrm,
+                    $parcelQuantity,
+                    $subPackageUnitOrm,
+                    $subPackageQuantity,
+                    $consumeUnitOrm,
+                    $consumeUnitQuantity
+                );
+
+                $articleOrm->setPackaging($packagingOrm);
+
+                return $articleOrm;
             }
         );
     }
 
     /**
-     * @return array{array{\Admin\Entities\Unit\Unit, float}, array{\Admin\Entities\Unit\Unit, float}|null, array{\Admin\Entities\Unit\Unit, float}|null}
+     * @return array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null}
      */
     private function generateDefaultPackaging(): array
     {

@@ -14,3 +14,14 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+when@test:
+    services:
+        _defaults:
+            autowire: true
+            autoconfigure: true
+            public: true
+
+        # Stories pour les tests
+        Admin\Tests\Story\:
+            resource: '%kernel.project_dir%/src/Admin/Tests/Story/'

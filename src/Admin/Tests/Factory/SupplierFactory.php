@@ -38,7 +38,7 @@ final class SupplierFactory extends PersistentProxyObjectFactory
             'uuid' => self::faker()->uuid(),
             'familyLog' => FamilyLogFactory::new(),
             'address' => self::faker()->streetAddress(),
-            'postalCode' => self::faker()->postcode(),
+            'postalCode' => self::faker()->regexify('[0-9]{5}'),
             'town' => self::faker()->city(),
             'phone' => '+33297000000',
             'cellphone' => '+33600000000',
