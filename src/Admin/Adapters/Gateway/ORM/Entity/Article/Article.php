@@ -29,7 +29,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: DoctrineArticleRepository::class)]
 #[UniqueEntity(fields: 'name')]
-final class Article
+class Article
 {
     #[ORM\OneToOne(mappedBy: 'article', targetEntity: Packaging::class, cascade: ['persist', 'remove'])]
     private Packaging $packaging;

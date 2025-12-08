@@ -13,15 +13,13 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\DataFixtures;
 
-use Admin\Adapters\Gateway\ORM\Entity\Article\Article;
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Admin\Adapters\Gateway\ORM\Entity\Supplier;
 use Admin\Adapters\Gateway\ORM\Entity\Tax;
 use Admin\Adapters\Gateway\ORM\Entity\Unit;
 use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineArticleRepository;
 use Admin\Entities\Unit\Unit as UnitDomain;
-use Admin\Tests\DataBuilder\ArticleDataBuilder;
+use Admin\Tests\Factory\ArticleFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -46,29 +44,21 @@ final class ArticleFixtures extends Fixture implements DependentFixtureInterface
 
             foreach ($names as $name) {
                 $packaging = $this->getPackaging($faker);
-                $article = (new ArticleDataBuilder())
-                    ->create(
-                        $name,
-                        $supplier->toDomain(),
-                        $tax->toDomain(),
-                        [$zoneStorage->toDomain()],
-                        $familyLog->toDomain($familyLog->parent()),
-                        $packaging
-                    )
-                    ->withUuid($faker->uuid())
-                    ->withAmount($faker->randomNumber(5))
-                    ->withMinStock($faker->randomFloat(3, 1, 5))
-                    ->withQuantity($faker->randomFloat(3, 0.5, 15))
-                    ->build()
-                ;
 
-                /** @var DoctrineArticleRepository $articleRepository */
-                $articleRepository = $manager->getRepository(Article::class);
-                $articleRepository->save($article);
+                ArticleFactory::createOne([
+                    'name' => $name,
+                    'uuid' => $faker->uuid(),
+                    'supplier' => $supplier,
+                    'tax' => $tax,
+                    'zoneStorages' => [$zoneStorage],
+                    'familyLog' => $familyLog,
+                    'packaging' => $packaging,
+                    'unitPrice' => $faker->numberBetween(100, 99999),
+                    'minStock' => $faker->randomFloat(3, 1, 5),
+                    'quantity' => $faker->randomFloat(3, 0.5, 15),
+                ]);
             }
         }
-
-        $manager->flush();
     }
 
     public function getDependencies(): array
