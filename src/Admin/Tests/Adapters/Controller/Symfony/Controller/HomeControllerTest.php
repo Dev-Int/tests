@@ -13,91 +13,53 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller;
 
-use Admin\Tests\DataBuilder\ArticleDataBuilder;
-use Admin\Tests\DataBuilder\CompanyDataBuilder;
-use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
-use Admin\Tests\DataBuilder\SupplierDataBuilder;
-use Admin\Tests\DataBuilder\TaxDataBuilder;
-use Admin\Tests\DataBuilder\UnitDataBuilder;
-use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
-use Admin\UseCases\Gateway\ArticleRepository;
-use Admin\UseCases\Gateway\CompanyRepository;
-use Admin\UseCases\Gateway\FamilyLogRepository;
-use Admin\UseCases\Gateway\SupplierRepository;
-use Admin\UseCases\Gateway\TaxRepository;
-use Admin\UseCases\Gateway\UnitRepository;
-use Admin\UseCases\Gateway\ZoneStorageRepository;
+use Admin\Tests\Factory\ArticleFactory;
+use Admin\Tests\Factory\CompanyFactory;
+use Admin\Tests\Factory\FamilyLogFactory;
+use Admin\Tests\Factory\SupplierFactory;
+use Admin\Tests\Factory\TaxFactory;
+use Admin\Tests\Factory\UnitFactory;
+use Admin\Tests\Factory\ZoneStorageFactory;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Zenstruck\Foundry\Test\Factories;
 
 /**
  * @group functionalTest
  */
 final class HomeControllerTest extends BaseFunctionalTestCase
 {
+    use Factories;
+
     private const HOME_URI = '/admin/';
 
     public function testHomePageWillSucceed(): void
     {
         // Arrange
-        /** @var CompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(CompanyRepository::class);
-
-        /** @var UnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(UnitRepository::class);
-
-        /** @var TaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(TaxRepository::class);
-
-        /** @var FamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
-
-        /** @var ZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
-
-        /** @var SupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
-
-        /** @var ArticleRepository $articleRepository */
-        $articleRepository = self::getContainer()->get(ArticleRepository::class);
-
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $company = (new CompanyDataBuilder())->create('TestCompany')->build();
-        $companyRepository->save($company);
-
-        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
-        $unitRepository->save($unit);
-
-        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
-        $taxRepository->save($tax);
-
-        $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
-        $familyLogRepository->save($familyLog);
-
-        $zoneStorage = (new ZoneStorageDataBuilder())
-            ->create('Réserve négative', $familyLog)
-            ->build()
-        ;
-        $zoneStorageRepository->save($zoneStorage);
-
-        $supplier = (new SupplierDataBuilder())->create('supplier 1', $familyLog)->build();
-        $supplierRepository->save($supplier);
-
-        $article = (new ArticleDataBuilder())
-            ->create(
-                'article 1',
-                $supplier,
-                $tax,
-                [$zoneStorage],
-                $familyLog,
-                [[$unit, 1.0], null, null]
-            )
-            ->build()
-        ;
-        $articleRepository->save($article);
+        CompanyFactory::createOne(['name' => 'TestCompany']);
+        $unit = UnitFactory::createOne(['label' => 'Kilogramme', 'abbreviation' => 'kg']);
+        $tax = TaxFactory::createOne(['name' => 'TVA taux normal', 'rate' => 20.0]);
+        $familyLog = FamilyLogFactory::createOne(['label' => 'Surgelé']);
+        $zoneStorage = ZoneStorageFactory::createOne([
+            'label' => 'Réserve négative',
+            'familyLog' => $familyLog->_real(),
+        ]);
+        $supplier = SupplierFactory::createOne([
+            'name' => 'supplier 1',
+            'familyLog' => $familyLog->_real(),
+        ]);
+        ArticleFactory::createOne([
+            'name' => 'article 1',
+            'supplier' => $supplier->_real(),
+            'tax' => $tax->_real(),
+            'zoneStorages' => [$zoneStorage->_real()],
+            'familyLog' => $familyLog->_real(),
+            'packaging' => [[$unit->_real()->toDomain(), 1.0], null, null],
+        ]);
 
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::HOME_URI);
