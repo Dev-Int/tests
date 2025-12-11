@@ -24,6 +24,12 @@ final class SupplierDataBuilder implements DataBuilderInterface
 {
     public const UUID_VALID = '94d5dbbe-5fd5-42fa-a94d-87091d35f0d0';
 
+    // UUID constants for standard Suppliers
+    public const SUPPLIER_SURGELE_UUID = 's1u2p3p4-0000-4444-8888-000000000001';
+    public const SUPPLIER_FRAIS_UUID = 's1u2p3p4-0000-4444-8888-000000000002';
+    public const SUPPLIER_EPICERIE_UUID = 's1u2p3p4-0000-4444-8888-000000000003';
+    public const SUPPLIER_MARAICHERE_UUID = 's1u2p3p4-0000-4444-8888-000000000004';
+
     private string $uuid;
     private string $name;
     private string $address = '5, rue des Plantes';

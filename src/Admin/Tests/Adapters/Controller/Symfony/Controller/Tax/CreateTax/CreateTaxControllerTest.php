@@ -16,43 +16,36 @@ namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Tax\CreateTax;
 use Admin\Entities\Exception\Tax\TaxAlreadyExistsException;
 use Admin\Entities\Exception\Unit\NoUnitRegisteredException;
 use Admin\Entities\Tax\Tax;
-use Admin\Tests\DataBuilder\CompanyDataBuilder;
-use Admin\Tests\DataBuilder\TaxDataBuilder;
-use Admin\Tests\DataBuilder\UnitDataBuilder;
-use Admin\UseCases\Gateway\CompanyRepository;
+use Admin\Tests\Factory\CompanyFactory;
+use Admin\Tests\Factory\TaxFactory;
+use Admin\Tests\Factory\UnitFactory;
 use Admin\UseCases\Gateway\TaxRepository;
-use Admin\UseCases\Gateway\UnitRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Zenstruck\Foundry\Test\Factories;
 
 /**
  * @group functionalTest
  */
 final class CreateTaxControllerTest extends BaseFunctionalTestCase
 {
+    use Factories;
+
     private const CREATE_TAX_URI = '/admin/taxes/create';
 
     public function testCreateTaxWillSucceed(): void
     {
         // Arrange
-        /** @var CompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(CompanyRepository::class);
-
-        /** @var UnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(UnitRepository::class);
-
         /** @var TaxRepository $taxRepository */
         $taxRepository = self::getContainer()->get(TaxRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $company = (new CompanyDataBuilder())->create('Test company')->build();
-        $companyRepository->save($company);
-        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
-        $unitRepository->save($unit);
+        CompanyFactory::createOne(['name' => 'Test company']);
+        UnitFactory::createOne(['label' => 'Kilogramme', 'abbreviation' => 'kg']);
 
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_TAX_URI);
@@ -84,24 +77,15 @@ final class CreateTaxControllerTest extends BaseFunctionalTestCase
     public function testCreateTaxFailWithAlreadyExistsException(): void
     {
         // Arrange
-        /** @var CompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(CompanyRepository::class);
-
-        /** @var UnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(UnitRepository::class);
-
         /** @var TaxRepository $taxRepository */
         $taxRepository = self::getContainer()->get(TaxRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $company = (new CompanyDataBuilder())->create('Test company')->build();
-        $companyRepository->save($company);
-        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
-        $unitRepository->save($unit);
-        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
-        $taxRepository->save($tax);
+        CompanyFactory::createOne(['name' => 'Test company']);
+        UnitFactory::createOne(['label' => 'Kilogramme', 'abbreviation' => 'kg']);
+        TaxFactory::createOne(['name' => 'TVA taux normal', 'rate' => 20.0]);
 
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_TAX_URI);
@@ -133,19 +117,11 @@ final class CreateTaxControllerTest extends BaseFunctionalTestCase
     public function testCreateTaxFailWithBadRequestException(): void
     {
         // Arrange
-        /** @var CompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(CompanyRepository::class);
-
-        /** @var UnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(UnitRepository::class);
-
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $company = (new CompanyDataBuilder())->create('Test company')->build();
-        $companyRepository->save($company);
-        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
-        $unitRepository->save($unit);
+        CompanyFactory::createOne(['name' => 'Test company']);
+        UnitFactory::createOne(['label' => 'Kilogramme', 'abbreviation' => 'kg']);
 
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_TAX_URI);
@@ -172,19 +148,11 @@ final class CreateTaxControllerTest extends BaseFunctionalTestCase
     public function testCreateTaxFailWithRateTooLargeException(): void
     {
         // Arrange
-        /** @var CompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(CompanyRepository::class);
-
-        /** @var UnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(UnitRepository::class);
-
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $company = (new CompanyDataBuilder())->create('Test company')->build();
-        $companyRepository->save($company);
-        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
-        $unitRepository->save($unit);
+        CompanyFactory::createOne(['name' => 'Test company']);
+        UnitFactory::createOne(['label' => 'Kilogramme', 'abbreviation' => 'kg']);
 
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_TAX_URI);
@@ -215,10 +183,7 @@ final class CreateTaxControllerTest extends BaseFunctionalTestCase
     public function testCreateUnitFailWithNoCompanyRegisteredException(): void
     {
         // Arrange
-        /** @var CompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(CompanyRepository::class);
-        $company = (new CompanyDataBuilder())->create('Test company')->build();
-        $companyRepository->save($company);
+        CompanyFactory::createOne(['name' => 'Test company']);
 
         // Act
         $this->client->request(Request::METHOD_POST, self::CREATE_TAX_URI);

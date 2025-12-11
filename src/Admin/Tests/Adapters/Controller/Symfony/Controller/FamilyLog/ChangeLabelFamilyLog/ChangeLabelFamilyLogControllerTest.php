@@ -15,7 +15,7 @@ namespace Admin\Tests\Adapters\Controller\Symfony\Controller\FamilyLog\ChangeLab
 
 use Admin\Adapters\Controller\Symfony\Controller\FamilyLog\GetFamilyLogs\GetFamilyLogsController;
 use Admin\Entities\FamilyLog\FamilyLog;
-use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
+use Admin\Tests\Factory\FamilyLogFactory;
 use Admin\UseCases\Gateway\FamilyLogRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
@@ -23,44 +23,40 @@ use Shared\Entities\ResourceUuid;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Zenstruck\Foundry\Test\Factories;
 
 /**
  * @group functionalTest
  */
 final class ChangeLabelFamilyLogControllerTest extends BaseFunctionalTestCase
 {
+    use Factories;
+
     private const CHANGE_LABEL_FAMILY_LOG_URI = '/admin/family_logs/%s/change-label';
 
     public function testChangeLabelFamilyLogWillSucceed(): void
     {
         // Arrange
-        $faker = Factory::create('fr_FR');
-
         /** @var FamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
-        $familyLogBuilder = new FamilyLogDataBuilder();
 
-        $familyLogParent = $familyLogBuilder->create('Surgelé')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $familyLogRepository->save($familyLogParent);
+        // Créer la hiérarchie: Surgelé (parent) -> Viande (enfant)
+        $familyLogParent = FamilyLogFactory::createOne(['label' => 'Surgelé']);
+        $familyLog = FamilyLogFactory::createOne([
+            'label' => 'Viande',
+            'parent' => $familyLogParent->_real(),
+        ]);
 
-        $familyLog = $familyLogBuilder->create('Viande')
-            ->withParent($familyLogParent)
-            ->build()
-        ;
-        $familyLogRepository->save($familyLog);
         $familyLogs = $familyLogRepository->findFamilyLogsOrderingBySlug();
         self::assertCount(2, $familyLogs);
 
         // Act
         $crawler = $this->client->request(
             Request::METHOD_GET,
-            \sprintf(self::CHANGE_LABEL_FAMILY_LOG_URI, $familyLog->uuid()->toString())
+            \sprintf(self::CHANGE_LABEL_FAMILY_LOG_URI, $familyLog->_real()->uuid())
         );
 
         self::assertResponseIsSuccessful();
@@ -85,7 +81,7 @@ final class ChangeLabelFamilyLogControllerTest extends BaseFunctionalTestCase
 
         /** @var FamilyLog $familyLogUpdated */
         $familyLogUpdated = $familyLogRepository->findByUuid(
-            ResourceUuid::fromString(FamilyLogDataBuilder::VALID_UUID)
+            ResourceUuid::fromString($familyLog->_real()->uuid())
         );
         $familyLogs = $familyLogRepository->findFamilyLogsOrderingBySlug();
         self::assertCount(2, $familyLogs->toArray());
@@ -97,40 +93,30 @@ final class ChangeLabelFamilyLogControllerTest extends BaseFunctionalTestCase
     public function testChangeLabelFamilyLogWithChildrenWillSucceed(): void
     {
         // Arrange
-        $faker = Factory::create('fr_FR');
-
         /** @var FamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
-        $familyLogBuilder = new FamilyLogDataBuilder();
 
-        $familyLogParent = $familyLogBuilder->create('Surgelé')
-            ->build()
-        ;
-        $familyLogRepository->save($familyLogParent);
+        // Créer la hiérarchie: Surgelé (grandparent) -> Viande (parent) -> Paté (child)
+        $familyLogParent = FamilyLogFactory::createOne(['label' => 'Surgelé']);
+        $familyLog = FamilyLogFactory::createOne([
+            'label' => 'Viande',
+            'parent' => $familyLogParent->_real(),
+        ]);
+        FamilyLogFactory::createOne([
+            'label' => 'Paté',
+            'parent' => $familyLog->_real(),
+        ]);
 
-        $familyLog = $familyLogBuilder->create('Viande')
-            ->withUuid($faker->uuid())
-            ->withParent($familyLogParent)
-            ->build()
-        ;
-        $familyLogRepository->save($familyLog);
-        $familyLogChild = $familyLogBuilder
-            ->create('Paté')
-            ->withUuid($faker->uuid())
-            ->withParent($familyLog)
-            ->build()
-        ;
-        $familyLogRepository->save($familyLogChild);
         $familyLogs = $familyLogRepository->findFamilyLogsOrderingBySlug();
         self::assertCount(3, $familyLogs);
 
         // Act
         $crawler = $this->client->request(
             Request::METHOD_GET,
-            \sprintf(self::CHANGE_LABEL_FAMILY_LOG_URI, $familyLogParent->uuid()->toString())
+            \sprintf(self::CHANGE_LABEL_FAMILY_LOG_URI, $familyLogParent->_real()->uuid())
         );
 
         self::assertResponseIsSuccessful();
@@ -155,7 +141,7 @@ final class ChangeLabelFamilyLogControllerTest extends BaseFunctionalTestCase
 
         /** @var FamilyLog $familyLogUpdated */
         $familyLogUpdated = $familyLogRepository->findByUuidWithChildren(
-            uuid: ResourceUuid::fromString(FamilyLogDataBuilder::VALID_UUID)
+            uuid: ResourceUuid::fromString($familyLogParent->_real()->uuid())
         );
         $familyLogs = $familyLogRepository->findFamilyLogsOrderingBySlug();
         self::assertCount(3, $familyLogs);
@@ -184,37 +170,24 @@ final class ChangeLabelFamilyLogControllerTest extends BaseFunctionalTestCase
     public function testChangeLabelFamilyLogFailWithAlreadyExistsException(): void
     {
         // Arrange
-        $faker = Factory::create('fr_FR');
-
-        /** @var FamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
-
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
-        $familyLogBuilder = new FamilyLogDataBuilder();
 
-        $familyLogParent = $familyLogBuilder->create('Surgelé')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $familyLogRepository->save($familyLogParent);
-        $familyLog2 = $familyLogBuilder->create('Produits carnés')
-            ->withUuid($faker->uuid())
-            ->withParent($familyLogParent)
-            ->build()
-        ;
-        $familyLogRepository->save($familyLog2);
-
-        $familyLog = $familyLogBuilder->create('Viande')
-            ->withParent($familyLogParent)
-            ->build()
-        ;
-        $familyLogRepository->save($familyLog);
+        // Créer un parent avec 2 enfants
+        $familyLogParent = FamilyLogFactory::createOne(['label' => 'Surgelé']);
+        FamilyLogFactory::createOne([
+            'label' => 'Produits carnés',
+            'parent' => $familyLogParent->_real(),
+        ]);
+        $familyLog = FamilyLogFactory::createOne([
+            'label' => 'Viande',
+            'parent' => $familyLogParent->_real(),
+        ]);
 
         // Act
         $crawler = $this->client->request(
             Request::METHOD_GET,
-            \sprintf(self::CHANGE_LABEL_FAMILY_LOG_URI, $familyLog->uuid()->toString())
+            \sprintf(self::CHANGE_LABEL_FAMILY_LOG_URI, $familyLog->_real()->uuid())
         );
 
         self::assertResponseIsSuccessful();
@@ -245,19 +218,14 @@ final class ChangeLabelFamilyLogControllerTest extends BaseFunctionalTestCase
 
         /** @var FamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
-        $familyLogBuilder = new FamilyLogDataBuilder();
 
-        $familyLogParent = $familyLogBuilder->create('Surgelé')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $familyLogRepository->save($familyLogParent);
+        // Créer la hiérarchie mais on va utiliser un UUID qui n'existe pas
+        $familyLogParent = FamilyLogFactory::createOne(['label' => 'Surgelé']);
+        FamilyLogFactory::createOne([
+            'label' => 'Viande',
+            'parent' => $familyLogParent->_real(),
+        ]);
 
-        $familyLog = $familyLogBuilder->create('Viande')
-            ->withParent($familyLogParent)
-            ->build()
-        ;
-        $familyLogRepository->save($familyLog);
         $familyLogs = $familyLogRepository->findFamilyLogsOrderingBySlug();
         self::assertCount(2, $familyLogs->toArray());
 
@@ -279,33 +247,26 @@ final class ChangeLabelFamilyLogControllerTest extends BaseFunctionalTestCase
     public function testCancelDuringFamilyLogLabelChange(): void
     {
         // Arrange
-        $faker = Factory::create('fr_FR');
-
         /** @var FamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
-        $familyLogBuilder = new FamilyLogDataBuilder();
 
-        $familyLogParent = $familyLogBuilder->create('Surgelé')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $familyLogRepository->save($familyLogParent);
+        // Créer la hiérarchie: Surgelé (parent) -> Viande (enfant)
+        $familyLogParent = FamilyLogFactory::createOne(['label' => 'Surgelé']);
+        $familyLog = FamilyLogFactory::createOne([
+            'label' => 'Viande',
+            'parent' => $familyLogParent->_real(),
+        ]);
 
-        $familyLog = $familyLogBuilder->create('Viande')
-            ->withParent($familyLogParent)
-            ->build()
-        ;
-        $familyLogRepository->save($familyLog);
         $familyLogs = $familyLogRepository->findFamilyLogsOrderingBySlug();
         self::assertCount(2, $familyLogs->toArray());
 
         // Act
         $crawler = $this->client->request(
             Request::METHOD_GET,
-            \sprintf(self::CHANGE_LABEL_FAMILY_LOG_URI, $familyLog->uuid()->toString())
+            \sprintf(self::CHANGE_LABEL_FAMILY_LOG_URI, $familyLog->_real()->uuid())
         );
 
         self::assertResponseIsSuccessful();
@@ -325,7 +286,7 @@ final class ChangeLabelFamilyLogControllerTest extends BaseFunctionalTestCase
 
         /** @var FamilyLog $familyLogAfterCancel */
         $familyLogAfterCancel = $familyLogRepository->findByUuid(
-            ResourceUuid::fromString(FamilyLogDataBuilder::VALID_UUID)
+            ResourceUuid::fromString($familyLog->_real()->uuid())
         );
         self::assertSame('Viande', $familyLogAfterCancel->label()->toString());
         self::assertSame('surgele_viande', $familyLogAfterCancel->slug());

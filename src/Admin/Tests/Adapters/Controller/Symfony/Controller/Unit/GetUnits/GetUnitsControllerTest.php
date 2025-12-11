@@ -14,40 +14,30 @@ declare(strict_types=1);
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Unit\GetUnits;
 
 use Admin\Entities\Exception\Unit\NoUnitRegisteredException;
-use Admin\Tests\DataBuilder\UnitDataBuilder;
-use Admin\UseCases\Gateway\UnitRepository;
+use Admin\Tests\Factory\UnitFactory;
 use App\Shared\Tests\BaseFunctionalTestCase;
-use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Zenstruck\Foundry\Test\Factories;
 
 /**
  * @group functionalTest
  */
 final class GetUnitsControllerTest extends BaseFunctionalTestCase
 {
+    use Factories;
+
     private const GET_UNITS_URI = '/admin/units';
 
     public function testGetUnitsWillSucceed(): void
     {
         // Arrange
-        $faker = Factory::create('fr_FR');
-
-        /** @var UnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(UnitRepository::class);
-
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $unitBuilder = new UnitDataBuilder();
-        $unit1 = $unitBuilder->create('Kilogramme', 'kg')->build();
-        $unit2 = $unitBuilder->create('Litre', 'L')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $unitRepository->save($unit1);
-        $unitRepository->save($unit2);
+        UnitFactory::createOne(['label' => 'Kilogramme', 'abbreviation' => 'kg']);
+        UnitFactory::createOne(['label' => 'Litre', 'abbreviation' => 'L']);
 
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::GET_UNITS_URI);

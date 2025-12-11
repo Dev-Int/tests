@@ -13,109 +13,59 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Article\CreateArticle;
 
-use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
 use Admin\Entities\Exception\Article\ArticleAlreadyExistsException;
 use Admin\Entities\Exception\Supplier\NoSupplierRegisteredException;
-use Admin\Tests\DataBuilder\ArticleDataBuilder;
-use Admin\Tests\DataBuilder\CompanyDataBuilder;
-use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
-use Admin\Tests\DataBuilder\SupplierDataBuilder;
-use Admin\Tests\DataBuilder\TaxDataBuilder;
-use Admin\Tests\DataBuilder\UnitDataBuilder;
-use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
+use Admin\Tests\Factory\ArticleFactory;
+use Admin\Tests\Factory\CompanyFactory;
+use Admin\Tests\Factory\FamilyLogFactory;
+use Admin\Tests\Factory\SupplierFactory;
+use Admin\Tests\Factory\TaxFactory;
+use Admin\Tests\Factory\UnitFactory;
+use Admin\Tests\Factory\ZoneStorageFactory;
 use Admin\UseCases\Gateway\ArticleRepository;
-use Admin\UseCases\Gateway\CompanyRepository;
-use Admin\UseCases\Gateway\FamilyLogRepository;
-use Admin\UseCases\Gateway\SupplierRepository;
-use Admin\UseCases\Gateway\TaxRepository;
-use Admin\UseCases\Gateway\UnitRepository;
-use Admin\UseCases\Gateway\ZoneStorageRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
-use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
-
-use function PHPUnit\Framework\assertInstanceOf;
+use Zenstruck\Foundry\Test\Factories;
 
 /**
  * @group functionalTest
  */
 final class CreateArticleControllerTest extends BaseFunctionalTestCase
 {
+    use Factories;
+
     private const CREATE_ARTICLE_URI = '/admin/articles/create';
 
     public function testCreateArticleWillSucceed(): void
     {
         // Arrange
-        $faker = Factory::create('fr_FR');
-
-        /** @var CompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(CompanyRepository::class);
-
-        /** @var UnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(UnitRepository::class);
-
-        /** @var TaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(TaxRepository::class);
-
-        /** @var FamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
-
-        /** @var ZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
-
-        /** @var SupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
-
         /** @var ArticleRepository $articleRepository */
         $articleRepository = self::getContainer()->get(ArticleRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $company = (new CompanyDataBuilder())->create('Test company')->build();
-        $companyRepository->save($company);
+        // Créer la configuration directement avec Foundry
+        CompanyFactory::createOne(['name' => 'Test company']);
+        $tax = TaxFactory::createOne(['name' => 'TVA taux réduit', 'rate' => 5.5]);
 
-        $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
-        $piece = (new UnitDataBuilder())
-            ->create('Pièce', 'kg')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $kilogramme = (new UnitDataBuilder())
-            ->create('Kilogramme', 'kg')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $unitRepository->save($colis);
-        $unitRepository->save($piece);
-        $unitRepository->save($kilogramme);
+        // Créer les unités de packaging
+        $colis = UnitFactory::createOne(['label' => 'Colis']);
+        $piece = UnitFactory::createOne(['label' => 'Pièce']);
+        $kilogramme = UnitFactory::createOne(['label' => 'Kilogramme']);
 
-        $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
-        $taxRepository->save($tax);
+        // Créer la hiérarchie FamilyLog: Alimentaire > Frais > Viande
+        $familyLog0 = FamilyLogFactory::createOne(['label' => 'Alimentaire']);
+        $familyLog1 = FamilyLogFactory::createOne(['label' => 'Frais', 'parent' => $familyLog0->_real()]);
+        $familyLog2 = FamilyLogFactory::createOne(['label' => 'Viande', 'parent' => $familyLog1->_real()]);
 
-        $familyLog0 = (new FamilyLogDataBuilder())->create('Alimentaire')->build();
-        $familyLog1 = (new FamilyLogDataBuilder())->create('Frais')
-            ->withUuid($faker->uuid())
-            ->withParent($familyLog0)
-            ->build()
-        ;
-        $familyLog2 = (new FamilyLogDataBuilder())->create('Viande')
-            ->withUuid($faker->uuid())
-            ->withParent($familyLog1)
-            ->build()
-        ;
-        $familyLogRepository->save($familyLog0);
-        $familyLogRepository->save($familyLog1);
-        $familyLogRepository->save($familyLog2);
+        // Créer ZoneStorage lié au parent (Frais)
+        $zoneStorage = ZoneStorageFactory::createOne(['label' => 'Réserve froide', 'familyLog' => $familyLog1]);
 
-        $zoneStorage = (new ZoneStorageDataBuilder())->create('Réserve froide', $familyLog1)->build();
-        $zoneStorageRepository->save($zoneStorage);
-
-        $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLog0)->build();
-        $supplierRepository->save($supplier);
+        // Créer Supplier lié au grand-parent (Alimentaire)
+        $supplier = SupplierFactory::createOne(['name' => 'Supplier 1', 'familyLog' => $familyLog0]);
 
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_ARTICLE_URI);
@@ -125,18 +75,18 @@ final class CreateArticleControllerTest extends BaseFunctionalTestCase
 
         $form = $crawler->selectButton($translator->trans('add'))->form([
             'createArticle[name]' => 'Jambon Trad 6kg',
-            'createArticle[supplier]' => $supplier->uuid()->toString(),
-            'createArticle[packaging][parcel][unit]' => $colis->uuid()->toString(),
+            'createArticle[supplier]' => $supplier->_real()->uuid(),
+            'createArticle[packaging][parcel][unit]' => $colis->_real()->uuid(),
             'createArticle[packaging][parcel][quantity]' => 1,
-            'createArticle[packaging][subPackage][unit]' => $piece->uuid()->toString(),
+            'createArticle[packaging][subPackage][unit]' => $piece->_real()->uuid(),
             'createArticle[packaging][subPackage][quantity]' => 2,
-            'createArticle[packaging][consumeUnit][unit]' => $kilogramme->uuid()->toString(),
+            'createArticle[packaging][consumeUnit][unit]' => $kilogramme->_real()->uuid(),
             'createArticle[packaging][consumeUnit][quantity]' => 6.800,
             'createArticle[unitPrice]' => 6.82,
-            'createArticle[tax]' => $tax->uuid()->toString(),
+            'createArticle[tax]' => $tax->_real()->uuid(),
             'createArticle[minStock]' => 8.8,
-            'createArticle[zoneStorages]' => [$zoneStorage->uuid()->toString()],
-            'createArticle[familyLog]' => $familyLog2->uuid()->toString(),
+            'createArticle[zoneStorages]' => [$zoneStorage->_real()->uuid()],
+            'createArticle[familyLog]' => $familyLog2->_real()->uuid(),
             'createArticle[quantity]' => 12.500,
         ]);
         $this->client->submit($form);
@@ -154,9 +104,9 @@ final class CreateArticleControllerTest extends BaseFunctionalTestCase
         self::assertSame('Jambon Trad 6kg', $articleCreated->name()->toString());
         self::assertSame('Supplier 1', $articleCreated->supplier()->name()->toString());
         self::assertSame('Alimentaire', $articleCreated->supplier()->familyLog()->label()->toString());
-        self::assertEquals([$colis, 1.0], $articleCreated->packaging()->parcel());
-        self::assertEquals([$piece, 2.0], $articleCreated->packaging()->subPackage());
-        self::assertEquals([$kilogramme, 6.800], $articleCreated->packaging()->consumerUnit());
+        self::assertEquals([$colis->_real()->toDomain(), 1.0], $articleCreated->packaging()->parcel());
+        self::assertEquals([$piece->_real()->toDomain(), 2.0], $articleCreated->packaging()->subPackage());
+        self::assertEquals([$kilogramme->_real()->toDomain(), 6.800], $articleCreated->packaging()->consumerUnit());
         self::assertSame(682, $articleCreated->unitPrice()->toInt());
         self::assertSame(0.055, $articleCreated->tax()->rate());
         self::assertSame('TVA taux réduit', $articleCreated->tax()->name()->toString());
@@ -174,74 +124,30 @@ final class CreateArticleControllerTest extends BaseFunctionalTestCase
     public function testCreateArticleFailWithAlreadyExistsException(): void
     {
         // Arrange
-        $faker = Factory::create('fr_FR');
-
-        /** @var CompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(CompanyRepository::class);
-
-        /** @var UnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(UnitRepository::class);
-
-        /** @var TaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(TaxRepository::class);
-
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
-
-        /** @var ZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
-
-        /** @var SupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
-
-        /** @var ArticleRepository $articleRepository */
-        $articleRepository = self::getContainer()->get(ArticleRepository::class);
-
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $company = (new CompanyDataBuilder())->create('Test company')->build();
-        $companyRepository->save($company);
+        // Créer la configuration avec Foundry
+        CompanyFactory::createOne();
+        $tax = TaxFactory::createOne();
+        $familyLog = FamilyLogFactory::createOne();
+        $zoneStorage = ZoneStorageFactory::createOne(['familyLog' => $familyLog]);
+        $supplier = SupplierFactory::createOne(['familyLog' => $familyLog]);
 
-        $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
-        $piece = (new UnitDataBuilder())->create('Pièce', 'kg')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $kilogramme = (new UnitDataBuilder())->create('Kilogramme', 'kg')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $unitRepository->save($colis);
-        $unitRepository->save($piece);
-        $unitRepository->save($kilogramme);
+        $colis = UnitFactory::createOne(['label' => 'Colis']);
+        $piece = UnitFactory::createOne(['label' => 'Pièce']);
+        $kilogramme = UnitFactory::createOne(['label' => 'Kilogramme']);
 
-        $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
-        $taxRepository->save($tax);
-
-        $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $familyLogRepository->save($familyLog);
-        $familyLogOrm = $familyLogRepository->find($familyLog->uuid()->toString());
-        assertInstanceOf(FamilyLog::class, $familyLogOrm);
-
-        $zoneStorage = (new ZoneStorageDataBuilder())->create('Reserve froide', $familyLog)->build();
-        $zoneStorageRepository->save($zoneStorage);
-
-        $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLog)->build();
-        $supplierRepository->save($supplier);
-
-        $article = (new ArticleDataBuilder())->create(
-            'Jambon Trad 6kg',
-            $supplier,
-            $tax,
-            [$zoneStorage],
-            $familyLog,
-            [[$colis, 1.0], null, null]
-        )->build();
-        $articleRepository->save($article);
+        // Créer un article existant avec ArticleFactory
+        ArticleFactory::createOne([
+            'name' => 'Jambon Trad 6kg',
+            'supplier' => $supplier,
+            'tax' => $tax,
+            'familyLog' => $familyLog,
+            'zoneStorages' => [$zoneStorage],
+            'packaging' => [[$colis->_real()->toDomain(), 1.0], null, null],
+            'unitPrice' => 682,
+        ]);
 
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_ARTICLE_URI);
@@ -251,18 +157,18 @@ final class CreateArticleControllerTest extends BaseFunctionalTestCase
 
         $form = $crawler->selectButton($translator->trans('add'))->form([
             'createArticle[name]' => 'Jambon Trad 6kg',
-            'createArticle[supplier]' => $supplier->uuid()->toString(),
-            'createArticle[packaging][parcel][unit]' => $colis->uuid()->toString(),
+            'createArticle[supplier]' => $supplier->_real()->uuid(),
+            'createArticle[packaging][parcel][unit]' => $colis->_real()->uuid(),
             'createArticle[packaging][parcel][quantity]' => 1,
-            'createArticle[packaging][subPackage][unit]' => $piece->uuid()->toString(),
+            'createArticle[packaging][subPackage][unit]' => $piece->_real()->uuid(),
             'createArticle[packaging][subPackage][quantity]' => 2,
-            'createArticle[packaging][consumeUnit][unit]' => $kilogramme->uuid()->toString(),
+            'createArticle[packaging][consumeUnit][unit]' => $kilogramme->_real()->uuid(),
             'createArticle[packaging][consumeUnit][quantity]' => 6.000,
             'createArticle[unitPrice]' => 6.82,
-            'createArticle[tax]' => $tax->uuid()->toString(),
+            'createArticle[tax]' => $tax->_real()->uuid(),
             'createArticle[minStock]' => 8.8,
-            'createArticle[zoneStorages]' => [$zoneStorage->uuid()->toString()],
-            'createArticle[familyLog]' => $familyLog->uuid()->toString(),
+            'createArticle[zoneStorages]' => [$zoneStorage->_real()->uuid()],
+            'createArticle[familyLog]' => $familyLog->_real()->uuid(),
             'createArticle[quantity]' => 12.500,
         ]);
         $this->client->submit($form);
@@ -279,53 +185,11 @@ final class CreateArticleControllerTest extends BaseFunctionalTestCase
 
     public function testCreateArticleFailWithNoSupplierRegisteredException(): void
     {
-        // Arrange
-        $faker = Factory::create('fr_FR');
-
-        /** @var CompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(CompanyRepository::class);
-
-        /** @var UnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(UnitRepository::class);
-
-        /** @var TaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(TaxRepository::class);
-
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
-
-        /** @var ZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
-
-        $company = (new CompanyDataBuilder())->create('Test company')->build();
-        $companyRepository->save($company);
-
-        $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
-        $piece = (new UnitDataBuilder())->create('Pièce', 'kg')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $kilogramme = (new UnitDataBuilder())->create('Kilogramme', 'kg')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $unitRepository->save($colis);
-        $unitRepository->save($piece);
-        $unitRepository->save($kilogramme);
-
-        $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
-        $taxRepository->save($tax);
-
-        $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $familyLogRepository->save($familyLog);
-        $familyLogOrm = $familyLogRepository->find($familyLog->uuid()->toString());
-        assertInstanceOf(FamilyLog::class, $familyLogOrm);
-
-        $zoneStorage = (new ZoneStorageDataBuilder())->create('Reserve froide', $familyLog)->build();
-        $zoneStorageRepository->save($zoneStorage);
+        // Arrange - Créer config minimale SANS supplier
+        CompanyFactory::createOne(['name' => 'Test company']);
+        TaxFactory::createOne(['name' => 'TVA taux réduit', 'rate' => 5.5]);
+        $familyLog = FamilyLogFactory::createOne(['label' => 'Surgelé']);
+        ZoneStorageFactory::createOne(['label' => 'Reserve froide', 'familyLog' => $familyLog]);
 
         // Act
         $this->client->request(Request::METHOD_GET, self::CREATE_ARTICLE_URI);
@@ -343,69 +207,24 @@ final class CreateArticleControllerTest extends BaseFunctionalTestCase
     public function testCreateArticleFailWithInvalidFamilyLogAgainstSupplier(): void
     {
         // Arrange
-        $faker = Factory::create('fr_FR');
-
-        /** @var CompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(CompanyRepository::class);
-
-        /** @var UnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(UnitRepository::class);
-
-        /** @var TaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(TaxRepository::class);
-
-        /** @var FamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
-
-        /** @var ZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
-
-        /** @var SupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
-
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $company = (new CompanyDataBuilder())->create('Test company')->build();
-        $companyRepository->save($company);
+        // Créer la configuration de base
+        CompanyFactory::createOne();
+        $tax = TaxFactory::createOne();
+        $colis = UnitFactory::createOne(['label' => 'Colis']);
+        $piece = UnitFactory::createOne(['label' => 'Pièce']);
+        $kilogramme = UnitFactory::createOne(['label' => 'Kilogramme']);
 
-        $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
-        $piece = (new UnitDataBuilder())
-            ->create('Pièce', 'kg')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $kilogramme = (new UnitDataBuilder())
-            ->create('Kilogramme', 'kg')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $unitRepository->save($colis);
-        $unitRepository->save($piece);
-        $unitRepository->save($kilogramme);
+        // Créer FamilyLog et Supplier (supplier lié à "Alimentaire")
+        $familyLog0 = FamilyLogFactory::createOne(['label' => 'Alimentaire']);
+        $familyLog1 = FamilyLogFactory::createOne(['label' => 'Frais', 'parent' => $familyLog0->_real()]);
+        $zoneStorage = ZoneStorageFactory::createOne(['familyLog' => $familyLog1]);
+        $supplier = SupplierFactory::createOne(['familyLog' => $familyLog0]);
 
-        $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
-        $taxRepository->save($tax);
-
-        $familyLog0 = (new FamilyLogDataBuilder())->create('Alimentaire')->build();
-        $familyLog1 = (new FamilyLogDataBuilder())->create('Frais')
-            ->withUuid($faker->uuid())
-            ->withParent($familyLog0)
-            ->build()
-        ;
-        $familyLog2 = (new FamilyLogDataBuilder())->create('Viande')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $familyLogRepository->save($familyLog0);
-        $familyLogRepository->save($familyLog1);
-        $familyLogRepository->save($familyLog2);
-
-        $zoneStorage = (new ZoneStorageDataBuilder())->create('Réserve froide', $familyLog1)->build();
-        $zoneStorageRepository->save($zoneStorage);
-
-        $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLog0)->build();
-        $supplierRepository->save($supplier);
+        // Créer un FamilyLog incompatible (pas lié à Alimentaire)
+        $familyLog2 = FamilyLogFactory::createOne(['label' => 'Viande']);
 
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_ARTICLE_URI);
@@ -415,18 +234,18 @@ final class CreateArticleControllerTest extends BaseFunctionalTestCase
 
         $form = $crawler->selectButton($translator->trans('add'))->form([
             'createArticle[name]' => 'Jambon Trad 6kg',
-            'createArticle[supplier]' => $supplier->uuid()->toString(),
-            'createArticle[packaging][parcel][unit]' => $colis->uuid()->toString(),
+            'createArticle[supplier]' => $supplier->_real()->uuid(),
+            'createArticle[packaging][parcel][unit]' => $colis->_real()->uuid(),
             'createArticle[packaging][parcel][quantity]' => 1,
-            'createArticle[packaging][subPackage][unit]' => $piece->uuid()->toString(),
+            'createArticle[packaging][subPackage][unit]' => $piece->_real()->uuid(),
             'createArticle[packaging][subPackage][quantity]' => 2,
-            'createArticle[packaging][consumeUnit][unit]' => $kilogramme->uuid()->toString(),
+            'createArticle[packaging][consumeUnit][unit]' => $kilogramme->_real()->uuid(),
             'createArticle[packaging][consumeUnit][quantity]' => 6.800,
             'createArticle[unitPrice]' => 6.82,
-            'createArticle[tax]' => $tax->uuid()->toString(),
+            'createArticle[tax]' => $tax->_real()->uuid(),
             'createArticle[minStock]' => 8.8,
-            'createArticle[zoneStorages]' => [$zoneStorage->uuid()->toString()],
-            'createArticle[familyLog]' => $familyLog2->uuid()->toString(),
+            'createArticle[zoneStorages]' => [$zoneStorage->_real()->uuid()],
+            'createArticle[familyLog]' => $familyLog2->_real()->uuid(),
             'createArticle[quantity]' => 12.500,
         ]);
         $this->client->submit($form);
@@ -443,7 +262,8 @@ final class CreateArticleControllerTest extends BaseFunctionalTestCase
             $familyLogField->children('label')->text()
         );
         self::assertSame(
-            'Le champ Famille logistique "Viande" n\'est pas compatible avec la famille logistique du fournisseur: "Alimentaire"',
+            'Le champ Famille logistique "Viande" n\'est pas compatible avec la famille logistique '
+            . 'du fournisseur: "Alimentaire"',
             $familyLogField->children('ul > li')->text()
         );
     }
@@ -451,69 +271,24 @@ final class CreateArticleControllerTest extends BaseFunctionalTestCase
     public function testCreateArticleFailWithInvalidZoneStorageAgainstSupplier(): void
     {
         // Arrange
-        $faker = Factory::create('fr_FR');
-
-        /** @var CompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(CompanyRepository::class);
-
-        /** @var UnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(UnitRepository::class);
-
-        /** @var TaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(TaxRepository::class);
-
-        /** @var FamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
-
-        /** @var ZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
-
-        /** @var SupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
-
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $company = (new CompanyDataBuilder())->create('Test company')->build();
-        $companyRepository->save($company);
+        // Créer la configuration de base
+        CompanyFactory::createOne();
+        $tax = TaxFactory::createOne();
+        $colis = UnitFactory::createOne(['label' => 'Colis']);
+        $piece = UnitFactory::createOne(['label' => 'Pièce']);
+        $kilogramme = UnitFactory::createOne(['label' => 'Kilogramme']);
 
-        $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
-        $piece = (new UnitDataBuilder())
-            ->create('Pièce', 'kg')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $kilogramme = (new UnitDataBuilder())
-            ->create('Kilogramme', 'kg')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $unitRepository->save($colis);
-        $unitRepository->save($piece);
-        $unitRepository->save($kilogramme);
+        // Créer FamilyLog et Supplier (supplier lié à "Alimentaire")
+        $familyLog0 = FamilyLogFactory::createOne(['label' => 'Alimentaire']);
+        $familyLog1 = FamilyLogFactory::createOne(['label' => 'Frais', 'parent' => $familyLog0->_real()]);
+        $supplier = SupplierFactory::createOne(['familyLog' => $familyLog0]);
 
-        $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
-        $taxRepository->save($tax);
-
-        $familyLog0 = (new FamilyLogDataBuilder())->create('Alimentaire')->build();
-        $familyLog1 = (new FamilyLogDataBuilder())->create('Frais')
-            ->withUuid($faker->uuid())
-            ->withParent($familyLog0)
-            ->build()
-        ;
-        $familyLog2 = (new FamilyLogDataBuilder())->create('Viande')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $familyLogRepository->save($familyLog0);
-        $familyLogRepository->save($familyLog1);
-        $familyLogRepository->save($familyLog2);
-
-        $zoneStorage = (new ZoneStorageDataBuilder())->create('Réserve froide', $familyLog2)->build();
-        $zoneStorageRepository->save($zoneStorage);
-
-        $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLog0)->build();
-        $supplierRepository->save($supplier);
+        // Créer ZoneStorage incompatible (lié à "Viande" au lieu de "Alimentaire")
+        $incompatibleFamilyLog = FamilyLogFactory::createOne(['label' => 'Viande']);
+        $zoneStorage = ZoneStorageFactory::createOne(['label' => 'Réserve froide', 'familyLog' => $incompatibleFamilyLog]);
 
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_ARTICLE_URI);
@@ -523,18 +298,18 @@ final class CreateArticleControllerTest extends BaseFunctionalTestCase
 
         $form = $crawler->selectButton($translator->trans('add'))->form([
             'createArticle[name]' => 'Jambon Trad 6kg',
-            'createArticle[supplier]' => $supplier->uuid()->toString(),
-            'createArticle[packaging][parcel][unit]' => $colis->uuid()->toString(),
+            'createArticle[supplier]' => $supplier->_real()->uuid(),
+            'createArticle[packaging][parcel][unit]' => $colis->_real()->uuid(),
             'createArticle[packaging][parcel][quantity]' => 1,
-            'createArticle[packaging][subPackage][unit]' => $piece->uuid()->toString(),
+            'createArticle[packaging][subPackage][unit]' => $piece->_real()->uuid(),
             'createArticle[packaging][subPackage][quantity]' => 2,
-            'createArticle[packaging][consumeUnit][unit]' => $kilogramme->uuid()->toString(),
+            'createArticle[packaging][consumeUnit][unit]' => $kilogramme->_real()->uuid(),
             'createArticle[packaging][consumeUnit][quantity]' => 6.800,
             'createArticle[unitPrice]' => 6.82,
-            'createArticle[tax]' => $tax->uuid()->toString(),
+            'createArticle[tax]' => $tax->_real()->uuid(),
             'createArticle[minStock]' => 8.8,
-            'createArticle[zoneStorages]' => [$zoneStorage->uuid()->toString()],
-            'createArticle[familyLog]' => $familyLog1->uuid()->toString(),
+            'createArticle[zoneStorages]' => [$zoneStorage->_real()->uuid()],
+            'createArticle[familyLog]' => $familyLog1->_real()->uuid(),
             'createArticle[quantity]' => 12.500,
         ]);
         $this->client->submit($form);
@@ -550,7 +325,8 @@ final class CreateArticleControllerTest extends BaseFunctionalTestCase
             $zoneStorageField->children('label')->text()
         );
         self::assertSame(
-            'Le champ Zones de stockage "Frais" n\'est pas compatible avec la famille logistique du fournisseur: "Viande"',
+            'Le champ Zones de stockage "Frais" n\'est pas compatible avec la famille logistique '
+            . 'du fournisseur: "Viande"',
             $zoneStorageField->children('ul > li')->text()
         );
     }

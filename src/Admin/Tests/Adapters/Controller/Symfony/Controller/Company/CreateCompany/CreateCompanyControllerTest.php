@@ -14,18 +14,21 @@ declare(strict_types=1);
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Company\CreateCompany;
 
 use Admin\Entities\Exception\Company\CompanyAlreadyExistsException;
-use Admin\Tests\DataBuilder\CompanyDataBuilder;
+use Admin\Tests\Factory\CompanyFactory;
 use Admin\UseCases\Gateway\CompanyRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Zenstruck\Foundry\Test\Factories;
 
 /**
  * @group functionalTest
  */
 final class CreateCompanyControllerTest extends BaseFunctionalTestCase
 {
+    use Factories;
+
     private const CREATE_COMPANY_URI = '/admin/company/create';
 
     public function testCreateCompanyControllerWillSucceed(): void
@@ -73,14 +76,10 @@ final class CreateCompanyControllerTest extends BaseFunctionalTestCase
     public function testCreateCompanyControllerWillThrowAlreadyExistsException(): void
     {
         // Arrange
-        /** @var CompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(CompanyRepository::class);
-
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $company = (new CompanyDataBuilder())->create('TestCompany')->build();
-        $companyRepository->save($company);
+        CompanyFactory::createOne(['name' => 'TestCompany']);
 
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_COMPANY_URI);
@@ -116,14 +115,10 @@ final class CreateCompanyControllerTest extends BaseFunctionalTestCase
     public function testCreateCompanyControllerWillThrowBadRequestException(): void
     {
         // Arrange
-        /** @var CompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(CompanyRepository::class);
-
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $company = (new CompanyDataBuilder())->create('TestCompany')->build();
-        $companyRepository->save($company);
+        CompanyFactory::createOne(['name' => 'TestCompany']);
 
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_COMPANY_URI);

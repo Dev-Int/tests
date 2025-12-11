@@ -22,6 +22,12 @@ final class ZoneStorageDataBuilder implements DataBuilderInterface
 {
     public const VALID_UUID = '27463995-9deb-4637-b2d1-0568b274db1d';
 
+    // UUID constants for standard ZoneStorage
+    public const RESERVE_NEGATIVE_UUID = 'z1o2n3e4-0000-4444-8888-000000000001';
+    public const RESERVE_POSITIVE_UUID = 'z1o2n3e4-0000-4444-8888-000000000002';
+    public const RESERVE_SECHE_UUID = 'z1o2n3e4-0000-4444-8888-000000000003';
+    public const RESERVE_MARAICHERE_UUID = 'z1o2n3e4-0000-4444-8888-000000000004';
+
     private string $uuid;
     private string $label;
     private FamilyLog $familyLog;

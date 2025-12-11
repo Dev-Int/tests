@@ -14,53 +14,47 @@ declare(strict_types=1);
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Supplier\ChangeDeliverySpecifications;
 
 use Admin\Entities\Supplier\Supplier as SupplierDomain;
-use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
-use Admin\Tests\DataBuilder\SupplierDataBuilder;
-use Admin\UseCases\Gateway\FamilyLogRepository;
+use Admin\Tests\Factory\FamilyLogFactory;
+use Admin\Tests\Factory\SupplierFactory;
 use Admin\UseCases\Gateway\SupplierRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Zenstruck\Foundry\Test\Factories;
 
 /**
  * @group functionalTest
  */
 final class ChangeDeliverySpecificationsSupplierControllerTest extends BaseFunctionalTestCase
 {
+    use Factories;
+
     private const CHANGE_DELIVERY_SPECIFICATIONS_SUPPLIER_URI = '/admin/suppliers/%s/change-delivery-specifications';
 
     public function testChangeDeliverySpecificationsSupplierWillSucceed(): void
     {
         // Arrange
-        $faker = Factory::create('fr_FR');
-
         /** @var SupplierRepository $supplierRepository */
         $supplierRepository = self::getContainer()->get(SupplierRepository::class);
-
-        /** @var FamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
-        $familyLog2 = (new FamilyLogDataBuilder())->create('Frais')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $familyLogRepository->save($familyLog);
-        $familyLogRepository->save($familyLog2);
-        $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLog)->build();
-        $supplierRepository->save($supplier);
+        $familyLog = FamilyLogFactory::createOne(['label' => 'Surgelé']);
+        $familyLog2 = FamilyLogFactory::createOne(['label' => 'Frais']);
+        $supplier = SupplierFactory::createOne([
+            'name' => 'Supplier 1',
+            'familyLog' => $familyLog->_real(),
+        ]);
         $suppliers = $supplierRepository->findAllSuppliers();
         self::assertCount(1, $suppliers);
 
         // Act
         $crawler = $this->client->request(
             Request::METHOD_GET,
-            \sprintf(self::CHANGE_DELIVERY_SPECIFICATIONS_SUPPLIER_URI, $supplier->uuid()->toString())
+            \sprintf(self::CHANGE_DELIVERY_SPECIFICATIONS_SUPPLIER_URI, $supplier->_real()->uuid())
         );
 
         self::assertResponseIsSuccessful();
@@ -68,12 +62,12 @@ final class ChangeDeliverySpecificationsSupplierControllerTest extends BaseFunct
             'h1',
             $translator->trans(
                 'admin.supplier.changeDeliverySpecifications.titlePage',
-                ['%supplierName%' => $supplier->name()->toString()]
+                ['%supplierName%' => $supplier->_real()->name()]
             )
         );
 
         $form = $crawler->selectButton($translator->trans('admin.supplier.changeDeliverySpecifications.button'))->form([
-            'changeDeliverySpecificationsSupplier[familyLog]' => $familyLog2->uuid()->toString(),
+            'changeDeliverySpecificationsSupplier[familyLog]' => $familyLog2->_real()->uuid(),
             'changeDeliverySpecificationsSupplier[delayDelivery]' => 2,
             'changeDeliverySpecificationsSupplier[orderDays][0]' => true,
             'changeDeliverySpecificationsSupplier[orderDays][1]' => false,
@@ -112,18 +106,12 @@ final class ChangeDeliverySpecificationsSupplierControllerTest extends BaseFunct
         /** @var SupplierRepository $supplierRepository */
         $supplierRepository = self::getContainer()->get(SupplierRepository::class);
 
-        /** @var FamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
-
-        $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
-        $familyLog2 = (new FamilyLogDataBuilder())->create('Frais')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $familyLogRepository->save($familyLog);
-        $familyLogRepository->save($familyLog2);
-        $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLog)->build();
-        $supplierRepository->save($supplier);
+        $familyLog = FamilyLogFactory::createOne(['label' => 'Surgelé']);
+        FamilyLogFactory::createOne(['label' => 'Frais']);
+        SupplierFactory::createOne([
+            'name' => 'Supplier 1',
+            'familyLog' => $familyLog->_real(),
+        ]);
         $suppliers = $supplierRepository->findAllSuppliers();
         self::assertCount(1, $suppliers);
 

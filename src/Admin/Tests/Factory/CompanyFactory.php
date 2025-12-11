@@ -34,6 +34,13 @@ final class CompanyFactory extends PersistentProxyObjectFactory
     {
         return [
             'name' => self::faker()->company(),
+            'address' => self::faker()->streetAddress(),
+            'postalCode' => self::faker()->postcode(),
+            'city' => self::faker()->city(),
+            'country' => self::faker()->country(),
+            'phone' => '+33297000000',
+            'email' => self::faker()->email(),
+            'contact' => self::faker()->name(),
         ];
     }
 
@@ -41,13 +48,32 @@ final class CompanyFactory extends PersistentProxyObjectFactory
     {
         return $this->instantiateWith(
             /**
-             * @param array{name: string} $attributes
+             * @param array{
+             *     name: string,
+             *     address: string,
+             *     postalCode: string,
+             *     city: string,
+             *     country: string,
+             *     phone: string,
+             *     email: string,
+             *     contact: string
+             * } $attributes
              */
             static function (array $attributes): Company {
                 \assert(\is_string($attributes['name']));
+                \assert(\is_string($attributes['address']));
+                \assert(\is_string($attributes['postalCode']));
+                \assert(\is_string($attributes['city']));
+                \assert(\is_string($attributes['country']));
+                \assert(\is_string($attributes['phone']));
+                \assert(\is_string($attributes['email']));
+                \assert(\is_string($attributes['contact']));
 
                 $companyDomain = (new CompanyDataBuilder())
                     ->create($attributes['name'])
+                    ->withAddress($attributes['address'])
+                    ->withPostalCode($attributes['postalCode'])
+                    ->withTown($attributes['city'])
                     ->build()
                 ;
 

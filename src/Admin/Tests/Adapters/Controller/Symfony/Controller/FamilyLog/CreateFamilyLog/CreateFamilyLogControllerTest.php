@@ -13,33 +13,27 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\FamilyLog\CreateFamilyLog;
 
-use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineCompanyRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineTaxRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineUnitRepository;
 use Admin\Entities\Exception\FamilyLog\FamilyLogAlreadyExistsException;
 use Admin\Entities\Exception\Tax\NoTaxRegisteredException;
 use Admin\Entities\FamilyLog\FamilyLog as FamilyLogDomain;
-use Admin\Tests\DataBuilder\CompanyDataBuilder;
-use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
-use Admin\Tests\DataBuilder\TaxDataBuilder;
-use Admin\Tests\DataBuilder\UnitDataBuilder;
-use Admin\UseCases\Gateway\CompanyRepository;
+use Admin\Tests\Factory\CompanyFactory;
+use Admin\Tests\Factory\FamilyLogFactory;
+use Admin\Tests\Factory\TaxFactory;
+use Admin\Tests\Factory\UnitFactory;
 use Admin\UseCases\Gateway\FamilyLogRepository;
-use Admin\UseCases\Gateway\TaxRepository;
-use Admin\UseCases\Gateway\UnitRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
-use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Zenstruck\Foundry\Test\Factories;
 
 /**
  * @group functionalTest
  */
 final class CreateFamilyLogControllerTest extends BaseFunctionalTestCase
 {
+    use Factories;
+
     private const CREATE_FAMILY_LOG_URI = '/admin/family_logs/create';
 
     public function testCreateFamilyLogWithoutParentWillSucceed(): void
@@ -48,26 +42,12 @@ final class CreateFamilyLogControllerTest extends BaseFunctionalTestCase
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        /** @var CompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(CompanyRepository::class);
-
-        /** @var UnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(UnitRepository::class);
-
-        /** @var TaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(TaxRepository::class);
-
         /** @var FamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
-        $company = (new CompanyDataBuilder())->create('Test company')->build();
-        $companyRepository->save($company);
-
-        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
-        $unitRepository->save($unit);
-
-        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
-        $taxRepository->save($tax);
+        CompanyFactory::createOne(['name' => 'Test company']);
+        UnitFactory::createOne(['label' => 'Kilogramme', 'abbreviation' => 'kg']);
+        TaxFactory::createOne(['name' => 'TVA taux normal', 'rate' => 20.0]);
 
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_FAMILY_LOG_URI);
@@ -97,38 +77,18 @@ final class CreateFamilyLogControllerTest extends BaseFunctionalTestCase
     public function testCreateFamilyLogWithParentWillSucceed(): void
     {
         // Arrange
-        $faker = Factory::create('fr_FR');
-
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        CompanyFactory::createOne(['name' => 'Test company']);
+        UnitFactory::createOne(['label' => 'Kilogramme', 'abbreviation' => 'kg']);
+        TaxFactory::createOne(['name' => 'TVA taux normal', 'rate' => 20.0]);
 
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
-
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
-
-        $company = (new CompanyDataBuilder())->create('Test company')->build();
-        $companyRepository->save($company);
-
-        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
-        $unitRepository->save($unit);
-
-        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
-        $taxRepository->save($tax);
-
-        $familyLogParent = (new FamilyLogDataBuilder())->create('Surgelé')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $familyLogRepository->save($familyLogParent);
-        $familyLogParentOrm = $familyLogRepository->findByUuid($familyLogParent->uuid());
+        // Créer le parent avec Foundry
+        $familyLogParent = FamilyLogFactory::createOne(['label' => 'Surgelé']);
 
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_FAMILY_LOG_URI);
@@ -138,7 +98,7 @@ final class CreateFamilyLogControllerTest extends BaseFunctionalTestCase
 
         $form = $crawler->selectButton($translator->trans('add'))->form([
             'createFamilyLog[label]' => 'Viande',
-            'createFamilyLog[parent]' => $familyLogParentOrm->uuid()->toString(),
+            'createFamilyLog[parent]' => $familyLogParent->_real()->uuid(),
         ]);
         $this->client->submit($form);
 
@@ -161,44 +121,22 @@ final class CreateFamilyLogControllerTest extends BaseFunctionalTestCase
     public function testCreateFamilyLogWithGrandParentsWillSucceed(): void
     {
         // Arrange
-        $faker = Factory::create('fr_FR');
-
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
+        CompanyFactory::createOne(['name' => 'Test company']);
+        UnitFactory::createOne(['label' => 'Kilogramme', 'abbreviation' => 'kg']);
+        TaxFactory::createOne(['name' => 'TVA taux normal', 'rate' => 20.0]);
 
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
-
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
-
-        $company = (new CompanyDataBuilder())->create('Test company')->build();
-        $companyRepository->save($company);
-
-        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
-        $unitRepository->save($unit);
-
-        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
-        $taxRepository->save($tax);
-
-        $familyLogBuilder = new FamilyLogDataBuilder();
-        $familyLogGrandParent = $familyLogBuilder->create('Surgelé')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $familyLogRepository->save($familyLogGrandParent);
-        $familyLogParent = $familyLogBuilder->create('Viande')
-            ->withParent($familyLogGrandParent)
-            ->build()
-        ;
-        $familyLogRepository->save($familyLogParent);
-        $familyLogParentOrm = $familyLogRepository->findBySlug('surgele_viande');
+        // Créer la hiérarchie: Surgelé (grandparent) -> Viande (parent)
+        $familyLogGrandParent = FamilyLogFactory::createOne(['label' => 'Surgelé']);
+        $familyLogParent = FamilyLogFactory::createOne([
+            'label' => 'Viande',
+            'parent' => $familyLogGrandParent->_real(),
+        ]);
 
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_FAMILY_LOG_URI);
@@ -208,7 +146,7 @@ final class CreateFamilyLogControllerTest extends BaseFunctionalTestCase
 
         $form = $crawler->selectButton($translator->trans('add'))->form([
             'createFamilyLog[label]' => 'Poulet',
-            'createFamilyLog[parent]' => $familyLogParentOrm->uuid()->toString(),
+            'createFamilyLog[parent]' => $familyLogParent->_real()->uuid(),
         ]);
         $this->client->submit($form);
 
@@ -234,35 +172,11 @@ final class CreateFamilyLogControllerTest extends BaseFunctionalTestCase
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
+        CompanyFactory::createOne(['name' => 'Test company']);
+        UnitFactory::createOne(['label' => 'Kilogramme', 'abbreviation' => 'kg']);
+        TaxFactory::createOne(['name' => 'TVA taux normal', 'rate' => 20.0]);
 
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
-
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
-
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
-
-        $company = (new CompanyDataBuilder())->create('Test company')->build();
-        $companyRepository->save($company);
-
-        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
-        $unitRepository->save($unit);
-
-        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
-        $taxRepository->save($tax);
-
-        $familyLogBuilder = new FamilyLogDataBuilder();
-        $familyLog = $familyLogBuilder->create('Surgelé')->build();
-        $familyLogRepository->save($familyLog);
-
-        /** @var FamilyLog $familyCreated */
-        $familyCreated = $familyLogRepository->find(FamilyLogDataBuilder::VALID_UUID);
-        self::assertSame('Surgelé', $familyCreated->label());
-        self::assertNull($familyCreated->parent());
+        FamilyLogFactory::createOne(['label' => 'Surgelé']);
 
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_FAMILY_LOG_URI);
@@ -288,17 +202,8 @@ final class CreateFamilyLogControllerTest extends BaseFunctionalTestCase
     public function testCreateUnitFailWithNoCompanyRegisteredException(): void
     {
         // Arrange
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
-
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
-
-        $company = (new CompanyDataBuilder())->create('Test company')->build();
-        $companyRepository->save($company);
-
-        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
-        $unitRepository->save($unit);
+        CompanyFactory::createOne(['name' => 'Test company']);
+        UnitFactory::createOne(['label' => 'Kilogramme', 'abbreviation' => 'kg']);
 
         // Act
         $this->client->request(Request::METHOD_POST, self::CREATE_FAMILY_LOG_URI);

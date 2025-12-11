@@ -14,84 +14,54 @@ declare(strict_types=1);
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Article\RenameArticle;
 
 use Admin\Entities\Exception\Article\ArticleAlreadyExistsException;
-use Admin\Tests\DataBuilder\ArticleDataBuilder;
-use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
-use Admin\Tests\DataBuilder\SupplierDataBuilder;
-use Admin\Tests\DataBuilder\TaxDataBuilder;
-use Admin\Tests\DataBuilder\UnitDataBuilder;
-use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
+use Admin\Tests\Factory\ArticleFactory;
+use Admin\Tests\Factory\FamilyLogFactory;
+use Admin\Tests\Factory\SupplierFactory;
+use Admin\Tests\Factory\TaxFactory;
+use Admin\Tests\Factory\UnitFactory;
+use Admin\Tests\Factory\ZoneStorageFactory;
 use Admin\UseCases\Gateway\ArticleRepository;
-use Admin\UseCases\Gateway\FamilyLogRepository;
-use Admin\UseCases\Gateway\SupplierRepository;
-use Admin\UseCases\Gateway\TaxRepository;
-use Admin\UseCases\Gateway\UnitRepository;
-use Admin\UseCases\Gateway\ZoneStorageRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Zenstruck\Foundry\Test\Factories;
 
 /**
  * @group functionalTest
  */
 final class RenameArticleControllerTest extends BaseFunctionalTestCase
 {
+    use Factories;
+
     private const RENAME_ARTICLE_URI = '/admin/articles/%s/rename';
 
     public function testRenameArticleWillSucceed(): void
     {
         // Arrange
-        $faker = Factory::create('fr_FR');
-
-        /** @var UnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(UnitRepository::class);
-
-        /** @var TaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(TaxRepository::class);
-
-        /** @var FamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
-
-        /** @var ZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
-
-        /** @var SupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
-
         /** @var ArticleRepository $articleRepository */
         $articleRepository = self::getContainer()->get(ArticleRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
-        $unitRepository->save($colis);
+        // Créer la configuration de base
+        $tax = TaxFactory::createOne();
+        $familyLog = FamilyLogFactory::createOne();
+        $zoneStorage = ZoneStorageFactory::createOne(['familyLog' => $familyLog]);
+        $supplier = SupplierFactory::createOne(['familyLog' => $familyLog]);
+        $unit = UnitFactory::createOne();
 
-        $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
-        $taxRepository->save($tax);
-
-        $familyLog = (new FamilyLogDataBuilder())->create('Frais')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $familyLogRepository->save($familyLog);
-
-        $zoneStorage = (new ZoneStorageDataBuilder())->create('Réserve froide', $familyLog)->build();
-        $zoneStorageRepository->save($zoneStorage);
-
-        $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLog)->build();
-        $supplierRepository->save($supplier);
-
-        $article = (new ArticleDataBuilder())->create(
-            'Jambon Trad 6kg',
-            $supplier,
-            $tax,
-            [$zoneStorage],
-            $familyLog,
-            [[$colis, 1.0], null, null]
-        )->build();
-        $articleRepository->save($article);
+        $articleProxy = ArticleFactory::createOne([
+            'name' => 'Jambon Trad 6kg',
+            'supplier' => $supplier,
+            'tax' => $tax,
+            'familyLog' => $familyLog,
+            'zoneStorages' => [$zoneStorage],
+            'packaging' => [[$unit->_real()->toDomain(), 1.0], null, null],
+        ]);
+        $article = $articleProxy->_real()->toDomain();
 
         // Act
         $crawler = $this->client->request(
@@ -127,68 +97,37 @@ final class RenameArticleControllerTest extends BaseFunctionalTestCase
     public function testRenameArticleFailWithAlreadyExistsException(): void
     {
         // Arrange
-        $faker = Factory::create('fr_FR');
-
-        /** @var UnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(UnitRepository::class);
-
-        /** @var TaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(TaxRepository::class);
-
-        /** @var FamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
-
-        /** @var ZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
-
-        /** @var SupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
-
-        /** @var ArticleRepository $articleRepository */
-        $articleRepository = self::getContainer()->get(ArticleRepository::class);
-
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
-        $unitRepository->save($colis);
+        // Créer la configuration de base
+        $tax = TaxFactory::createOne();
+        $familyLog = FamilyLogFactory::createOne();
+        $zoneStorage = ZoneStorageFactory::createOne(['familyLog' => $familyLog]);
+        $supplier = SupplierFactory::createOne(['familyLog' => $familyLog]);
+        $unit = UnitFactory::createOne();
 
-        $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
-        $taxRepository->save($tax);
+        // Créer le premier article
+        $articleProxy1 = ArticleFactory::createOne([
+            'name' => 'Jambon Trad 6kg',
+            'supplier' => $supplier,
+            'tax' => $tax,
+            'familyLog' => $familyLog,
+            'zoneStorages' => [$zoneStorage],
+            'packaging' => [[$unit->_real()->toDomain(), 1.0], null, null],
+        ]);
+        $article1 = $articleProxy1->_real()->toDomain();
 
-        $familyLog = (new FamilyLogDataBuilder())->create('Frais')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $familyLogRepository->save($familyLog);
-
-        $zoneStorage = (new ZoneStorageDataBuilder())->create('Réserve froide', $familyLog)->build();
-        $zoneStorageRepository->save($zoneStorage);
-
-        $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLog)->build();
-        $supplierRepository->save($supplier);
-
-        $article1 = (new ArticleDataBuilder())->create(
-            'Jambon Trad 6kg',
-            $supplier,
-            $tax,
-            [$zoneStorage],
-            $familyLog,
-            [[$colis, 1.0], null, null]
-        )->build();
-        $articleRepository->save($article1);
-        $article2 = (new ArticleDataBuilder())->create(
-            'Jambon 6kg',
-            $supplier,
-            $tax,
-            [$zoneStorage],
-            $familyLog,
-            [[$colis, 1.0], null, null]
-        )
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $articleRepository->save($article2);
+        // Créer un 2ème article avec un nom différent
+        ArticleFactory::createOne([
+            'name' => 'Jambon 6kg',
+            'supplier' => $supplier,
+            'tax' => $tax,
+            'familyLog' => $familyLog,
+            'zoneStorages' => [$zoneStorage],
+            'packaging' => [[$unit->_real()->toDomain(), 1.0], null, null],
+            'unitPrice' => 682,
+        ]);
 
         // Act
         $crawler = $this->client->request(
@@ -223,51 +162,21 @@ final class RenameArticleControllerTest extends BaseFunctionalTestCase
         // Arrange
         $faker = Factory::create('fr_FR');
 
-        /** @var UnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(UnitRepository::class);
+        // Créer un article pour avoir des données en base (test realiste)
+        $tax = TaxFactory::createOne();
+        $familyLog = FamilyLogFactory::createOne();
+        $zoneStorage = ZoneStorageFactory::createOne(['familyLog' => $familyLog]);
+        $supplier = SupplierFactory::createOne(['familyLog' => $familyLog]);
+        $unit = UnitFactory::createOne();
 
-        /** @var TaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(TaxRepository::class);
-
-        /** @var FamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
-
-        /** @var ZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
-
-        /** @var SupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
-
-        /** @var ArticleRepository $articleRepository */
-        $articleRepository = self::getContainer()->get(ArticleRepository::class);
-
-        $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
-        $unitRepository->save($colis);
-
-        $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
-        $taxRepository->save($tax);
-
-        $familyLog = (new FamilyLogDataBuilder())->create('Frais')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $familyLogRepository->save($familyLog);
-
-        $zoneStorage = (new ZoneStorageDataBuilder())->create('Réserve froide', $familyLog)->build();
-        $zoneStorageRepository->save($zoneStorage);
-
-        $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLog)->build();
-        $supplierRepository->save($supplier);
-
-        $article = (new ArticleDataBuilder())->create(
-            'Jambon Trad 6kg',
-            $supplier,
-            $tax,
-            [$zoneStorage],
-            $familyLog,
-            [[$colis, 1.0], null, null]
-        )->build();
-        $articleRepository->save($article);
+        ArticleFactory::createOne([
+            'name' => 'Jambon Trad 6kg',
+            'supplier' => $supplier,
+            'tax' => $tax,
+            'familyLog' => $familyLog,
+            'zoneStorages' => [$zoneStorage],
+            'packaging' => [[$unit->_real()->toDomain(), 1.0], null, null],
+        ]);
 
         // Act
         $this->client->request(

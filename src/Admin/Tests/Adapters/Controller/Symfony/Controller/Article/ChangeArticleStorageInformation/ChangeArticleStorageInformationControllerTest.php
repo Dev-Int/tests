@@ -13,102 +13,58 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Article\ChangeArticleStorageInformation;
 
-use Admin\Tests\DataBuilder\ArticleDataBuilder;
-use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
-use Admin\Tests\DataBuilder\SupplierDataBuilder;
-use Admin\Tests\DataBuilder\TaxDataBuilder;
-use Admin\Tests\DataBuilder\UnitDataBuilder;
-use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
+use Admin\Tests\Factory\ArticleFactory;
+use Admin\Tests\Factory\FamilyLogFactory;
+use Admin\Tests\Factory\SupplierFactory;
+use Admin\Tests\Factory\TaxFactory;
+use Admin\Tests\Factory\UnitFactory;
+use Admin\Tests\Factory\ZoneStorageFactory;
 use Admin\UseCases\Gateway\ArticleRepository;
-use Admin\UseCases\Gateway\FamilyLogRepository;
-use Admin\UseCases\Gateway\SupplierRepository;
-use Admin\UseCases\Gateway\TaxRepository;
-use Admin\UseCases\Gateway\UnitRepository;
-use Admin\UseCases\Gateway\ZoneStorageRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Zenstruck\Foundry\Test\Factories;
 
 /**
  * @group functionalTest
  */
 class ChangeArticleStorageInformationControllerTest extends BaseFunctionalTestCase
 {
+    use Factories;
+
     public const CHANGE_ARTICLE_STORAGE_INFORMATION_URI = '/admin/articles/%s/change-article-storage-information';
 
     public function testChangeArticleStorageInformationWillSucceed(): void
     {
         // Arrange
-        $faker = Factory::create('fr_FR');
-
-        /** @var UnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(UnitRepository::class);
-
-        /** @var TaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(TaxRepository::class);
-
-        /** @var FamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
-
-        /** @var ZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
-
-        /** @var SupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
-
         /** @var ArticleRepository $articleRepository */
         $articleRepository = self::getContainer()->get(ArticleRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
-        $piece = (new UnitDataBuilder())
-            ->create('Pièce', 'kg')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $kilogramme = (new UnitDataBuilder())
-            ->create('Kilogramme', 'kg')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $unitRepository->save($colis);
-        $unitRepository->save($piece);
-        $unitRepository->save($kilogramme);
+        // Créer les unités de packaging
+        $colis = UnitFactory::createOne(['label' => 'Colis']);
+        $piece = UnitFactory::createOne(['label' => 'Pièce']);
+        $kilogramme = UnitFactory::createOne(['label' => 'Kilogramme']);
 
-        $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
-        $taxRepository->save($tax);
+        // Créer l'article
+        $tax = TaxFactory::createOne();
+        $familyLog = FamilyLogFactory::createOne();
+        $supplier = SupplierFactory::createOne(['familyLog' => $familyLog]);
+        $zoneStorage = ZoneStorageFactory::createOne(['familyLog' => $familyLog]);
 
-        $surgele = (new FamilyLogDataBuilder())->create('Surgelé')->build();
-        $frais = (new FamilyLogDataBuilder())
-            ->create('Frais')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $familyLogRepository->save($surgele);
-        $familyLogRepository->save($frais);
-
-        $storageSurgele = (new ZoneStorageDataBuilder())->create('Réserve négative', $surgele)->build();
-        $zoneStorageRepository->save($storageSurgele);
-
-        $supplierSurgele = (new SupplierDataBuilder())->create('Supplier Surgelé', $frais)->build();
-        $supplierRepository->save($supplierSurgele);
-
-        $article = (new ArticleDataBuilder())
-            ->create(
-                'Jambon Trad 6kg',
-                $supplierSurgele,
-                $tax,
-                [$storageSurgele],
-                $frais,
-                [[$colis, 1.0], null, null]
-            )
-            ->build()
-        ;
-        $articleRepository->save($article);
+        $articleProxy = ArticleFactory::createOne([
+            'name' => 'Jambon Trad 6kg',
+            'supplier' => $supplier,
+            'tax' => $tax,
+            'familyLog' => $familyLog,
+            'zoneStorages' => [$zoneStorage],
+            'packaging' => [[$colis->_real()->toDomain(), 1.0], null, null],
+        ]);
+        $article = $articleProxy->_real()->toDomain();
 
         // Act
         $crawler = $this->client->request(
@@ -126,11 +82,11 @@ class ChangeArticleStorageInformationControllerTest extends BaseFunctionalTestCa
         );
 
         $form = $crawler->selectButton($translator->trans('admin.article.changeStorageInformation.button'))->form([
-            'changeArticleStorageInformation[packaging][parcel][unit]' => $colis->uuid()->toString(),
+            'changeArticleStorageInformation[packaging][parcel][unit]' => $colis->_real()->uuid(),
             'changeArticleStorageInformation[packaging][parcel][quantity]' => 1,
-            'changeArticleStorageInformation[packaging][subPackage][unit]' => $piece->uuid()->toString(),
+            'changeArticleStorageInformation[packaging][subPackage][unit]' => $piece->_real()->uuid(),
             'changeArticleStorageInformation[packaging][subPackage][quantity]' => 2,
-            'changeArticleStorageInformation[packaging][consumeUnit][unit]' => $kilogramme->uuid()->toString(),
+            'changeArticleStorageInformation[packaging][consumeUnit][unit]' => $kilogramme->_real()->uuid(),
             'changeArticleStorageInformation[packaging][consumeUnit][quantity]' => 6.800,
             'changeArticleStorageInformation[minStock]' => 6.8,
         ]);
@@ -146,9 +102,9 @@ class ChangeArticleStorageInformationControllerTest extends BaseFunctionalTestCa
         static::assertEquals($translator->trans('admin.article.changeStorageInformation.success'), $flash);
 
         $articleUpdated = $articleRepository->findByUuid($article->uuid()->toString());
-        static::assertEquals([$colis, 1.0], $articleUpdated->packaging()->parcel());
-        static::assertEquals([$piece, 2.0], $articleUpdated->packaging()->subPackage());
-        static::assertEquals([$kilogramme, 6.800], $articleUpdated->packaging()->consumerUnit());
+        static::assertEquals([$colis->_real()->toDomain(), 1.0], $articleUpdated->packaging()->parcel());
+        static::assertEquals([$piece->_real()->toDomain(), 2.0], $articleUpdated->packaging()->subPackage());
+        static::assertEquals([$kilogramme->_real()->toDomain(), 6.800], $articleUpdated->packaging()->consumerUnit());
         static::assertEquals(6.8, $articleUpdated->minStock());
     }
 
@@ -157,69 +113,21 @@ class ChangeArticleStorageInformationControllerTest extends BaseFunctionalTestCa
         // Arrange
         $faker = Factory::create('fr_FR');
 
-        /** @var UnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(UnitRepository::class);
+        // Créer un article pour avoir des données en base (test réaliste)
+        $tax = TaxFactory::createOne();
+        $familyLog = FamilyLogFactory::createOne();
+        $supplier = SupplierFactory::createOne(['familyLog' => $familyLog]);
+        $zoneStorage = ZoneStorageFactory::createOne(['familyLog' => $familyLog]);
+        $unit = UnitFactory::createOne();
 
-        /** @var TaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(TaxRepository::class);
-
-        /** @var FamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
-
-        /** @var ZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
-
-        /** @var SupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
-
-        /** @var ArticleRepository $articleRepository */
-        $articleRepository = self::getContainer()->get(ArticleRepository::class);
-
-        $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
-        $piece = (new UnitDataBuilder())
-            ->create('Pièce', 'kg')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $kilogramme = (new UnitDataBuilder())
-            ->create('Kilogramme', 'kg')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $unitRepository->save($colis);
-        $unitRepository->save($piece);
-        $unitRepository->save($kilogramme);
-
-        $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)->build();
-        $taxRepository->save($tax);
-
-        $surgele = (new FamilyLogDataBuilder())->create('Surgelé')->build();
-        $frais = (new FamilyLogDataBuilder())
-            ->create('Frais')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $familyLogRepository->save($surgele);
-        $familyLogRepository->save($frais);
-
-        $storageSurgele = (new ZoneStorageDataBuilder())->create('Réserve négative', $surgele)->build();
-        $zoneStorageRepository->save($storageSurgele);
-
-        $supplierSurgele = (new SupplierDataBuilder())->create('Supplier Surgelé', $frais)->build();
-        $supplierRepository->save($supplierSurgele);
-
-        $article = (new ArticleDataBuilder())
-            ->create(
-                'Jambon Trad 6kg',
-                $supplierSurgele,
-                $tax,
-                [$storageSurgele],
-                $frais,
-                [[$colis, 1.0], null, null]
-            )
-            ->build()
-        ;
-        $articleRepository->save($article);
+        ArticleFactory::createOne([
+            'name' => 'Jambon Trad 6kg',
+            'supplier' => $supplier,
+            'tax' => $tax,
+            'familyLog' => $familyLog,
+            'zoneStorages' => [$zoneStorage],
+            'packaging' => [[$unit->_real()->toDomain(), 1.0], null, null],
+        ]);
 
         // Act
         $this->client->request(

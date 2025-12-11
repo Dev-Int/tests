@@ -61,7 +61,14 @@ final class FamilyLogFactory extends PersistentProxyObjectFactory
                     ->build()
                 ;
 
-                return (new FamilyLog())->fromDomain($familyLogDomain);
+                $familyLogOrm = (new FamilyLog())->fromDomain($familyLogDomain);
+
+                // Assigner le parent ORM (fromDomain ne le gère pas)
+                if ($attributes['parent'] instanceof FamilyLog) {
+                    $familyLogOrm->setParent($attributes['parent']);
+                }
+
+                return $familyLogOrm;
             }
         );
     }

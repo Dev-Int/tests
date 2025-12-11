@@ -13,92 +13,57 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Article\ChangeArticleFinancialInformation;
 
-use Admin\Tests\DataBuilder\ArticleDataBuilder;
-use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
-use Admin\Tests\DataBuilder\SupplierDataBuilder;
-use Admin\Tests\DataBuilder\TaxDataBuilder;
-use Admin\Tests\DataBuilder\UnitDataBuilder;
-use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
+use Admin\Tests\Factory\ArticleFactory;
+use Admin\Tests\Factory\FamilyLogFactory;
+use Admin\Tests\Factory\SupplierFactory;
+use Admin\Tests\Factory\TaxFactory;
+use Admin\Tests\Factory\UnitFactory;
+use Admin\Tests\Factory\ZoneStorageFactory;
 use Admin\UseCases\Gateway\ArticleRepository;
-use Admin\UseCases\Gateway\FamilyLogRepository;
-use Admin\UseCases\Gateway\SupplierRepository;
-use Admin\UseCases\Gateway\TaxRepository;
-use Admin\UseCases\Gateway\UnitRepository;
-use Admin\UseCases\Gateway\ZoneStorageRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Zenstruck\Foundry\Test\Factories;
 
 final class ChangeArticleFinancialInformationControllerTest extends BaseFunctionalTestCase
 {
+    use Factories;
+
     public const CHANGE_ARTICLE_FINANCIAL_INFORMATION_URI = '/admin/articles/%s/change-financial-information';
 
     public function testChangeArticleFinancialInformationWillSucceed(): void
     {
         // Arrange
-        $faker = Factory::create('fr_FR');
-
-        /** @var UnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(UnitRepository::class);
-
-        /** @var TaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(TaxRepository::class);
-
-        /** @var FamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
-
-        /** @var ZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
-
-        /** @var SupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
-
         /** @var ArticleRepository $articleRepository */
         $articleRepository = self::getContainer()->get(ArticleRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
-        $unitRepository->save($colis);
+        // Créer un article avec Foundry
+        $tax = TaxFactory::createOne();
+        $familyLog = FamilyLogFactory::createOne();
+        $supplier = SupplierFactory::createOne(['familyLog' => $familyLog]);
+        $zoneStorage = ZoneStorageFactory::createOne(['familyLog' => $familyLog]);
+        $unit = UnitFactory::createOne();
 
-        $tax20 = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
-        $tax55 = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $taxRepository->save($tax20);
-        $taxRepository->save($tax55);
+        $articleProxy = ArticleFactory::createOne([
+            'name' => 'Jambon Trad 6kg',
+            'supplier' => $supplier,
+            'tax' => $tax,
+            'familyLog' => $familyLog,
+            'zoneStorages' => [$zoneStorage],
+            'packaging' => [[$unit->_real()->toDomain(), 1.0], null, null],
+        ]);
+        $article = $articleProxy->_real()->toDomain();
 
-        $surgele = (new FamilyLogDataBuilder())->create('Surgelé')->build();
-        $frais = (new FamilyLogDataBuilder())
-            ->create('Frais')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $familyLogRepository->save($surgele);
-        $familyLogRepository->save($frais);
-
-        $storageSurgele = (new ZoneStorageDataBuilder())->create('Réserve négative', $surgele)->build();
-        $zoneStorageRepository->save($storageSurgele);
-
-        $supplierSurgele = (new SupplierDataBuilder())->create('Supplier Surgelé', $frais)->build();
-        $supplierRepository->save($supplierSurgele);
-
-        $article = (new ArticleDataBuilder())
-            ->create(
-                'Jambon Trad 6kg',
-                $supplierSurgele,
-                $tax20,
-                [$storageSurgele],
-                $frais,
-                [[$colis, 1.0], null, null]
-            )
-            ->build()
-        ;
-        $articleRepository->save($article);
+        // Créer une taxe supplémentaire pour le changement
+        $tax55 = TaxFactory::createOne([
+            'name' => 'TVA taux réduit',
+            'rate' => 5.5,
+        ])->_real()->toDomain();
 
         // Act
         $crawler = $this->client->request(
@@ -140,62 +105,21 @@ final class ChangeArticleFinancialInformationControllerTest extends BaseFunction
         // Arrange
         $faker = Factory::create('fr_FR');
 
-        /** @var UnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(UnitRepository::class);
+        // Créer un article pour avoir des données en base (test réaliste)
+        $tax = TaxFactory::createOne();
+        $familyLog = FamilyLogFactory::createOne();
+        $supplier = SupplierFactory::createOne(['familyLog' => $familyLog]);
+        $zoneStorage = ZoneStorageFactory::createOne(['familyLog' => $familyLog]);
+        $unit = UnitFactory::createOne();
 
-        /** @var TaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(TaxRepository::class);
-
-        /** @var FamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
-
-        /** @var ZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
-
-        /** @var SupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
-
-        /** @var ArticleRepository $articleRepository */
-        $articleRepository = self::getContainer()->get(ArticleRepository::class);
-
-        $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
-        $unitRepository->save($colis);
-
-        $tax20 = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
-        $tax55 = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $taxRepository->save($tax20);
-        $taxRepository->save($tax55);
-
-        $surgele = (new FamilyLogDataBuilder())->create('Surgelé')->build();
-        $frais = (new FamilyLogDataBuilder())
-            ->create('Frais')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $familyLogRepository->save($surgele);
-        $familyLogRepository->save($frais);
-
-        $storageSurgele = (new ZoneStorageDataBuilder())->create('Réserve négative', $surgele)->build();
-        $zoneStorageRepository->save($storageSurgele);
-
-        $supplierSurgele = (new SupplierDataBuilder())->create('Supplier Surgelé', $frais)->build();
-        $supplierRepository->save($supplierSurgele);
-
-        $article = (new ArticleDataBuilder())
-            ->create(
-                'Jambon Trad 6kg',
-                $supplierSurgele,
-                $tax20,
-                [$storageSurgele],
-                $frais,
-                [[$colis, 1.0], null, null]
-            )
-            ->build()
-        ;
-        $articleRepository->save($article);
+        ArticleFactory::createOne([
+            'name' => 'Jambon Trad 6kg',
+            'supplier' => $supplier,
+            'tax' => $tax,
+            'familyLog' => $familyLog,
+            'zoneStorages' => [$zoneStorage],
+            'packaging' => [[$unit->_real()->toDomain(), 1.0], null, null],
+        ]);
 
         // Act
         $this->client->request(

@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Admin\Tests\Factory;
 
 use Admin\Adapters\Gateway\ORM\Entity\Unit;
+use Admin\Entities\Article\VO\Storage;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
@@ -33,7 +34,7 @@ final class UnitFactory extends PersistentProxyObjectFactory
     protected function defaults(): array
     {
         return [
-            'label' => self::faker()->words(2, true),
+            'label' => self::faker()->randomElement(Storage::UNITS),
             'abbreviation' => self::faker()->lexify('???'),
             'uuid' => self::faker()->uuid(),
         ];
