@@ -16,19 +16,22 @@ namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Tax\RevaluateTax;
 use Admin\Adapters\Controller\Symfony\Controller\Tax\GetTaxes\GetTaxesController;
 use Admin\Entities\Exception\Tax\TaxAlreadyExistsException;
 use Admin\Entities\Tax\Tax;
-use Admin\Tests\DataBuilder\TaxDataBuilder;
+use Admin\Tests\Factory\TaxFactory;
 use Admin\UseCases\Gateway\TaxRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Zenstruck\Foundry\Test\Factories;
 
 /**
  * @group functionalTest
  */
 final class RevaluateTaxControllerTest extends BaseFunctionalTestCase
 {
+    use Factories;
+
     private const REEVALUATE_TAX_URI = '/admin/taxes/%s/revaluate';
 
     public function testRevaluateTaxWillSucceed(): void
@@ -40,26 +43,25 @@ final class RevaluateTaxControllerTest extends BaseFunctionalTestCase
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
-        $taxRepository->save($tax);
+        $tax = TaxFactory::createOne(['name' => 'TVA taux normal', 'rate' => 20.0]);
         $taxes = $taxRepository->findAllTaxes();
         self::assertCount(1, $taxes);
 
         // Act
         $crawler = $this->client->request(
             Request::METHOD_GET,
-            \sprintf(self::REEVALUATE_TAX_URI, TaxDataBuilder::UUID_VALID)
+            \sprintf(self::REEVALUATE_TAX_URI, $tax->_real()->uuid())
         );
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains(
             'h1',
-            $translator->trans('admin.tax.revaluate.titlePage', ['%taxName%' => $tax->name()->toString()])
+            $translator->trans('admin.tax.revaluate.titlePage', ['%taxName%' => $tax->_real()->name()])
         );
 
         $form = $crawler->selectButton($translator->trans('admin.tax.revaluate.button'))->form([
             'revaluateTax[rate]' => 10,
-            'revaluateTax[uuid]' => $tax->uuid()->toString(),
+            'revaluateTax[uuid]' => $tax->_real()->uuid(),
         ]);
         $this->client->submit($form);
 
@@ -76,7 +78,7 @@ final class RevaluateTaxControllerTest extends BaseFunctionalTestCase
         self::assertCount(1, $taxes);
 
         /** @var Tax $taxRenamed */
-        $taxRenamed = $taxRepository->findById($tax->uuid()->toString());
+        $taxRenamed = $taxRepository->findById($tax->_real()->uuid());
         self::assertSame('TVA taux normal', $taxRenamed->name()->toString());
         self::assertSame(0.1, $taxRenamed->rate());
     }
@@ -90,31 +92,26 @@ final class RevaluateTaxControllerTest extends BaseFunctionalTestCase
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $tax1 = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
-        $tax2 = (new TaxDataBuilder())->create('TVA taux normal', 10.0)
-            ->withUuid('2fd3cd27-c9e8-49e2-b993-48390d3c665a')
-            ->build()
-        ;
-        $taxRepository->save($tax1);
-        $taxRepository->save($tax2);
+        $tax1 = TaxFactory::createOne(['name' => 'TVA taux normal', 'rate' => 20.0]);
+        TaxFactory::createOne(['name' => 'TVA taux normal', 'rate' => 10.0]);
         $taxes = $taxRepository->findAllTaxes();
         self::assertCount(2, $taxes);
 
         // Act
         $crawler = $this->client->request(
             Request::METHOD_GET,
-            \sprintf(self::REEVALUATE_TAX_URI, TaxDataBuilder::UUID_VALID)
+            \sprintf(self::REEVALUATE_TAX_URI, $tax1->_real()->uuid())
         );
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains(
             'h1',
-            $translator->trans('admin.tax.revaluate.titlePage', ['%taxName%' => $tax1->name()->toString()])
+            $translator->trans('admin.tax.revaluate.titlePage', ['%taxName%' => $tax1->_real()->name()])
         );
 
         $form = $crawler->selectButton($translator->trans('admin.tax.revaluate.button'))->form([
             'revaluateTax[rate]' => 10.0,
-            'revaluateTax[uuid]' => $tax1->uuid()->toString(),
+            'revaluateTax[uuid]' => $tax1->_real()->uuid(),
         ]);
         $this->client->submit($form);
 
@@ -131,7 +128,7 @@ final class RevaluateTaxControllerTest extends BaseFunctionalTestCase
         self::assertCount(2, $taxes);
 
         /** @var Tax $taxRevaluated */
-        $taxRevaluated = $taxRepository->findById($tax1->uuid()->toString());
+        $taxRevaluated = $taxRepository->findById($tax1->_real()->uuid());
         self::assertSame('TVA taux normal', $taxRevaluated->name()->toString());
         self::assertSame(0.2, $taxRevaluated->rate());
     }
@@ -139,30 +136,26 @@ final class RevaluateTaxControllerTest extends BaseFunctionalTestCase
     public function testCreateTaxFailWithBadRequestException(): void
     {
         // Arrange
-        /** @var TaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(TaxRepository::class);
-
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
-        $taxRepository->save($tax);
+        $tax = TaxFactory::createOne(['name' => 'TVA taux normal', 'rate' => 20.0]);
 
         // Act
         $crawler = $this->client->request(
             Request::METHOD_GET,
-            \sprintf(self::REEVALUATE_TAX_URI, TaxDataBuilder::UUID_VALID)
+            \sprintf(self::REEVALUATE_TAX_URI, $tax->_real()->uuid())
         );
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $translator->trans(
             'admin.tax.revaluate.titlePage',
-            ['%taxName%' => $tax->name()->toString()]
+            ['%taxName%' => $tax->_real()->name()]
         ));
 
         $form = $crawler->selectButton($translator->trans('admin.tax.revaluate.button'))->form([
             'revaluateTax[rate]' => 120.0,
-            'revaluateTax[uuid]' => $tax->uuid()->toString(),
+            'revaluateTax[uuid]' => $tax->_real()->uuid(),
         ]);
         $this->client->submit($form);
 
@@ -187,8 +180,7 @@ final class RevaluateTaxControllerTest extends BaseFunctionalTestCase
         /** @var TaxRepository $taxRepository */
         $taxRepository = self::getContainer()->get(TaxRepository::class);
 
-        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
-        $taxRepository->save($tax);
+        TaxFactory::createOne(['name' => 'TVA taux normal', 'rate' => 20.0]);
         $taxes = $taxRepository->findAllTaxes();
         self::assertCount(1, $taxes);
 
@@ -216,21 +208,20 @@ final class RevaluateTaxControllerTest extends BaseFunctionalTestCase
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
-        $taxRepository->save($tax);
+        $tax = TaxFactory::createOne(['name' => 'TVA taux normal', 'rate' => 20.0]);
         $taxes = $taxRepository->findAllTaxes();
         self::assertCount(1, $taxes);
 
         // Act
         $crawler = $this->client->request(
             Request::METHOD_GET,
-            \sprintf(self::REEVALUATE_TAX_URI, TaxDataBuilder::UUID_VALID)
+            \sprintf(self::REEVALUATE_TAX_URI, $tax->_real()->uuid())
         );
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains(
             'h1',
-            $translator->trans('admin.tax.revaluate.titlePage', ['%taxName%' => $tax->name()->toString()])
+            $translator->trans('admin.tax.revaluate.titlePage', ['%taxName%' => $tax->_real()->name()])
         );
 
         $cancelLink = $crawler->selectLink($translator->trans('cancel'));
@@ -243,9 +234,9 @@ final class RevaluateTaxControllerTest extends BaseFunctionalTestCase
         self::assertRouteSame(GetTaxesController::ROUTE_NAME);
 
         /** @var Tax $taxAfterCancel */
-        $taxAfterCancel = $taxRepository->findById($tax->uuid()->toString());
-        self::assertSame($tax->name()->toString(), $taxAfterCancel->name()->toString());
-        self::assertSame($tax->rate(), $taxAfterCancel->rate());
+        $taxAfterCancel = $taxRepository->findById($tax->_real()->uuid());
+        self::assertSame($tax->_real()->name(), $taxAfterCancel->name()->toString());
+        self::assertSame($tax->_real()->rate(), $taxAfterCancel->rate());
 
         $taxes = $taxRepository->findAllTaxes();
         self::assertCount(1, $taxes);
