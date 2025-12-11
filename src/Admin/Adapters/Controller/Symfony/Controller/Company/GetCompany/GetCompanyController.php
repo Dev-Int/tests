@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\Adapters\Controller\Symfony\Controller\Company\GetCompany;
 
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineCompanyRepository;
-use Admin\Entities\Exception\Company\NoCompanyRegisteredException;
+use Admin\Entities\Exception\Company\NoCompanyRegistered;
 use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,8 +37,8 @@ final class GetCompanyController extends AbstractController
     public function __invoke(): Response
     {
         try {
-            $company = $this->repository->findCompany();
-        } catch (NoCompanyRegisteredException $exception) {
+            $company = $this->repository->getCompany();
+        } catch (NoCompanyRegistered $exception) {
             $this->addFlash('error', $exception->getMessage());
 
             return $this->redirectToRoute('admin_configure');

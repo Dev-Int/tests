@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace Admin\Adapters\Controller\Symfony\Controller;
 
 use Admin\Adapters\Gateway\ConfigurationService;
+use Admin\Entities\Repository\CompanyRepository;
 use Admin\UseCases\Gateway\ArticleRepository;
-use Admin\UseCases\Gateway\CompanyRepository;
 use Admin\UseCases\Gateway\FamilyLogRepository;
 use Admin\UseCases\Gateway\SupplierRepository;
 use Admin\UseCases\Gateway\ZoneStorageRepository;

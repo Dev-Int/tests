@@ -16,7 +16,7 @@ namespace Admin\Entities\Exception\Company;
 use Shared\Entities\Exception\DomainException;
 use Shared\Entities\Exception\ExceptionSerializableTrait;
 
-final class CompanyNotFoundException extends DomainException implements \JsonSerializable
+final class CompanyNotFound extends DomainException implements \JsonSerializable
 {
     use ExceptionSerializableTrait;
 

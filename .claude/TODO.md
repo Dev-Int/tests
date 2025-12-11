@@ -4,38 +4,128 @@
 
 ---
 
-## Domain Entities & Repository
+## Repository/Finder Separation Refactoring
 
-### ✅ Récupération des FamilyLog avec leurs enfants depuis le domaine
+**Priority** : High  
+**Context** : DDD Architecture - Separation of concerns  
+**Status** : 🔄 **IN PROGRESS**  
+**GitHub Issue** : [#145](https://github.com/Dev-Int/tests/issues/145)
 
-**Priority** : Medium
-**Context** : Domain Repository pattern
-**Status** : ✅ **DONE** (2025-12-07)
-**GitHub Issue** : [#113](https://github.com/Dev-Int/tests/issues/113)
+### Objectif
 
-**Solution implémentée** : Option A - Méthode dédiée dans le repository
+Séparer les responsabilités des repositories selon les principes DDD :
 
-**Modifications apportées** :
-1. Ajout de `findByUuidWithChildren(ResourceUuid $uuid): FamilyLog` dans l'interface `FamilyLogRepository`
-2. Implémentation avec chargement récursif de tous les niveaux de l'arborescence dans `DoctrineFamilyLogRepository`
-3. Méthode privée `toDomainWithChildren()` pour convertir récursivement ORM → Domaine
-4. Refactoring des 2 tests fonctionnels concernés pour utiliser la nouvelle méthode
+1. **Repository** (dans `Entities/`) :
+   - Opérations CRUD basiques (save, delete)
+   - Méthodes `get*` qui DOIVENT trouver une entité
+   - Lèvent des exceptions `*NotFound` si l'entité n'existe pas
 
-**Fichiers modifiés** :
-- `src/Admin/UseCases/Gateway/FamilyLogRepository.php` (ligne 34)
-- `src/Admin/Adapters/Gateway/ORM/Repository/DoctrineFamilyLogRepository.php` (lignes 193-295)
-- `src/Admin/Tests/Adapters/Controller/Symfony/Controller/FamilyLog/AssignParentFamilyLog/AssignParentFamilyLogControllerTest.php`
-- `src/Admin/Tests/Adapters/Controller/Symfony/Controller/FamilyLog/ChangeLabelFamilyLog/ChangeLabelFamilyLogControllerTest.php`
+2. **Finder** (dans `UseCases/Gateway/Finder/`) :
+   - Méthodes `find*` qui PEUVENT ne pas trouver
+   - Retournent `null` ou tableau vide si aucun résultat
+   - Utilisées pour les requêtes de recherche
 
-**Résultats** :
-- ✅ 17 tests FamilyLog passent (146 assertions)
-- ✅ 119 tests fonctionnels passent (799 assertions)
-- ✅ PHPStan : aucune erreur
-- ✅ Architecture DDD respectée (pas de fuite Doctrine dans le domaine)
-- ✅ Chargement récursif fonctionnel (parent → enfant → petit-enfant)
+### État actuel
 
-**Created** : 2025-12-04
-**Completed** : 2025-12-07
+**Problème** : Actuellement, toutes les interfaces sont dans `UseCases/Gateway/` et mélangent CRUD + Finder, sans distinction claire entre opérations obligatoires et optionnelles.
+
+**Fichiers impactés** :
+- 7 interfaces Repository dans `src/Admin/UseCases/Gateway/`
+- 7 implémentations Doctrine dans `src/Admin/Adapters/Gateway/ORM/Repository/`
+- Multiples use cases utilisant ces interfaces
+- Tests unitaires et fonctionnels
+
+### Plan de refactorisation (7 entités)
+
+#### 1. Company
+- [ ] Créer `Admin/Entities/Company/CompanyRepository` (interface)
+- [ ] Créer `Admin/UseCases/Gateway/Finder/CompanyFinder` (interface)
+- [ ] Mettre à jour `DoctrineCompanyRepository` pour implémenter les 2 interfaces
+- [ ] Mettre à jour les use cases concernés
+- [ ] Mettre à jour les tests
+
+#### 2. Tax
+- [ ] Créer `Admin/Entities/Tax/TaxRepository` (interface)
+- [ ] Créer `Admin/UseCases/Gateway/Finder/TaxFinder` (interface)
+- [ ] Mettre à jour `DoctrineTaxRepository` pour implémenter les 2 interfaces
+- [ ] Mettre à jour les use cases concernés
+- [ ] Mettre à jour les tests
+
+#### 3. Unit
+- [ ] Créer `Admin/Entities/Unit/UnitRepository` (interface)
+- [ ] Créer `Admin/UseCases/Gateway/Finder/UnitFinder` (interface)
+- [ ] Mettre à jour `DoctrineUnitRepository` pour implémenter les 2 interfaces
+- [ ] Mettre à jour les use cases concernés
+- [ ] Mettre à jour les tests
+
+#### 4. ZoneStorage
+- [ ] Créer `Admin/Entities/ZoneStorage/ZoneStorageRepository` (interface)
+- [ ] Créer `Admin/UseCases/Gateway/Finder/ZoneStorageFinder` (interface)
+- [ ] Mettre à jour `DoctrineZoneStorageRepository` pour implémenter les 2 interfaces
+- [ ] Mettre à jour les use cases concernés
+- [ ] Mettre à jour les tests
+
+#### 5. FamilyLog
+- [ ] Créer `Admin/Entities/FamilyLog/FamilyLogRepository` (interface)
+- [ ] Créer `Admin/UseCases/Gateway/Finder/FamilyLogFinder` (interface)
+- [ ] Mettre à jour `DoctrineFamilyLogRepository` pour implémenter les 2 interfaces
+- [ ] Mettre à jour les use cases concernés
+- [ ] Mettre à jour les tests
+
+#### 6. Supplier
+- [ ] Créer `Admin/Entities/Supplier/SupplierRepository` (interface)
+- [ ] Créer `Admin/UseCases/Gateway/Finder/SupplierFinder` (interface)
+- [ ] Mettre à jour `DoctrineSupplierRepository` pour implémenter les 2 interfaces
+- [ ] Mettre à jour les use cases concernés
+- [ ] Mettre à jour les tests
+
+#### 7. Article
+- [ ] Créer `Admin/Entities/Article/ArticleRepository` (interface)
+- [ ] Créer `Admin/UseCases/Gateway/Finder/ArticleFinder` (interface)
+- [ ] Mettre à jour `DoctrineArticleRepository` pour implémenter les 2 interfaces
+- [ ] Mettre à jour les use cases concernés
+- [ ] Mettre à jour les tests
+
+### Règles de séparation
+
+#### Repository (Entities/)
+```php
+interface TaxRepository
+{
+    public function save(Tax $tax): void;
+    public function delete(Tax $tax): void;
+    public function exists(string $name, float $rate): bool;
+    public function getById(string $uuid): Tax; // throw TaxNotFoundException
+    public function getByName(string $name): Tax; // throw TaxNotFoundException
+}
+```
+
+#### Finder (UseCases/Gateway/Finder/)
+```php
+interface TaxFinder
+{
+    public function findAll(): TaxCollection; // peut retourner collection vide
+    public function findById(string $uuid): ?Tax; // peut retourner null
+    public function findByName(string $name): ?Tax; // peut retourner null
+}
+```
+
+### Avantages attendus
+
+1. **Séparation claire des responsabilités** : CRUD vs Queries
+2. **Respect des principes DDD** : Repository dans le domaine
+3. **Meilleure expressivité** : `get*` vs `find*` indique clairement le comportement
+4. **Architecture plus propre** : Moins de couplage entre layers
+5. **Facilité de test** : Mocks plus simples et ciblés
+
+### Dépendances
+
+- ✅ Implémentation de Foundry terminée (fixtures uniformisées)
+- ⚠️ Vérifier impact sur Deptrac rules (nouvelles interfaces dans Entities/)
+- ⚠️ Possibles mises à jour des services.yaml (DI)
+
+**Created** : 2025-12-11
+**Target completion** : TBD
 
 ---
 
@@ -43,8 +133,8 @@
 
 ### État actuel de la couverture E2E
 
-**Priority** : Low
-**Context** : E2E testing coverage
+**Priority** : Low  
+**Context** : E2E testing coverage  
 **Status** : 🟢 **BONNE COUVERTURE** (améliorations optionnelles possibles)
 
 #### ✅ Tests E2E créés et fonctionnels
@@ -149,18 +239,18 @@ Moins critique car Supplier est plus simple qu'Article et déjà bien couvert pa
 - Tests fonctionnels : `src/Admin/Tests/Adapters/Controller/**/*Test.php`
 - Configuration workflow : `src/Admin/Tests/Adapters/Controller/Symfony/Controller/ConfigurationControllerTest.php`
 
-**Created** : 2025-11-26
+**Created** : 2025-11-26  
 **Updated** : 2025-12-06
 
 ---
 
-## Fixtures Architecture
+## ✅ COMPLETED TASKS
 
-### ✅ Uniformiser l'enregistrement des fixtures avec Foundry
+### ~~Uniformiser l'enregistrement des fixtures avec Foundry~~ ✅
 
-**Priority** : Medium
-**Context** : DataFixtures consistency & Test maintainability
-**Status** : ✅ **DONE** (2025-12-11)
+**Priority** : Medium  
+**Context** : DataFixtures consistency & Test maintainability  
+**Status** : ✅ **DONE** (2025-12-11)  
 **GitHub Issue** : [#110](https://github.com/Dev-Int/tests/issues/110), [#143](https://github.com/Dev-Int/tests/issues/143)
 
 **Décision prise** : ✅ **Option B - Foundry** retenue pour uniformiser les fixtures et les tests
@@ -174,7 +264,7 @@ Ce mix causait des problèmes avec LiipTestFixturesBundle (problème de contexte
 
 ---
 
-#### ✅ Phase 1 : Tests fonctionnels refactorés (TERMINÉ)
+#### ~~Phase 1 : Tests fonctionnels refactorés~~  ✅
 
 **Travaux réalisés** (2025-12-11) :
 
@@ -244,7 +334,7 @@ $familyLog = FamilyLogFactory::createOne(['label' => 'Surgelé']);
 
 ---
 
-#### ✅ Phase 2 : DataFixtures refactorées (TERMINÉ)
+#### ~~Phase 2 : DataFixtures refactorées~~ ✅
 
 **Fichiers migrés vers Foundry** :
 - ✅ `src/Admin/Adapters/DataFixtures/TaxFixtures.php`
@@ -296,13 +386,44 @@ $familyLog = FamilyLogFactory::createOne(['label' => 'Surgelé']);
 
 ---
 
-## Routes Refactoring
+### ~~Récupération des FamilyLog avec leurs enfants depuis le domaine~~ ✅
 
-### ✅ Refactorer les noms de routes en dur en constantes de controller
+**Priority** : Medium  
+**Context** : Domain Repository pattern  
+**Status** : ✅ **DONE** (2025-12-07)  
+**GitHub Issue** : [#113](https://github.com/Dev-Int/tests/issues/113)
 
-**Priority** : Medium
-**Context** : Code maintainability and refactoring
-**Status** : ✅ **DONE** (2025-12-07)
+**Solution implémentée** : Option A - Méthode dédiée dans le repository
+
+**Modifications apportées** :
+1. Ajout de `findByUuidWithChildren(ResourceUuid $uuid): FamilyLog` dans l'interface `FamilyLogRepository`
+2. Implémentation avec chargement récursif de tous les niveaux de l'arborescence dans `DoctrineFamilyLogRepository`
+3. Méthode privée `toDomainWithChildren()` pour convertir récursivement ORM → Domaine
+4. Refactoring des 2 tests fonctionnels concernés pour utiliser la nouvelle méthode
+
+**Fichiers modifiés** :
+- `src/Admin/UseCases/Gateway/FamilyLogRepository.php` (ligne 34)
+- `src/Admin/Adapters/Gateway/ORM/Repository/DoctrineFamilyLogRepository.php` (lignes 193-295)
+- `src/Admin/Tests/Adapters/Controller/Symfony/Controller/FamilyLog/AssignParentFamilyLog/AssignParentFamilyLogControllerTest.php`
+- `src/Admin/Tests/Adapters/Controller/Symfony/Controller/FamilyLog/ChangeLabelFamilyLog/ChangeLabelFamilyLogControllerTest.php`
+
+**Résultats** :
+- ✅ 17 tests FamilyLog passent (146 assertions)
+- ✅ 119 tests fonctionnels passent (799 assertions)
+- ✅ PHPStan : aucune erreur
+- ✅ Architecture DDD respectée (pas de fuite Doctrine dans le domaine)
+- ✅ Chargement récursif fonctionnel (parent → enfant → petit-enfant)
+
+**Created** : 2025-12-04
+**Completed** : 2025-12-07
+
+---
+
+### ~~Refactorer les noms de routes en dur en constantes de controller~~ ✅
+
+**Priority** : Medium  
+**Context** : Code maintainability and refactoring  
+**Status** : ✅ **DONE** (2025-12-07)  
 **GitHub Issue** : [#105](https://github.com/Dev-Int/tests/issues/105)
 
 **Travaux réalisés** :
@@ -341,13 +462,11 @@ $familyLog = FamilyLogFactory::createOne(['label' => 'Surgelé']);
 
 ---
 
-## ✅ COMPLETED TASKS
-
 ### ~~Warning: Deprecated config option `checkGenericClassInNonGenericObjectType`~~ ✅
 
-**Priority** : ~~Medium~~ **COMPLETED**
-**Context** : PHPStan analysis
-**Status** : ✅ **RESOLVED on 2025-11-29**
+**Priority** : ~~Medium~~ **COMPLETED**  
+**Context** : PHPStan analysis  
+**Status** : ✅ **RESOLVED on 2025-11-29**  
 
 **Issue** :
 PHPStan displays a deprecation warning during analysis:
@@ -379,9 +498,9 @@ To: `@implements Collection<EntityType>`
 
 ### ~~Tests E2E pour l'annulation de formulaires (Cancel)~~ ✅
 
-**Priority** : ~~Medium~~ **COMPLETED**
-**Context** : E2E testing coverage
-**Status** : ✅ **COMPLETED on 2025-12-03**
+**Priority** : ~~Medium~~ **COMPLETED**  
+**Context** : E2E testing coverage  
+**Status** : ✅ **COMPLETED on 2025-12-03**  
 
 **Objectif** :
 Implémenter des tests Cancel pour toutes les opérations (Create et Update) de toutes les entités principales de configuration.
@@ -423,8 +542,8 @@ Implémenter des tests Cancel pour toutes les opérations (Create et Update) de 
 
 ### ~~Tests E2E pour la pagination des listes~~ ✅
 
-**Priority** : ~~Medium~~ **COMPLETED**
-**Context** : E2E testing coverage
+**Priority** : ~~Medium~~ **COMPLETED**  
+**Context** : E2E testing coverage  
 **Status** : ✅ **RESOLVED on 2025-12-01**
 
 **Objectif** :
@@ -441,5 +560,5 @@ Créer des tests E2E complets pour valider tous les aspects de la pagination sur
 - Détection précoce des régressions
 - Validation du calcul du nombre de pages
 
-**Created** : 2025-12-01
+**Created** : 2025-12-01  
 **Resolved** : 2025-12-01

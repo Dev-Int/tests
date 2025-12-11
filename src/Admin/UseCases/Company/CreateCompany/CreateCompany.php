@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace Admin\UseCases\Company\CreateCompany;
 
 use Admin\Entities\Company;
-use Admin\Entities\Exception\Company\CompanyAlreadyExistsException;
-use Admin\UseCases\Gateway\CompanyRepository;
+use Admin\Entities\Exception\Company\CompanyAlreadyExists;
+use Admin\Entities\Repository\CompanyRepository;
 use Shared\Entities\VO\ContactAddress;
 use Shared\Entities\VO\EmailField;
 use Shared\Entities\VO\NameField;
@@ -31,7 +31,7 @@ final readonly class CreateCompany
     {
         $hasCompany = $this->companyRepository->hasCompany();
         if ($hasCompany) {
-            throw new CompanyAlreadyExistsException($request->name());
+            throw new CompanyAlreadyExists($request->name());
         }
 
         $company = Company::create(

@@ -11,9 +11,10 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\UseCases\Gateway;
+namespace Admin\Entities\Repository;
 
 use Admin\Entities\Company;
+use Admin\Entities\Exception\Company\CompanyNotFound;
 
 interface CompanyRepository
 {
@@ -21,7 +22,13 @@ interface CompanyRepository
 
     public function hasCompany(): bool;
 
-    public function findByName(string $name): Company;
+    /**
+     * @throws CompanyNotFound
+     */
+    public function getByName(string $name): Company;
 
+    /**
+     * @throws CompanyNotFound
+     */
     public function update(Company $company): void;
 }
