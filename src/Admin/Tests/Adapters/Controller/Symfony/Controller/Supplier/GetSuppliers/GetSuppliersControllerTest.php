@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Supplier\GetSuppliers;
 
 use Admin\Adapters\Gateway\Pagination\Pagination;
-use Admin\Entities\Exception\Supplier\NoSupplierRegisteredException;
+use Admin\Entities\Exception\Supplier\NoSupplierRegistered;
 use Admin\Tests\Factory\FamilyLogFactory;
 use Admin\Tests\Factory\SupplierFactory;
 use App\Shared\Tests\BaseFunctionalTestCase;
@@ -75,6 +75,6 @@ final class GetSuppliersControllerTest extends BaseFunctionalTestCase
         $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
-        self::assertSame(NoSupplierRegisteredException::MESSAGE, $flash);
+        self::assertSame(NoSupplierRegistered::MESSAGE, $flash);
     }
 }

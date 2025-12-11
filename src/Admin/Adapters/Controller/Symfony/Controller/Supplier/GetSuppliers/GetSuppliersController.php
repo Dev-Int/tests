@@ -15,7 +15,7 @@ namespace Admin\Adapters\Controller\Symfony\Controller\Supplier\GetSuppliers;
 
 use Admin\Adapters\Controller\Symfony\Controller\ConfigurationController;
 use Admin\Adapters\Gateway\Pagination\Pagination;
-use Admin\Entities\Exception\Supplier\NoSupplierRegisteredException;
+use Admin\Entities\Exception\Supplier\NoSupplierRegistered;
 use Admin\UseCases\Supplier\GetSuppliers\GetSuppliers;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,7 +45,7 @@ final class GetSuppliersController extends AbstractController
 
         try {
             $suppliers = $this->useCase->execute(new GetSuppliersApiRequest($page, $itemPerPage));
-        } catch (NoSupplierRegisteredException $exception) {
+        } catch (NoSupplierRegistered $exception) {
             $this->addFlash('error', $exception->getMessage());
 
             return $this->redirectToRoute(ConfigurationController::ROUTE_NAME);

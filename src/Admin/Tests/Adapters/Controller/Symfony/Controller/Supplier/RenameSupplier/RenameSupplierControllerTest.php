@@ -14,10 +14,10 @@ declare(strict_types=1);
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Supplier\RenameSupplier;
 
 use Admin\Entities\Exception\Supplier\SupplierAlreadyExists;
+use Admin\Entities\Repository\SupplierRepository;
 use Admin\Entities\Supplier\Supplier as SupplierDomain;
 use Admin\Tests\Factory\FamilyLogFactory;
 use Admin\Tests\Factory\SupplierFactory;
-use Admin\UseCases\Gateway\SupplierRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
@@ -48,7 +48,7 @@ final class RenameSupplierControllerTest extends BaseFunctionalTestCase
             'name' => 'Supplier 1',
             'familyLog' => $familyLog->_real(),
         ]);
-        $suppliers = $supplierRepository->findAllSuppliers();
+        $suppliers = $supplierRepository->getAllSuppliers();
         self::assertCount(1, $suppliers);
 
         // Act
@@ -79,9 +79,9 @@ final class RenameSupplierControllerTest extends BaseFunctionalTestCase
         self::assertSame($translator->trans('admin.supplier.rename.success'), $flash);
 
         /** @var SupplierDomain $supplierUpdated */
-        $supplierUpdated = $supplierRepository->findBySlug('supplier-new');
+        $supplierUpdated = $supplierRepository->getBySlug('supplier-new');
         self::assertSame('Supplier new', $supplierUpdated->name()->toString());
-        $suppliers = $supplierRepository->findAllSuppliers();
+        $suppliers = $supplierRepository->getAllSuppliers();
         self::assertCount(1, $suppliers->toArray());
     }
 
@@ -142,7 +142,7 @@ final class RenameSupplierControllerTest extends BaseFunctionalTestCase
             'name' => 'Supplier 1',
             'familyLog' => $familyLog->_real(),
         ]);
-        $suppliers = $supplierRepository->findAllSuppliers();
+        $suppliers = $supplierRepository->getAllSuppliers();
         self::assertCount(1, $suppliers);
 
         // Act

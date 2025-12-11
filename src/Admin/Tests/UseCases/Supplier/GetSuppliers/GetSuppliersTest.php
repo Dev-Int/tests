@@ -13,10 +13,10 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\Supplier\GetSuppliers;
 
+use Admin\Entities\Repository\SupplierRepository;
 use Admin\Entities\Supplier\SupplierCollection;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\SupplierDataBuilder;
-use Admin\UseCases\Gateway\SupplierRepository;
 use Admin\UseCases\Supplier\GetSuppliers\GetSuppliers;
 use Admin\UseCases\Supplier\GetSuppliers\GetSuppliersRequest;
 use PHPUnit\Framework\TestCase;
@@ -45,7 +45,7 @@ final class GetSuppliersTest extends TestCase
         $request->expects(self::once())->method('page')->willReturn(1);
         $request->expects(self::once())->method('itemsPerPage')->willReturn(10);
 
-        $supplierRepository->expects(self::once())->method('findAllSuppliersPaginated')->willReturn($suppliers);
+        $supplierRepository->expects(self::once())->method('getAllSuppliersPaginated')->willReturn($suppliers);
 
         // Act
         $response = $useCase->execute($request);

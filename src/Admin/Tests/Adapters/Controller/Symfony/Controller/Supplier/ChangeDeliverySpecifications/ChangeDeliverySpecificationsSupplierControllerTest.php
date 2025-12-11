@@ -13,10 +13,10 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Supplier\ChangeDeliverySpecifications;
 
+use Admin\Entities\Repository\SupplierRepository;
 use Admin\Entities\Supplier\Supplier as SupplierDomain;
 use Admin\Tests\Factory\FamilyLogFactory;
 use Admin\Tests\Factory\SupplierFactory;
-use Admin\UseCases\Gateway\SupplierRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
@@ -48,7 +48,7 @@ final class ChangeDeliverySpecificationsSupplierControllerTest extends BaseFunct
             'name' => 'Supplier 1',
             'familyLog' => $familyLog->_real(),
         ]);
-        $suppliers = $supplierRepository->findAllSuppliers();
+        $suppliers = $supplierRepository->getAllSuppliers();
         self::assertCount(1, $suppliers);
 
         // Act
@@ -88,7 +88,7 @@ final class ChangeDeliverySpecificationsSupplierControllerTest extends BaseFunct
         self::assertEquals($translator->trans('admin.supplier.changeDeliverySpecifications.success'), $flash);
 
         /** @var SupplierDomain $supplierUpdated */
-        $supplierUpdated = $supplierRepository->findBySlug('supplier-1');
+        $supplierUpdated = $supplierRepository->getBySlug('supplier-1');
         self::assertSame('Frais', $supplierUpdated->familyLog()->label()->toString());
         self::assertSame(2, $supplierUpdated->delayDelivery());
         self::assertSame(
@@ -112,7 +112,7 @@ final class ChangeDeliverySpecificationsSupplierControllerTest extends BaseFunct
             'name' => 'Supplier 1',
             'familyLog' => $familyLog->_real(),
         ]);
-        $suppliers = $supplierRepository->findAllSuppliers();
+        $suppliers = $supplierRepository->getAllSuppliers();
         self::assertCount(1, $suppliers);
 
         // Act

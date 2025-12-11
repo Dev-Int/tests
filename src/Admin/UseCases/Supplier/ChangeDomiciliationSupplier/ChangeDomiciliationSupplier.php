@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Supplier\ChangeDomiciliationSupplier;
 
-use Admin\UseCases\Gateway\SupplierRepository;
+use Admin\Entities\Repository\SupplierRepository;
 use Shared\Entities\VO\ContactAddress;
 use Shared\Entities\VO\EmailField;
 use Shared\Entities\VO\PhoneField;
@@ -26,7 +26,7 @@ final readonly class ChangeDomiciliationSupplier
 
     public function execute(ChangeDomiciliationSupplierRequest $request): ChangeDomiciliationSupplierResponse
     {
-        $supplier = $this->supplierRepository->findBySlug($request->slug());
+        $supplier = $this->supplierRepository->getBySlug($request->slug());
 
         $supplier->changeDomiciliation(
             ContactAddress::fromString(

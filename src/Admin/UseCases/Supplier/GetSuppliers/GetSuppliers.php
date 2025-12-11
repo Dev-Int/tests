@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Supplier\GetSuppliers;
 
-use Admin\UseCases\Gateway\SupplierRepository;
+use Admin\Entities\Repository\SupplierRepository;
 
 final readonly class GetSuppliers
 {
@@ -23,7 +23,7 @@ final readonly class GetSuppliers
 
     public function execute(GetSuppliersRequest $request): GetSuppliersResponse
     {
-        $suppliers = $this->repository->findAllSuppliersPaginated($request->page(), $request->itemsPerPage());
+        $suppliers = $this->repository->getAllSuppliersPaginated($request->page(), $request->itemsPerPage());
 
         return new GetSuppliersResponse($suppliers);
     }

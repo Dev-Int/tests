@@ -26,7 +26,7 @@ use Admin\Entities\Exception\Article\ArticleNotFoundException;
 use Admin\Entities\Exception\Article\NoArticleRegisteredException;
 use Admin\Entities\Exception\Article\PackagingNotFoundException;
 use Admin\Entities\Exception\FamilyLog\FamilyLogNotFound;
-use Admin\Entities\Exception\Supplier\SupplierNotFoundException;
+use Admin\Entities\Exception\Supplier\SupplierNotFound;
 use Admin\Entities\Exception\Tax\TaxNotFound;
 use Admin\Entities\Exception\Unit\UnitNotFound;
 use Admin\Entities\Exception\ZoneStorage\ZoneStorageNotFound;
@@ -103,7 +103,7 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         $supplier = $this->supplierRepository->find($article->supplier()->uuid()->toString());
         if (!$supplier instanceof Supplier) {
             // @codeCoverageIgnoreStart
-            throw new SupplierNotFoundException($article->supplier()->uuid()->toString());
+            throw new SupplierNotFound($article->supplier()->uuid()->toString());
             // @codeCoverageIgnoreEnd
         }
 
@@ -174,7 +174,7 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         $supplierOrm = $this->supplierRepository->find($article->supplier()->uuid()->toString());
         if (!$supplierOrm instanceof Supplier) {
             // @codeCoverageIgnoreStart
-            throw new SupplierNotFoundException($article->supplier()->slug());
+            throw new SupplierNotFound($article->supplier()->slug());
             // @codeCoverageIgnoreEnd
         }
         $familyLogOrm = $this->familyLogRepository->find($article->familyLog()->uuid()->toString());

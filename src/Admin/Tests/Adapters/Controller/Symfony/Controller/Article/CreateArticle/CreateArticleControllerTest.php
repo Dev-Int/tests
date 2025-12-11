@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Article\CreateArticle;
 
 use Admin\Entities\Exception\Article\ArticleAlreadyExistsException;
-use Admin\Entities\Exception\Supplier\NoSupplierRegisteredException;
+use Admin\Entities\Exception\Supplier\NoSupplierRegistered;
 use Admin\Tests\Factory\ArticleFactory;
 use Admin\Tests\Factory\CompanyFactory;
 use Admin\Tests\Factory\FamilyLogFactory;
@@ -201,7 +201,7 @@ final class CreateArticleControllerTest extends BaseFunctionalTestCase
         $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
-        self::assertEquals(NoSupplierRegisteredException::MESSAGE, $flash);
+        self::assertEquals(NoSupplierRegistered::MESSAGE, $flash);
     }
 
     public function testCreateArticleFailWithInvalidFamilyLogAgainstSupplier(): void

@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Supplier\ChangeDeliverySpecifications;
 
-use Admin\UseCases\Gateway\SupplierRepository;
+use Admin\Entities\Repository\SupplierRepository;
 
 final readonly class ChangeDeliverySpecificationsSupplier
 {
@@ -24,7 +24,7 @@ final readonly class ChangeDeliverySpecificationsSupplier
     public function execute(
         ChangeDeliverySpecificationsSupplierRequest $request
     ): ChangeDeliverySpecificationsSupplierResponse {
-        $supplier = $this->supplierRepository->findBySlug($request->slug());
+        $supplier = $this->supplierRepository->getBySlug($request->slug());
 
         $supplier->changeDeliverySpecifications(
             $request->familyLog(),

@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace Admin\Tests\UseCases\Supplier\CreateSupplier;
 
 use Admin\Entities\Exception\Supplier\SupplierAlreadyExists;
+use Admin\Entities\Repository\SupplierRepository;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
-use Admin\UseCases\Gateway\SupplierRepository;
 use Admin\UseCases\Supplier\CreateSupplier\CreateSupplier;
 use Admin\UseCases\Supplier\CreateSupplier\CreateSupplierRequest;
 use PHPUnit\Framework\TestCase;
