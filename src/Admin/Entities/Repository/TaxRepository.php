@@ -11,8 +11,10 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\UseCases\Gateway;
+namespace Admin\Entities\Repository;
 
+use Admin\Entities\Exception\Tax\NoTaxRegistered;
+use Admin\Entities\Exception\Tax\TaxNotFound;
 use Admin\Entities\Tax\Tax;
 use Admin\Entities\Tax\TaxCollection;
 
@@ -28,9 +30,18 @@ interface TaxRepository
 
     public function revaluate(Tax $tax): void;
 
-    public function findById(string $uuid): Tax;
+    /**
+     * @throws TaxNotFound
+     */
+    public function getById(string $uuid): Tax;
 
-    public function findByName(string $name): Tax;
+    /**
+     * @throws TaxNotFound
+     */
+    public function getByName(string $name): Tax;
 
-    public function findAllTaxes(): TaxCollection;
+    /**
+     * @throws NoTaxRegistered
+     */
+    public function getAllTaxes(): TaxCollection;
 }

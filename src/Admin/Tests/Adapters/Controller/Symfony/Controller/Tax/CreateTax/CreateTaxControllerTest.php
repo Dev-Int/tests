@@ -13,13 +13,13 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Tax\CreateTax;
 
-use Admin\Entities\Exception\Tax\TaxAlreadyExistsException;
+use Admin\Entities\Exception\Tax\TaxAlreadyExists;
 use Admin\Entities\Exception\Unit\NoUnitRegisteredException;
+use Admin\Entities\Repository\TaxRepository;
 use Admin\Entities\Tax\Tax;
 use Admin\Tests\Factory\CompanyFactory;
 use Admin\Tests\Factory\TaxFactory;
 use Admin\Tests\Factory\UnitFactory;
-use Admin\UseCases\Gateway\TaxRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -69,7 +69,7 @@ final class CreateTaxControllerTest extends BaseFunctionalTestCase
         self::assertSame($translator->trans('admin.tax.create.success'), $flash);
 
         /** @var Tax $taxCreated */
-        $taxCreated = $taxRepository->findByName('TVA taux normal');
+        $taxCreated = $taxRepository->getByName('TVA taux normal');
         self::assertSame('TVA taux normal', $taxCreated->name()->toString());
         self::assertSame(0.2, $taxCreated->rate());
     }
@@ -106,10 +106,10 @@ final class CreateTaxControllerTest extends BaseFunctionalTestCase
         $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
-        self::assertSame(TaxAlreadyExistsException::MESSAGE, $flash);
+        self::assertSame(TaxAlreadyExists::MESSAGE, $flash);
 
         /** @var Tax $taxCreated */
-        $taxCreated = $taxRepository->findByName('TVA taux normal');
+        $taxCreated = $taxRepository->getByName('TVA taux normal');
         self::assertSame('TVA taux normal', $taxCreated->name()->toString());
         self::assertSame(0.2, $taxCreated->rate());
     }

@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Tax\GetTaxes;
 
-use Admin\UseCases\Gateway\TaxRepository;
+use Admin\Entities\Repository\TaxRepository;
 
 final readonly class GetTaxes
 {
@@ -23,7 +23,7 @@ final readonly class GetTaxes
 
     public function execute(): GetTaxesResponse
     {
-        $taxes = $this->taxRepository->findAllTaxes();
+        $taxes = $this->taxRepository->getAllTaxes();
 
         return new GetTaxesResponse($taxes);
     }

@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Tax\CreateTax;
 
-use Admin\Entities\Exception\Tax\TaxAlreadyExistsException;
+use Admin\Entities\Exception\Tax\TaxAlreadyExists;
+use Admin\Entities\Repository\TaxRepository;
 use Admin\Entities\Tax\Tax;
-use Admin\UseCases\Gateway\TaxRepository;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
 
@@ -29,7 +29,7 @@ final readonly class CreateTax
     {
         $isExists = $this->taxRepository->exists($request->name(), $request->rate());
         if ($isExists) {
-            throw new TaxAlreadyExistsException($request->name(), $request->rate());
+            throw new TaxAlreadyExists($request->name(), $request->rate());
         }
 
         $tax = Tax::create(

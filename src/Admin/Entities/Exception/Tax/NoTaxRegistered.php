@@ -16,15 +16,15 @@ namespace Admin\Entities\Exception\Tax;
 use Shared\Entities\Exception\DomainException;
 use Shared\Entities\Exception\ExceptionSerializableTrait;
 
-final class TaxNotFoundException extends DomainException implements \JsonSerializable
+final class NoTaxRegistered extends DomainException implements \JsonSerializable
 {
     use ExceptionSerializableTrait;
 
-    public const MESSAGE = 'Tax not found.';
+    public const MESSAGE = 'No tax is registered.';
 
-    public function __construct(private readonly string $uuid, ?\Throwable $previous = null)
+    public function __construct(?\Throwable $previous = null)
     {
-        parent::__construct(self::MESSAGE, DomainException::NOT_FOUND_CODE, $previous);
+        parent::__construct(self::MESSAGE, DomainException::BAD_ENTITY_CODE, $previous);
     }
 
     /**
@@ -34,8 +34,6 @@ final class TaxNotFoundException extends DomainException implements \JsonSeriali
      */
     public function jsonSerialize(): iterable
     {
-        return $this->toJson() + [
-            'uuid' => $this->uuid,
-        ];
+        return $this->toJson();
     }
 }

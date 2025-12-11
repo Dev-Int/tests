@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Tax\RenameTax;
 
-use Admin\Entities\Exception\Tax\TaxAlreadyExistsException;
-use Admin\UseCases\Gateway\TaxRepository;
+use Admin\Entities\Exception\Tax\TaxAlreadyExists;
+use Admin\Entities\Repository\TaxRepository;
 use Shared\Entities\VO\NameField;
 
 final readonly class RenameTax
@@ -25,11 +25,11 @@ final readonly class RenameTax
 
     public function execute(RenameTaxRequest $request): RenameTaxResponse
     {
-        $tax = $this->taxRepository->findById($request->uuid());
+        $tax = $this->taxRepository->getById($request->uuid());
 
         $isExists = $this->taxRepository->exists($request->name(), $tax->rate());
         if ($isExists) {
-            throw new TaxAlreadyExistsException($request->name(), $tax->rate());
+            throw new TaxAlreadyExists($request->name(), $tax->rate());
         }
 
         $tax->rename(NameField::fromString($request->name()));

@@ -14,10 +14,10 @@ declare(strict_types=1);
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Tax\RevaluateTax;
 
 use Admin\Adapters\Controller\Symfony\Controller\Tax\GetTaxes\GetTaxesController;
-use Admin\Entities\Exception\Tax\TaxAlreadyExistsException;
+use Admin\Entities\Exception\Tax\TaxAlreadyExists;
+use Admin\Entities\Repository\TaxRepository;
 use Admin\Entities\Tax\Tax;
 use Admin\Tests\Factory\TaxFactory;
-use Admin\UseCases\Gateway\TaxRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,7 +44,7 @@ final class RevaluateTaxControllerTest extends BaseFunctionalTestCase
         $translator = self::getContainer()->get('translator');
 
         $tax = TaxFactory::createOne(['name' => 'TVA taux normal', 'rate' => 20.0]);
-        $taxes = $taxRepository->findAllTaxes();
+        $taxes = $taxRepository->getAllTaxes();
         self::assertCount(1, $taxes);
 
         // Act
@@ -74,11 +74,11 @@ final class RevaluateTaxControllerTest extends BaseFunctionalTestCase
 
         self::assertSame($translator->trans('admin.tax.revaluate.success'), $flash);
 
-        $taxes = $taxRepository->findAllTaxes();
+        $taxes = $taxRepository->getAllTaxes();
         self::assertCount(1, $taxes);
 
         /** @var Tax $taxRenamed */
-        $taxRenamed = $taxRepository->findById($tax->_real()->uuid());
+        $taxRenamed = $taxRepository->getById($tax->_real()->uuid());
         self::assertSame('TVA taux normal', $taxRenamed->name()->toString());
         self::assertSame(0.1, $taxRenamed->rate());
     }
@@ -94,7 +94,7 @@ final class RevaluateTaxControllerTest extends BaseFunctionalTestCase
 
         $tax1 = TaxFactory::createOne(['name' => 'TVA taux normal', 'rate' => 20.0]);
         TaxFactory::createOne(['name' => 'TVA taux normal', 'rate' => 10.0]);
-        $taxes = $taxRepository->findAllTaxes();
+        $taxes = $taxRepository->getAllTaxes();
         self::assertCount(2, $taxes);
 
         // Act
@@ -122,13 +122,13 @@ final class RevaluateTaxControllerTest extends BaseFunctionalTestCase
         $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
-        self::assertSame(TaxAlreadyExistsException::MESSAGE, $flash);
+        self::assertSame(TaxAlreadyExists::MESSAGE, $flash);
 
-        $taxes = $taxRepository->findAllTaxes();
+        $taxes = $taxRepository->getAllTaxes();
         self::assertCount(2, $taxes);
 
         /** @var Tax $taxRevaluated */
-        $taxRevaluated = $taxRepository->findById($tax1->_real()->uuid());
+        $taxRevaluated = $taxRepository->getById($tax1->_real()->uuid());
         self::assertSame('TVA taux normal', $taxRevaluated->name()->toString());
         self::assertSame(0.2, $taxRevaluated->rate());
     }
@@ -181,7 +181,7 @@ final class RevaluateTaxControllerTest extends BaseFunctionalTestCase
         $taxRepository = self::getContainer()->get(TaxRepository::class);
 
         TaxFactory::createOne(['name' => 'TVA taux normal', 'rate' => 20.0]);
-        $taxes = $taxRepository->findAllTaxes();
+        $taxes = $taxRepository->getAllTaxes();
         self::assertCount(1, $taxes);
 
         // Act
@@ -209,7 +209,7 @@ final class RevaluateTaxControllerTest extends BaseFunctionalTestCase
         $translator = self::getContainer()->get('translator');
 
         $tax = TaxFactory::createOne(['name' => 'TVA taux normal', 'rate' => 20.0]);
-        $taxes = $taxRepository->findAllTaxes();
+        $taxes = $taxRepository->getAllTaxes();
         self::assertCount(1, $taxes);
 
         // Act
@@ -234,11 +234,11 @@ final class RevaluateTaxControllerTest extends BaseFunctionalTestCase
         self::assertRouteSame(GetTaxesController::ROUTE_NAME);
 
         /** @var Tax $taxAfterCancel */
-        $taxAfterCancel = $taxRepository->findById($tax->_real()->uuid());
+        $taxAfterCancel = $taxRepository->getById($tax->_real()->uuid());
         self::assertSame($tax->_real()->name(), $taxAfterCancel->name()->toString());
         self::assertSame($tax->_real()->rate(), $taxAfterCancel->rate());
 
-        $taxes = $taxRepository->findAllTaxes();
+        $taxes = $taxRepository->getAllTaxes();
         self::assertCount(1, $taxes);
     }
 }

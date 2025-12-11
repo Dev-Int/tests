@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\FamilyLog\CreateFamilyLog;
 
 use Admin\Entities\Exception\FamilyLog\FamilyLogAlreadyExistsException;
-use Admin\Entities\Exception\Tax\NoTaxRegisteredException;
+use Admin\Entities\Exception\Tax\NoTaxRegistered;
 use Admin\Entities\FamilyLog\FamilyLog as FamilyLogDomain;
 use Admin\Tests\Factory\CompanyFactory;
 use Admin\Tests\Factory\FamilyLogFactory;
@@ -215,6 +215,6 @@ final class CreateFamilyLogControllerTest extends BaseFunctionalTestCase
         $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
-        self::assertSame(NoTaxRegisteredException::MESSAGE, $flash);
+        self::assertSame(NoTaxRegistered::MESSAGE, $flash);
     }
 }
