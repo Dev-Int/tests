@@ -27,7 +27,7 @@ use Admin\Entities\Exception\Article\NoArticleRegisteredException;
 use Admin\Entities\Exception\Article\PackagingNotFoundException;
 use Admin\Entities\Exception\FamilyLog\FamilyLogNotFoundException;
 use Admin\Entities\Exception\Supplier\SupplierNotFoundException;
-use Admin\Entities\Exception\Tax\TaxNotFoundException;
+use Admin\Entities\Exception\Tax\TaxNotFound;
 use Admin\Entities\Exception\Unit\UnitNotFoundException;
 use Admin\Entities\Exception\ZoneStorage\ZoneStorageNotFoundException;
 use Admin\Entities\Unit\Unit as UnitDomain;
@@ -110,7 +110,7 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         $tax = $this->taxRepository->find($article->tax()->uuid()->toString());
         if (!$tax instanceof Tax) {
             // @codeCoverageIgnoreStart
-            throw new TaxNotFoundException($article->tax()->uuid()->toString());
+            throw new TaxNotFound($article->tax()->uuid()->toString());
             // @codeCoverageIgnoreEnd
         }
 
@@ -229,7 +229,7 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         $tax = $this->taxRepository->find($article->tax()->uuid()->toString());
         if (!$tax instanceof Tax) {
             // @codeCoverageIgnoreStart
-            throw new TaxNotFoundException($article->tax()->uuid()->toString());
+            throw new TaxNotFound($article->tax()->uuid()->toString());
             // @codeCoverageIgnoreEnd
         }
 

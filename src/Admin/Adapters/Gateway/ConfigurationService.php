@@ -14,10 +14,10 @@ declare(strict_types=1);
 namespace Admin\Adapters\Gateway;
 
 use Admin\Entities\Repository\CompanyRepository;
+use Admin\Entities\Repository\TaxRepository;
 use Admin\UseCases\Gateway\ArticleRepository;
 use Admin\UseCases\Gateway\FamilyLogRepository;
 use Admin\UseCases\Gateway\SupplierRepository;
-use Admin\UseCases\Gateway\TaxRepository;
 use Admin\UseCases\Gateway\UnitRepository;
 use Admin\UseCases\Gateway\ZoneStorageRepository;
 

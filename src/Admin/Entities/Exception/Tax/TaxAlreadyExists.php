@@ -16,7 +16,7 @@ namespace Admin\Entities\Exception\Tax;
 use Shared\Entities\Exception\DomainException;
 use Shared\Entities\Exception\ExceptionSerializableTrait;
 
-final class TaxAlreadyExistsException extends DomainException implements \JsonSerializable
+final class TaxAlreadyExists extends DomainException implements \JsonSerializable
 {
     use ExceptionSerializableTrait;
 

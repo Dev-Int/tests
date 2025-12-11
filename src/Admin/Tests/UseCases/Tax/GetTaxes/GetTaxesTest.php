@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\Tax\GetTaxes;
 
+use Admin\Entities\Repository\TaxRepository;
 use Admin\Entities\Tax\TaxCollection;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
-use Admin\UseCases\Gateway\TaxRepository;
 use Admin\UseCases\Tax\GetTaxes\GetTaxes;
 use PHPUnit\Framework\TestCase;
 
@@ -39,7 +39,7 @@ final class GetTaxesTest extends TestCase
         $taxes->add($tax1);
         $taxes->add($tax2);
 
-        $taxRepository->expects(self::once())->method('findAllTaxes')->willReturn($taxes);
+        $taxRepository->expects(self::once())->method('getAllTaxes')->willReturn($taxes);
 
         // Act
         $response = $useCase->execute();

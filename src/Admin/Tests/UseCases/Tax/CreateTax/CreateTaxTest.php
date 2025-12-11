@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\Tax\CreateTax;
 
-use Admin\Entities\Exception\Tax\TaxAlreadyExistsException;
-use Admin\UseCases\Gateway\TaxRepository;
+use Admin\Entities\Exception\Tax\TaxAlreadyExists;
+use Admin\Entities\Repository\TaxRepository;
 use Admin\UseCases\Tax\CreateTax\CreateTax;
 use Admin\UseCases\Tax\CreateTax\CreateTaxRequest;
 use PHPUnit\Framework\TestCase;
@@ -70,8 +70,8 @@ final class CreateTaxTest extends TestCase
         $taxRepository->expects(self::never())->method('save');
 
         // Act && Assert
-        $this->expectException(TaxAlreadyExistsException::class);
-        $this->expectExceptionMessage(TaxAlreadyExistsException::MESSAGE);
+        $this->expectException(TaxAlreadyExists::class);
+        $this->expectExceptionMessage(TaxAlreadyExists::MESSAGE);
         $useCase->execute($request);
     }
 }

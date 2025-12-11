@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Tax\GetTaxes;
 
-use Admin\Entities\Exception\Tax\NoTaxRegisteredException;
+use Admin\Entities\Exception\Tax\NoTaxRegistered;
 use Admin\Tests\Factory\TaxFactory;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -64,6 +64,6 @@ final class GetTaxesControllerTest extends BaseFunctionalTestCase
         $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
-        self::assertSame(NoTaxRegisteredException::MESSAGE, $flash);
+        self::assertSame(NoTaxRegistered::MESSAGE, $flash);
     }
 }

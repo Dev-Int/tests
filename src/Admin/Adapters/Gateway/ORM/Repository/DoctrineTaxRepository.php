@@ -14,11 +14,11 @@ declare(strict_types=1);
 namespace Admin\Adapters\Gateway\ORM\Repository;
 
 use Admin\Adapters\Gateway\ORM\Entity\Tax;
-use Admin\Entities\Exception\Tax\NoTaxRegisteredException;
-use Admin\Entities\Exception\Tax\TaxNotFoundException;
+use Admin\Entities\Exception\Tax\NoTaxRegistered;
+use Admin\Entities\Exception\Tax\TaxNotFound;
+use Admin\Entities\Repository\TaxRepository;
 use Admin\Entities\Tax\Tax as TaxDomain;
 use Admin\Entities\Tax\TaxCollection;
-use Admin\UseCases\Gateway\TaxRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -90,7 +90,7 @@ final class DoctrineTaxRepository extends ServiceEntityRepository implements Tax
 
         if (!$taxToRename instanceof Tax) {
             // @codeCoverageIgnoreStart
-            throw new TaxNotFoundException($tax->uuid()->toString());
+            throw new TaxNotFound($tax->uuid()->toString());
             // @codeCoverageIgnoreEnd
         }
 
@@ -105,7 +105,7 @@ final class DoctrineTaxRepository extends ServiceEntityRepository implements Tax
 
         if (!$taxToRevaluate instanceof Tax) {
             // @codeCoverageIgnoreStart
-            throw new TaxNotFoundException($tax->uuid()->toString());
+            throw new TaxNotFound($tax->uuid()->toString());
             // @codeCoverageIgnoreEnd
         }
 
@@ -114,13 +114,13 @@ final class DoctrineTaxRepository extends ServiceEntityRepository implements Tax
         $this->_em->flush();
     }
 
-    public function findAllTaxes(): TaxCollection
+    public function getAllTaxes(): TaxCollection
     {
         $taxes = $this->findAll();
         $collection = new TaxCollection();
 
         if ($taxes === []) {
-            throw new NoTaxRegisteredException();
+            throw new NoTaxRegistered();
         }
 
         foreach ($taxes as $tax) {
@@ -130,24 +130,24 @@ final class DoctrineTaxRepository extends ServiceEntityRepository implements Tax
         return $collection;
     }
 
-    public function findById(string $uuid): TaxDomain
+    public function getById(string $uuid): TaxDomain
     {
         $tax = $this->find($uuid);
 
         if (!$tax instanceof Tax) {
             // @codeCoverageIgnoreStart
-            throw new TaxNotFoundException($uuid);
+            throw new TaxNotFound($uuid);
             // @codeCoverageIgnoreEnd
         }
 
         return $tax->toDomain();
     }
 
-    public function findByName(string $name): TaxDomain
+    public function getByName(string $name): TaxDomain
     {
         $tax = $this->findOneBy(['name' => $name]);
         if (!$tax instanceof Tax) {
-            throw new TaxNotFoundException($name);
+            throw new TaxNotFound($name);
         }
 
         return $tax->toDomain();
