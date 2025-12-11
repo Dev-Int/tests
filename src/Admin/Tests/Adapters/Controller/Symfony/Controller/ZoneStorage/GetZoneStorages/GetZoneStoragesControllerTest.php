@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\ZoneStorage\GetZoneStorages;
 
-use Admin\Entities\Exception\ZoneStorage\NoZoneStorageRegisteredException;
+use Admin\Entities\Exception\ZoneStorage\NoZoneStorageRegistered;
 use Admin\Tests\Factory\FamilyLogFactory;
 use Admin\Tests\Factory\ZoneStorageFactory;
 use App\Shared\Tests\BaseFunctionalTestCase;
@@ -72,6 +72,6 @@ final class GetZoneStoragesControllerTest extends BaseFunctionalTestCase
         $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
-        self::assertSame(NoZoneStorageRegisteredException::MESSAGE, $flash);
+        self::assertSame(NoZoneStorageRegistered::MESSAGE, $flash);
     }
 }

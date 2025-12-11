@@ -16,10 +16,10 @@ namespace Admin\Adapters\Gateway;
 use Admin\Entities\Repository\CompanyRepository;
 use Admin\Entities\Repository\TaxRepository;
 use Admin\Entities\Repository\UnitRepository;
+use Admin\Entities\Repository\ZoneStorageRepository;
 use Admin\UseCases\Gateway\ArticleRepository;
 use Admin\UseCases\Gateway\FamilyLogRepository;
 use Admin\UseCases\Gateway\SupplierRepository;
-use Admin\UseCases\Gateway\ZoneStorageRepository;
 
 final readonly class ConfigurationService
 {

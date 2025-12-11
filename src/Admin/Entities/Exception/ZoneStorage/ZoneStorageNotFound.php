@@ -16,7 +16,7 @@ namespace Admin\Entities\Exception\ZoneStorage;
 use Shared\Entities\Exception\DomainException;
 use Shared\Entities\Exception\ExceptionSerializableTrait;
 
-final class ZoneStorageNotFoundException extends DomainException implements \JsonSerializable
+final class ZoneStorageNotFound extends DomainException implements \JsonSerializable
 {
     use ExceptionSerializableTrait;
 

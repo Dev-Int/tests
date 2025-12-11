@@ -14,10 +14,10 @@ declare(strict_types=1);
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\ZoneStorage\ChangeZoneStorageFamilyLog;
 
 use Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\GetZoneStorages\GetZoneStoragesController;
+use Admin\Entities\Repository\ZoneStorageRepository;
 use Admin\Entities\ZoneStorage\ZoneStorage;
 use Admin\Tests\Factory\FamilyLogFactory;
 use Admin\Tests\Factory\ZoneStorageFactory;
-use Admin\UseCases\Gateway\ZoneStorageRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
@@ -49,7 +49,7 @@ final class ChangeZoneStorageFamilyLogControllerTest extends BaseFunctionalTestC
             'label' => 'Réserve négative',
             'familyLog' => $familyLog1->_real(),
         ]);
-        $zoneStorages = $zoneStorageRepository->findAllZones();
+        $zoneStorages = $zoneStorageRepository->getAllZones();
         self::assertCount(1, $zoneStorages);
 
         // Act
@@ -77,7 +77,7 @@ final class ChangeZoneStorageFamilyLogControllerTest extends BaseFunctionalTestC
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/zone_storages');
 
-        $zoneStorages = $zoneStorageRepository->findAllZones();
+        $zoneStorages = $zoneStorageRepository->getAllZones();
         self::assertCount(1, $zoneStorages);
 
         $admin = $this->client->followRedirect();
@@ -86,7 +86,7 @@ final class ChangeZoneStorageFamilyLogControllerTest extends BaseFunctionalTestC
         self::assertSame($translator->trans('admin.zoneStorage.changeFamilyLog.success'), $flash);
 
         /** @var ZoneStorage $zoneStorageUpdated */
-        $zoneStorageUpdated = $zoneStorageRepository->findBySlug('reserve-negative');
+        $zoneStorageUpdated = $zoneStorageRepository->getBySlug('reserve-negative');
         self::assertSame('Réserve négative', $zoneStorageUpdated->label()->toString());
         self::assertEquals(
             'Frais',
@@ -108,7 +108,7 @@ final class ChangeZoneStorageFamilyLogControllerTest extends BaseFunctionalTestC
             'label' => 'Réserve négative',
             'familyLog' => $familyLog->_real(),
         ]);
-        $zoneStorages = $zoneStorageRepository->findAllZones();
+        $zoneStorages = $zoneStorageRepository->getAllZones();
         self::assertCount(1, $zoneStorages);
 
         // Act
@@ -141,7 +141,7 @@ final class ChangeZoneStorageFamilyLogControllerTest extends BaseFunctionalTestC
             'label' => 'Réserve négative',
             'familyLog' => $familyLog1->_real(),
         ]);
-        $zoneStorages = $zoneStorageRepository->findAllZones();
+        $zoneStorages = $zoneStorageRepository->getAllZones();
         self::assertCount(1, $zoneStorages);
 
         // Act
@@ -169,11 +169,11 @@ final class ChangeZoneStorageFamilyLogControllerTest extends BaseFunctionalTestC
         self::assertRouteSame(GetZoneStoragesController::ROUTE_NAME);
 
         /** @var ZoneStorage $zoneStorageAfterCancel */
-        $zoneStorageAfterCancel = $zoneStorageRepository->findBySlug('reserve-negative');
+        $zoneStorageAfterCancel = $zoneStorageRepository->getBySlug('reserve-negative');
         self::assertSame('Réserve négative', $zoneStorageAfterCancel->label()->toString());
         self::assertEquals('Surgelé', $zoneStorageAfterCancel->familyLog()->label()->toString());
 
-        $zoneStorages = $zoneStorageRepository->findAllZones();
+        $zoneStorages = $zoneStorageRepository->getAllZones();
         self::assertCount(1, $zoneStorages);
     }
 }

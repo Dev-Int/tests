@@ -16,13 +16,13 @@ namespace Admin\Entities\Exception\ZoneStorage;
 use Shared\Entities\Exception\DomainException;
 use Shared\Entities\Exception\ExceptionSerializableTrait;
 
-final class ZoneStorageAlreadyExistsException extends DomainException implements \JsonSerializable
+final class NoZoneStorageRegistered extends DomainException implements \JsonSerializable
 {
     use ExceptionSerializableTrait;
 
-    public const MESSAGE = 'Zone storage already exists.';
+    public const MESSAGE = 'No zone storage is registered.';
 
-    public function __construct(private readonly string $label, ?\Throwable $previous = null)
+    public function __construct(?\Throwable $previous = null)
     {
         parent::__construct(self::MESSAGE, DomainException::BAD_ENTITY_CODE, $previous);
     }
@@ -34,8 +34,6 @@ final class ZoneStorageAlreadyExistsException extends DomainException implements
      */
     public function jsonSerialize(): iterable
     {
-        return $this->toJson() + [
-            'label' => $this->label,
-        ];
+        return $this->toJson();
     }
 }

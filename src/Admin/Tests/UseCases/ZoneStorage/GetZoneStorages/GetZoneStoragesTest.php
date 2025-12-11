@@ -13,10 +13,10 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\ZoneStorage\GetZoneStorages;
 
+use Admin\Entities\Repository\ZoneStorageRepository;
 use Admin\Entities\ZoneStorage\ZoneStorageCollection;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
-use Admin\UseCases\Gateway\ZoneStorageRepository;
 use Admin\UseCases\ZoneStorage\GetZoneStorages\GetZoneStorages;
 use PHPUnit\Framework\TestCase;
 
@@ -37,7 +37,7 @@ final class GetZoneStoragesTest extends TestCase
         $zoneStorages->add($zoneStorage1);
         $zoneStorages->add($zoneStorage2);
 
-        $zoneStorageRepository->expects(self::once())->method('findAllZones')->willReturn($zoneStorages);
+        $zoneStorageRepository->expects(self::once())->method('getAllZones')->willReturn($zoneStorages);
 
         $useCase = new GetZoneStorages($zoneStorageRepository);
 
