@@ -105,7 +105,7 @@ final class CreateFirstZoneStorageTest extends BasePantherTestCase
 
         $zoneStorageLabel = 'Réserve froide';
 
-        $familyLogOrm = $familyLogRepository->findByUuid($familyLog->uuid());
+        $familyLogOrm = $familyLogRepository->getByUuid($familyLog->uuid());
 
         $client->submitForm($translator->trans('add'), [
             'createZoneStorage[label]' => $zoneStorageLabel,

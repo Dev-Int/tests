@@ -15,8 +15,8 @@ namespace Admin\Tests\Adapters\Controller\Symfony\Controller\FamilyLog\AssignPar
 
 use Admin\Adapters\Controller\Symfony\Controller\FamilyLog\GetFamilyLogs\GetFamilyLogsController;
 use Admin\Entities\FamilyLog\FamilyLog;
+use Admin\Entities\Repository\FamilyLogRepository;
 use Admin\Tests\Factory\FamilyLogFactory;
-use Admin\UseCases\Gateway\FamilyLogRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Shared\Entities\ResourceUuid;
@@ -74,7 +74,7 @@ final class AssignParentFamilyLogControllerTest extends BaseFunctionalTestCase
         self::assertSame($translator->trans('admin.familyLog.assignParent.success'), $flash);
 
         /** @var FamilyLog $familyLogAssigned */
-        $familyLogAssigned = $familyLogRepository->findByUuid(
+        $familyLogAssigned = $familyLogRepository->getByUuid(
             ResourceUuid::fromString($familyLog->_real()->uuid())
         );
         self::assertSame('Viande', $familyLogAssigned->label()->toString());
@@ -126,7 +126,7 @@ final class AssignParentFamilyLogControllerTest extends BaseFunctionalTestCase
         self::assertSame($translator->trans('admin.familyLog.assignParent.success'), $flash);
 
         /** @var FamilyLog $familyLogAssigned */
-        $familyLogAssigned = $familyLogRepository->findByUuidWithChildren(
+        $familyLogAssigned = $familyLogRepository->getByUuidWithChildren(
             uuid: ResourceUuid::fromString($familyLog->_real()->uuid())
         );
         self::assertSame('Viande', $familyLogAssigned->label()->toString());
@@ -184,7 +184,7 @@ final class AssignParentFamilyLogControllerTest extends BaseFunctionalTestCase
         self::assertSame('FamilyLog already exists.', $flash);
 
         /** @var FamilyLog $familyLogAssigned */
-        $familyLogAssigned = $familyLogRepository->findByUuid(
+        $familyLogAssigned = $familyLogRepository->getByUuid(
             ResourceUuid::fromString($familyLog->_real()->uuid())
         );
         self::assertSame('Viande', $familyLogAssigned->label()->toString());
@@ -227,7 +227,7 @@ final class AssignParentFamilyLogControllerTest extends BaseFunctionalTestCase
         $familyLog = FamilyLogFactory::createOne(['label' => 'Viande']);
         FamilyLogFactory::createOne(['label' => 'Surgelé']);
 
-        $familyLogs = $familyLogRepository->findFamilyLogsOrderingBySlug();
+        $familyLogs = $familyLogRepository->getFamilyLogsOrderingBySlug();
         self::assertCount(2, $familyLogs->toArray());
 
         // Act
@@ -252,14 +252,14 @@ final class AssignParentFamilyLogControllerTest extends BaseFunctionalTestCase
         self::assertRouteSame(GetFamilyLogsController::ROUTE_NAME);
 
         /** @var FamilyLog $familyLogAfterCancel */
-        $familyLogAfterCancel = $familyLogRepository->findByUuid(
+        $familyLogAfterCancel = $familyLogRepository->getByUuid(
             ResourceUuid::fromString($familyLog->_real()->uuid())
         );
         self::assertSame('Viande', $familyLogAfterCancel->label()->toString());
         self::assertNull($familyLogAfterCancel->parent());
         self::assertSame('viande', $familyLogAfterCancel->slug());
 
-        $familyLogs = $familyLogRepository->findFamilyLogsOrderingBySlug();
+        $familyLogs = $familyLogRepository->getFamilyLogsOrderingBySlug();
         self::assertCount(2, $familyLogs->toArray());
     }
 }

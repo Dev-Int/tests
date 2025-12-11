@@ -117,7 +117,7 @@ final class CreateFirstSupplierTest extends BasePantherTestCase
 
         $supplierName = 'Fournisseur Test';
 
-        $familyLogOrm = $familyLogRepository->findByUuid($familyLog->uuid());
+        $familyLogOrm = $familyLogRepository->getByUuid($familyLog->uuid());
 
         $client->submitForm($translator->trans('add'), [
             'createSupplier[name]' => $supplierName,

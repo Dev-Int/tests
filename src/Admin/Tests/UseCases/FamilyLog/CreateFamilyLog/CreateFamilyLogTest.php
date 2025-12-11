@@ -13,12 +13,12 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\FamilyLog\CreateFamilyLog;
 
-use Admin\Entities\Exception\FamilyLog\FamilyLogAlreadyExistsException;
+use Admin\Entities\Exception\FamilyLog\FamilyLogAlreadyExists;
 use Admin\Entities\FamilyLog\FamilyLog;
+use Admin\Entities\Repository\FamilyLogRepository;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\UseCases\FamilyLog\CreateFamilyLog\CreateFamilyLog;
 use Admin\UseCases\FamilyLog\CreateFamilyLog\CreateFamilyLogRequest;
-use Admin\UseCases\Gateway\FamilyLogRepository;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -144,7 +144,7 @@ final class CreateFamilyLogTest extends TestCase
         $familyLogRepository->expects(self::never())->method('save');
 
         // Act && Assert
-        $this->expectException(FamilyLogAlreadyExistsException::class);
+        $this->expectException(FamilyLogAlreadyExists::class);
         $useCase->execute($request);
     }
 }

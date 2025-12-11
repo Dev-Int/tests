@@ -15,7 +15,7 @@ namespace Admin\Adapters\Gateway\ORM\Repository;
 
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Admin\Adapters\Gateway\ORM\Entity\Supplier;
-use Admin\Entities\Exception\FamilyLog\FamilyLogNotFoundException;
+use Admin\Entities\Exception\FamilyLog\FamilyLogNotFound;
 use Admin\Entities\Exception\Supplier\NoSupplierRegisteredException;
 use Admin\Entities\Exception\Supplier\SupplierNotFoundException;
 use Admin\Entities\Supplier\Supplier as SupplierDomain;
@@ -86,7 +86,7 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
 
         if (!$familyLog instanceof FamilyLog) {
             // @codeCoverageIgnoreStart
-            throw new FamilyLogNotFoundException($supplier->familyLog()->uuid()->toString());
+            throw new FamilyLogNotFound($supplier->familyLog()->uuid()->toString());
             // @codeCoverageIgnoreEnd
         }
 
@@ -161,7 +161,7 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
         $familyLog = $this->familyLogRepository->find($supplier->familyLog()->uuid()->toString());
         if (!$familyLog instanceof FamilyLog) {
             // @codeCoverageIgnoreStart
-            throw new FamilyLogNotFoundException($supplier->familyLog()->uuid()->toString());
+            throw new FamilyLogNotFound($supplier->familyLog()->uuid()->toString());
             // @codeCoverageIgnoreEnd
         }
 

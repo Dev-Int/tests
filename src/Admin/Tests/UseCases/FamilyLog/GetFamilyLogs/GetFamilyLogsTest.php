@@ -15,9 +15,9 @@ namespace Admin\Tests\UseCases\FamilyLog\GetFamilyLogs;
 
 use Admin\Entities\FamilyLog\FamilyLog;
 use Admin\Entities\FamilyLog\FamilyLogCollection;
+use Admin\Entities\Repository\FamilyLogRepository;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\UseCases\FamilyLog\GetFamilyLogs\GetFamilyLogs;
-use Admin\UseCases\Gateway\FamilyLogRepository;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -50,7 +50,7 @@ final class GetFamilyLogsTest extends TestCase
         }
 
         $familyLogRepository->expects(self::once())
-            ->method('findFamilyLogsOrderingBySlug')
+            ->method('getFamilyLogsOrderingBySlug')
             ->willReturn($familyLogs)
         ;
 

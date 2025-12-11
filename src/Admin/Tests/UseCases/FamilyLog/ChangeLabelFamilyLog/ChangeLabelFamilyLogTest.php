@@ -13,11 +13,11 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\FamilyLog\ChangeLabelFamilyLog;
 
-use Admin\Entities\Exception\FamilyLog\FamilyLogAlreadyExistsException;
+use Admin\Entities\Exception\FamilyLog\FamilyLogAlreadyExists;
+use Admin\Entities\Repository\FamilyLogRepository;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\UseCases\FamilyLog\ChangeLabelFamilyLog\ChangeLabelFamilyLog;
 use Admin\UseCases\FamilyLog\ChangeLabelFamilyLog\ChangeLabelFamilyLogRequest;
-use Admin\UseCases\Gateway\FamilyLogRepository;
 use Faker\Factory;
 use PHPUnit\Framework\TestCase;
 use Shared\Entities\ResourceUuid;
@@ -40,7 +40,7 @@ final class ChangeLabelFamilyLogTest extends TestCase
         $request->expects(self::exactly(2))->method('label')->willReturn('Viandes');
 
         $repository->expects(self::once())
-            ->method('findByUuid')
+            ->method('getByUuid')
             ->with(ResourceUuid::fromString(FamilyLogDataBuilder::VALID_UUID))
             ->willReturn($familyLog)
         ;
@@ -89,7 +89,7 @@ final class ChangeLabelFamilyLogTest extends TestCase
         $request->expects(self::exactly(2))->method('label')->willReturn('Alimentaires');
 
         $repository->expects(self::once())
-            ->method('findByUuid')
+            ->method('getByUuid')
             ->with(ResourceUuid::fromString(FamilyLogDataBuilder::VALID_UUID))
             ->willReturn($familyLogParent)
         ;
@@ -132,7 +132,7 @@ final class ChangeLabelFamilyLogTest extends TestCase
         $request->expects(self::exactly(2))->method('label')->willReturn('Viandes');
 
         $repository->expects(self::once())
-            ->method('findByUuid')
+            ->method('getByUuid')
             ->with(ResourceUuid::fromString(FamilyLogDataBuilder::VALID_UUID))
             ->willReturn($familyLog)
         ;
@@ -145,7 +145,7 @@ final class ChangeLabelFamilyLogTest extends TestCase
             ->method('updateLabel')
         ;
         // Assert
-        $this->expectException(FamilyLogAlreadyExistsException::class);
+        $this->expectException(FamilyLogAlreadyExists::class);
 
         // Act
         $useCase->execute($request);

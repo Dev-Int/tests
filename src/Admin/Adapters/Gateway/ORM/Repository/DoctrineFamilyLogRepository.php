@@ -14,11 +14,11 @@ declare(strict_types=1);
 namespace Admin\Adapters\Gateway\ORM\Repository;
 
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
-use Admin\Entities\Exception\FamilyLog\FamilyLogNotFoundException;
-use Admin\Entities\Exception\FamilyLog\NoFamilyLogRegisteredException;
+use Admin\Entities\Exception\FamilyLog\FamilyLogNotFound;
+use Admin\Entities\Exception\FamilyLog\NoFamilyLogRegistered;
 use Admin\Entities\FamilyLog\FamilyLog as FamilyLogDomain;
 use Admin\Entities\FamilyLog\FamilyLogCollection;
-use Admin\UseCases\Gateway\FamilyLogRepository;
+use Admin\Entities\Repository\FamilyLogRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -101,7 +101,7 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
 
             if (!$parent instanceof FamilyLog) {
                 // @codeCoverageIgnoreStart
-                throw new FamilyLogNotFoundException($familyLog->parent()->slug());
+                throw new FamilyLogNotFound($familyLog->parent()->slug());
                 // @codeCoverageIgnoreEnd
             }
         }
@@ -117,7 +117,7 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
 
         if (!$familyLogToUpdate instanceof FamilyLog) {
             // @codeCoverageIgnoreStart
-            throw new FamilyLogNotFoundException($familyLog->slug());
+            throw new FamilyLogNotFound($familyLog->slug());
             // @codeCoverageIgnoreEnd
         }
 
@@ -140,7 +140,7 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
 
         if (!$familyLogToUpdate instanceof FamilyLog) {
             // @codeCoverageIgnoreStart
-            throw new FamilyLogNotFoundException($familyLog->slug());
+            throw new FamilyLogNotFound($familyLog->slug());
             // @codeCoverageIgnoreEnd
         }
 
@@ -149,7 +149,7 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
 
             if (!$parent instanceof FamilyLog) {
                 // @codeCoverageIgnoreStart
-                throw new FamilyLogNotFoundException($familyLog->parent()->slug());
+                throw new FamilyLogNotFound($familyLog->parent()->slug());
                 // @codeCoverageIgnoreEnd
             }
 
@@ -171,7 +171,7 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
     /**
      * @throws NonUniqueResultException
      */
-    public function findByUuid(ResourceUuid $uuid): FamilyLogDomain
+    public function getByUuid(ResourceUuid $uuid): FamilyLogDomain
     {
         $alias = self::ALIAS;
         $familyLog = $this->createQueryBuilder($alias)
@@ -183,14 +183,14 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
 
         if (!$familyLog instanceof FamilyLog) {
             // @codeCoverageIgnoreStart
-            throw new FamilyLogNotFoundException($uuid->toString());
+            throw new FamilyLogNotFound($uuid->toString());
             // @codeCoverageIgnoreEnd
         }
 
         return $familyLog->toDomain($familyLog->parent());
     }
 
-    public function findByUuidWithChildren(ResourceUuid $uuid): FamilyLogDomain
+    public function getByUuidWithChildren(ResourceUuid $uuid): FamilyLogDomain
     {
         $alias = self::ALIAS;
         $familyLogOrm = $this->createQueryBuilder($alias)
@@ -202,7 +202,7 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
 
         if (!$familyLogOrm instanceof FamilyLog) {
             // @codeCoverageIgnoreStart
-            throw new FamilyLogNotFoundException($uuid->toString());
+            throw new FamilyLogNotFound($uuid->toString());
             // @codeCoverageIgnoreEnd
         }
 
@@ -212,7 +212,7 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
     /**
      * @throws NonUniqueResultException
      */
-    public function findBySlug(string $slug): FamilyLogDomain
+    public function getBySlug(string $slug): FamilyLogDomain
     {
         $alias = self::ALIAS;
         $familyLog = $this->createQueryBuilder($alias)
@@ -224,14 +224,14 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
 
         if (!$familyLog instanceof FamilyLog) {
             // @codeCoverageIgnoreStart
-            throw new FamilyLogNotFoundException($slug);
+            throw new FamilyLogNotFound($slug);
             // @codeCoverageIgnoreEnd
         }
 
         return $familyLog->toDomain($familyLog->parent());
     }
 
-    public function findFamilyLogsOrderingBySlug(): FamilyLogCollection
+    public function getFamilyLogsOrderingBySlug(): FamilyLogCollection
     {
         $collection = new FamilyLogCollection();
         $alias = self::ALIAS;
@@ -248,7 +248,7 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
         }
 
         if ($familyLogs === []) {
-            throw new NoFamilyLogRegisteredException();
+            throw new NoFamilyLogRegistered();
         }
 
         foreach ($familyLogs as $familyLog) {

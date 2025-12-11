@@ -17,7 +17,7 @@ use Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\GetZoneStorages\Get
 use Admin\Adapters\Form\Type\ZoneStorage\ChangeZoneStorageFamilyLogType;
 use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
-use Admin\Entities\Exception\FamilyLog\FamilyLogNotFoundException;
+use Admin\Entities\Exception\FamilyLog\FamilyLogNotFound;
 use Admin\UseCases\ZoneStorage\ChangeZoneStorageFamilyLog\ChangeZoneStorageFamilyLog;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -49,7 +49,7 @@ final class ChangeZoneStorageFamilyLogController extends AbstractController
         $familyLog = $this->familyLogRepository->findOneBy(['label' => $zoneStorage->familyLog()->label()]);
         if ($familyLog === null) {
             // @codeCoverageIgnoreStart
-            throw new FamilyLogNotFoundException($zoneStorage->familyLog()->slug());
+            throw new FamilyLogNotFound($zoneStorage->familyLog()->slug());
             // @codeCoverageIgnoreEnd
         }
 

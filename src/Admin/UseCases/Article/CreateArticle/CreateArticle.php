@@ -15,7 +15,7 @@ namespace Admin\UseCases\Article\CreateArticle;
 
 use Admin\Entities\Article\Article;
 use Admin\Entities\Exception\Article\ArticleAlreadyExistsException;
-use Admin\Entities\Exception\FamilyLog\BadFamilyLogAssignedException;
+use Admin\Entities\Exception\FamilyLog\BadFamilyLogAssigned;
 use Admin\Entities\FamilyLog\FamilyLog;
 use Admin\Entities\ZoneStorage\ZoneStorage;
 use Admin\UseCases\Gateway\ArticleRepository;
@@ -79,7 +79,7 @@ final readonly class CreateArticle
         $check = $supplierFamilyLog->isCompatible($familyLog);
 
         if ($check === false || $checkZoneStorage === false) {
-            throw new BadFamilyLogAssignedException($familyLog->label()->toString());
+            throw new BadFamilyLogAssigned($familyLog->label()->toString());
         }
     }
 }

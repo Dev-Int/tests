@@ -16,7 +16,7 @@ namespace Admin\Entities\Exception\FamilyLog;
 use Shared\Entities\Exception\DomainException;
 use Shared\Entities\Exception\ExceptionSerializableTrait;
 
-final class NoFamilyLogRegisteredException extends DomainException implements \JsonSerializable
+final class NoFamilyLogRegistered extends DomainException implements \JsonSerializable
 {
     use ExceptionSerializableTrait;
 

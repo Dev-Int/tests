@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\ZoneStorage\CreateZoneStorage;
 
-use Admin\Entities\Exception\FamilyLog\NoFamilyLogRegisteredException;
+use Admin\Entities\Exception\FamilyLog\NoFamilyLogRegistered;
 use Admin\Entities\Exception\ZoneStorage\ZoneStorageAlreadyExists;
 use Admin\Entities\Repository\ZoneStorageRepository;
 use Admin\Entities\ZoneStorage\ZoneStorage;
@@ -127,6 +127,6 @@ final class CreateZoneStorageControllerTest extends BaseFunctionalTestCase
         $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
-        self::assertSame(NoFamilyLogRegisteredException::MESSAGE, $flash);
+        self::assertSame(NoFamilyLogRegistered::MESSAGE, $flash);
     }
 }

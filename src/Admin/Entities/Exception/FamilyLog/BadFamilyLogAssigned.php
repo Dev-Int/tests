@@ -16,13 +16,13 @@ namespace Admin\Entities\Exception\FamilyLog;
 use Shared\Entities\Exception\DomainException;
 use Shared\Entities\Exception\ExceptionSerializableTrait;
 
-final class FamilyLogAlreadyExistsException extends DomainException implements \JsonSerializable
+final class BadFamilyLogAssigned extends DomainException implements \JsonSerializable
 {
     use ExceptionSerializableTrait;
 
-    public const MESSAGE = 'FamilyLog already exists.';
+    public const MESSAGE = 'Bad logistic family is assigned.';
 
-    public function __construct(private readonly string $name, ?\Throwable $previous = null)
+    public function __construct(private readonly string $familyLogLabel, ?\Throwable $previous = null)
     {
         parent::__construct(self::MESSAGE, DomainException::BAD_ENTITY_CODE, $previous);
     }
@@ -35,7 +35,7 @@ final class FamilyLogAlreadyExistsException extends DomainException implements \
     public function jsonSerialize(): iterable
     {
         return $this->toJson() + [
-            'name' => $this->name,
+            'familyLog label' => $this->familyLogLabel,
         ];
     }
 }
