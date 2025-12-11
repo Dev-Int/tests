@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\Unit\CreateUnit;
 
-use Admin\Entities\Exception\Unit\UnitAlreadyExistsException;
-use Admin\UseCases\Gateway\UnitRepository;
+use Admin\Entities\Exception\Unit\UnitAlreadyExists;
+use Admin\Entities\Repository\UnitRepository;
 use Admin\UseCases\Unit\CreateUnit\CreateUnit;
 use Admin\UseCases\Unit\CreateUnit\CreateUnitRequest;
 use PHPUnit\Framework\TestCase;
@@ -69,7 +69,7 @@ final class CreateUnitTest extends TestCase
         $unitRepository->expects(self::never())->method('save');
 
         // Act
-        $this->expectException(UnitAlreadyExistsException::class);
+        $this->expectException(UnitAlreadyExists::class);
         $useCase->execute($request);
     }
 }

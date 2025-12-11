@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\Tests\Entities\Article\VO;
 
 use Admin\Entities\Article\VO\Storage;
-use Admin\Entities\Exception\Unit\InvalidUnitException;
+use Admin\Entities\Exception\Unit\InvalidUnit;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
 use PHPUnit\Framework\TestCase;
 
@@ -43,8 +43,8 @@ final class StorageTest extends TestCase
         $unit = (new UnitDataBuilder())->create('Bad unit', 'bd')->build();
 
         // Act && Assert
-        $this->expectException(InvalidUnitException::class);
-        $this->expectExceptionMessage(InvalidUnitException::MESSAGE);
+        $this->expectException(InvalidUnit::class);
+        $this->expectExceptionMessage(InvalidUnit::MESSAGE);
         Storage::fromArray([$unit, 1.0]);
     }
 }

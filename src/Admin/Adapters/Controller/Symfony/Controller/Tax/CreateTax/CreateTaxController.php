@@ -15,7 +15,7 @@ namespace Admin\Adapters\Controller\Symfony\Controller\Tax\CreateTax;
 
 use Admin\Adapters\Form\Type\Tax\TaxType;
 use Admin\Adapters\Gateway\ConfigurationService;
-use Admin\Entities\Exception\Unit\NoUnitRegisteredException;
+use Admin\Entities\Exception\Unit\NoUnitRegistered;
 use Admin\UseCases\Tax\CreateTax\CreateTax;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,7 +40,7 @@ final class CreateTaxController extends AbstractController
     public function __invoke(Request $request): Response
     {
         if (!$this->configurationService->isUnitConfigured()) {
-            $this->addFlash('error', NoUnitRegisteredException::MESSAGE);
+            $this->addFlash('error', NoUnitRegistered::MESSAGE);
 
             return $this->redirectToRoute('admin_configure');
         }

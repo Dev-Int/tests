@@ -14,11 +14,11 @@ declare(strict_types=1);
 namespace Admin\Adapters\Gateway\ORM\Repository;
 
 use Admin\Adapters\Gateway\ORM\Entity\Unit;
-use Admin\Entities\Exception\Unit\NoUnitRegisteredException;
-use Admin\Entities\Exception\Unit\UnitNotFoundException;
+use Admin\Entities\Exception\Unit\NoUnitRegistered;
+use Admin\Entities\Exception\Unit\UnitNotFound;
+use Admin\Entities\Repository\UnitRepository;
 use Admin\Entities\Unit\Unit as UnitDomain;
 use Admin\Entities\Unit\UnitCollection;
-use Admin\UseCases\Gateway\UnitRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -90,7 +90,7 @@ final class DoctrineUnitRepository extends ServiceEntityRepository implements Un
 
         if (!$unitToUpdate instanceof Unit) {
             // @codeCoverageIgnoreStart
-            throw new UnitNotFoundException($unit->slug());
+            throw new UnitNotFound($unit->slug());
             // @codeCoverageIgnoreEnd
         }
 
@@ -102,13 +102,13 @@ final class DoctrineUnitRepository extends ServiceEntityRepository implements Un
         $this->_em->flush();
     }
 
-    public function findAllUnits(): UnitCollection
+    public function getAllUnits(): UnitCollection
     {
         $units = $this->findAll();
         $collection = new UnitCollection();
 
         if ($units === []) {
-            throw new NoUnitRegisteredException();
+            throw new NoUnitRegistered();
         }
 
         foreach ($units as $unit) {
@@ -121,7 +121,7 @@ final class DoctrineUnitRepository extends ServiceEntityRepository implements Un
     /**
      * @throws NonUniqueResultException
      */
-    public function findBySlug(string $slug): UnitDomain
+    public function getBySlug(string $slug): UnitDomain
     {
         $alias = self::ALIAS;
         $unit = $this->createQueryBuilder($alias)
@@ -133,7 +133,7 @@ final class DoctrineUnitRepository extends ServiceEntityRepository implements Un
 
         if (!$unit instanceof Unit) {
             // @codeCoverageIgnoreStart
-            throw new UnitNotFoundException($slug);
+            throw new UnitNotFound($slug);
             // @codeCoverageIgnoreEnd
         }
 

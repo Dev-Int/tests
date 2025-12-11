@@ -28,7 +28,7 @@ use Admin\Entities\Exception\Article\PackagingNotFoundException;
 use Admin\Entities\Exception\FamilyLog\FamilyLogNotFoundException;
 use Admin\Entities\Exception\Supplier\SupplierNotFoundException;
 use Admin\Entities\Exception\Tax\TaxNotFound;
-use Admin\Entities\Exception\Unit\UnitNotFoundException;
+use Admin\Entities\Exception\Unit\UnitNotFound;
 use Admin\Entities\Exception\ZoneStorage\ZoneStorageNotFoundException;
 use Admin\Entities\Unit\Unit as UnitDomain;
 use Admin\UseCases\Gateway\ArticleRepository;
@@ -368,7 +368,7 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         $unit = $this->unitRepository->findOneBy(['slug' => $package[0]->slug()]);
         if (!$unit instanceof Unit) {
             // @codeCoverageIgnoreStart
-            throw new UnitNotFoundException($package[0]->slug());
+            throw new UnitNotFound($package[0]->slug());
             // @codeCoverageIgnoreEnd
         }
 

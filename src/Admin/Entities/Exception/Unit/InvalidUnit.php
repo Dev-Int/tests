@@ -15,7 +15,7 @@ namespace Admin\Entities\Exception\Unit;
 
 use Shared\Entities\Exception\ExceptionSerializableTrait;
 
-final class InvalidUnitException extends \DomainException implements \JsonSerializable
+final class InvalidUnit extends \DomainException implements \JsonSerializable
 {
     use ExceptionSerializableTrait;
 
