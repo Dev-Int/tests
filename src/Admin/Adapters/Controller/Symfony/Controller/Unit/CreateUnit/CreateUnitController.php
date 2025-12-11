@@ -15,7 +15,7 @@ namespace Admin\Adapters\Controller\Symfony\Controller\Unit\CreateUnit;
 
 use Admin\Adapters\Form\Type\Unit\UnitType;
 use Admin\Adapters\Gateway\ConfigurationService;
-use Admin\Entities\Exception\Company\NoCompanyRegisteredException;
+use Admin\Entities\Exception\Company\NoCompanyRegistered;
 use Admin\UseCases\Unit\CreateUnit\CreateUnit;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,7 +40,7 @@ final class CreateUnitController extends AbstractController
     public function __invoke(Request $request): Response
     {
         if (!$this->configurationService->isCompanyConfigured()) {
-            $this->addFlash('error', NoCompanyRegisteredException::MESSAGE);
+            $this->addFlash('error', NoCompanyRegistered::MESSAGE);
 
             return $this->redirectToRoute('admin_configure');
         }

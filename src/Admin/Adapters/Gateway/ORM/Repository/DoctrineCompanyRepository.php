@@ -15,9 +15,9 @@ namespace Admin\Adapters\Gateway\ORM\Repository;
 
 use Admin\Adapters\Gateway\ORM\Entity\Company;
 use Admin\Entities\Company as CompanyDomain;
-use Admin\Entities\Exception\Company\CompanyNotFoundException;
-use Admin\Entities\Exception\Company\NoCompanyRegisteredException;
-use Admin\UseCases\Gateway\CompanyRepository;
+use Admin\Entities\Exception\Company\CompanyNotFound;
+use Admin\Entities\Exception\Company\NoCompanyRegistered;
+use Admin\Entities\Repository\CompanyRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -67,7 +67,7 @@ final class DoctrineCompanyRepository extends ServiceEntityRepository implements
     /**
      * @throws NonUniqueResultException
      */
-    public function findByName(string $name): CompanyDomain
+    public function getByName(string $name): CompanyDomain
     {
         $alias = self::ALIAS;
         $company = $this->createQueryBuilder($alias)
@@ -79,7 +79,7 @@ final class DoctrineCompanyRepository extends ServiceEntityRepository implements
 
         if (!$company instanceof Company) {
             // @codeCoverageIgnoreStart
-            throw new CompanyNotFoundException($name);
+            throw new CompanyNotFound($name);
             // @codeCoverageIgnoreEnd
         }
 
@@ -92,7 +92,7 @@ final class DoctrineCompanyRepository extends ServiceEntityRepository implements
 
         if (!$companyToUpdate instanceof Company) {
             // @codeCoverageIgnoreStart
-            throw new CompanyNotFoundException($company->name()->toString());
+            throw new CompanyNotFound($company->name()->toString());
             // @codeCoverageIgnoreEnd
         }
 
@@ -103,9 +103,9 @@ final class DoctrineCompanyRepository extends ServiceEntityRepository implements
 
     /**
      * @throws NonUniqueResultException
-     * @throws NoCompanyRegisteredException
+     * @throws NoCompanyRegistered
      */
-    public function findCompany(): Company
+    public function getCompany(): Company
     {
         $company = $this->createQueryBuilder(self::ALIAS)
             ->getQuery()
@@ -113,7 +113,7 @@ final class DoctrineCompanyRepository extends ServiceEntityRepository implements
         ;
 
         if (!$company instanceof Company) {
-            throw new NoCompanyRegisteredException();
+            throw new NoCompanyRegistered();
         }
 
         return $company;

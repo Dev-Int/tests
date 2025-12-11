@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Company\GetCompany;
 
-use Admin\Entities\Exception\Company\NoCompanyRegisteredException;
+use Admin\Entities\Exception\Company\NoCompanyRegistered;
 use Admin\Tests\Factory\CompanyFactory;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -65,6 +65,6 @@ final class GetCompanyControllerTest extends BaseFunctionalTestCase
         $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
-        self::assertSame(NoCompanyRegisteredException::MESSAGE, $flash);
+        self::assertSame(NoCompanyRegistered::MESSAGE, $flash);
     }
 }

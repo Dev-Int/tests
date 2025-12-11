@@ -13,11 +13,11 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\Company\UpdateCompany;
 
-use Admin\Entities\Exception\Company\CompanyNotFoundException;
+use Admin\Entities\Exception\Company\CompanyNotFound;
+use Admin\Entities\Repository\CompanyRepository;
 use Admin\Tests\DataBuilder\CompanyDataBuilder;
 use Admin\UseCases\Company\UpdateCompany\UpdateCompany;
 use Admin\UseCases\Company\UpdateCompany\UpdateCompanyRequest;
-use Admin\UseCases\Gateway\CompanyRepository;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -43,7 +43,7 @@ final class UpdateCompanyTest extends TestCase
         ;
 
         $request->expects(self::once())->method('name')->willReturn('Dev-Int Création');
-        $companyRepository->expects(self::once())->method('findByName')->with('Dev-Int Création')->willReturn($company);
+        $companyRepository->expects(self::once())->method('getByName')->with('Dev-Int Création')->willReturn($company);
 
         $request->expects(self::once())->method('address')->willReturn('12, rue des Singes');
         $request->expects(self::once())->method('postalCode')->willReturn('56000');
@@ -86,9 +86,9 @@ final class UpdateCompanyTest extends TestCase
 
         $request->expects(self::once())->method('name')->willReturn($companyName);
         $companyRepository->expects(self::once())
-            ->method('findByName')
+            ->method('getByName')
             ->with($companyName)
-            ->willThrowException(new CompanyNotFoundException($companyName))
+            ->willThrowException(new CompanyNotFound($companyName))
         ;
 
         $request->expects(self::never())->method('address')->willReturn('12, rue des Singes');
@@ -102,7 +102,7 @@ final class UpdateCompanyTest extends TestCase
         $companyRepository->expects(self::never())->method('update')->with($companyToUpdate);
 
         // Act && Assert
-        $this->expectException(CompanyNotFoundException::class);
+        $this->expectException(CompanyNotFound::class);
         $useCase->execute($request);
     }
 }

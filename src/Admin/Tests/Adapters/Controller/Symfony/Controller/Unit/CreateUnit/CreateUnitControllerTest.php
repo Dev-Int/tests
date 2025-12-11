@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Unit\CreateUnit;
 
-use Admin\Entities\Exception\Company\NoCompanyRegisteredException;
+use Admin\Entities\Exception\Company\NoCompanyRegistered;
 use Admin\Entities\Unit\Unit;
 use Admin\Tests\Factory\CompanyFactory;
 use Admin\Tests\Factory\UnitFactory;
@@ -169,6 +169,6 @@ final class CreateUnitControllerTest extends BaseFunctionalTestCase
         $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
-        self::assertSame(NoCompanyRegisteredException::MESSAGE, $flash);
+        self::assertSame(NoCompanyRegistered::MESSAGE, $flash);
     }
 }

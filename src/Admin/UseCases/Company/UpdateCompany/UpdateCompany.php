@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\UseCases\Company\UpdateCompany;
 
 use Admin\Entities\Company;
-use Admin\UseCases\Gateway\CompanyRepository;
+use Admin\Entities\Repository\CompanyRepository;
 use Shared\Entities\VO\ContactAddress;
 use Shared\Entities\VO\EmailField;
 use Shared\Entities\VO\PhoneField;
@@ -27,7 +27,7 @@ final readonly class UpdateCompany
 
     public function execute(UpdateCompanyRequest $request): UpdateCompanyResponse
     {
-        $companyToUpdate = $this->companyRepository->findByName($request->name());
+        $companyToUpdate = $this->companyRepository->getByName($request->name());
 
         $company = Company::create(
             $companyToUpdate->name(),

@@ -16,7 +16,7 @@ namespace Admin\Entities\Exception\Company;
 use Shared\Entities\Exception\DomainException;
 use Shared\Entities\Exception\ExceptionSerializableTrait;
 
-final class CompanyAlreadyExistsException extends DomainException implements \JsonSerializable
+final class CompanyAlreadyExists extends DomainException implements \JsonSerializable
 {
     use ExceptionSerializableTrait;
 
