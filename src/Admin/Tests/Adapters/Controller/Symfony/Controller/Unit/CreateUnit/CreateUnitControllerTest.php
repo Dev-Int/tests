@@ -14,10 +14,10 @@ declare(strict_types=1);
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Unit\CreateUnit;
 
 use Admin\Entities\Exception\Company\NoCompanyRegistered;
+use Admin\Entities\Repository\UnitRepository;
 use Admin\Entities\Unit\Unit;
 use Admin\Tests\Factory\CompanyFactory;
 use Admin\Tests\Factory\UnitFactory;
-use Admin\UseCases\Gateway\UnitRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -66,7 +66,7 @@ final class CreateUnitControllerTest extends BaseFunctionalTestCase
         self::assertSame($translator->trans('admin.unit.create.success'), $flash);
 
         /** @var Unit $unitCreated */
-        $unitCreated = $unitRepository->findBySlug('kilogramme');
+        $unitCreated = $unitRepository->getBySlug('kilogramme');
         self::assertSame('Kilogramme', $unitCreated->label()->toString());
         self::assertSame('kilogramme', $unitCreated->slug());
         self::assertSame('kg', $unitCreated->abbreviation());
@@ -106,7 +106,7 @@ final class CreateUnitControllerTest extends BaseFunctionalTestCase
         self::assertSame('Unit already exists.', $flash);
 
         /** @var Unit $unitCreated */
-        $unitCreated = $unitRepository->findBySlug('kilogramme');
+        $unitCreated = $unitRepository->getBySlug('kilogramme');
         self::assertSame('Kilogramme', $unitCreated->label()->toString());
         self::assertSame('kg', $unitCreated->abbreviation());
     }
@@ -149,7 +149,7 @@ final class CreateUnitControllerTest extends BaseFunctionalTestCase
         self::assertSame('Cette valeur ne doit pas être vide.', $abbreviationField->children('ul > li')->text());
 
         /** @var Unit $unitCreated */
-        $unitCreated = $unitRepository->findBySlug('kilogramme');
+        $unitCreated = $unitRepository->getBySlug('kilogramme');
         self::assertSame('Kilogramme', $unitCreated->label()->toString());
         self::assertSame('kg', $unitCreated->abbreviation());
     }

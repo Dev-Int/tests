@@ -11,8 +11,10 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\UseCases\Gateway;
+namespace Admin\Entities\Repository;
 
+use Admin\Entities\Exception\Unit\NoUnitRegistered;
+use Admin\Entities\Exception\Unit\UnitNotFound;
 use Admin\Entities\Unit\Unit;
 use Admin\Entities\Unit\UnitCollection;
 
@@ -24,9 +26,18 @@ interface UnitRepository
 
     public function save(Unit $unit): void;
 
+    /**
+     * @throws UnitNotFound
+     */
     public function changeLabel(Unit $unit): void;
 
-    public function findAllUnits(): UnitCollection;
+    /**
+     * @throws NoUnitRegistered
+     */
+    public function getAllUnits(): UnitCollection;
 
-    public function findBySlug(string $slug): Unit;
+    /**
+     * @throws UnitNotFound
+     */
+    public function getBySlug(string $slug): Unit;
 }

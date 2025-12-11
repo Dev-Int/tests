@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\Unit\GetUnits;
 
-use Admin\Entities\Exception\Unit\NoUnitRegisteredException;
+use Admin\Entities\Exception\Unit\NoUnitRegistered;
 use Admin\UseCases\Unit\GetUnits\GetUnits;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,7 +34,7 @@ final class GetUnitsController extends AbstractController
     {
         try {
             $units = $this->useCase->execute();
-        } catch (NoUnitRegisteredException $exception) {
+        } catch (NoUnitRegistered $exception) {
             $this->addFlash('error', $exception->getMessage());
 
             return $this->redirectToRoute('admin_configure');

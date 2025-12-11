@@ -16,15 +16,15 @@ namespace Admin\Entities\Exception\Unit;
 use Shared\Entities\Exception\DomainException;
 use Shared\Entities\Exception\ExceptionSerializableTrait;
 
-final class UnitNotFoundException extends DomainException implements \JsonSerializable
+final class UnitAlreadyExists extends DomainException implements \JsonSerializable
 {
     use ExceptionSerializableTrait;
 
-    public const MESSAGE = 'Unit not found.';
+    public const MESSAGE = 'Unit already exists.';
 
-    public function __construct(private readonly string $slug, ?\Throwable $previous = null)
+    public function __construct(private readonly string $label, ?\Throwable $previous = null)
     {
-        parent::__construct(self::MESSAGE, DomainException::NOT_FOUND_CODE, $previous);
+        parent::__construct(self::MESSAGE, DomainException::BAD_ENTITY_CODE, $previous);
     }
 
     /**
@@ -35,7 +35,7 @@ final class UnitNotFoundException extends DomainException implements \JsonSerial
     public function jsonSerialize(): iterable
     {
         return $this->toJson() + [
-            'slug' => $this->slug,
+            'label' => $this->label,
         ];
     }
 }

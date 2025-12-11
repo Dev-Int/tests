@@ -13,10 +13,10 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\Unit\ChangeUnitLabel;
 
-use Admin\Entities\Exception\Unit\UnitAlreadyExistsException;
-use Admin\Entities\Exception\Unit\UnitNotFoundException;
+use Admin\Entities\Exception\Unit\UnitAlreadyExists;
+use Admin\Entities\Exception\Unit\UnitNotFound;
+use Admin\Entities\Repository\UnitRepository;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
-use Admin\UseCases\Gateway\UnitRepository;
 use Admin\UseCases\Unit\ChangeUnitLabel\ChangeUnitLabel;
 use Admin\UseCases\Unit\ChangeUnitLabel\ChangeUnitLabelRequest;
 use PHPUnit\Framework\TestCase;
@@ -39,7 +39,7 @@ final class ChangeUnitLabelTest extends TestCase
         $request->expects(self::once())->method('slug')->willReturn('kilogramme');
 
         $unitRepository->expects(self::once())
-            ->method('findBySlug')
+            ->method('getBySlug')
             ->with('kilogramme')
             ->willReturn($unit)
         ;
@@ -78,7 +78,7 @@ final class ChangeUnitLabelTest extends TestCase
         $request->expects(self::once())->method('slug')->willReturn('kilogramme');
 
         $unitRepository->expects(self::once())
-            ->method('findBySlug')
+            ->method('getBySlug')
             ->with('kilogramme')
             ->willReturn($unit)
         ;
@@ -117,7 +117,7 @@ final class ChangeUnitLabelTest extends TestCase
         $request->expects(self::once())->method('slug')->willReturn('kilogramme');
 
         $unitRepository->expects(self::once())
-            ->method('findBySlug')
+            ->method('getBySlug')
             ->with('kilogramme')
             ->willReturn($unit)
         ;
@@ -134,8 +134,8 @@ final class ChangeUnitLabelTest extends TestCase
         ;
 
         // Act
-        $this->expectException(UnitAlreadyExistsException::class);
-        $this->expectExceptionMessage(UnitAlreadyExistsException::MESSAGE);
+        $this->expectException(UnitAlreadyExists::class);
+        $this->expectExceptionMessage(UnitAlreadyExists::MESSAGE);
         $useCase->execute($request);
     }
 
@@ -152,9 +152,9 @@ final class ChangeUnitLabelTest extends TestCase
         $request->expects(self::once())->method('slug')->willReturn('kilogramme');
 
         $unitRepository->expects(self::once())
-            ->method('findBySlug')
+            ->method('getBySlug')
             ->with('kilogramme')
-            ->will(self::throwException(new UnitNotFoundException('kilogramme')))
+            ->will(self::throwException(new UnitNotFound('kilogramme')))
         ;
 
         $unitRepository->expects(self::never())
@@ -168,8 +168,8 @@ final class ChangeUnitLabelTest extends TestCase
         ;
 
         // Act
-        $this->expectException(UnitNotFoundException::class);
-        $this->expectExceptionMessage(UnitNotFoundException::MESSAGE);
+        $this->expectException(UnitNotFound::class);
+        $this->expectExceptionMessage(UnitNotFound::MESSAGE);
         $useCase->execute($request);
     }
 }

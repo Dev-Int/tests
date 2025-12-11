@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Tax\CreateTax;
 
 use Admin\Entities\Exception\Tax\TaxAlreadyExists;
-use Admin\Entities\Exception\Unit\NoUnitRegisteredException;
+use Admin\Entities\Exception\Unit\NoUnitRegistered;
 use Admin\Entities\Repository\TaxRepository;
 use Admin\Entities\Tax\Tax;
 use Admin\Tests\Factory\CompanyFactory;
@@ -195,6 +195,6 @@ final class CreateTaxControllerTest extends BaseFunctionalTestCase
         $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
-        self::assertSame(NoUnitRegisteredException::MESSAGE, $flash);
+        self::assertSame(NoUnitRegistered::MESSAGE, $flash);
     }
 }

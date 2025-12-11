@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\Unit\GetUnits;
 
+use Admin\Entities\Repository\UnitRepository;
 use Admin\Entities\Unit\UnitCollection;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
-use Admin\UseCases\Gateway\UnitRepository;
 use Admin\UseCases\Unit\GetUnits\GetUnits;
 use PHPUnit\Framework\TestCase;
 
@@ -38,7 +38,7 @@ final class GetUnitsTest extends TestCase
         $units->add($unit1);
         $units->add($unit2);
 
-        $unitRepository->expects(self::once())->method('findAllUnits')->willReturn($units);
+        $unitRepository->expects(self::once())->method('getAllUnits')->willReturn($units);
 
         $useCase = new GetUnits($unitRepository);
 

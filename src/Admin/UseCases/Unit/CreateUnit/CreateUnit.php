@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Unit\CreateUnit;
 
-use Admin\Entities\Exception\Unit\UnitAlreadyExistsException;
+use Admin\Entities\Exception\Unit\UnitAlreadyExists;
+use Admin\Entities\Repository\UnitRepository;
 use Admin\Entities\Unit\Unit;
-use Admin\UseCases\Gateway\UnitRepository;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
 
@@ -30,7 +30,7 @@ final readonly class CreateUnit
         $uuid = ResourceUuid::generate();
         $isExists = $this->unitRepository->exists($request->label(), $uuid->toString());
         if ($isExists) {
-            throw new UnitAlreadyExistsException($request->label());
+            throw new UnitAlreadyExists($request->label());
         }
 
         $unit = Unit::create(
