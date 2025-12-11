@@ -14,40 +14,30 @@ declare(strict_types=1);
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Tax\GetTaxes;
 
 use Admin\Entities\Exception\Tax\NoTaxRegisteredException;
-use Admin\Tests\DataBuilder\TaxDataBuilder;
-use Admin\UseCases\Gateway\TaxRepository;
+use Admin\Tests\Factory\TaxFactory;
 use App\Shared\Tests\BaseFunctionalTestCase;
-use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Zenstruck\Foundry\Test\Factories;
 
 /**
  * @group functionalTest
  */
 final class GetTaxesControllerTest extends BaseFunctionalTestCase
 {
+    use Factories;
+
     private const GET_TAXES_URI = '/admin/taxes';
 
     public function testGetTaxesWillSucceed(): void
     {
         // Arrange
-        $faker = Factory::create('fr_FR');
-
-        /** @var TaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(TaxRepository::class);
-
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $taxBuilder = new TaxDataBuilder();
-        $tax1 = $taxBuilder->create('TVA taux normal', 20.0)->build();
-        $tax2 = $taxBuilder->create('TVA taux réduit', 5.5)
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $taxRepository->save($tax1);
-        $taxRepository->save($tax2);
+        TaxFactory::createOne(['name' => 'TVA taux normal', 'rate' => 20.0]);
+        TaxFactory::createOne(['name' => 'TVA taux réduit', 'rate' => 5.5]);
 
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::GET_TAXES_URI);

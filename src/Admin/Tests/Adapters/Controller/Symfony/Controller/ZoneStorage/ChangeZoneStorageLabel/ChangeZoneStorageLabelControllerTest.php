@@ -15,52 +15,46 @@ namespace Admin\Tests\Adapters\Controller\Symfony\Controller\ZoneStorage\ChangeZ
 
 use Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\GetZoneStorages\GetZoneStoragesController;
 use Admin\Entities\ZoneStorage\ZoneStorage;
-use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
-use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
-use Admin\UseCases\Gateway\FamilyLogRepository;
+use Admin\Tests\Factory\FamilyLogFactory;
+use Admin\Tests\Factory\ZoneStorageFactory;
 use Admin\UseCases\Gateway\ZoneStorageRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Zenstruck\Foundry\Test\Factories;
 
 /**
  * @group functionalTest
  */
 final class ChangeZoneStorageLabelControllerTest extends BaseFunctionalTestCase
 {
+    use Factories;
+
     private const CHANGE_LABEL_URI = '/admin/zone_storages/%s/change-label';
 
     public function testChangeLabelControllerWillSucceed(): void
     {
         // Arrange
-        $faker = Factory::create('fr_FR');
-
         /** @var ZoneStorageRepository $zoneStorageRepository */
         $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
-
-        /** @var FamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $zoneStorageBuilder = new ZoneStorageDataBuilder();
-        $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $familyLogRepository->save($familyLog);
-        $zoneStorage = $zoneStorageBuilder->create('Réserve négative', $familyLog)->build();
-        $zoneStorageRepository->save($zoneStorage);
+        $familyLog = FamilyLogFactory::createOne(['label' => 'Surgelé']);
+        $zoneStorage = ZoneStorageFactory::createOne([
+            'label' => 'Réserve négative',
+            'familyLog' => $familyLog->_real(),
+        ]);
         $zoneStorages = $zoneStorageRepository->findAllZones();
         self::assertCount(1, $zoneStorages);
 
         // Act
         $crawler = $this->client->request(
             Request::METHOD_GET,
-            \sprintf(self::CHANGE_LABEL_URI, $zoneStorage->uuid()->toString())
+            \sprintf(self::CHANGE_LABEL_URI, $zoneStorage->_real()->uuid())
         );
 
         self::assertResponseIsSuccessful();
@@ -68,7 +62,7 @@ final class ChangeZoneStorageLabelControllerTest extends BaseFunctionalTestCase
             'h1',
             $translator->trans(
                 'admin.zoneStorage.changeLabel.titlePage',
-                ['%zoneLabel%' => $zoneStorage->label()->toString()]
+                ['%zoneLabel%' => $zoneStorage->_real()->label()]
             )
         );
 
@@ -103,16 +97,11 @@ final class ChangeZoneStorageLabelControllerTest extends BaseFunctionalTestCase
         /** @var ZoneStorageRepository $zoneStorageRepository */
         $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
 
-        /** @var FamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
-        $zoneStorageBuilder = new ZoneStorageDataBuilder();
-        $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $familyLogRepository->save($familyLog);
-        $zoneStorage = $zoneStorageBuilder->create('Réserve négative', $familyLog)->build();
-        $zoneStorageRepository->save($zoneStorage);
+        $familyLog = FamilyLogFactory::createOne(['label' => 'Surgelé']);
+        ZoneStorageFactory::createOne([
+            'label' => 'Réserve négative',
+            'familyLog' => $familyLog->_real(),
+        ]);
         $zoneStorages = $zoneStorageRepository->findAllZones();
         self::assertCount(1, $zoneStorages);
 
@@ -134,32 +123,24 @@ final class ChangeZoneStorageLabelControllerTest extends BaseFunctionalTestCase
     public function testCancelDuringZoneStorageLabelChange(): void
     {
         // Arrange
-        $faker = Factory::create('fr_FR');
-
         /** @var ZoneStorageRepository $zoneStorageRepository */
         $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
-
-        /** @var FamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $zoneStorageBuilder = new ZoneStorageDataBuilder();
-        $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $familyLogRepository->save($familyLog);
-        $zoneStorage = $zoneStorageBuilder->create('Réserve négative', $familyLog)->build();
-        $zoneStorageRepository->save($zoneStorage);
+        $familyLog = FamilyLogFactory::createOne(['label' => 'Surgelé']);
+        $zoneStorage = ZoneStorageFactory::createOne([
+            'label' => 'Réserve négative',
+            'familyLog' => $familyLog->_real(),
+        ]);
         $zoneStorages = $zoneStorageRepository->findAllZones();
         self::assertCount(1, $zoneStorages);
 
         // Act
         $crawler = $this->client->request(
             Request::METHOD_GET,
-            \sprintf(self::CHANGE_LABEL_URI, $zoneStorage->uuid()->toString())
+            \sprintf(self::CHANGE_LABEL_URI, $zoneStorage->_real()->uuid())
         );
 
         self::assertResponseIsSuccessful();
@@ -167,7 +148,7 @@ final class ChangeZoneStorageLabelControllerTest extends BaseFunctionalTestCase
             'h1',
             $translator->trans(
                 'admin.zoneStorage.changeLabel.titlePage',
-                ['%zoneLabel%' => $zoneStorage->label()->toString()]
+                ['%zoneLabel%' => $zoneStorage->_real()->label()]
             )
         );
 

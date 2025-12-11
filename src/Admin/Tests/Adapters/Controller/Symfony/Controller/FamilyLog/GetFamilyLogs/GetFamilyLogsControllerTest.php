@@ -14,44 +14,32 @@ declare(strict_types=1);
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\FamilyLog\GetFamilyLogs;
 
 use Admin\Entities\Exception\FamilyLog\NoFamilyLogRegisteredException;
-use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
-use Admin\UseCases\Gateway\FamilyLogRepository;
+use Admin\Tests\Factory\FamilyLogFactory;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Zenstruck\Foundry\Test\Factories;
 
 /**
  * @group functionalTest
  */
 final class GetFamilyLogsControllerTest extends BaseFunctionalTestCase
 {
+    use Factories;
+
     private const GET_FAMILY_LOGS_URI = '/admin/family_logs';
 
     public function testGetFamilyLogsWillSucceed(): void
     {
         // Arrange
-        /** @var FamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
-
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
-        $familyLogBuilder = new FamilyLogDataBuilder();
-        $familyLog1 = $familyLogBuilder->create('Surgelé')
-            ->withUuid('99282a8d-f344-456c-bbd3-37fe89f3876c')
-            ->build()
-        ;
-        $familyLogRepository->save($familyLog1);
-        $familyLog2 = $familyLogBuilder->create('Surgelé')
-            ->withUuid('fdfedfaa-9b1e-48e2-a689-1944a03a5927')
-            ->build()
-        ;
-        $familyLogRepository->save($familyLog2);
-        $familyLog3 = $familyLogBuilder->create('Viande')
-            ->withParent($familyLog2)
-            ->build()
-        ;
-        $familyLogRepository->save($familyLog3);
+
+        // Créer 3 FamilyLog : 2 parents "Surgelé" et 1 enfant "Viande"
+        FamilyLogFactory::createOne(['label' => 'Surgelé']);
+        $familyLog2 = FamilyLogFactory::createOne(['label' => 'Surgelé']);
+        FamilyLogFactory::createOne(['label' => 'Viande', 'parent' => $familyLog2->_real()]);
 
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::GET_FAMILY_LOGS_URI);

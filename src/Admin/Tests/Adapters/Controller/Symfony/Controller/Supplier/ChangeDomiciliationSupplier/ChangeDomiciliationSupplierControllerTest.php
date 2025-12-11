@@ -14,21 +14,23 @@ declare(strict_types=1);
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Supplier\ChangeDomiciliationSupplier;
 
 use Admin\Entities\Supplier\Supplier as SupplierDomain;
-use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
-use Admin\Tests\DataBuilder\SupplierDataBuilder;
-use Admin\UseCases\Gateway\FamilyLogRepository;
+use Admin\Tests\Factory\FamilyLogFactory;
+use Admin\Tests\Factory\SupplierFactory;
 use Admin\UseCases\Gateway\SupplierRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Zenstruck\Foundry\Test\Factories;
 
 /**
  * @group functionalTest
  */
 final class ChangeDomiciliationSupplierControllerTest extends BaseFunctionalTestCase
 {
+    use Factories;
+
     public const CHANGE_DOMICILIATION_SUPPLIER_URI = '/admin/suppliers/%s/change-domiciliation';
 
     public function testChangeDomiciliationWillSucceed(): void
@@ -37,23 +39,21 @@ final class ChangeDomiciliationSupplierControllerTest extends BaseFunctionalTest
         /** @var SupplierRepository $supplierRepository */
         $supplierRepository = self::getContainer()->get(SupplierRepository::class);
 
-        /** @var FamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
-
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
-        $familyLogRepository->save($familyLog);
-        $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLog)->build();
-        $supplierRepository->save($supplier);
+        $familyLog = FamilyLogFactory::createOne(['label' => 'Surgelé']);
+        $supplier = SupplierFactory::createOne([
+            'name' => 'Supplier 1',
+            'familyLog' => $familyLog->_real(),
+        ]);
         $suppliers = $supplierRepository->findAllSuppliers();
         self::assertCount(1, $suppliers);
 
         // Act
         $crawler = $this->client->request(
             Request::METHOD_GET,
-            \sprintf(self::CHANGE_DOMICILIATION_SUPPLIER_URI, $supplier->uuid()->toString())
+            \sprintf(self::CHANGE_DOMICILIATION_SUPPLIER_URI, $supplier->_real()->uuid())
         );
 
         self::assertResponseIsSuccessful();
@@ -61,7 +61,7 @@ final class ChangeDomiciliationSupplierControllerTest extends BaseFunctionalTest
             'h1',
             $translator->trans(
                 'admin.supplier.changeDomiciliation.titlePage',
-                ['%supplierName%' => $supplier->name()->toString()],
+                ['%supplierName%' => $supplier->_real()->name()],
             )
         );
 
@@ -101,13 +101,11 @@ final class ChangeDomiciliationSupplierControllerTest extends BaseFunctionalTest
         /** @var SupplierRepository $supplierRepository */
         $supplierRepository = self::getContainer()->get(SupplierRepository::class);
 
-        /** @var FamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
-
-        $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
-        $familyLogRepository->save($familyLog);
-        $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLog)->build();
-        $supplierRepository->save($supplier);
+        $familyLog = FamilyLogFactory::createOne(['label' => 'Surgelé']);
+        SupplierFactory::createOne([
+            'name' => 'Supplier 1',
+            'familyLog' => $familyLog->_real(),
+        ]);
         $suppliers = $supplierRepository->findAllSuppliers();
         self::assertCount(1, $suppliers);
 

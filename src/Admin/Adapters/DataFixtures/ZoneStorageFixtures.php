@@ -14,13 +14,10 @@ declare(strict_types=1);
 namespace Admin\Adapters\DataFixtures;
 
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
-use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineZoneStorageRepository;
-use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
+use Admin\Tests\Factory\ZoneStorageFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
-use Faker\Factory;
 
 final class ZoneStorageFixtures extends Fixture implements DependentFixtureInterface
 {
@@ -28,25 +25,17 @@ final class ZoneStorageFixtures extends Fixture implements DependentFixtureInter
 
     public function load(ObjectManager $manager): void
     {
-        $faker = Factory::create('fr_FR');
-
         foreach ($this->getData() as $datum) {
             $familyLog = $this->getReference($datum['familyLogReference'], FamilyLog::class);
 
-            $zoneStorage = (new ZoneStorageDataBuilder())
-                ->create($datum['label'], $familyLog->toDomain($familyLog->parent()))
-                ->withUuid($faker->uuid())
-                ->build()
-            ;
-            $zoneStorageOrm = (new ZoneStorage())->fromDomain($zoneStorage, $familyLog);
-            $this->setReference(self::REFERENCE_PREFIX . $datum['slug'], $zoneStorageOrm);
+            $zoneStorage = ZoneStorageFactory::createOne([
+                'label' => $datum['label'],
+                'familyLog' => $familyLog,
+                'slug' => $datum['slug'],
+            ]);
 
-            /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-            $zoneStorageRepository = $manager->getRepository(ZoneStorage::class);
-            $zoneStorageRepository->save($zoneStorage);
+            $this->setReference(self::REFERENCE_PREFIX . $datum['slug'], $zoneStorage->_real());
         }
-
-        $manager->flush();
     }
 
     public function getDependencies(): array

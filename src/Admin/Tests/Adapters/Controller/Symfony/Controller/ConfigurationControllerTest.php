@@ -13,27 +13,24 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller;
 
-use Admin\Tests\DataBuilder\CompanyDataBuilder;
-use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
-use Admin\Tests\DataBuilder\SupplierDataBuilder;
-use Admin\Tests\DataBuilder\TaxDataBuilder;
-use Admin\Tests\DataBuilder\UnitDataBuilder;
-use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
-use Admin\UseCases\Gateway\CompanyRepository;
-use Admin\UseCases\Gateway\FamilyLogRepository;
-use Admin\UseCases\Gateway\SupplierRepository;
-use Admin\UseCases\Gateway\TaxRepository;
-use Admin\UseCases\Gateway\UnitRepository;
-use Admin\UseCases\Gateway\ZoneStorageRepository;
+use Admin\Tests\Factory\CompanyFactory;
+use Admin\Tests\Factory\FamilyLogFactory;
+use Admin\Tests\Factory\SupplierFactory;
+use Admin\Tests\Factory\TaxFactory;
+use Admin\Tests\Factory\UnitFactory;
+use Admin\Tests\Factory\ZoneStorageFactory;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Zenstruck\Foundry\Test\Factories;
 
 /**
  * @group functionalTest
  */
 final class ConfigurationControllerTest extends BaseFunctionalTestCase
 {
+    use Factories;
+
     private const CONFIGURATION_URI = '/admin/configure';
 
     public function testConfigurePageWillSucceed(): void
@@ -93,14 +90,10 @@ final class ConfigurationControllerTest extends BaseFunctionalTestCase
     public function testConfigurePageWithCompany(): void
     {
         // Arrange
-        /** @var CompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(CompanyRepository::class);
-
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $company = (new CompanyDataBuilder())->create('TestCompany')->build();
-        $companyRepository->save($company);
+        CompanyFactory::createOne(['name' => 'TestCompany']);
 
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
@@ -118,24 +111,12 @@ final class ConfigurationControllerTest extends BaseFunctionalTestCase
     public function testConfigurePageWithApplicationConfigured(): void
     {
         // Arrange
-        /** @var CompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(CompanyRepository::class);
-
-        /** @var UnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(UnitRepository::class);
-
-        /** @var TaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(TaxRepository::class);
-
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $company = (new CompanyDataBuilder())->create('TestCompany')->build();
-        $companyRepository->save($company);
-        $unit = (new UnitDataBuilder())->create('Kilogramme', 'KG')->build();
-        $unitRepository->save($unit);
-        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
-        $taxRepository->save($tax);
+        CompanyFactory::createOne(['name' => 'TestCompany']);
+        UnitFactory::createOne(['label' => 'Kilogramme', 'abbreviation' => 'KG']);
+        TaxFactory::createOne(['name' => 'TVA taux normal', 'rate' => 20.0]);
 
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
@@ -153,29 +134,13 @@ final class ConfigurationControllerTest extends BaseFunctionalTestCase
     public function testConfigurePageWithFamilyLog(): void
     {
         // Arrange
-        /** @var CompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(CompanyRepository::class);
-
-        /** @var UnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(UnitRepository::class);
-
-        /** @var TaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(TaxRepository::class);
-
-        /** @var FamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
-
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $company = (new CompanyDataBuilder())->create('TestCompany')->build();
-        $companyRepository->save($company);
-        $unit = (new UnitDataBuilder())->create('Kilogramme', 'KG')->build();
-        $unitRepository->save($unit);
-        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
-        $taxRepository->save($tax);
-        $familyLog = (new FamilyLogDataBuilder())->create('Frais')->build();
-        $familyLogRepository->save($familyLog);
+        CompanyFactory::createOne(['name' => 'TestCompany']);
+        UnitFactory::createOne(['label' => 'Kilogramme', 'abbreviation' => 'KG']);
+        TaxFactory::createOne(['name' => 'TVA taux normal', 'rate' => 20.0]);
+        FamilyLogFactory::createOne(['label' => 'Frais']);
 
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
@@ -193,34 +158,17 @@ final class ConfigurationControllerTest extends BaseFunctionalTestCase
     public function testConfigurePageWithZoneStorage(): void
     {
         // Arrange
-        /** @var CompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(CompanyRepository::class);
-
-        /** @var UnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(UnitRepository::class);
-
-        /** @var TaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(TaxRepository::class);
-
-        /** @var FamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
-
-        /** @var ZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
-
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $company = (new CompanyDataBuilder())->create('TestCompany')->build();
-        $companyRepository->save($company);
-        $unit = (new UnitDataBuilder())->create('Kilogramme', 'KG')->build();
-        $unitRepository->save($unit);
-        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
-        $taxRepository->save($tax);
-        $familyLog = (new FamilyLogDataBuilder())->create('Frais')->build();
-        $familyLogRepository->save($familyLog);
-        $zoneStorage = (new ZoneStorageDataBuilder())->create('Réserve froide', $familyLog)->build();
-        $zoneStorageRepository->save($zoneStorage);
+        CompanyFactory::createOne(['name' => 'TestCompany']);
+        UnitFactory::createOne(['label' => 'Kilogramme', 'abbreviation' => 'KG']);
+        TaxFactory::createOne(['name' => 'TVA taux normal', 'rate' => 20.0]);
+        $familyLog = FamilyLogFactory::createOne(['label' => 'Frais']);
+        ZoneStorageFactory::createOne([
+            'label' => 'Réserve froide',
+            'familyLog' => $familyLog->_real(),
+        ]);
 
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
@@ -238,39 +186,21 @@ final class ConfigurationControllerTest extends BaseFunctionalTestCase
     public function testConfigurePageWithSupplier(): void
     {
         // Arrange
-        /** @var CompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(CompanyRepository::class);
-
-        /** @var UnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(UnitRepository::class);
-
-        /** @var TaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(TaxRepository::class);
-
-        /** @var FamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
-
-        /** @var ZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
-
-        /** @var SupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
-
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $company = (new CompanyDataBuilder())->create('TestCompany')->build();
-        $companyRepository->save($company);
-        $unit = (new UnitDataBuilder())->create('Kilogramme', 'KG')->build();
-        $unitRepository->save($unit);
-        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
-        $taxRepository->save($tax);
-        $familyLog = (new FamilyLogDataBuilder())->create('Frais')->build();
-        $familyLogRepository->save($familyLog);
-        $zoneStorage = (new ZoneStorageDataBuilder())->create('Réserve froide', $familyLog)->build();
-        $zoneStorageRepository->save($zoneStorage);
-        $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLog)->build();
-        $supplierRepository->save($supplier);
+        CompanyFactory::createOne(['name' => 'TestCompany']);
+        UnitFactory::createOne(['label' => 'Kilogramme', 'abbreviation' => 'KG']);
+        TaxFactory::createOne(['name' => 'TVA taux normal', 'rate' => 20.0]);
+        $familyLog = FamilyLogFactory::createOne(['label' => 'Frais']);
+        ZoneStorageFactory::createOne([
+            'label' => 'Réserve froide',
+            'familyLog' => $familyLog->_real(),
+        ]);
+        SupplierFactory::createOne([
+            'name' => 'Supplier 1',
+            'familyLog' => $familyLog->_real(),
+        ]);
 
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::CONFIGURATION_URI);

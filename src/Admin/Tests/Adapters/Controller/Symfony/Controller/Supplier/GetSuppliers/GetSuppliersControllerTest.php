@@ -15,21 +15,22 @@ namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Supplier\GetSupplie
 
 use Admin\Adapters\Gateway\Pagination\Pagination;
 use Admin\Entities\Exception\Supplier\NoSupplierRegisteredException;
-use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
-use Admin\Tests\DataBuilder\SupplierDataBuilder;
-use Admin\UseCases\Gateway\FamilyLogRepository;
-use Admin\UseCases\Gateway\SupplierRepository;
+use Admin\Tests\Factory\FamilyLogFactory;
+use Admin\Tests\Factory\SupplierFactory;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Zenstruck\Foundry\Test\Factories;
 
 /**
  * @group functionalTest
  */
 final class GetSuppliersControllerTest extends BaseFunctionalTestCase
 {
+    use Factories;
+
     private const GET_SUPPLIERS_URI = '/admin/suppliers';
 
     public function testGetSuppliersWillSucceed(): void
@@ -37,28 +38,16 @@ final class GetSuppliersControllerTest extends BaseFunctionalTestCase
         // Arrange
         $faker = Factory::create('fr_FR');
 
-        /** @var SupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
-
-        /** @var FamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
-
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $supplierBuilder = new SupplierDataBuilder();
-        $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $familyLogRepository->save($familyLog);
+        $familyLog = FamilyLogFactory::createOne(['label' => 'Surgelé']);
 
         for ($i = 0; $i < 30; $i++) {
-            $supplier = $supplierBuilder->create($faker->company(), $familyLog)
-                ->withUuid($faker->uuid())
-                ->build()
-            ;
-            $supplierRepository->save($supplier);
+            SupplierFactory::createOne([
+                'name' => $faker->company(),
+                'familyLog' => $familyLog->_real(),
+            ]);
         }
 
         // Act

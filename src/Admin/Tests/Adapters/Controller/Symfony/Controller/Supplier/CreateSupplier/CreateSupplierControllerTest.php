@@ -15,25 +15,21 @@ namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Supplier\CreateSupp
 
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Admin\Adapters\Gateway\ORM\Entity\Supplier;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineCompanyRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineSupplierRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineTaxRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineUnitRepository;
-use Admin\Adapters\Gateway\ORM\Repository\DoctrineZoneStorageRepository;
 use Admin\Entities\Exception\Supplier\SupplierAlreadyExists;
 use Admin\Entities\Exception\ZoneStorage\NoZoneStorageRegisteredException;
-use Admin\Tests\DataBuilder\CompanyDataBuilder;
-use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
-use Admin\Tests\DataBuilder\SupplierDataBuilder;
-use Admin\Tests\DataBuilder\TaxDataBuilder;
-use Admin\Tests\DataBuilder\UnitDataBuilder;
-use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
+use Admin\Tests\Factory\CompanyFactory;
+use Admin\Tests\Factory\FamilyLogFactory;
+use Admin\Tests\Factory\SupplierFactory;
+use Admin\Tests\Factory\TaxFactory;
+use Admin\Tests\Factory\UnitFactory;
+use Admin\Tests\Factory\ZoneStorageFactory;
 use App\Shared\Tests\BaseFunctionalTestCase;
-use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Zenstruck\Foundry\Test\Factories;
 
 use function PHPUnit\Framework\assertInstanceOf;
 
@@ -42,27 +38,15 @@ use function PHPUnit\Framework\assertInstanceOf;
  */
 final class CreateSupplierControllerTest extends BaseFunctionalTestCase
 {
+    use Factories;
+
     private const CREATE_SUPPLIER_URI = '/admin/suppliers/create';
 
     public function testCreateSupplierWillSucceed(): void
     {
         // Arrange
-        $faker = Factory::create('fr_FR');
-
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
-
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
-
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
-
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
-
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
 
         /** @var DoctrineSupplierRepository $supplierRepository */
         $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
@@ -70,25 +54,17 @@ final class CreateSupplierControllerTest extends BaseFunctionalTestCase
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $company = (new CompanyDataBuilder())->create('Test company')->build();
-        $companyRepository->save($company);
-
-        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
-        $unitRepository->save($unit);
-
-        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
-        $taxRepository->save($tax);
-
-        $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $familyLogRepository->save($familyLog);
-        $familyLogOrm = $familyLogRepository->find($familyLog->uuid()->toString());
+        CompanyFactory::createOne(['name' => 'Test company']);
+        UnitFactory::createOne(['label' => 'Kilogramme', 'abbreviation' => 'kg']);
+        TaxFactory::createOne(['name' => 'TVA taux normal', 'rate' => 20.0]);
+        $familyLog = FamilyLogFactory::createOne(['label' => 'Surgelé']);
+        $familyLogOrm = $familyLogRepository->find($familyLog->_real()->uuid());
         assertInstanceOf(FamilyLog::class, $familyLogOrm);
 
-        $zoneStorage = (new ZoneStorageDataBuilder())->create('Reserve négative', $familyLog)->build();
-        $zoneStorageRepository->save($zoneStorage);
+        ZoneStorageFactory::createOne([
+            'label' => 'Reserve négative',
+            'familyLog' => $familyLog->_real(),
+        ]);
 
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_SUPPLIER_URI);
@@ -147,51 +123,27 @@ final class CreateSupplierControllerTest extends BaseFunctionalTestCase
     public function testCreateSupplierFailWithAlreadyExistsException(): void
     {
         // Arrange
-        $faker = Factory::create('fr_FR');
-
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
-
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
-
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
-
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
         $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
-
-        /** @var DoctrineZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(DoctrineZoneStorageRepository::class);
-
-        /** @var DoctrineSupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(DoctrineSupplierRepository::class);
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $company = (new CompanyDataBuilder())->create('Test company')->build();
-        $companyRepository->save($company);
-
-        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
-        $unitRepository->save($unit);
-
-        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
-        $taxRepository->save($tax);
-
-        $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $familyLogRepository->save($familyLog);
-        $familyLogOrm = $familyLogRepository->find($familyLog->uuid()->toString());
+        CompanyFactory::createOne(['name' => 'Test company']);
+        UnitFactory::createOne(['label' => 'Kilogramme', 'abbreviation' => 'kg']);
+        TaxFactory::createOne(['name' => 'TVA taux normal', 'rate' => 20.0]);
+        $familyLog = FamilyLogFactory::createOne(['label' => 'Surgelé']);
+        $familyLogOrm = $familyLogRepository->find($familyLog->_real()->uuid());
         assertInstanceOf(FamilyLog::class, $familyLogOrm);
 
-        $zoneStorage = (new ZoneStorageDataBuilder())->create('Reserve négative', $familyLog)->build();
-        $zoneStorageRepository->save($zoneStorage);
-
-        $supplier = (new SupplierDataBuilder())->create('Dev-Int Création', $familyLog)->build();
-        $supplierRepository->save($supplier);
+        ZoneStorageFactory::createOne([
+            'label' => 'Reserve négative',
+            'familyLog' => $familyLog->_real(),
+        ]);
+        SupplierFactory::createOne([
+            'name' => 'Dev-Int Création',
+            'familyLog' => $familyLog->_real(),
+        ]);
 
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_SUPPLIER_URI);
@@ -233,34 +185,10 @@ final class CreateSupplierControllerTest extends BaseFunctionalTestCase
     public function testCreateSupplierFailWithNoZoneStorageRegisteredException(): void
     {
         // Arrange
-        $faker = Factory::create('fr_FR');
-
-        /** @var DoctrineCompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(DoctrineCompanyRepository::class);
-
-        /** @var DoctrineUnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(DoctrineUnitRepository::class);
-
-        /** @var DoctrineTaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(DoctrineTaxRepository::class);
-
-        /** @var DoctrineFamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(DoctrineFamilyLogRepository::class);
-
-        $company = (new CompanyDataBuilder())->create('Test company')->build();
-        $companyRepository->save($company);
-
-        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
-        $unitRepository->save($unit);
-
-        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
-        $taxRepository->save($tax);
-
-        $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $familyLogRepository->save($familyLog);
+        CompanyFactory::createOne(['name' => 'Test company']);
+        UnitFactory::createOne(['label' => 'Kilogramme', 'abbreviation' => 'kg']);
+        TaxFactory::createOne(['name' => 'TVA taux normal', 'rate' => 20.0]);
+        FamilyLogFactory::createOne(['label' => 'Surgelé']);
 
         // Act
         $this->client->request(Request::METHOD_GET, self::CREATE_SUPPLIER_URI);

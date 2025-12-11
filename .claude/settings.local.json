@@ -22,7 +22,10 @@
       "Bash(do)",
       "Bash(then)",
       "Bash(echo:*)",
-      "Bash(fi)"
+      "Bash(fi)",
+      "Bash(composer show:*)",
+      "Bash(ls:*)",
+      "Bash(xargs:*)"
     ],
     "deny": [],
     "ask": []

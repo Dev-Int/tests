@@ -15,30 +15,27 @@ namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Article\GetArticles
 
 use Admin\Adapters\Gateway\Pagination\Pagination;
 use Admin\Entities\Exception\Article\NoArticleRegisteredException;
-use Admin\Tests\DataBuilder\ArticleDataBuilder;
-use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
-use Admin\Tests\DataBuilder\SupplierDataBuilder;
-use Admin\Tests\DataBuilder\TaxDataBuilder;
-use Admin\Tests\DataBuilder\UnitDataBuilder;
-use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
-use Admin\UseCases\Gateway\ArticleRepository;
-use Admin\UseCases\Gateway\FamilyLogRepository;
-use Admin\UseCases\Gateway\SupplierRepository;
-use Admin\UseCases\Gateway\TaxRepository;
-use Admin\UseCases\Gateway\UnitRepository;
-use Admin\UseCases\Gateway\ZoneStorageRepository;
+use Admin\Tests\Factory\ArticleFactory;
+use Admin\Tests\Factory\FamilyLogFactory;
+use Admin\Tests\Factory\SupplierFactory;
+use Admin\Tests\Factory\TaxFactory;
+use Admin\Tests\Factory\UnitFactory;
+use Admin\Tests\Factory\ZoneStorageFactory;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use FakerRestaurant\Provider\fr_FR\Restaurant;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Zenstruck\Foundry\Test\Factories;
 
 /**
  * @group functionalTest
  */
 final class GetArticlesControllerTest extends BaseFunctionalTestCase
 {
+    use Factories;
+
     private const GET_ARTICLES_URI = '/admin/articles';
 
     public function testGetArticlesPaginatedWillSucceed(): void
@@ -47,75 +44,36 @@ final class GetArticlesControllerTest extends BaseFunctionalTestCase
         $faker = Factory::create('fr_FR');
         $faker->addProvider(new Restaurant($faker));
 
-        /** @var UnitRepository $unitRepository */
-        $unitRepository = self::getContainer()->get(UnitRepository::class);
-
-        /** @var TaxRepository $taxRepository */
-        $taxRepository = self::getContainer()->get(TaxRepository::class);
-
-        /** @var FamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
-
-        /** @var ZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
-
-        /** @var SupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
-
-        /** @var ArticleRepository $articleRepository */
-        $articleRepository = self::getContainer()->get(ArticleRepository::class);
-
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $colis = (new UnitDataBuilder())->create('Colis', 'kg')->build();
-        $unitRepository->save($colis);
+        // Créer la configuration directement avec Foundry
+        $supplier = SupplierFactory::createOne();
+        $tax = TaxFactory::createOne();
+        $familyLog = FamilyLogFactory::createOne();
+        $zoneStorage = ZoneStorageFactory::createOne();
+        $colis = UnitFactory::createOne(['label' => 'Colis']);
 
-        $tax = (new TaxDataBuilder())->create('TVA taux normal', 20.0)->build();
-        $taxRepository->save($tax);
-
-        $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
-        $familyLogRepository->save($familyLog);
-
-        $zoneStorage = (new ZoneStorageDataBuilder())
-            ->create('Réserve négative', $familyLog)
-            ->build()
-        ;
-        $zoneStorageRepository->save($zoneStorage);
-
-        $supplier = (new SupplierDataBuilder())->create('supplier 1', $familyLog)->build();
-        $supplierRepository->save($supplier);
-
-        $articleDataBuilder = new ArticleDataBuilder();
+        // Créer 30 articles pour tester la pagination (15 légumes + 15 viandes)
         for ($i = 0; $i < 15; $i++) {
-            $article1 = $articleDataBuilder
-                ->create(
-                    $faker->vegetableName(),
-                    $supplier,
-                    $tax,
-                    [$zoneStorage],
-                    $familyLog,
-                    [[$colis, 1.0], null, null]
-                )
-                ->withUuid($faker->uuid())
-                ->build()
-            ;
-            $articleRepository->save($article1);
+            ArticleFactory::createOne([
+                'name' => $faker->vegetableName(),
+                'supplier' => $supplier,
+                'tax' => $tax,
+                'zoneStorages' => [$zoneStorage],
+                'familyLog' => $familyLog,
+                'packaging' => [[$colis->_real()->toDomain(), 1.0], null, null],
+            ]);
         }
         for ($i = 0; $i < 15; $i++) {
-            $article2 = $articleDataBuilder
-                ->create(
-                    $faker->meatName(),
-                    $supplier,
-                    $tax,
-                    [$zoneStorage],
-                    $familyLog,
-                    [[$colis, 1.0], null, null]
-                )
-                ->withUuid($faker->uuid())
-                ->build()
-            ;
-            $articleRepository->save($article2);
+            ArticleFactory::createOne([
+                'name' => $faker->meatName(),
+                'supplier' => $supplier,
+                'tax' => $tax,
+                'zoneStorages' => [$zoneStorage],
+                'familyLog' => $familyLog,
+                'packaging' => [[$colis->_real()->toDomain(), 1.0], null, null],
+            ]);
         }
 
         // Act

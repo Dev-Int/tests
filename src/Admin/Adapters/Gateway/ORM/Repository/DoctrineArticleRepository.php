@@ -245,6 +245,8 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
     {
         $alias = self::ALIAS;
         $query = $this->createQueryBuilder($alias)
+            ->leftJoin("{$alias}.packaging", 'packaging')
+            ->addSelect('packaging')
             ->setFirstResult(($page - 1) * $itemPerPage)
             ->setMaxResults($itemPerPage)
         ;
@@ -266,7 +268,16 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
 
     public function findByUuid(string $uuid): ArticleDomain
     {
-        $article = $this->find($uuid);
+        $alias = self::ALIAS;
+        $article = $this->createQueryBuilder($alias)
+            ->leftJoin("{$alias}.packaging", 'packaging')
+            ->addSelect('packaging')
+            ->where("{$alias}.uuid = :uuid")
+            ->setParameter('uuid', $uuid)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+
         if (!$article instanceof Article) {
             // @codeCoverageIgnoreStart
             throw new ArticleNotFoundException($uuid);
@@ -278,7 +289,16 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
 
     public function findBySlug(string $slug): ArticleDomain
     {
-        $article = $this->findOneBy(['slug' => $slug]);
+        $alias = self::ALIAS;
+        $article = $this->createQueryBuilder($alias)
+            ->leftJoin("{$alias}.packaging", 'packaging')
+            ->addSelect('packaging')
+            ->where("{$alias}.slug = :slug")
+            ->setParameter('slug', $slug)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+
         if (!$article instanceof Article) {
             throw new ArticleNotFoundException($slug);
         }

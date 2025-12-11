@@ -15,19 +15,22 @@ namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Unit\ChangeUnitLabe
 
 use Admin\Adapters\Controller\Symfony\Controller\Unit\GetUnits\GetUnitsController;
 use Admin\Entities\Unit\Unit;
-use Admin\Tests\DataBuilder\UnitDataBuilder;
+use Admin\Tests\Factory\UnitFactory;
 use Admin\UseCases\Gateway\UnitRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Zenstruck\Foundry\Test\Factories;
 
 /**
  * @group functionalTest
  */
 final class ChangeUnitLabelControllerTest extends BaseFunctionalTestCase
 {
+    use Factories;
+
     private const CHANGE_LABEL_URI = '/admin/units/%s/change-label';
 
     public function testChangeLabelWillSucceed(): void
@@ -39,15 +42,14 @@ final class ChangeUnitLabelControllerTest extends BaseFunctionalTestCase
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
-        $unitRepository->save($unit);
+        $unit = UnitFactory::createOne(['label' => 'Kilogramme', 'abbreviation' => 'kg']);
         $units = $unitRepository->findAllUnits();
         self::assertCount(1, $units);
 
         // Act
         $crawler = $this->client->request(
             Request::METHOD_GET,
-            \sprintf(self::CHANGE_LABEL_URI, $unit->uuid()->toString())
+            \sprintf(self::CHANGE_LABEL_URI, $unit->_real()->uuid())
         );
 
         self::assertResponseIsSuccessful();
@@ -89,15 +91,14 @@ final class ChangeUnitLabelControllerTest extends BaseFunctionalTestCase
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
-        $unitRepository->save($unit);
+        $unit = UnitFactory::createOne(['label' => 'Kilogramme', 'abbreviation' => 'kg']);
         $units = $unitRepository->findAllUnits();
         self::assertCount(1, $units);
 
         // Act
         $crawler = $this->client->request(
             Request::METHOD_GET,
-            \sprintf(self::CHANGE_LABEL_URI, $unit->uuid()->toString())
+            \sprintf(self::CHANGE_LABEL_URI, $unit->_real()->uuid())
         );
 
         self::assertResponseIsSuccessful();
@@ -139,21 +140,15 @@ final class ChangeUnitLabelControllerTest extends BaseFunctionalTestCase
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $unitBuilder = new UnitDataBuilder();
-        $unit1 = $unitBuilder->create('Kilogramme', 'kg')->build();
-        $unitRepository->save($unit1);
-        $unit2 = $unitBuilder->create('Litre', 'L')
-            ->withUuid('30eca73f-dc2b-4abf-885a-ae1b7022e816')
-            ->build()
-        ;
-        $unitRepository->save($unit2);
+        $unit1 = UnitFactory::createOne(['label' => 'Kilogramme', 'abbreviation' => 'kg']);
+        UnitFactory::createOne(['label' => 'Litre', 'abbreviation' => 'L']);
         $units = $unitRepository->findAllUnits();
         self::assertCount(2, $units);
 
         // Act
         $crawler = $this->client->request(
             Request::METHOD_GET,
-            \sprintf(self::CHANGE_LABEL_URI, $unit1->uuid()->toString())
+            \sprintf(self::CHANGE_LABEL_URI, $unit1->_real()->uuid())
         );
 
         self::assertResponseIsSuccessful();
@@ -191,13 +186,12 @@ final class ChangeUnitLabelControllerTest extends BaseFunctionalTestCase
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
-        $unitRepository->save($unit);
+        $unit = UnitFactory::createOne(['label' => 'Kilogramme', 'abbreviation' => 'kg']);
 
         // Act
         $crawler = $this->client->request(
             Request::METHOD_GET,
-            \sprintf(self::CHANGE_LABEL_URI, $unit->uuid()->toString())
+            \sprintf(self::CHANGE_LABEL_URI, $unit->_real()->uuid())
         );
 
         self::assertResponseIsSuccessful();
@@ -243,8 +237,7 @@ final class ChangeUnitLabelControllerTest extends BaseFunctionalTestCase
 
         /** @var UnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(UnitRepository::class);
-        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
-        $unitRepository->save($unit);
+        UnitFactory::createOne(['label' => 'Kilogramme', 'abbreviation' => 'kg']);
         $units = $unitRepository->findAllUnits();
         self::assertCount(1, $units);
 
@@ -269,15 +262,14 @@ final class ChangeUnitLabelControllerTest extends BaseFunctionalTestCase
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $unit = (new UnitDataBuilder())->create('Kilogramme', 'kg')->build();
-        $unitRepository->save($unit);
+        $unit = UnitFactory::createOne(['label' => 'Kilogramme', 'abbreviation' => 'kg']);
         $units = $unitRepository->findAllUnits();
         self::assertCount(1, $units);
 
         // Act
         $crawler = $this->client->request(
             Request::METHOD_GET,
-            \sprintf(self::CHANGE_LABEL_URI, $unit->uuid()->toString())
+            \sprintf(self::CHANGE_LABEL_URI, $unit->_real()->uuid())
         );
 
         self::assertResponseIsSuccessful();
@@ -296,9 +288,9 @@ final class ChangeUnitLabelControllerTest extends BaseFunctionalTestCase
         self::assertRouteSame(GetUnitsController::ROUTE_NAME);
 
         /** @var Unit $unitAfterCancel */
-        $unitAfterCancel = $unitRepository->findBySlug($unit->slug());
-        self::assertSame($unit->label()->toString(), $unitAfterCancel->label()->toString());
-        self::assertSame($unit->abbreviation(), $unitAfterCancel->abbreviation());
+        $unitAfterCancel = $unitRepository->findBySlug($unit->_real()->slug());
+        self::assertSame($unit->_real()->label(), $unitAfterCancel->label()->toString());
+        self::assertSame($unit->_real()->abbreviation(), $unitAfterCancel->abbreviation());
 
         $units = $unitRepository->findAllUnits();
         self::assertCount(1, $units);

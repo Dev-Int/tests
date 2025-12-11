@@ -29,7 +29,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: DoctrineArticleRepository::class)]
 #[UniqueEntity(fields: 'name')]
-final class Article
+class Article
 {
     #[ORM\OneToOne(mappedBy: 'article', targetEntity: Packaging::class, cascade: ['persist', 'remove'])]
     private Packaging $packaging;
@@ -87,7 +87,7 @@ final class Article
         #[ORM\JoinColumn(name: 'family_log_id', referencedColumnName: 'uuid')]
         private FamilyLog $familyLog,
         #[ORM\Column(name: 'quantity', type: 'float', scale: 3)]
-        private float $quantity,
+        private readonly float $quantity,
         #[ORM\Column(name: 'slug', type: 'string')]
         private string $slug,
         #[ORM\Column(name: 'active', type: 'boolean')]

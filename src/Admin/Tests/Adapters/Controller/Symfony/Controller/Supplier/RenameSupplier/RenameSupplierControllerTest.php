@@ -15,21 +15,23 @@ namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Supplier\RenameSupp
 
 use Admin\Entities\Exception\Supplier\SupplierAlreadyExists;
 use Admin\Entities\Supplier\Supplier as SupplierDomain;
-use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
-use Admin\Tests\DataBuilder\SupplierDataBuilder;
-use Admin\UseCases\Gateway\FamilyLogRepository;
+use Admin\Tests\Factory\FamilyLogFactory;
+use Admin\Tests\Factory\SupplierFactory;
 use Admin\UseCases\Gateway\SupplierRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Zenstruck\Foundry\Test\Factories;
 
 /**
  * @group functionalTest
  */
 final class RenameSupplierControllerTest extends BaseFunctionalTestCase
 {
+    use Factories;
+
     private const RENAME_SUPPLIER_URI = '/admin/suppliers/%s/rename';
 
     public function testRenameSupplierWillSucceed(): void
@@ -38,29 +40,27 @@ final class RenameSupplierControllerTest extends BaseFunctionalTestCase
         /** @var SupplierRepository $supplierRepository */
         $supplierRepository = self::getContainer()->get(SupplierRepository::class);
 
-        /** @var FamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
-
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
-        $familyLogRepository->save($familyLog);
-        $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLog)->build();
-        $supplierRepository->save($supplier);
+        $familyLog = FamilyLogFactory::createOne(['label' => 'Surgelé']);
+        $supplier = SupplierFactory::createOne([
+            'name' => 'Supplier 1',
+            'familyLog' => $familyLog->_real(),
+        ]);
         $suppliers = $supplierRepository->findAllSuppliers();
         self::assertCount(1, $suppliers);
 
         // Act
         $crawler = $this->client->request(
             Request::METHOD_GET,
-            \sprintf(self::RENAME_SUPPLIER_URI, $supplier->uuid()->toString())
+            \sprintf(self::RENAME_SUPPLIER_URI, $supplier->_real()->uuid())
         );
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains(
             'h1',
-            $translator->trans('admin.supplier.rename.titlePage', ['%supplierName%' => $supplier->name()->toString()])
+            $translator->trans('admin.supplier.rename.titlePage', ['%supplierName%' => $supplier->_real()->name()])
         );
 
         $form = $crawler->selectButton($translator->trans('admin.supplier.rename.button'))->form([
@@ -88,35 +88,29 @@ final class RenameSupplierControllerTest extends BaseFunctionalTestCase
     public function testRenameSupplierFailWithAlreadyExistsException(): void
     {
         // Arrange
-        /** @var SupplierRepository $supplierRepository */
-        $supplierRepository = self::getContainer()->get(SupplierRepository::class);
-
-        /** @var FamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
-
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
-        $familyLogRepository->save($familyLog);
-        $supplier1 = (new SupplierDataBuilder())->create('Supplier 1', $familyLog)->build();
-        $supplier2 = (new SupplierDataBuilder())->create('Supplier new', $familyLog)
-            ->withUuid('eca51cd2-4189-4a55-be7e-a6928cf1b5a8')
-            ->build()
-        ;
-        $supplierRepository->save($supplier1);
-        $supplierRepository->save($supplier2);
+        $familyLog = FamilyLogFactory::createOne(['label' => 'Surgelé']);
+        $supplier1 = SupplierFactory::createOne([
+            'name' => 'Supplier 1',
+            'familyLog' => $familyLog->_real(),
+        ]);
+        SupplierFactory::createOne([
+            'name' => 'Supplier new',
+            'familyLog' => $familyLog->_real(),
+        ]);
 
         // Act
         $crawler = $this->client->request(
             Request::METHOD_GET,
-            \sprintf(self::RENAME_SUPPLIER_URI, $supplier1->uuid()->toString())
+            \sprintf(self::RENAME_SUPPLIER_URI, $supplier1->_real()->uuid())
         );
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains(
             'h1',
-            $translator->trans('admin.supplier.rename.titlePage', ['%supplierName%' => $supplier1->name()->toString()])
+            $translator->trans('admin.supplier.rename.titlePage', ['%supplierName%' => $supplier1->_real()->name()])
         );
 
         $form = $crawler->selectButton($translator->trans('admin.supplier.rename.button'))->form([
@@ -143,13 +137,11 @@ final class RenameSupplierControllerTest extends BaseFunctionalTestCase
         /** @var SupplierRepository $supplierRepository */
         $supplierRepository = self::getContainer()->get(SupplierRepository::class);
 
-        /** @var FamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
-
-        $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
-        $familyLogRepository->save($familyLog);
-        $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLog)->build();
-        $supplierRepository->save($supplier);
+        $familyLog = FamilyLogFactory::createOne(['label' => 'Surgelé']);
+        SupplierFactory::createOne([
+            'name' => 'Supplier 1',
+            'familyLog' => $familyLog->_real(),
+        ]);
         $suppliers = $supplierRepository->findAllSuppliers();
         self::assertCount(1, $suppliers);
 
