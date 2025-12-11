@@ -18,7 +18,7 @@ use Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\GetZoneStorages\Get
 use Admin\Adapters\Form\Type\ZoneStorage\ZoneStorageType;
 use Admin\Adapters\Gateway\ConfigurationService;
 use Admin\Entities\Exception\FamilyLog\NoFamilyLogRegisteredException;
-use Admin\Entities\Exception\ZoneStorage\ZoneStorageAlreadyExistsException;
+use Admin\Entities\Exception\ZoneStorage\ZoneStorageAlreadyExists;
 use Admin\UseCases\ZoneStorage\CreateZoneStorage\CreateZoneStorage;
 use Ramsey\Uuid\Exception\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -72,7 +72,7 @@ final class CreateZoneStorageController extends AbstractController
                         $zoneStorage->familyLog->toDomain()
                     )
                 );
-            } catch (ZoneStorageAlreadyExistsException $exception) {
+            } catch (ZoneStorageAlreadyExists $exception) {
                 $this->addFlash('error', $exception->getMessage());
 
                 return $this->redirectToRoute(GetZoneStoragesController::ROUTE_NAME);

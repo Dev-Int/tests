@@ -11,8 +11,10 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\UseCases\Gateway;
+namespace Admin\Entities\Repository;
 
+use Admin\Entities\Exception\ZoneStorage\NoZoneStorageRegistered;
+use Admin\Entities\Exception\ZoneStorage\ZoneStorageNotFound;
 use Admin\Entities\ZoneStorage\ZoneStorage;
 use Admin\Entities\ZoneStorage\ZoneStorageCollection;
 
@@ -24,11 +26,23 @@ interface ZoneStorageRepository
 
     public function save(ZoneStorage $zoneStorage): void;
 
+    /**
+     * @throws ZoneStorageNotFound
+     */
     public function changeLabel(ZoneStorage $zoneStorage): void;
 
+    /**
+     * @throws ZoneStorageNotFound
+     */
     public function changeFamilyLog(ZoneStorage $zoneStorage): void;
 
-    public function findAllZones(): ZoneStorageCollection;
+    /**
+     * @throws NoZoneStorageRegistered
+     */
+    public function getAllZones(): ZoneStorageCollection;
 
-    public function findBySlug(string $slug): ZoneStorage;
+    /**
+     * @throws ZoneStorageNotFound
+     */
+    public function getBySlug(string $slug): ZoneStorage;
 }

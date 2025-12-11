@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\ZoneStorage\GetZoneStorages;
 
-use Admin\UseCases\Gateway\ZoneStorageRepository;
+use Admin\Entities\Repository\ZoneStorageRepository;
 
 final readonly class GetZoneStorages
 {
@@ -23,7 +23,7 @@ final readonly class GetZoneStorages
 
     public function execute(): GetZoneStoragesResponse
     {
-        $zoneStorages = $this->repository->findAllZones();
+        $zoneStorages = $this->repository->getAllZones();
 
         return new GetZoneStoragesResponse($zoneStorages);
     }

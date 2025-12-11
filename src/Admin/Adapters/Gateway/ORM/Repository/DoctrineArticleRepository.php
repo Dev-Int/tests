@@ -29,7 +29,7 @@ use Admin\Entities\Exception\FamilyLog\FamilyLogNotFoundException;
 use Admin\Entities\Exception\Supplier\SupplierNotFoundException;
 use Admin\Entities\Exception\Tax\TaxNotFound;
 use Admin\Entities\Exception\Unit\UnitNotFound;
-use Admin\Entities\Exception\ZoneStorage\ZoneStorageNotFoundException;
+use Admin\Entities\Exception\ZoneStorage\ZoneStorageNotFound;
 use Admin\Entities\Unit\Unit as UnitDomain;
 use Admin\UseCases\Gateway\ArticleRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -119,7 +119,7 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
             $zoneStorageOrm = $this->zoneStorageRepository->find($zoneStorage->uuid()->toString());
             if (!$zoneStorageOrm instanceof ZoneStorage) {
                 // @codeCoverageIgnoreStart
-                throw new ZoneStorageNotFoundException($zoneStorage->slug());
+                throw new ZoneStorageNotFound($zoneStorage->slug());
                 // @codeCoverageIgnoreEnd
             }
             $zoneStorages->add($zoneStorageOrm);
@@ -188,7 +188,7 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
             $zoneStorageOrm = $this->zoneStorageRepository->find($zoneStorage->uuid()->toString());
             if (!$zoneStorageOrm instanceof ZoneStorage) {
                 // @codeCoverageIgnoreStart
-                throw new ZoneStorageNotFoundException($zoneStorage->slug());
+                throw new ZoneStorageNotFound($zoneStorage->slug());
                 // @codeCoverageIgnoreEnd
             }
             $zoneStorages->add($zoneStorageOrm);

@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\ZoneStorage\ChangeZoneStorageFamilyLog;
 
-use Admin\UseCases\Gateway\ZoneStorageRepository;
+use Admin\Entities\Repository\ZoneStorageRepository;
 
 final readonly class ChangeZoneStorageFamilyLog
 {
@@ -23,7 +23,7 @@ final readonly class ChangeZoneStorageFamilyLog
 
     public function execute(ChangeZoneStorageFamilyLogRequest $request): ChangeZoneStorageFamilyLogResponse
     {
-        $zoneStorage = $this->zoneStorageRepository->findBySlug($request->slug());
+        $zoneStorage = $this->zoneStorageRepository->getBySlug($request->slug());
 
         $zoneStorage->changeFamilyLog($request->familyLog());
 
