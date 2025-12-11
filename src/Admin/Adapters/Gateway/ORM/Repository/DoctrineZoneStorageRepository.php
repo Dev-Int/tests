@@ -15,7 +15,7 @@ namespace Admin\Adapters\Gateway\ORM\Repository;
 
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
-use Admin\Entities\Exception\FamilyLog\FamilyLogNotFoundException;
+use Admin\Entities\Exception\FamilyLog\FamilyLogNotFound;
 use Admin\Entities\Exception\ZoneStorage\NoZoneStorageRegistered;
 use Admin\Entities\Exception\ZoneStorage\ZoneStorageNotFound;
 use Admin\Entities\Repository\ZoneStorageRepository;
@@ -86,7 +86,7 @@ final class DoctrineZoneStorageRepository extends ServiceEntityRepository implem
 
         if (!$familyLog instanceof FamilyLog) {
             // @codeCoverageIgnoreStart
-            throw new FamilyLogNotFoundException($zoneStorage->familyLog()->uuid()->toString());
+            throw new FamilyLogNotFound($zoneStorage->familyLog()->uuid()->toString());
             // @codeCoverageIgnoreEnd
         }
 
@@ -119,7 +119,7 @@ final class DoctrineZoneStorageRepository extends ServiceEntityRepository implem
 
         if (!$familyLog instanceof FamilyLog) {
             // @codeCoverageIgnoreStart
-            throw new FamilyLogNotFoundException($zoneStorage->familyLog()->uuid()->toString());
+            throw new FamilyLogNotFound($zoneStorage->familyLog()->uuid()->toString());
             // @codeCoverageIgnoreEnd
         }
 

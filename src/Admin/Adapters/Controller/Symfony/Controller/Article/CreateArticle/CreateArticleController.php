@@ -20,10 +20,10 @@ use Admin\Adapters\Gateway\ConfigurationService;
 use Admin\Adapters\Gateway\ORM\Entity\ReadModel\Packaging;
 use Admin\Adapters\Gateway\ORM\Entity\Unit;
 use Admin\Entities\Exception\Supplier\NoSupplierRegisteredException;
+use Admin\Entities\Repository\FamilyLogRepository;
 use Admin\Entities\Repository\ZoneStorageRepository;
 use Admin\Entities\Unit\Unit as UnitDomain;
 use Admin\UseCases\Article\CreateArticle\CreateArticle;
-use Admin\UseCases\Gateway\FamilyLogRepository;
 use Admin\UseCases\Gateway\SupplierRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -86,7 +86,7 @@ final class CreateArticleController extends AbstractController
                 throw new \InvalidArgumentException('FamilyLog expected!');
                 // @codeCoverageIgnoreEnd
             }
-            $familyLog = $this->familyLogRepository->findBySlug($article->familyLog->slug());
+            $familyLog = $this->familyLogRepository->getBySlug($article->familyLog->slug());
             $zoneStorages = [];
             foreach ($article->zoneStorages as $zoneStorageOrm) {
                 $zoneStorage = $this->zoneStorageRepository->getBySlug($zoneStorageOrm->slug());

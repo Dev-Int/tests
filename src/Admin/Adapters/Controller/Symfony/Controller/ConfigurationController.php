@@ -15,9 +15,9 @@ namespace Admin\Adapters\Controller\Symfony\Controller;
 
 use Admin\Adapters\Gateway\ConfigurationService;
 use Admin\Entities\Repository\CompanyRepository;
+use Admin\Entities\Repository\FamilyLogRepository;
 use Admin\Entities\Repository\ZoneStorageRepository;
 use Admin\UseCases\Gateway\ArticleRepository;
-use Admin\UseCases\Gateway\FamilyLogRepository;
 use Admin\UseCases\Gateway\SupplierRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;

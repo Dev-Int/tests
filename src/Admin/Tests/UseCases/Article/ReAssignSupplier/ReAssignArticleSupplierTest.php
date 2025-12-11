@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\Article\ReAssignSupplier;
 
-use Admin\Entities\Exception\FamilyLog\BadFamilyLogAssignedException;
+use Admin\Entities\Exception\FamilyLog\BadFamilyLogAssigned;
 use Admin\Entities\FamilyLog\FamilyLog;
 use Admin\Tests\DataBuilder\ArticleDataBuilder;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
@@ -164,8 +164,8 @@ final class ReAssignArticleSupplierTest extends TestCase
         ;
 
         // Act && Assert
-        $this->expectException(BadFamilyLogAssignedException::class);
-        $this->expectExceptionMessage(BadFamilyLogAssignedException::MESSAGE);
+        $this->expectException(BadFamilyLogAssigned::class);
+        $this->expectExceptionMessage(BadFamilyLogAssigned::MESSAGE);
         $useCase->execute($request);
     }
 }

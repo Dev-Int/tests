@@ -17,7 +17,7 @@ use Admin\Adapters\Controller\Symfony\Controller\ConfigurationController;
 use Admin\Adapters\Controller\Symfony\Controller\FamilyLog\GetFamilyLogs\GetFamilyLogsController;
 use Admin\Adapters\Form\Type\FamilyLog\CreateFamilyLogType;
 use Admin\Adapters\Gateway\ConfigurationService;
-use Admin\Entities\Exception\FamilyLog\FamilyLogAlreadyExistsException;
+use Admin\Entities\Exception\FamilyLog\FamilyLogAlreadyExists;
 use Admin\Entities\Exception\Tax\NoTaxRegistered;
 use Admin\UseCases\FamilyLog\CreateFamilyLog\CreateFamilyLog;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -60,7 +60,7 @@ final class CreateFamilyLogController extends AbstractController
 
             try {
                 $this->useCase->execute($familyLog);
-            } catch (FamilyLogAlreadyExistsException $exception) {
+            } catch (FamilyLogAlreadyExists $exception) {
                 $this->addFlash('error', $exception->getMessage());
 
                 return $this->redirectToRoute(GetFamilyLogsController::ROUTE_NAME);

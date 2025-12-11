@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\Adapters\Controller\Symfony\Controller\FamilyLog\GetFamilyLogs;
 
 use Admin\Adapters\Controller\Symfony\Controller\ConfigurationController;
-use Admin\Entities\Exception\FamilyLog\NoFamilyLogRegisteredException;
+use Admin\Entities\Exception\FamilyLog\NoFamilyLogRegistered;
 use Admin\UseCases\FamilyLog\GetFamilyLogs\GetFamilyLogs;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,7 +35,7 @@ final class GetFamilyLogsController extends AbstractController
     {
         try {
             $familyLogs = $this->useCase->execute();
-        } catch (NoFamilyLogRegisteredException $exception) {
+        } catch (NoFamilyLogRegistered $exception) {
             $this->addFlash('error', $exception->getMessage());
 
             return $this->redirectToRoute(ConfigurationController::ROUTE_NAME);

@@ -17,7 +17,7 @@ use Admin\Adapters\Controller\Symfony\Controller\ConfigurationController;
 use Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\GetZoneStorages\GetZoneStoragesController;
 use Admin\Adapters\Form\Type\ZoneStorage\ZoneStorageType;
 use Admin\Adapters\Gateway\ConfigurationService;
-use Admin\Entities\Exception\FamilyLog\NoFamilyLogRegisteredException;
+use Admin\Entities\Exception\FamilyLog\NoFamilyLogRegistered;
 use Admin\Entities\Exception\ZoneStorage\ZoneStorageAlreadyExists;
 use Admin\UseCases\ZoneStorage\CreateZoneStorage\CreateZoneStorage;
 use Ramsey\Uuid\Exception\InvalidArgumentException;
@@ -44,7 +44,7 @@ final class CreateZoneStorageController extends AbstractController
     public function __invoke(Request $request): Response
     {
         if (!$this->configurationService->isFamilyLogConfigured()) {
-            $this->addFlash('error', NoFamilyLogRegisteredException::MESSAGE);
+            $this->addFlash('error', NoFamilyLogRegistered::MESSAGE);
 
             return $this->redirectToRoute(ConfigurationController::ROUTE_NAME);
         }

@@ -25,7 +25,7 @@ use Admin\Entities\Article\ArticleCollection;
 use Admin\Entities\Exception\Article\ArticleNotFoundException;
 use Admin\Entities\Exception\Article\NoArticleRegisteredException;
 use Admin\Entities\Exception\Article\PackagingNotFoundException;
-use Admin\Entities\Exception\FamilyLog\FamilyLogNotFoundException;
+use Admin\Entities\Exception\FamilyLog\FamilyLogNotFound;
 use Admin\Entities\Exception\Supplier\SupplierNotFoundException;
 use Admin\Entities\Exception\Tax\TaxNotFound;
 use Admin\Entities\Exception\Unit\UnitNotFound;
@@ -128,7 +128,7 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
 
         if (!$familyLog instanceof FamilyLog) {
             // @codeCoverageIgnoreStart
-            throw new FamilyLogNotFoundException($article->familyLog()->uuid()->toString());
+            throw new FamilyLogNotFound($article->familyLog()->uuid()->toString());
             // @codeCoverageIgnoreEnd
         }
 
@@ -180,7 +180,7 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         $familyLogOrm = $this->familyLogRepository->find($article->familyLog()->uuid()->toString());
         if (!$familyLogOrm instanceof FamilyLog) {
             // @codeCoverageIgnoreStart
-            throw new FamilyLogNotFoundException($article->familyLog()->slug());
+            throw new FamilyLogNotFound($article->familyLog()->slug());
             // @codeCoverageIgnoreEnd
         }
         $zoneStorages = new ArrayCollection();

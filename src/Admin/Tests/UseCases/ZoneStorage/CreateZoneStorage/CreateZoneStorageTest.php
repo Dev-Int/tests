@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\ZoneStorage\CreateZoneStorage;
 
-use Admin\Entities\Exception\FamilyLog\FamilyLogNotFoundException;
+use Admin\Entities\Exception\FamilyLog\FamilyLogNotFound;
 use Admin\Entities\Exception\ZoneStorage\ZoneStorageAlreadyExists;
 use Admin\Entities\FamilyLog\FamilyLog;
 use Admin\Entities\Repository\ZoneStorageRepository;
@@ -101,12 +101,12 @@ final class CreateZoneStorageTest extends TestCase
         ;
 
         // Act && Assert
-        $this->expectException(FamilyLogNotFoundException::class);
-        $this->expectExceptionMessage(FamilyLogNotFoundException::MESSAGE);
+        $this->expectException(FamilyLogNotFound::class);
+        $this->expectExceptionMessage(FamilyLogNotFound::MESSAGE);
 
         $zoneStorageRepository->expects(self::once())
             ->method('save')
-            ->will(self::throwException(new FamilyLogNotFoundException($familyLog->slug())))
+            ->will(self::throwException(new FamilyLogNotFound($familyLog->slug())))
         ;
 
         $useCase->execute($request);

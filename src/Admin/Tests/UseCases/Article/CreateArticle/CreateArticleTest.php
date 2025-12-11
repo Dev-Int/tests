@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\Tests\UseCases\Article\CreateArticle;
 
 use Admin\Entities\Exception\Article\ArticleAlreadyExistsException;
-use Admin\Entities\Exception\FamilyLog\BadFamilyLogAssignedException;
+use Admin\Entities\Exception\FamilyLog\BadFamilyLogAssigned;
 use Admin\Entities\FamilyLog\FamilyLog;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\SupplierDataBuilder;
@@ -145,8 +145,8 @@ final class CreateArticleTest extends TestCase
         ;
 
         // Act && Assert
-        $this->expectException(BadFamilyLogAssignedException::class);
-        $this->expectExceptionMessage(BadFamilyLogAssignedException::MESSAGE);
+        $this->expectException(BadFamilyLogAssigned::class);
+        $this->expectExceptionMessage(BadFamilyLogAssigned::MESSAGE);
         $useCase->execute($request);
     }
 

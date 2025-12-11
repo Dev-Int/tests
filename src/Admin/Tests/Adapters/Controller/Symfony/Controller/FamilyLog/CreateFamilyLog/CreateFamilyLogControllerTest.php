@@ -13,14 +13,14 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\FamilyLog\CreateFamilyLog;
 
-use Admin\Entities\Exception\FamilyLog\FamilyLogAlreadyExistsException;
+use Admin\Entities\Exception\FamilyLog\FamilyLogAlreadyExists;
 use Admin\Entities\Exception\Tax\NoTaxRegistered;
 use Admin\Entities\FamilyLog\FamilyLog as FamilyLogDomain;
+use Admin\Entities\Repository\FamilyLogRepository;
 use Admin\Tests\Factory\CompanyFactory;
 use Admin\Tests\Factory\FamilyLogFactory;
 use Admin\Tests\Factory\TaxFactory;
 use Admin\Tests\Factory\UnitFactory;
-use Admin\UseCases\Gateway\FamilyLogRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -70,7 +70,7 @@ final class CreateFamilyLogControllerTest extends BaseFunctionalTestCase
         self::assertSame($translator->trans('admin.familyLog.create.success'), $flash);
 
         /** @var FamilyLogDomain $familyCreated */
-        $familyCreated = $familyLogRepository->findBySlug('surgele');
+        $familyCreated = $familyLogRepository->getBySlug('surgele');
         self::assertSame('Surgelé', $familyCreated->label()->toString());
     }
 
@@ -112,7 +112,7 @@ final class CreateFamilyLogControllerTest extends BaseFunctionalTestCase
         self::assertSame($translator->trans('admin.familyLog.create.success'), $flash);
 
         /** @var FamilyLogDomain $familyCreated */
-        $familyCreated = $familyLogRepository->findBySlug('surgele_viande');
+        $familyCreated = $familyLogRepository->getBySlug('surgele_viande');
         self::assertSame('Viande', $familyCreated->label()->toString());
         self::assertSame('surgele_viande', $familyCreated->slug());
         self::assertSame('Surgelé', $familyCreated->parent()?->label()->toString());
@@ -160,7 +160,7 @@ final class CreateFamilyLogControllerTest extends BaseFunctionalTestCase
         self::assertSame($translator->trans('admin.familyLog.create.success'), $flash);
 
         /** @var FamilyLogDomain $familyCreated */
-        $familyCreated = $familyLogRepository->findBySlug('surgele_viande_poulet');
+        $familyCreated = $familyLogRepository->getBySlug('surgele_viande_poulet');
         self::assertSame('Poulet', $familyCreated->label()->toString());
         self::assertSame('surgele_viande_poulet', $familyCreated->slug());
         self::assertSame('Viande', $familyCreated->parent()?->label()->toString());
@@ -196,7 +196,7 @@ final class CreateFamilyLogControllerTest extends BaseFunctionalTestCase
         $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
-        self::assertSame(FamilyLogAlreadyExistsException::MESSAGE, $flash);
+        self::assertSame(FamilyLogAlreadyExists::MESSAGE, $flash);
     }
 
     public function testCreateUnitFailWithNoCompanyRegisteredException(): void

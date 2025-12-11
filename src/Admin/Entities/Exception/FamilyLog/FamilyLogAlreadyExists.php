@@ -16,15 +16,15 @@ namespace Admin\Entities\Exception\FamilyLog;
 use Shared\Entities\Exception\DomainException;
 use Shared\Entities\Exception\ExceptionSerializableTrait;
 
-final class FamilyLogNotFoundException extends DomainException implements \JsonSerializable
+final class FamilyLogAlreadyExists extends DomainException implements \JsonSerializable
 {
     use ExceptionSerializableTrait;
 
-    public const MESSAGE = 'FamilyLog not found.';
+    public const MESSAGE = 'FamilyLog already exists.';
 
-    public function __construct(private readonly string $identifier, ?\Throwable $previous = null)
+    public function __construct(private readonly string $name, ?\Throwable $previous = null)
     {
-        parent::__construct(self::MESSAGE, DomainException::NOT_FOUND_CODE, $previous);
+        parent::__construct(self::MESSAGE, DomainException::BAD_ENTITY_CODE, $previous);
     }
 
     /**
@@ -35,7 +35,7 @@ final class FamilyLogNotFoundException extends DomainException implements \JsonS
     public function jsonSerialize(): iterable
     {
         return $this->toJson() + [
-            'identifier' => $this->identifier,
+            'name' => $this->name,
         ];
     }
 }

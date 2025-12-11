@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Entities\FamilyLog;
 
-use Admin\Entities\Exception\FamilyLog\IsAlreadyChildException;
+use Admin\Entities\Exception\FamilyLog\IsAlreadyChild;
 use Admin\Entities\FamilyLog\FamilyLog;
 use PHPUnit\Framework\TestCase;
 use Shared\Entities\ResourceUuid;
@@ -65,7 +65,7 @@ final class FamilyLogTest extends TestCase
         );
 
         // Act && Assert
-        $this->expectException(IsAlreadyChildException::class);
+        $this->expectException(IsAlreadyChild::class);
         $parent->addChild($fresh);
     }
 
