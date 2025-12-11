@@ -14,51 +14,38 @@ declare(strict_types=1);
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\ZoneStorage\GetZoneStorages;
 
 use Admin\Entities\Exception\ZoneStorage\NoZoneStorageRegisteredException;
-use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
-use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
-use Admin\UseCases\Gateway\FamilyLogRepository;
-use Admin\UseCases\Gateway\ZoneStorageRepository;
+use Admin\Tests\Factory\FamilyLogFactory;
+use Admin\Tests\Factory\ZoneStorageFactory;
 use App\Shared\Tests\BaseFunctionalTestCase;
-use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Zenstruck\Foundry\Test\Factories;
 
 /**
  * @group functionalTest
  */
 final class GetZoneStoragesControllerTest extends BaseFunctionalTestCase
 {
+    use Factories;
+
     private const GET_ZONE_STORAGES_URI = '/admin/zone_storages';
 
     public function testGetZoneStoragesWillSucceed(): void
     {
         // Arrange
-        $faker = Factory::create('fr_FR');
-
-        /** @var ZoneStorageRepository $zoneStorageRepository */
-        $zoneStorageRepository = self::getContainer()->get(ZoneStorageRepository::class);
-
-        /** @var FamilyLogRepository $familyLogRepository */
-        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
-
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $zoneStorageBuilder = new ZoneStorageDataBuilder();
-        $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $familyLogRepository->save($familyLog);
-        $zoneStorage1 = $zoneStorageBuilder->create('Réserve négative', $familyLog)->build();
-        $zoneStorage2 = $zoneStorageBuilder
-            ->create('Réserve positive', $familyLog)
-            ->withUuid($faker->uuid())
-            ->build()
-        ;
-        $zoneStorageRepository->save($zoneStorage1);
-        $zoneStorageRepository->save($zoneStorage2);
+        $familyLog = FamilyLogFactory::createOne(['label' => 'Surgelé']);
+        ZoneStorageFactory::createOne([
+            'label' => 'Réserve négative',
+            'familyLog' => $familyLog->_real(),
+        ]);
+        ZoneStorageFactory::createOne([
+            'label' => 'Réserve positive',
+            'familyLog' => $familyLog->_real(),
+        ]);
 
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::GET_ZONE_STORAGES_URI);
