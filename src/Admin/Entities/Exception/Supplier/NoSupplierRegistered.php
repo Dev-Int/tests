@@ -16,7 +16,7 @@ namespace Admin\Entities\Exception\Supplier;
 use Shared\Entities\Exception\DomainException;
 use Shared\Entities\Exception\ExceptionSerializableTrait;
 
-final class NoSupplierRegisteredException extends DomainException implements \JsonSerializable
+final class NoSupplierRegistered extends DomainException implements \JsonSerializable
 {
     use ExceptionSerializableTrait;
 

@@ -14,10 +14,10 @@ declare(strict_types=1);
 namespace Admin\Tests\UseCases\Supplier\RenameSupplier;
 
 use Admin\Entities\Exception\Supplier\SupplierAlreadyExists;
-use Admin\Entities\Exception\Supplier\SupplierNotFoundException;
+use Admin\Entities\Exception\Supplier\SupplierNotFound;
+use Admin\Entities\Repository\SupplierRepository;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\SupplierDataBuilder;
-use Admin\UseCases\Gateway\SupplierRepository;
 use Admin\UseCases\Supplier\RenameSupplier\RenameSupplier;
 use Admin\UseCases\Supplier\RenameSupplier\RenameSupplierRequest;
 use PHPUnit\Framework\TestCase;
@@ -46,7 +46,7 @@ final class RenameSupplierTest extends TestCase
         ;
 
         $supplierRepository->expects(self::once())
-            ->method('findBySlug')
+            ->method('getBySlug')
             ->with('supplier-1')
             ->willReturn($supplier)
         ;
@@ -83,7 +83,7 @@ final class RenameSupplierTest extends TestCase
         ;
 
         $supplierRepository->expects(self::never())
-            ->method('findBySlug')
+            ->method('getBySlug')
         ;
 
         $supplierRepository->expects(self::never())
@@ -114,9 +114,9 @@ final class RenameSupplierTest extends TestCase
         ;
 
         $supplierRepository->expects(self::once())
-            ->method('findBySlug')
+            ->method('getBySlug')
             ->with('supplier-1')
-            ->will(self::throwException(new SupplierNotFoundException('supplier-1')))
+            ->will(self::throwException(new SupplierNotFound('supplier-1')))
         ;
 
         $supplierRepository->expects(self::never())
@@ -124,8 +124,8 @@ final class RenameSupplierTest extends TestCase
         ;
 
         // Act && Assert
-        $this->expectException(SupplierNotFoundException::class);
-        $this->expectExceptionMessage(SupplierNotFoundException::MESSAGE);
+        $this->expectException(SupplierNotFound::class);
+        $this->expectExceptionMessage(SupplierNotFound::MESSAGE);
         $useCase->execute($request);
     }
 }

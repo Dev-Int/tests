@@ -13,10 +13,10 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Supplier\ChangeDomiciliationSupplier;
 
+use Admin\Entities\Repository\SupplierRepository;
 use Admin\Entities\Supplier\Supplier as SupplierDomain;
 use Admin\Tests\Factory\FamilyLogFactory;
 use Admin\Tests\Factory\SupplierFactory;
-use Admin\UseCases\Gateway\SupplierRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,7 +47,7 @@ final class ChangeDomiciliationSupplierControllerTest extends BaseFunctionalTest
             'name' => 'Supplier 1',
             'familyLog' => $familyLog->_real(),
         ]);
-        $suppliers = $supplierRepository->findAllSuppliers();
+        $suppliers = $supplierRepository->getAllSuppliers();
         self::assertCount(1, $suppliers);
 
         // Act
@@ -86,10 +86,10 @@ final class ChangeDomiciliationSupplierControllerTest extends BaseFunctionalTest
         self::assertEquals($translator->trans('admin.supplier.changeDomiciliation.success'), $flash);
 
         /** @var SupplierDomain $supplierUpdated */
-        $supplierUpdated = $supplierRepository->findBySlug('supplier-1');
+        $supplierUpdated = $supplierRepository->getBySlug('supplier-1');
         self::assertSame('Supplier 1', $supplierUpdated->name()->toString());
         self::assertSame("5, rue des Fleurs\n45000 Orléans, France", $supplierUpdated->address()->getFullAddress());
-        $suppliers = $supplierRepository->findAllSuppliers();
+        $suppliers = $supplierRepository->getAllSuppliers();
         self::assertCount(1, $suppliers->toArray());
     }
 
@@ -106,7 +106,7 @@ final class ChangeDomiciliationSupplierControllerTest extends BaseFunctionalTest
             'name' => 'Supplier 1',
             'familyLog' => $familyLog->_real(),
         ]);
-        $suppliers = $supplierRepository->findAllSuppliers();
+        $suppliers = $supplierRepository->getAllSuppliers();
         self::assertCount(1, $suppliers);
 
         // Act
