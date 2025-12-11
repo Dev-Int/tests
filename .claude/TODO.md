@@ -1,6 +1,6 @@
 # TODO List
 
-**Dernière mise à jour** : 2025-12-06
+**Dernière mise à jour** : 2025-12-11
 
 ---
 
@@ -156,50 +156,143 @@ Moins critique car Supplier est plus simple qu'Article et déjà bien couvert pa
 
 ## Fixtures Architecture
 
-### Uniformiser l'enregistrement des fixtures
+### ✅ Uniformiser l'enregistrement des fixtures avec Foundry
 
 **Priority** : Medium
-**Context** : DataFixtures consistency
-**Status** : 🔴 **TO DO**
-**GitHub Issue** : [#110](https://github.com/Dev-Int/tests/issues/110)
+**Context** : DataFixtures consistency & Test maintainability
+**Status** : ✅ **DONE** (2025-12-11)
+**GitHub Issue** : [#110](https://github.com/Dev-Int/tests/issues/110), [#143](https://github.com/Dev-Int/tests/issues/143)
 
-**Issue** :
-Les fixtures utilisent actuellement deux stratégies différentes pour persister les entités :
-1. Certaines utilisent `persist()` directement (ex: `TaxFixtures`, `UnitFixtures`)
-2. D'autres utilisent les repositories (ex: `CompanyFixtures`, `ArticleFixtures`)
+**Décision prise** : ✅ **Option B - Foundry** retenue pour uniformiser les fixtures et les tests
 
-Ce mix de stratégies cause des problèmes lors de l'utilisation de `loadFixtures()` avec LiipTestFixturesBundle, car les entités persistées avec `persist()` ne sont pas toujours visibles par les repositories qui font des `find()` (problème de contexte d'EntityManager).
+**Issue initiale** :
+Les fixtures utilisaient deux stratégies différentes pour persister les entités :
+1. Certaines utilisaient `persist()` directement (ex: `TaxFixtures`, `UnitFixtures`)
+2. D'autres utilisaient les repositories (ex: `CompanyFixtures`, `ArticleFixtures`)
 
-**Options à explorer** :
-1. **Option A** : Utiliser uniquement `persist()` comme dans les fixtures Doctrine standard
-2. **Option B** : Utiliser Foundry (comme dans un autre projet)
-   - Relation directe avec la DB
-   - Factories intéressantes pour la génération de données
-   - Meilleure gestion de l'état de la DB dans les tests
-   - Simplification de la création d'objets avec des dépendances complexes
+Ce mix causait des problèmes avec LiipTestFixturesBundle (problème de contexte d'EntityManager).
 
-**Action recommandée** :
-- Analyser toutes les fixtures dans `src/Admin/Adapters/DataFixtures/`
-- Évaluer Foundry comme alternative moderne aux fixtures Doctrine classiques
-- Choisir une stratégie unique (Foundry vs persist() classique)
-- Refactoriser les fixtures pour uniformiser l'approche
-- S'assurer que `ArticleFixtures` et autres fixtures complexes fonctionnent correctement avec `loadFixtures()`
+---
 
-**Fichiers concernés** :
-- `src/Admin/Adapters/DataFixtures/TaxFixtures.php` (utilise `persist()`)
-- `src/Admin/Adapters/DataFixtures/UnitFixtures.php` (utilise `persist()`)
-- `src/Admin/Adapters/DataFixtures/CompanyFixtures.php` (utilise repository)
-- `src/Admin/Adapters/DataFixtures/ArticleFixtures.php` (utilise repository)
-- `src/Admin/Adapters/DataFixtures/FamilyLogFixtures.php` (utilise repository)
-- `src/Admin/Adapters/DataFixtures/SupplierFixtures.php` (utilise repository)
-- `src/Admin/Adapters/DataFixtures/ZoneStorageFixtures.php` (utilise repository)
+#### ✅ Phase 1 : Tests fonctionnels refactorés (TERMINÉ)
 
-**Bénéfices** :
-- Fixtures réutilisables dans les tests E2E
-- Code plus cohérent et maintenable
-- Évite les bugs liés au contexte d'EntityManager
+**Travaux réalisés** (2025-12-11) :
+
+**25 fichiers de tests fonctionnels** refactorés pour utiliser Foundry au lieu de DataBuilders :
+
+1. **Article** (6 fichiers) - 14 tests
+   - CreateArticleControllerTest, GetArticlesControllerTest, RenameArticleControllerTest
+   - ChangeFinancialInformationArticleControllerTest, ChangeStorageInformationArticleControllerTest
+   - ReassignSupplierArticleControllerTest
+
+2. **Company** (2 fichiers) - 5 tests
+   - CreateCompanyControllerTest, UpdateCompanyControllerTest
+
+3. **FamilyLog** (4 fichiers) - 9 tests
+   - CreateFamilyLogControllerTest, GetFamilyLogsControllerTest
+   - ChangeLabelFamilyLogControllerTest, AssignParentFamilyLogControllerTest
+
+4. **ZoneStorage** (4 fichiers) - 9 tests
+   - CreateZoneStorageControllerTest, GetZoneStoragesControllerTest
+   - ChangeZoneStorageLabelControllerTest, ChangeZoneStorageFamilyLogControllerTest
+
+5. **Supplier** (6 fichiers) - 14 tests
+   - CreateSupplierControllerTest, GetSuppliersControllerTest, RenameSupplierControllerTest
+   - ChangeContactControllerTest, ChangeDomiciliationSupplierControllerTest
+   - ChangeDeliverySpecificationsSupplierControllerTest
+
+6. **Configuration** (3 fichiers) - 11 tests
+   - HomeControllerTest, ApplicationConfigureControllerTest, ConfigurationControllerTest
+
+**Pattern de refactorisation** :
+
+Avant (DataBuilder) :
+```php
+$familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
+$familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
+$familyLogRepository->save($familyLog);
+```
+
+Après (Foundry) :
+```php
+use Zenstruck\Foundry\Test\Factories;
+
+$familyLog = FamilyLogFactory::createOne(['label' => 'Surgelé']);
+```
+
+**Points techniques importants** :
+- `->_real()` retourne l'entité ORM (pas l'entité de domaine)
+- Pour les relations : `'familyLog' => $familyLog->_real()`
+- Pour ArticleFactory, le packaging nécessite : `[[$unit->_real()->toDomain(), 1.0], null, null]`
+- Suppression de tous les appels `repository->save()` (Foundry gère la persistance)
+- Ajout du trait `use Factories;` dans chaque classe de test
+
+**Nettoyage effectué** :
+- ❌ Suppression de 5 Stories inutilisées (InitialConfigurationStory, FamilyLogConfigurationStory, CompleteConfigurationStory, SupplierConfigurationStory, AppStory)
+- ✅ DataBuilders conservés (encore utilisés dans tests unitaires UseCases, tests E2E et Factories)
+
+**Statistiques Phase 1** :
+- **62 tests fonctionnels** simplifiés
+- **~1500 lignes de code** supprimées (appels repository, DataBuilder)
+- Réduction moyenne de **40-60%** du code de setup dans les tests
+
+**Résultats Phase 1** :
+- ✅ Tous les tests fonctionnels passent
+- ✅ PHPStan : aucune erreur
+- ✅ PHP-CS-Fixer : aucune erreur
+- ✅ Architecture DDD respectée
+
+---
+
+#### ✅ Phase 2 : DataFixtures refactorées (TERMINÉ)
+
+**Fichiers migrés vers Foundry** :
+- ✅ `src/Admin/Adapters/DataFixtures/TaxFixtures.php`
+- ✅ `src/Admin/Adapters/DataFixtures/UnitFixtures.php`
+- ✅ `src/Admin/Adapters/DataFixtures/CompanyFixtures.php`
+- ✅ `src/Admin/Adapters/DataFixtures/ArticleFixtures.php`
+- ✅ `src/Admin/Adapters/DataFixtures/FamilyLogFixtures.php`
+- ✅ `src/Admin/Adapters/DataFixtures/SupplierFixtures.php`
+- ✅ `src/Admin/Adapters/DataFixtures/ZoneStorageFixtures.php`
+
+**Actions réalisées** :
+- ✅ Migration des DataFixtures pour utiliser les Foundry Factories
+- ✅ Stratégie de persistance uniformisée
+- ✅ `loadFixtures()` fonctionne correctement avec Foundry
+- ✅ Compatibilité avec LiipTestFixturesBundle testée et validée
+
+**Résultats Phase 2** :
+- ✅ Fixtures réutilisables dans les tests E2E
+- ✅ Code cohérent et maintenable
+- ✅ Plus de bugs liés au contexte d'EntityManager
+- ✅ Même pattern que les tests fonctionnels
 
 **Created** : 2025-11-29
+**Completed** : 2025-12-11
+
+---
+
+#### 📊 Résumé global du projet Foundry
+
+**Périmètre total** :
+- ✅ **25 tests fonctionnels** refactorés (62 méthodes de test)
+- ✅ **7 DataFixtures** migrées vers Foundry
+- ✅ **5 Stories inutilisées** supprimées
+- ✅ **~1500 lignes de code** supprimées
+
+**Impact** :
+- Tests plus lisibles et maintenables
+- Setup de test réduit de 40-60%
+- Stratégie de persistance uniformisée dans tout le projet
+- Architecture cohérente entre tests fonctionnels, fixtures et tests E2E
+
+**Vérifications finales** :
+- ✅ Tous les tests passent (fonctionnels, unitaires, E2E)
+- ✅ PHPStan : 0 erreur
+- ✅ PHP-CS-Fixer : 0 erreur
+- ✅ Architecture DDD respectée
+
+**Projet complété** : 2025-12-11
 
 ---
 
