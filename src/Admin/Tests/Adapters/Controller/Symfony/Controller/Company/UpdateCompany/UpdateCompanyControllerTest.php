@@ -13,18 +13,21 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Company\UpdateCompany;
 
-use Admin\Tests\DataBuilder\CompanyDataBuilder;
+use Admin\Tests\Factory\CompanyFactory;
 use Admin\UseCases\Gateway\CompanyRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Zenstruck\Foundry\Test\Factories;
 
 /**
  * @group functionalTest
  */
 final class UpdateCompanyControllerTest extends BaseFunctionalTestCase
 {
+    use Factories;
+
     private const UPDATE_COMPANY_URI = '/admin/company/%s/update';
 
     public function testUpdateCompanyControllerWillSucceed(): void
@@ -36,8 +39,12 @@ final class UpdateCompanyControllerTest extends BaseFunctionalTestCase
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $company = (new CompanyDataBuilder())->create('Dev-Int Création')->build();
-        $companyRepository->save($company);
+        $company = CompanyFactory::createOne([
+            'name' => 'Dev-Int Création',
+            'address' => '5, rue des Plantes',
+            'postalCode' => '75000',
+            'city' => 'Paris',
+        ]);
 
         $companyCreated = $companyRepository->findByName('Dev-Int Création');
         self::assertSame('5, rue des Plantes', $companyCreated->address()->address());
@@ -80,10 +87,7 @@ final class UpdateCompanyControllerTest extends BaseFunctionalTestCase
     public function testUpdateCompanyControllerWillFailWithCompanyNotFound(): void
     {
         // Arrange
-        /** @var CompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(CompanyRepository::class);
-        $company = (new CompanyDataBuilder())->create('Dev-Int Création')->build();
-        $companyRepository->save($company);
+        CompanyFactory::createOne(['name' => 'Dev-Int Création']);
 
         // Act
         $this->client->request(

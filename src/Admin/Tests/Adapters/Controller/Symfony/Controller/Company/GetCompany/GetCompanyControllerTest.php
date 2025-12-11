@@ -14,31 +14,29 @@ declare(strict_types=1);
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Company\GetCompany;
 
 use Admin\Entities\Exception\Company\NoCompanyRegisteredException;
-use Admin\Tests\DataBuilder\CompanyDataBuilder;
-use Admin\UseCases\Gateway\CompanyRepository;
+use Admin\Tests\Factory\CompanyFactory;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Zenstruck\Foundry\Test\Factories;
 
 /**
  * @group functionalTest
  */
 final class GetCompanyControllerTest extends BaseFunctionalTestCase
 {
+    use Factories;
+
     private const GET_COMPANY_URI = '/admin/company';
 
     public function testGetCompanyWillSucceed(): void
     {
         // Arrange
-        /** @var CompanyRepository $companyRepository */
-        $companyRepository = self::getContainer()->get(CompanyRepository::class);
-
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        $company = (new CompanyDataBuilder())->create('Test Company')->build();
-        $companyRepository->save($company);
+        CompanyFactory::createOne(['name' => 'Test Company']);
 
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::GET_COMPANY_URI);
