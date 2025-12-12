@@ -13,10 +13,10 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\ZoneStorage\ChangeZoneStorageFamilyLog;
 
-use Admin\Entities\Exception\FamilyLog\FamilyLogNotFoundException;
+use Admin\Entities\Exception\FamilyLog\FamilyLogNotFound;
+use Admin\Entities\Repository\ZoneStorageRepository;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
-use Admin\UseCases\Gateway\ZoneStorageRepository;
 use Admin\UseCases\ZoneStorage\ChangeZoneStorageFamilyLog\ChangeZoneStorageFamilyLog;
 use Admin\UseCases\ZoneStorage\ChangeZoneStorageFamilyLog\ChangeZoneStorageFamilyLogRequest;
 use PHPUnit\Framework\TestCase;
@@ -43,7 +43,7 @@ final class ChangeZoneStorageFamilyLogTest extends TestCase
         $request->expects(self::once())->method('familyLog')->willReturn($familyLog2);
 
         $zoneStorageRepository->expects(self::once())
-            ->method('findBySlug')
+            ->method('getBySlug')
             ->with('reserve-negative')
             ->willReturn($zoneStorage)
         ;
@@ -79,18 +79,18 @@ final class ChangeZoneStorageFamilyLogTest extends TestCase
         $request->expects(self::once())->method('familyLog')->willReturn($familyLog2);
 
         $zoneStorageRepository->expects(self::once())
-            ->method('findBySlug')
+            ->method('getBySlug')
             ->with('reserve-negative')
             ->willReturn($zoneStorage)
         ;
 
         // Act && Assert
-        $this->expectException(FamilyLogNotFoundException::class);
+        $this->expectException(FamilyLogNotFound::class);
 
         $zoneStorageRepository->expects(self::once())
             ->method('changeFamilyLog')
             ->with($zoneStorage)
-            ->will(self::throwException(new FamilyLogNotFoundException($familyLog2->slug())))
+            ->will(self::throwException(new FamilyLogNotFound($familyLog2->slug())))
         ;
         $useCase->execute($request);
     }

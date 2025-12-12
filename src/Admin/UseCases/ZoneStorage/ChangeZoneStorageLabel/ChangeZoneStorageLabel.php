@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\ZoneStorage\ChangeZoneStorageLabel;
 
-use Admin\Entities\Exception\ZoneStorage\ZoneStorageAlreadyExistsException;
-use Admin\UseCases\Gateway\ZoneStorageRepository;
+use Admin\Entities\Exception\ZoneStorage\ZoneStorageAlreadyExists;
+use Admin\Entities\Repository\ZoneStorageRepository;
 use Shared\Entities\VO\NameField;
 
 final readonly class ChangeZoneStorageLabel
@@ -27,9 +27,9 @@ final readonly class ChangeZoneStorageLabel
     {
         $isExists = $this->zoneStorageRepository->exists($request->label());
         if ($isExists) {
-            throw new ZoneStorageAlreadyExistsException($request->label());
+            throw new ZoneStorageAlreadyExists($request->label());
         }
-        $zoneStorage = $this->zoneStorageRepository->findBySlug($request->slug());
+        $zoneStorage = $this->zoneStorageRepository->getBySlug($request->slug());
         $zoneStorage->changeLabel(NameField::fromString($request->label()));
 
         $this->zoneStorageRepository->changeLabel($zoneStorage);

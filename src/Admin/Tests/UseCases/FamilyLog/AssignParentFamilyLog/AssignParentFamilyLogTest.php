@@ -13,12 +13,12 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\FamilyLog\AssignParentFamilyLog;
 
-use Admin\Entities\Exception\FamilyLog\FamilyLogAlreadyExistsException;
-use Admin\Entities\Exception\FamilyLog\FamilyLogNotFoundException;
+use Admin\Entities\Exception\FamilyLog\FamilyLogAlreadyExists;
+use Admin\Entities\Exception\FamilyLog\FamilyLogNotFound;
+use Admin\Entities\Repository\FamilyLogRepository;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\UseCases\FamilyLog\ChangeParentFamilyLog\AssignParentFamilyLog;
 use Admin\UseCases\FamilyLog\ChangeParentFamilyLog\AssignParentFamilyLogRequest;
-use Admin\UseCases\Gateway\FamilyLogRepository;
 use Faker\Factory;
 use PHPUnit\Framework\TestCase;
 use Shared\Entities\ResourceUuid;
@@ -48,7 +48,7 @@ final class AssignParentFamilyLogTest extends TestCase
         $request->expects(self::exactly(2))->method('parent')->willReturn($parent);
 
         $repository->expects(self::once())
-            ->method('findByUuid')
+            ->method('getByUuid')
             ->with(ResourceUuid::fromString(FamilyLogDataBuilder::VALID_UUID))
             ->willReturn($familyLog)
         ;
@@ -94,7 +94,7 @@ final class AssignParentFamilyLogTest extends TestCase
         $request->expects(self::exactly(2))->method('parent')->willReturn($otherParent);
 
         $repository->expects(self::once())
-            ->method('findByUuid')
+            ->method('getByUuid')
             ->with(ResourceUuid::fromString(FamilyLogDataBuilder::VALID_UUID))
             ->willReturn($familyLog)
         ;
@@ -146,7 +146,7 @@ final class AssignParentFamilyLogTest extends TestCase
         $request->expects(self::exactly(2))->method('parent')->willReturn($parent);
 
         $repository->expects(self::once())
-            ->method('findByUuid')
+            ->method('getByUuid')
             ->with(ResourceUuid::fromString(FamilyLogDataBuilder::VALID_UUID))
             ->willReturn($familyLog)
         ;
@@ -210,7 +210,7 @@ final class AssignParentFamilyLogTest extends TestCase
         $request->expects(self::exactly(2))->method('parent')->willReturn($otherParent);
 
         $repository->expects(self::once())
-            ->method('findByUuid')
+            ->method('getByUuid')
             ->with(ResourceUuid::fromString(FamilyLogDataBuilder::VALID_UUID))
             ->willReturn($familyLog)
         ;
@@ -267,7 +267,7 @@ final class AssignParentFamilyLogTest extends TestCase
         $request->expects(self::once())->method('parent')->willReturn($parent);
 
         $repository->expects(self::once())
-            ->method('findByUuid')
+            ->method('getByUuid')
             ->with(ResourceUuid::fromString(FamilyLogDataBuilder::VALID_UUID))
             ->willReturn($familyLog)
         ;
@@ -284,7 +284,7 @@ final class AssignParentFamilyLogTest extends TestCase
         ;
 
         // Act && Assert
-        $this->expectException(FamilyLogAlreadyExistsException::class);
+        $this->expectException(FamilyLogAlreadyExists::class);
 
         $useCase->execute($request);
     }
@@ -306,9 +306,9 @@ final class AssignParentFamilyLogTest extends TestCase
         $request->expects(self::never())->method('parent')->willReturn($parent);
 
         $repository->expects(self::once())
-            ->method('findByUuid')
+            ->method('getByUuid')
             ->with(ResourceUuid::fromString(FamilyLogDataBuilder::VALID_UUID))
-            ->will(self::throwException(new FamilyLogNotFoundException(FamilyLogDataBuilder::VALID_UUID)))
+            ->will(self::throwException(new FamilyLogNotFound(FamilyLogDataBuilder::VALID_UUID)))
         ;
 
         $repository->expects(self::never())
@@ -320,7 +320,7 @@ final class AssignParentFamilyLogTest extends TestCase
         ;
 
         // Act && Assert
-        $this->expectException(FamilyLogNotFoundException::class);
+        $this->expectException(FamilyLogNotFound::class);
 
         $useCase->execute($request);
     }

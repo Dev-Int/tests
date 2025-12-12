@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\ZoneStorage\CreateZoneStorage;
 
-use Admin\Entities\Exception\ZoneStorage\ZoneStorageAlreadyExistsException;
+use Admin\Entities\Exception\ZoneStorage\ZoneStorageAlreadyExists;
+use Admin\Entities\Repository\ZoneStorageRepository;
 use Admin\Entities\ZoneStorage\ZoneStorage;
-use Admin\UseCases\Gateway\ZoneStorageRepository;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
 
@@ -29,7 +29,7 @@ final readonly class CreateZoneStorage
     {
         $isExists = $this->zoneStorageRepository->exists($request->label());
         if ($isExists) {
-            throw new ZoneStorageAlreadyExistsException($request->label());
+            throw new ZoneStorageAlreadyExists($request->label());
         }
 
         $zoneStorage = ZoneStorage::create(

@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\UseCases\Supplier\RenameSupplier;
 
 use Admin\Entities\Exception\Supplier\SupplierAlreadyExists;
-use Admin\UseCases\Gateway\SupplierRepository;
+use Admin\Entities\Repository\SupplierRepository;
 use Shared\Entities\VO\NameField;
 
 final readonly class RenameSupplier
@@ -30,7 +30,7 @@ final readonly class RenameSupplier
             throw new SupplierAlreadyExists($request->name());
         }
 
-        $supplier = $this->supplierRepository->findBySlug($request->slug());
+        $supplier = $this->supplierRepository->getBySlug($request->slug());
 
         $supplier->rename(NameField::fromString($request->name()));
 

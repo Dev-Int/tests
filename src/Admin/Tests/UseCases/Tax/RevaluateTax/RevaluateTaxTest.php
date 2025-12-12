@@ -13,10 +13,10 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\Tax\RevaluateTax;
 
-use Admin\Entities\Exception\Tax\TaxAlreadyExistsException;
-use Admin\Entities\Exception\Tax\TaxNotFoundException;
+use Admin\Entities\Exception\Tax\TaxAlreadyExists;
+use Admin\Entities\Exception\Tax\TaxNotFound;
+use Admin\Entities\Repository\TaxRepository;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
-use Admin\UseCases\Gateway\TaxRepository;
 use Admin\UseCases\Tax\RevaluateTax\RevaluateTax;
 use Admin\UseCases\Tax\RevaluateTax\RevaluateTaxRequest;
 use PHPUnit\Framework\TestCase;
@@ -38,7 +38,7 @@ final class RevaluateTaxTest extends TestCase
         $request->expects(self::once())->method('uuid')->willReturn(TaxDataBuilder::UUID_VALID);
 
         $taxRepository->expects(self::once())
-            ->method('findById')
+            ->method('getById')
             ->with(TaxDataBuilder::UUID_VALID)
             ->willReturn($tax)
         ;
@@ -72,7 +72,7 @@ final class RevaluateTaxTest extends TestCase
         $request->expects(self::once())->method('uuid')->willReturn(TaxDataBuilder::UUID_VALID);
 
         $taxRepository->expects(self::once())
-            ->method('findById')
+            ->method('getById')
             ->with(TaxDataBuilder::UUID_VALID)
             ->willReturn($tax)
         ;
@@ -86,8 +86,8 @@ final class RevaluateTaxTest extends TestCase
         $taxRepository->expects(self::never())->method('revaluate');
 
         // Act && Assert
-        $this->expectException(TaxAlreadyExistsException::class);
-        $this->expectExceptionMessage(TaxAlreadyExistsException::MESSAGE);
+        $this->expectException(TaxAlreadyExists::class);
+        $this->expectExceptionMessage(TaxAlreadyExists::MESSAGE);
         $useCase->execute($request);
     }
 
@@ -102,9 +102,9 @@ final class RevaluateTaxTest extends TestCase
         $request->expects(self::once())->method('uuid')->willReturn(TaxDataBuilder::UUID_VALID);
 
         $taxRepository->expects(self::once())
-            ->method('findById')
+            ->method('getById')
             ->with(TaxDataBuilder::UUID_VALID)
-            ->will(self::throwException(new TaxNotFoundException(TaxDataBuilder::UUID_VALID)))
+            ->will(self::throwException(new TaxNotFound(TaxDataBuilder::UUID_VALID)))
         ;
 
         $taxRepository->expects(self::never())
@@ -114,8 +114,8 @@ final class RevaluateTaxTest extends TestCase
         $taxRepository->expects(self::never())->method('revaluate');
 
         // Act && Assert
-        $this->expectException(TaxNotFoundException::class);
-        $this->expectExceptionMessage(TaxNotFoundException::MESSAGE);
+        $this->expectException(TaxNotFound::class);
+        $this->expectExceptionMessage(TaxNotFound::MESSAGE);
         $useCase->execute($request);
     }
 }

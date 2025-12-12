@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\Adapters\Controller\Symfony\Controller\Company\CreateCompany;
 
 use Admin\Adapters\Form\Type\Company\CompanyType;
-use Admin\Entities\Exception\Company\CompanyAlreadyExistsException;
+use Admin\Entities\Exception\Company\CompanyAlreadyExists;
 use Admin\UseCases\Company\CreateCompany\CreateCompany;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -46,7 +46,7 @@ final class CreateCompanyController extends AbstractController
 
             try {
                 $this->useCase->execute($company);
-            } catch (CompanyAlreadyExistsException $exception) {
+            } catch (CompanyAlreadyExists $exception) {
                 $this->addFlash('error', $exception->getMessage());
 
                 return $this->redirectToRoute('admin_index');

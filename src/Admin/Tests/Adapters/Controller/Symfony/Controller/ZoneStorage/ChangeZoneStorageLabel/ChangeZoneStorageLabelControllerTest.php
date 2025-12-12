@@ -14,10 +14,10 @@ declare(strict_types=1);
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\ZoneStorage\ChangeZoneStorageLabel;
 
 use Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\GetZoneStorages\GetZoneStoragesController;
+use Admin\Entities\Repository\ZoneStorageRepository;
 use Admin\Entities\ZoneStorage\ZoneStorage;
 use Admin\Tests\Factory\FamilyLogFactory;
 use Admin\Tests\Factory\ZoneStorageFactory;
-use Admin\UseCases\Gateway\ZoneStorageRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
@@ -48,7 +48,7 @@ final class ChangeZoneStorageLabelControllerTest extends BaseFunctionalTestCase
             'label' => 'Réserve négative',
             'familyLog' => $familyLog->_real(),
         ]);
-        $zoneStorages = $zoneStorageRepository->findAllZones();
+        $zoneStorages = $zoneStorageRepository->getAllZones();
         self::assertCount(1, $zoneStorages);
 
         // Act
@@ -82,10 +82,10 @@ final class ChangeZoneStorageLabelControllerTest extends BaseFunctionalTestCase
         self::assertSame($translator->trans('admin.zoneStorage.changeLabel.success'), $flash);
 
         /** @var ZoneStorage $zoneStorageUpdated */
-        $zoneStorageUpdated = $zoneStorageRepository->findBySlug('reserve-positive');
+        $zoneStorageUpdated = $zoneStorageRepository->getBySlug('reserve-positive');
         self::assertSame('Réserve positive', $zoneStorageUpdated->label()->toString());
         self::assertEquals('Surgelé', $zoneStorageUpdated->familyLog()->label()->toString());
-        $zoneStorages = $zoneStorageRepository->findAllZones();
+        $zoneStorages = $zoneStorageRepository->getAllZones();
         self::assertCount(1, $zoneStorages);
     }
 
@@ -102,7 +102,7 @@ final class ChangeZoneStorageLabelControllerTest extends BaseFunctionalTestCase
             'label' => 'Réserve négative',
             'familyLog' => $familyLog->_real(),
         ]);
-        $zoneStorages = $zoneStorageRepository->findAllZones();
+        $zoneStorages = $zoneStorageRepository->getAllZones();
         self::assertCount(1, $zoneStorages);
 
         // Act
@@ -134,7 +134,7 @@ final class ChangeZoneStorageLabelControllerTest extends BaseFunctionalTestCase
             'label' => 'Réserve négative',
             'familyLog' => $familyLog->_real(),
         ]);
-        $zoneStorages = $zoneStorageRepository->findAllZones();
+        $zoneStorages = $zoneStorageRepository->getAllZones();
         self::assertCount(1, $zoneStorages);
 
         // Act
@@ -162,11 +162,11 @@ final class ChangeZoneStorageLabelControllerTest extends BaseFunctionalTestCase
         self::assertRouteSame(GetZoneStoragesController::ROUTE_NAME);
 
         /** @var ZoneStorage $zoneStorageAfterCancel */
-        $zoneStorageAfterCancel = $zoneStorageRepository->findBySlug('reserve-negative');
+        $zoneStorageAfterCancel = $zoneStorageRepository->getBySlug('reserve-negative');
         self::assertSame('Réserve négative', $zoneStorageAfterCancel->label()->toString());
         self::assertEquals('Surgelé', $zoneStorageAfterCancel->familyLog()->label()->toString());
 
-        $zoneStorages = $zoneStorageRepository->findAllZones();
+        $zoneStorages = $zoneStorageRepository->getAllZones();
         self::assertCount(1, $zoneStorages);
     }
 }

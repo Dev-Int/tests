@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Entities\Article\VO;
 
-use Admin\Entities\Exception\Unit\InvalidUnitException;
+use Admin\Entities\Exception\Unit\InvalidUnit;
 use Admin\Entities\Unit\Unit;
 
 final class Storage
@@ -66,7 +66,7 @@ final class Storage
     private static function isValidUnit(Unit $unit): Unit
     {
         if (!\in_array(strtolower($unit->label()->toString()), self::UNITS, true)) {
-            throw new InvalidUnitException($unit->label()->toString());
+            throw new InvalidUnit($unit->label()->toString());
         }
 
         return $unit;

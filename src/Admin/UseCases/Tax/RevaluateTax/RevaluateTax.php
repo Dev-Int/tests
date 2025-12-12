@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Tax\RevaluateTax;
 
-use Admin\Entities\Exception\Tax\TaxAlreadyExistsException;
-use Admin\UseCases\Gateway\TaxRepository;
+use Admin\Entities\Exception\Tax\TaxAlreadyExists;
+use Admin\Entities\Repository\TaxRepository;
 
 final readonly class RevaluateTax
 {
@@ -24,11 +24,11 @@ final readonly class RevaluateTax
 
     public function execute(RevaluateTaxRequest $request): RevaluateTaxResponse
     {
-        $tax = $this->taxRepository->findById($request->uuid());
+        $tax = $this->taxRepository->getById($request->uuid());
 
         $isExists = $this->taxRepository->exists($tax->name()->toString(), $request->rate());
         if ($isExists) {
-            throw new TaxAlreadyExistsException($tax->name()->toString(), $request->rate());
+            throw new TaxAlreadyExists($tax->name()->toString(), $request->rate());
         }
 
         $tax->revaluate($request->rate());

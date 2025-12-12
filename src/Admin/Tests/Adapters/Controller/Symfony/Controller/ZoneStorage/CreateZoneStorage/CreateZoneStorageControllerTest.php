@@ -13,15 +13,15 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\ZoneStorage\CreateZoneStorage;
 
-use Admin\Entities\Exception\FamilyLog\NoFamilyLogRegisteredException;
-use Admin\Entities\Exception\ZoneStorage\ZoneStorageAlreadyExistsException;
+use Admin\Entities\Exception\FamilyLog\NoFamilyLogRegistered;
+use Admin\Entities\Exception\ZoneStorage\ZoneStorageAlreadyExists;
+use Admin\Entities\Repository\ZoneStorageRepository;
 use Admin\Entities\ZoneStorage\ZoneStorage;
 use Admin\Tests\Factory\CompanyFactory;
 use Admin\Tests\Factory\FamilyLogFactory;
 use Admin\Tests\Factory\TaxFactory;
 use Admin\Tests\Factory\UnitFactory;
 use Admin\Tests\Factory\ZoneStorageFactory;
-use Admin\UseCases\Gateway\ZoneStorageRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -73,7 +73,7 @@ final class CreateZoneStorageControllerTest extends BaseFunctionalTestCase
         self::assertSame($translator->trans('admin.zoneStorage.create.success'), $flash);
 
         /** @var ZoneStorage $zoneStorageCreated */
-        $zoneStorageCreated = $zoneStorageRepository->findBySlug('reserve-negative');
+        $zoneStorageCreated = $zoneStorageRepository->getBySlug('reserve-negative');
         self::assertSame('Réserve négative', $zoneStorageCreated->label()->toString());
         self::assertEquals('Surgelé', $zoneStorageCreated->familyLog()->label()->toString());
     }
@@ -112,7 +112,7 @@ final class CreateZoneStorageControllerTest extends BaseFunctionalTestCase
         $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
-        self::assertSame(ZoneStorageAlreadyExistsException::MESSAGE, $flash);
+        self::assertSame(ZoneStorageAlreadyExists::MESSAGE, $flash);
     }
 
     public function testCreateZoneStorageFailWithNoFamilyLogRegisteredException(): void
@@ -127,6 +127,6 @@ final class CreateZoneStorageControllerTest extends BaseFunctionalTestCase
         $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
-        self::assertSame(NoFamilyLogRegisteredException::MESSAGE, $flash);
+        self::assertSame(NoFamilyLogRegistered::MESSAGE, $flash);
     }
 }

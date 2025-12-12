@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Article\ChangeStorageInformation;
 
-use Admin\UseCases\Gateway\ArticleRepository;
+use Admin\Entities\Repository\ArticleRepository;
 use Shared\Entities\VO\Packaging;
 
 final readonly class ChangeArticleStorageInformation
@@ -24,7 +24,7 @@ final readonly class ChangeArticleStorageInformation
 
     public function execute(ChangeArticleStorageInformationRequest $request): ChangeArticleStorageInformationResponse
     {
-        $article = $this->articleRepository->findByUuid($request->uuid());
+        $article = $this->articleRepository->getByUuid($request->uuid());
 
         $article->changeStorageInformation(
             Packaging::fromArray($request->packaging()),

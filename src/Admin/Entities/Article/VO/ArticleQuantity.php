@@ -13,14 +13,14 @@ declare(strict_types=1);
 
 namespace Admin\Entities\Article\VO;
 
-use Admin\Entities\Exception\Article\NegativeValueException;
+use Admin\Entities\Exception\Article\NegativeValue;
 
 final readonly class ArticleQuantity
 {
     public static function fromFloat(float $quantity): self
     {
         if ($quantity < 0.0) {
-            throw new NegativeValueException($quantity);
+            throw new NegativeValue($quantity);
         }
 
         return new self((int) (round($quantity, 3) * 1000));

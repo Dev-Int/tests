@@ -13,8 +13,9 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\Article\ReAssignSupplier;
 
-use Admin\Entities\Exception\FamilyLog\BadFamilyLogAssignedException;
+use Admin\Entities\Exception\FamilyLog\BadFamilyLogAssigned;
 use Admin\Entities\FamilyLog\FamilyLog;
+use Admin\Entities\Repository\ArticleRepository;
 use Admin\Tests\DataBuilder\ArticleDataBuilder;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\SupplierDataBuilder;
@@ -23,7 +24,6 @@ use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
 use Admin\UseCases\Article\ReAssignSupplier\ReAssignArticleSupplier;
 use Admin\UseCases\Article\ReAssignSupplier\ReAssignArticleSupplierRequest;
-use Admin\UseCases\Gateway\ArticleRepository;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -79,7 +79,7 @@ final class ReAssignArticleSupplierTest extends TestCase
         $request->expects(self::once())->method('uuid')->willReturn($article->uuid()->toString());
 
         $articleRepository->expects(self::once())
-            ->method('findByUuid')
+            ->method('getByUuid')
             ->with($article->uuid()->toString())
             ->willReturn($article)
         ;
@@ -153,7 +153,7 @@ final class ReAssignArticleSupplierTest extends TestCase
         $request->expects(self::never())->method('uuid')->willReturn($article->uuid()->toString());
 
         $articleRepository->expects(self::never())
-            ->method('findByUuid')
+            ->method('getByUuid')
             ->with($article->uuid()->toString())
             ->willReturn($article)
         ;
@@ -164,8 +164,8 @@ final class ReAssignArticleSupplierTest extends TestCase
         ;
 
         // Act && Assert
-        $this->expectException(BadFamilyLogAssignedException::class);
-        $this->expectExceptionMessage(BadFamilyLogAssignedException::MESSAGE);
+        $this->expectException(BadFamilyLogAssigned::class);
+        $this->expectExceptionMessage(BadFamilyLogAssigned::MESSAGE);
         $useCase->execute($request);
     }
 }

@@ -13,10 +13,10 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\Supplier\ChangeDeliverySpecifications;
 
-use Admin\Entities\Exception\Supplier\SupplierNotFoundException;
+use Admin\Entities\Exception\Supplier\SupplierNotFound;
+use Admin\Entities\Repository\SupplierRepository;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\SupplierDataBuilder;
-use Admin\UseCases\Gateway\SupplierRepository;
 use Admin\UseCases\Supplier\ChangeDeliverySpecifications\ChangeDeliverySpecificationsSupplier;
 use Admin\UseCases\Supplier\ChangeDeliverySpecifications\ChangeDeliverySpecificationsSupplierRequest;
 use PHPUnit\Framework\TestCase;
@@ -41,7 +41,7 @@ final class ChangeDeliverySpecificationsSupplierTest extends TestCase
         $request->expects(self::once())->method('slug')->willReturn('supplier-1');
 
         $supplierRepository->expects(self::once())
-            ->method('findBySlug')
+            ->method('getBySlug')
             ->with('supplier-1')
             ->willReturn($supplier)
         ;
@@ -76,9 +76,9 @@ final class ChangeDeliverySpecificationsSupplierTest extends TestCase
         $request->expects(self::once())->method('slug')->willReturn('supplier-1');
 
         $supplierRepository->expects(self::once())
-            ->method('findBySlug')
+            ->method('getBySlug')
             ->with('supplier-1')
-            ->will(self::throwException(new SupplierNotFoundException($supplier->slug())))
+            ->will(self::throwException(new SupplierNotFound($supplier->slug())))
         ;
 
         $supplierRepository->expects(self::never())
@@ -86,8 +86,8 @@ final class ChangeDeliverySpecificationsSupplierTest extends TestCase
         ;
 
         // Act && Assert
-        $this->expectException(SupplierNotFoundException::class);
-        $this->expectExceptionMessage(SupplierNotFoundException::MESSAGE);
+        $this->expectException(SupplierNotFound::class);
+        $this->expectExceptionMessage(SupplierNotFound::MESSAGE);
         $useCase->execute($request);
     }
 }

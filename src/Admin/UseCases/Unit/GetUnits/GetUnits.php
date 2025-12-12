@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Unit\GetUnits;
 
-use Admin\UseCases\Gateway\UnitRepository;
+use Admin\Entities\Repository\UnitRepository;
 
 final readonly class GetUnits
 {
@@ -23,7 +23,7 @@ final readonly class GetUnits
 
     public function execute(): GetUnitsResponse
     {
-        $units = $this->unitRepository->findAllUnits();
+        $units = $this->unitRepository->getAllUnits();
 
         return new GetUnitsResponse($units);
     }

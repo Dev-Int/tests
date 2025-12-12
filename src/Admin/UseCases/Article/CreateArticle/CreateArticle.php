@@ -14,11 +14,11 @@ declare(strict_types=1);
 namespace Admin\UseCases\Article\CreateArticle;
 
 use Admin\Entities\Article\Article;
-use Admin\Entities\Exception\Article\ArticleAlreadyExistsException;
-use Admin\Entities\Exception\FamilyLog\BadFamilyLogAssignedException;
+use Admin\Entities\Exception\Article\ArticleAlreadyExists;
+use Admin\Entities\Exception\FamilyLog\BadFamilyLogAssigned;
 use Admin\Entities\FamilyLog\FamilyLog;
+use Admin\Entities\Repository\ArticleRepository;
 use Admin\Entities\ZoneStorage\ZoneStorage;
-use Admin\UseCases\Gateway\ArticleRepository;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\Amount;
 use Shared\Entities\VO\NameField;
@@ -34,7 +34,7 @@ final readonly class CreateArticle
     {
         $isExists = $this->articleRepository->isExists($request->name());
         if ($isExists) {
-            throw new ArticleAlreadyExistsException($request->name());
+            throw new ArticleAlreadyExists($request->name());
         }
         $this->checkFamilyLogs(
             $request->supplier()->familyLog(),
@@ -79,7 +79,7 @@ final readonly class CreateArticle
         $check = $supplierFamilyLog->isCompatible($familyLog);
 
         if ($check === false || $checkZoneStorage === false) {
-            throw new BadFamilyLogAssignedException($familyLog->label()->toString());
+            throw new BadFamilyLogAssigned($familyLog->label()->toString());
         }
     }
 }

@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\FamilyLog\GetFamilyLogs;
 
-use Admin\Entities\Exception\FamilyLog\NoFamilyLogRegisteredException;
+use Admin\Entities\Exception\FamilyLog\NoFamilyLogRegistered;
 use Admin\Tests\Factory\FamilyLogFactory;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -66,6 +66,6 @@ final class GetFamilyLogsControllerTest extends BaseFunctionalTestCase
         $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
-        self::assertSame(NoFamilyLogRegisteredException::MESSAGE, $flash);
+        self::assertSame(NoFamilyLogRegistered::MESSAGE, $flash);
     }
 }

@@ -19,12 +19,12 @@ use Admin\Adapters\Form\Type\Article\CreateArticleType;
 use Admin\Adapters\Gateway\ConfigurationService;
 use Admin\Adapters\Gateway\ORM\Entity\ReadModel\Packaging;
 use Admin\Adapters\Gateway\ORM\Entity\Unit;
-use Admin\Entities\Exception\Supplier\NoSupplierRegisteredException;
+use Admin\Entities\Exception\Supplier\NoSupplierRegistered;
+use Admin\Entities\Repository\FamilyLogRepository;
+use Admin\Entities\Repository\SupplierRepository;
+use Admin\Entities\Repository\ZoneStorageRepository;
 use Admin\Entities\Unit\Unit as UnitDomain;
 use Admin\UseCases\Article\CreateArticle\CreateArticle;
-use Admin\UseCases\Gateway\FamilyLogRepository;
-use Admin\UseCases\Gateway\SupplierRepository;
-use Admin\UseCases\Gateway\ZoneStorageRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -51,7 +51,7 @@ final class CreateArticleController extends AbstractController
     public function __invoke(Request $request): Response
     {
         if (!$this->configurationService->isSupplierConfigured()) {
-            $this->addFlash('error', NoSupplierRegisteredException::MESSAGE);
+            $this->addFlash('error', NoSupplierRegistered::MESSAGE);
 
             return $this->redirectToRoute(ConfigurationController::ROUTE_NAME);
         }
@@ -70,7 +70,7 @@ final class CreateArticleController extends AbstractController
                 throw new \InvalidArgumentException('Supplier expected!');
                 // @codeCoverageIgnoreEnd
             }
-            $supplier = $this->supplierRepository->findBySlug($article->supplier->slug());
+            $supplier = $this->supplierRepository->getBySlug($article->supplier->slug());
             if ($article->packaging === null) {
                 // @codeCoverageIgnoreStart
                 throw new \InvalidArgumentException('Array expected!');
@@ -86,10 +86,10 @@ final class CreateArticleController extends AbstractController
                 throw new \InvalidArgumentException('FamilyLog expected!');
                 // @codeCoverageIgnoreEnd
             }
-            $familyLog = $this->familyLogRepository->findBySlug($article->familyLog->slug());
+            $familyLog = $this->familyLogRepository->getBySlug($article->familyLog->slug());
             $zoneStorages = [];
             foreach ($article->zoneStorages as $zoneStorageOrm) {
-                $zoneStorage = $this->zoneStorageRepository->findBySlug($zoneStorageOrm->slug());
+                $zoneStorage = $this->zoneStorageRepository->getBySlug($zoneStorageOrm->slug());
                 $zoneStorages[] = $zoneStorage;
             }
             $packaging = $this->getPackagingDomain($article->packaging);

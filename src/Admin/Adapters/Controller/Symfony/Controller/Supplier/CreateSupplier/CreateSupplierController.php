@@ -18,7 +18,7 @@ use Admin\Adapters\Controller\Symfony\Controller\Supplier\GetSuppliers\GetSuppli
 use Admin\Adapters\Form\Type\Supplier\SupplierType;
 use Admin\Adapters\Gateway\ConfigurationService;
 use Admin\Entities\Exception\Supplier\SupplierAlreadyExists;
-use Admin\Entities\Exception\ZoneStorage\NoZoneStorageRegisteredException;
+use Admin\Entities\Exception\ZoneStorage\NoZoneStorageRegistered;
 use Admin\UseCases\Supplier\CreateSupplier\CreateSupplier;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -43,7 +43,7 @@ final class CreateSupplierController extends AbstractController
     public function __invoke(Request $request): Response
     {
         if (!$this->configurationService->isZoneStorageConfigured()) {
-            $this->addFlash('error', NoZoneStorageRegisteredException::MESSAGE);
+            $this->addFlash('error', NoZoneStorageRegistered::MESSAGE);
 
             return $this->redirectToRoute(ConfigurationController::ROUTE_NAME);
         }

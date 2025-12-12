@@ -13,11 +13,11 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\ZoneStorage\ChangeZoneStorageLabel;
 
-use Admin\Entities\Exception\ZoneStorage\ZoneStorageAlreadyExistsException;
-use Admin\Entities\Exception\ZoneStorage\ZoneStorageNotFoundException;
+use Admin\Entities\Exception\ZoneStorage\ZoneStorageAlreadyExists;
+use Admin\Entities\Exception\ZoneStorage\ZoneStorageNotFound;
+use Admin\Entities\Repository\ZoneStorageRepository;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
-use Admin\UseCases\Gateway\ZoneStorageRepository;
 use Admin\UseCases\ZoneStorage\ChangeZoneStorageLabel\ChangeZoneStorageLabel;
 use Admin\UseCases\ZoneStorage\ChangeZoneStorageLabel\ChangeZoneStorageLabelRequest;
 use PHPUnit\Framework\TestCase;
@@ -48,7 +48,7 @@ final class ChangeZoneStorageLabelTest extends TestCase
         ;
 
         $zoneStorageRepository->expects(self::once())
-            ->method('findBySlug')
+            ->method('getBySlug')
             ->with('reserve-negative')
             ->willReturn($zoneStorage)
         ;
@@ -87,7 +87,7 @@ final class ChangeZoneStorageLabelTest extends TestCase
         ;
 
         $zoneStorageRepository->expects(self::never())
-            ->method('findBySlug')
+            ->method('getBySlug')
         ;
 
         $zoneStorageRepository->expects(self::never())
@@ -96,8 +96,8 @@ final class ChangeZoneStorageLabelTest extends TestCase
         ;
 
         // Act && Assert
-        $this->expectException(ZoneStorageAlreadyExistsException::class);
-        $this->expectExceptionMessage(ZoneStorageAlreadyExistsException::MESSAGE);
+        $this->expectException(ZoneStorageAlreadyExists::class);
+        $this->expectExceptionMessage(ZoneStorageAlreadyExists::MESSAGE);
         $useCase->execute($request);
     }
 
@@ -120,14 +120,14 @@ final class ChangeZoneStorageLabelTest extends TestCase
         ;
 
         $zoneStorageRepository->expects(self::once())
-            ->method('findBySlug')
+            ->method('getBySlug')
             ->with('reserve-negative')
-            ->will(self::throwException(new ZoneStorageNotFoundException($zoneStorage->slug())))
+            ->will(self::throwException(new ZoneStorageNotFound($zoneStorage->slug())))
         ;
 
         // Act && Assert
-        $this->expectException(ZoneStorageNotFoundException::class);
-        $this->expectExceptionMessage(ZoneStorageNotFoundException::MESSAGE);
+        $this->expectException(ZoneStorageNotFound::class);
+        $this->expectExceptionMessage(ZoneStorageNotFound::MESSAGE);
 
         $zoneStorageRepository->expects(self::never())
             ->method('changeLabel')

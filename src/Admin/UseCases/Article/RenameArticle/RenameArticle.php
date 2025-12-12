@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Article\RenameArticle;
 
-use Admin\Entities\Exception\Article\ArticleAlreadyExistsException;
-use Admin\UseCases\Gateway\ArticleRepository;
+use Admin\Entities\Exception\Article\ArticleAlreadyExists;
+use Admin\Entities\Repository\ArticleRepository;
 use Shared\Entities\VO\NameField;
 
 final readonly class RenameArticle
@@ -27,10 +27,10 @@ final readonly class RenameArticle
     {
         $isExists = $this->articleRepository->isExists($request->name());
         if ($isExists) {
-            throw new ArticleAlreadyExistsException($request->name());
+            throw new ArticleAlreadyExists($request->name());
         }
 
-        $article = $this->articleRepository->findByUuid($request->uuid());
+        $article = $this->articleRepository->getByUuid($request->uuid());
 
         $article->rename(NameField::fromString($request->name()));
 

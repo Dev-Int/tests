@@ -22,16 +22,16 @@ use Admin\Adapters\Gateway\ORM\Entity\Unit;
 use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
 use Admin\Entities\Article\Article as ArticleDomain;
 use Admin\Entities\Article\ArticleCollection;
-use Admin\Entities\Exception\Article\ArticleNotFoundException;
-use Admin\Entities\Exception\Article\NoArticleRegisteredException;
-use Admin\Entities\Exception\Article\PackagingNotFoundException;
-use Admin\Entities\Exception\FamilyLog\FamilyLogNotFoundException;
-use Admin\Entities\Exception\Supplier\SupplierNotFoundException;
-use Admin\Entities\Exception\Tax\TaxNotFoundException;
-use Admin\Entities\Exception\Unit\UnitNotFoundException;
-use Admin\Entities\Exception\ZoneStorage\ZoneStorageNotFoundException;
+use Admin\Entities\Exception\Article\ArticleNotFound;
+use Admin\Entities\Exception\Article\NoArticleRegistered;
+use Admin\Entities\Exception\Article\PackagingNotFound;
+use Admin\Entities\Exception\FamilyLog\FamilyLogNotFound;
+use Admin\Entities\Exception\Supplier\SupplierNotFound;
+use Admin\Entities\Exception\Tax\TaxNotFound;
+use Admin\Entities\Exception\Unit\UnitNotFound;
+use Admin\Entities\Exception\ZoneStorage\ZoneStorageNotFound;
+use Admin\Entities\Repository\ArticleRepository;
 use Admin\Entities\Unit\Unit as UnitDomain;
-use Admin\UseCases\Gateway\ArticleRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
@@ -103,14 +103,14 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         $supplier = $this->supplierRepository->find($article->supplier()->uuid()->toString());
         if (!$supplier instanceof Supplier) {
             // @codeCoverageIgnoreStart
-            throw new SupplierNotFoundException($article->supplier()->uuid()->toString());
+            throw new SupplierNotFound($article->supplier()->uuid()->toString());
             // @codeCoverageIgnoreEnd
         }
 
         $tax = $this->taxRepository->find($article->tax()->uuid()->toString());
         if (!$tax instanceof Tax) {
             // @codeCoverageIgnoreStart
-            throw new TaxNotFoundException($article->tax()->uuid()->toString());
+            throw new TaxNotFound($article->tax()->uuid()->toString());
             // @codeCoverageIgnoreEnd
         }
 
@@ -119,7 +119,7 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
             $zoneStorageOrm = $this->zoneStorageRepository->find($zoneStorage->uuid()->toString());
             if (!$zoneStorageOrm instanceof ZoneStorage) {
                 // @codeCoverageIgnoreStart
-                throw new ZoneStorageNotFoundException($zoneStorage->slug());
+                throw new ZoneStorageNotFound($zoneStorage->slug());
                 // @codeCoverageIgnoreEnd
             }
             $zoneStorages->add($zoneStorageOrm);
@@ -128,7 +128,7 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
 
         if (!$familyLog instanceof FamilyLog) {
             // @codeCoverageIgnoreStart
-            throw new FamilyLogNotFoundException($article->familyLog()->uuid()->toString());
+            throw new FamilyLogNotFound($article->familyLog()->uuid()->toString());
             // @codeCoverageIgnoreEnd
         }
 
@@ -152,7 +152,7 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
 
         if (!$articleToUpdate instanceof Article) {
             // @codeCoverageIgnoreStart
-            throw new ArticleNotFoundException($article->uuid()->toString());
+            throw new ArticleNotFound($article->uuid()->toString());
             // @codeCoverageIgnoreEnd
         }
 
@@ -168,19 +168,19 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         $articleToUpdate = $this->find($article->uuid()->toString());
         if (!$articleToUpdate instanceof Article) {
             // @codeCoverageIgnoreStart
-            throw new ArticleNotFoundException($article->name()->toString());
+            throw new ArticleNotFound($article->name()->toString());
             // @codeCoverageIgnoreEnd
         }
         $supplierOrm = $this->supplierRepository->find($article->supplier()->uuid()->toString());
         if (!$supplierOrm instanceof Supplier) {
             // @codeCoverageIgnoreStart
-            throw new SupplierNotFoundException($article->supplier()->slug());
+            throw new SupplierNotFound($article->supplier()->slug());
             // @codeCoverageIgnoreEnd
         }
         $familyLogOrm = $this->familyLogRepository->find($article->familyLog()->uuid()->toString());
         if (!$familyLogOrm instanceof FamilyLog) {
             // @codeCoverageIgnoreStart
-            throw new FamilyLogNotFoundException($article->familyLog()->slug());
+            throw new FamilyLogNotFound($article->familyLog()->slug());
             // @codeCoverageIgnoreEnd
         }
         $zoneStorages = new ArrayCollection();
@@ -188,7 +188,7 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
             $zoneStorageOrm = $this->zoneStorageRepository->find($zoneStorage->uuid()->toString());
             if (!$zoneStorageOrm instanceof ZoneStorage) {
                 // @codeCoverageIgnoreStart
-                throw new ZoneStorageNotFoundException($zoneStorage->slug());
+                throw new ZoneStorageNotFound($zoneStorage->slug());
                 // @codeCoverageIgnoreEnd
             }
             $zoneStorages->add($zoneStorageOrm);
@@ -207,7 +207,7 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         $articleToUpdate = $this->find($article->uuid()->toString());
         if (!$articleToUpdate instanceof Article) {
             // @codeCoverageIgnoreStart
-            throw new ArticleNotFoundException($article->name()->toString());
+            throw new ArticleNotFound($article->name()->toString());
             // @codeCoverageIgnoreEnd
         }
 
@@ -222,14 +222,14 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         $articleToUpdate = $this->find($article->uuid()->toString());
         if (!$articleToUpdate instanceof Article) {
             // @codeCoverageIgnoreStart
-            throw new ArticleNotFoundException($article->name()->toString());
+            throw new ArticleNotFound($article->name()->toString());
             // @codeCoverageIgnoreEnd
         }
 
         $tax = $this->taxRepository->find($article->tax()->uuid()->toString());
         if (!$tax instanceof Tax) {
             // @codeCoverageIgnoreStart
-            throw new TaxNotFoundException($article->tax()->uuid()->toString());
+            throw new TaxNotFound($article->tax()->uuid()->toString());
             // @codeCoverageIgnoreEnd
         }
 
@@ -241,7 +241,7 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         $this->_em->flush();
     }
 
-    public function findAllArticlesPaginated(int $page, int $itemPerPage): ArticleCollection
+    public function getAllArticlesPaginated(int $page, int $itemPerPage): ArticleCollection
     {
         $alias = self::ALIAS;
         $query = $this->createQueryBuilder($alias)
@@ -253,7 +253,7 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
 
         $articles = new Paginator($query, fetchJoinCollection: true);
         if ($articles->count() === 0) {
-            throw new NoArticleRegisteredException();
+            throw new NoArticleRegistered();
         }
 
         $collection = new ArticleCollection($articles->count());
@@ -266,7 +266,7 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         return $collection;
     }
 
-    public function findByUuid(string $uuid): ArticleDomain
+    public function getByUuid(string $uuid): ArticleDomain
     {
         $alias = self::ALIAS;
         $article = $this->createQueryBuilder($alias)
@@ -280,14 +280,14 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
 
         if (!$article instanceof Article) {
             // @codeCoverageIgnoreStart
-            throw new ArticleNotFoundException($uuid);
+            throw new ArticleNotFound($uuid);
             // @codeCoverageIgnoreEnd
         }
 
         return $article->toDomain();
     }
 
-    public function findBySlug(string $slug): ArticleDomain
+    public function getBySlug(string $slug): ArticleDomain
     {
         $alias = self::ALIAS;
         $article = $this->createQueryBuilder($alias)
@@ -300,13 +300,16 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         ;
 
         if (!$article instanceof Article) {
-            throw new ArticleNotFoundException($slug);
+            throw new ArticleNotFound($slug);
         }
 
         return $article->toDomain();
     }
 
-    public function updateArticlePackaging(
+    /**
+     * @throws PackagingNotFound
+     */
+    private function updateArticlePackaging(
         PackagingDomain $packagingDomain,
         Article $articleToUpdate,
     ): Article {
@@ -314,7 +317,7 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         $packagingToUpdate = $this->packagingRepository->find($articleToUpdate->packaging()->id());
         if (!$packagingToUpdate instanceof Packaging) {
             // @codeCoverageIgnoreStart
-            throw new PackagingNotFoundException($articleToUpdate->packaging()->id());
+            throw new PackagingNotFound($articleToUpdate->packaging()->id());
             // @codeCoverageIgnoreEnd
         }
 
@@ -358,6 +361,8 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
      * @param array{UnitDomain, float}|null $package
      *
      * @return array{Unit|null, float|null}
+     *
+     * @throws UnitNotFound
      */
     private function getUnitWithSlug(?array $package): array
     {
@@ -368,7 +373,7 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         $unit = $this->unitRepository->findOneBy(['slug' => $package[0]->slug()]);
         if (!$unit instanceof Unit) {
             // @codeCoverageIgnoreStart
-            throw new UnitNotFoundException($package[0]->slug());
+            throw new UnitNotFound($package[0]->slug());
             // @codeCoverageIgnoreEnd
         }
 

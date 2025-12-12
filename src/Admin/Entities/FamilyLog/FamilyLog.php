@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Entities\FamilyLog;
 
-use Admin\Entities\Exception\FamilyLog\IsAlreadyChildException;
+use Admin\Entities\Exception\FamilyLog\IsAlreadyChild;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
 
@@ -141,7 +141,7 @@ final class FamilyLog
         if ($this->children !== null) {
             foreach ($this->children as $item) {
                 if ($item->slug === $child->slug) {
-                    throw new IsAlreadyChildException($child->slug, $this->slug);
+                    throw new IsAlreadyChild($child->slug, $this->slug);
                 }
             }
         }

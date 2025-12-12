@@ -15,12 +15,12 @@ namespace Admin\Adapters\Gateway\ORM\Repository;
 
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Admin\Adapters\Gateway\ORM\Entity\Supplier;
-use Admin\Entities\Exception\FamilyLog\FamilyLogNotFoundException;
-use Admin\Entities\Exception\Supplier\NoSupplierRegisteredException;
-use Admin\Entities\Exception\Supplier\SupplierNotFoundException;
+use Admin\Entities\Exception\FamilyLog\FamilyLogNotFound;
+use Admin\Entities\Exception\Supplier\NoSupplierRegistered;
+use Admin\Entities\Exception\Supplier\SupplierNotFound;
+use Admin\Entities\Repository\SupplierRepository;
 use Admin\Entities\Supplier\Supplier as SupplierDomain;
 use Admin\Entities\Supplier\SupplierCollection;
-use Admin\UseCases\Gateway\SupplierRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -86,7 +86,7 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
 
         if (!$familyLog instanceof FamilyLog) {
             // @codeCoverageIgnoreStart
-            throw new FamilyLogNotFoundException($supplier->familyLog()->uuid()->toString());
+            throw new FamilyLogNotFound($supplier->familyLog()->uuid()->toString());
             // @codeCoverageIgnoreEnd
         }
 
@@ -100,7 +100,7 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
 
         if (!$supplierToUpdate instanceof Supplier) {
             // @codeCoverageIgnoreStart
-            throw new SupplierNotFoundException($supplier->uuid()->toString());
+            throw new SupplierNotFound($supplier->uuid()->toString());
             // @codeCoverageIgnoreEnd
         }
 
@@ -117,7 +117,7 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
 
         if (!$supplierToUpdate instanceof Supplier) {
             // @codeCoverageIgnoreStart
-            throw new SupplierNotFoundException($supplier->uuid()->toString());
+            throw new SupplierNotFound($supplier->uuid()->toString());
             // @codeCoverageIgnoreEnd
         }
 
@@ -138,7 +138,7 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
 
         if (!$supplierToUpdate instanceof Supplier) {
             // @codeCoverageIgnoreStart
-            throw new SupplierNotFoundException($supplier->uuid()->toString());
+            throw new SupplierNotFound($supplier->uuid()->toString());
             // @codeCoverageIgnoreEnd
         }
 
@@ -155,13 +155,13 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
 
         if (!$supplierToUpdate instanceof Supplier) {
             // @codeCoverageIgnoreStart
-            throw new SupplierNotFoundException($supplier->uuid()->toString());
+            throw new SupplierNotFound($supplier->uuid()->toString());
             // @codeCoverageIgnoreEnd
         }
         $familyLog = $this->familyLogRepository->find($supplier->familyLog()->uuid()->toString());
         if (!$familyLog instanceof FamilyLog) {
             // @codeCoverageIgnoreStart
-            throw new FamilyLogNotFoundException($supplier->familyLog()->uuid()->toString());
+            throw new FamilyLogNotFound($supplier->familyLog()->uuid()->toString());
             // @codeCoverageIgnoreEnd
         }
 
@@ -173,14 +173,14 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
         $this->_em->flush();
     }
 
-    public function findAllSuppliers(): SupplierCollection
+    public function getAllSuppliers(): SupplierCollection
     {
         $suppliers = $this->findAll();
         $collection = new SupplierCollection(\count($suppliers));
 
         if ($suppliers === []) {
             // @codeCoverageIgnoreStart
-            throw new NoSupplierRegisteredException();
+            throw new NoSupplierRegistered();
             // @codeCoverageIgnoreEnd
         }
 
@@ -191,7 +191,7 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
         return $collection;
     }
 
-    public function findAllSuppliersPaginated(int $page, int $itemPerPage): SupplierCollection
+    public function getAllSuppliersPaginated(int $page, int $itemPerPage): SupplierCollection
     {
         $alias = self::ALIAS;
         $query = $this->createQueryBuilder($alias)
@@ -201,7 +201,7 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
 
         $suppliers = new Paginator($query, fetchJoinCollection: true);
         if ($suppliers->count() === 0) {
-            throw new NoSupplierRegisteredException();
+            throw new NoSupplierRegistered();
         }
 
         $collection = new SupplierCollection($suppliers->count());
@@ -217,7 +217,7 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
     /**
      * @throws NonUniqueResultException
      */
-    public function findBySlug(string $slug): SupplierDomain
+    public function getBySlug(string $slug): SupplierDomain
     {
         $alias = self::ALIAS;
         $supplier = $this->createQueryBuilder($alias)
@@ -229,7 +229,7 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
 
         if (!$supplier instanceof Supplier) {
             // @codeCoverageIgnoreStart
-            throw new SupplierNotFoundException($slug);
+            throw new SupplierNotFound($slug);
             // @codeCoverageIgnoreEnd
         }
 

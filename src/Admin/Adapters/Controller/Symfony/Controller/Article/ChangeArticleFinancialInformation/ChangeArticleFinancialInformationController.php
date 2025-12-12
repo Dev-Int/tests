@@ -15,7 +15,7 @@ namespace Admin\Adapters\Controller\Symfony\Controller\Article\ChangeArticleFina
 
 use Admin\Adapters\Form\Type\Article\ChangeFinancialInformationType;
 use Admin\Adapters\Gateway\ORM\Entity\Article\Article;
-use Admin\Entities\Exception\Article\ArticleNotFoundException;
+use Admin\Entities\Exception\Article\ArticleNotFound;
 use Admin\UseCases\Article\ChangeFinancialInformation\ChangeArticleFinancialInformation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -71,7 +71,7 @@ final class ChangeArticleFinancialInformationController extends AbstractControll
                     uuid: $articleToUpdate->uuid
                 ));
                 // @codeCoverageIgnoreStart
-            } catch (ArticleNotFoundException $exception) {
+            } catch (ArticleNotFound $exception) {
                 $this->addFlash('error', $exception->getMessage());
 
                 return $this->render('@admin/articles/change-financial-information.html.twig', [

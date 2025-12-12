@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Company\CreateCompany;
 
-use Admin\Entities\Exception\Company\CompanyAlreadyExistsException;
+use Admin\Entities\Exception\Company\CompanyAlreadyExists;
+use Admin\Entities\Repository\CompanyRepository;
 use Admin\Tests\Factory\CompanyFactory;
-use Admin\UseCases\Gateway\CompanyRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -62,7 +62,7 @@ final class CreateCompanyControllerTest extends BaseFunctionalTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/');
 
-        $companyCreated = $companyRepository->findByName('Dev-Int Création');
+        $companyCreated = $companyRepository->getByName('Dev-Int Création');
         self::assertSame('dev-int-creation', $companyCreated->slug());
 
         // The configuration only begins. The admin page is redirected throw admin configure.
@@ -109,7 +109,7 @@ final class CreateCompanyControllerTest extends BaseFunctionalTestCase
         $admin = $this->client->followRedirect(); // Configure page
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
-        self::assertEquals(CompanyAlreadyExistsException::MESSAGE, $flash);
+        self::assertEquals(CompanyAlreadyExists::MESSAGE, $flash);
     }
 
     public function testCreateCompanyControllerWillThrowBadRequestException(): void

@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Supplier\ChangeContactSupplier;
 
-use Admin\UseCases\Gateway\SupplierRepository;
+use Admin\Entities\Repository\SupplierRepository;
 use Shared\Entities\VO\PhoneField;
 
 final readonly class ChangeContactSupplier
@@ -24,7 +24,7 @@ final readonly class ChangeContactSupplier
 
     public function execute(ChangeContactSupplierRequest $request): ChangeContactSupplierResponse
     {
-        $supplier = $this->supplierRepository->findBySlug($request->slug());
+        $supplier = $this->supplierRepository->getBySlug($request->slug());
 
         $supplier->changeContact($request->contact(), PhoneField::fromString($request->cellphone()));
 

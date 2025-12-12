@@ -13,10 +13,10 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Supplier\ChangeContactSupplier;
 
+use Admin\Entities\Repository\SupplierRepository;
 use Admin\Entities\Supplier\Supplier;
 use Admin\Tests\Factory\FamilyLogFactory;
 use Admin\Tests\Factory\SupplierFactory;
-use Admin\UseCases\Gateway\SupplierRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,7 +47,7 @@ final class ChangeContactControllerTest extends BaseFunctionalTestCase
             'name' => 'Supplier 1',
             'familyLog' => $familyLog->_real(),
         ]);
-        $suppliers = $supplierRepository->findAllSuppliers();
+        $suppliers = $supplierRepository->getAllSuppliers();
         self::assertCount(1, $suppliers);
 
         // Act
@@ -82,7 +82,7 @@ final class ChangeContactControllerTest extends BaseFunctionalTestCase
         self::assertEquals($translator->trans('admin.supplier.changeContact.success'), $flash);
 
         /** @var Supplier $supplierUpdated */
-        $supplierUpdated = $supplierRepository->findBySlug('supplier-1');
+        $supplierUpdated = $supplierRepository->getBySlug('supplier-1');
         self::assertSame('David', $supplierUpdated->contact());
         self::assertSame('+33600000001', $supplierUpdated->cellphone()->toNumber());
     }
@@ -100,7 +100,7 @@ final class ChangeContactControllerTest extends BaseFunctionalTestCase
             'name' => 'Supplier 1',
             'familyLog' => $familyLog->_real(),
         ]);
-        $suppliers = $supplierRepository->findAllSuppliers();
+        $suppliers = $supplierRepository->getAllSuppliers();
         self::assertCount(1, $suppliers);
 
         // Act

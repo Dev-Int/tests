@@ -18,7 +18,7 @@ use Admin\Adapters\Gateway\ORM\Entity\Supplier;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineSupplierRepository;
 use Admin\Entities\Exception\Supplier\SupplierAlreadyExists;
-use Admin\Entities\Exception\ZoneStorage\NoZoneStorageRegisteredException;
+use Admin\Entities\Exception\ZoneStorage\NoZoneStorageRegistered;
 use Admin\Tests\Factory\CompanyFactory;
 use Admin\Tests\Factory\FamilyLogFactory;
 use Admin\Tests\Factory\SupplierFactory;
@@ -200,6 +200,6 @@ final class CreateSupplierControllerTest extends BaseFunctionalTestCase
         $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
-        self::assertEquals(NoZoneStorageRegisteredException::MESSAGE, $flash);
+        self::assertEquals(NoZoneStorageRegistered::MESSAGE, $flash);
     }
 }

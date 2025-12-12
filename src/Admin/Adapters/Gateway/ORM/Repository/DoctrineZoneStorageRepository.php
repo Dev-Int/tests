@@ -15,12 +15,12 @@ namespace Admin\Adapters\Gateway\ORM\Repository;
 
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
-use Admin\Entities\Exception\FamilyLog\FamilyLogNotFoundException;
-use Admin\Entities\Exception\ZoneStorage\NoZoneStorageRegisteredException;
-use Admin\Entities\Exception\ZoneStorage\ZoneStorageNotFoundException;
+use Admin\Entities\Exception\FamilyLog\FamilyLogNotFound;
+use Admin\Entities\Exception\ZoneStorage\NoZoneStorageRegistered;
+use Admin\Entities\Exception\ZoneStorage\ZoneStorageNotFound;
+use Admin\Entities\Repository\ZoneStorageRepository;
 use Admin\Entities\ZoneStorage\ZoneStorage as ZoneStorageDomain;
 use Admin\Entities\ZoneStorage\ZoneStorageCollection;
-use Admin\UseCases\Gateway\ZoneStorageRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -86,7 +86,7 @@ final class DoctrineZoneStorageRepository extends ServiceEntityRepository implem
 
         if (!$familyLog instanceof FamilyLog) {
             // @codeCoverageIgnoreStart
-            throw new FamilyLogNotFoundException($zoneStorage->familyLog()->uuid()->toString());
+            throw new FamilyLogNotFound($zoneStorage->familyLog()->uuid()->toString());
             // @codeCoverageIgnoreEnd
         }
 
@@ -102,7 +102,7 @@ final class DoctrineZoneStorageRepository extends ServiceEntityRepository implem
 
         if (!$zoneStorageToUpdate instanceof ZoneStorage) {
             // @codeCoverageIgnoreStart
-            throw new ZoneStorageNotFoundException($zoneStorage->uuid()->toString());
+            throw new ZoneStorageNotFound($zoneStorage->uuid()->toString());
             // @codeCoverageIgnoreEnd
         }
 
@@ -119,14 +119,14 @@ final class DoctrineZoneStorageRepository extends ServiceEntityRepository implem
 
         if (!$familyLog instanceof FamilyLog) {
             // @codeCoverageIgnoreStart
-            throw new FamilyLogNotFoundException($zoneStorage->familyLog()->uuid()->toString());
+            throw new FamilyLogNotFound($zoneStorage->familyLog()->uuid()->toString());
             // @codeCoverageIgnoreEnd
         }
 
         $zoneStorageToUpdate = $this->find($zoneStorage->uuid()->toString());
         if (!$zoneStorageToUpdate instanceof ZoneStorage) {
             // @codeCoverageIgnoreStart
-            throw new ZoneStorageNotFoundException($zoneStorage->slug());
+            throw new ZoneStorageNotFound($zoneStorage->slug());
             // @codeCoverageIgnoreEnd
         }
 
@@ -135,13 +135,13 @@ final class DoctrineZoneStorageRepository extends ServiceEntityRepository implem
         $this->_em->flush();
     }
 
-    public function findAllZones(): ZoneStorageCollection
+    public function getAllZones(): ZoneStorageCollection
     {
         $zoneStorages = $this->findAll();
         $collection = new ZoneStorageCollection();
 
         if ($zoneStorages === []) {
-            throw new NoZoneStorageRegisteredException();
+            throw new NoZoneStorageRegistered();
         }
 
         foreach ($zoneStorages as $zoneStorage) {
@@ -154,7 +154,7 @@ final class DoctrineZoneStorageRepository extends ServiceEntityRepository implem
     /**
      * @throws NonUniqueResultException
      */
-    public function findBySlug(string $slug): ZoneStorageDomain
+    public function getBySlug(string $slug): ZoneStorageDomain
     {
         $alias = self::ALIAS;
         $zoneStorage = $this->createQueryBuilder($alias)
@@ -166,7 +166,7 @@ final class DoctrineZoneStorageRepository extends ServiceEntityRepository implem
 
         if (!$zoneStorage instanceof ZoneStorage) {
             // @codeCoverageIgnoreStart
-            throw new ZoneStorageNotFoundException($slug);
+            throw new ZoneStorageNotFound($slug);
             // @codeCoverageIgnoreEnd
         }
 

@@ -14,9 +14,9 @@ declare(strict_types=1);
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Unit\ChangeUnitLabel;
 
 use Admin\Adapters\Controller\Symfony\Controller\Unit\GetUnits\GetUnitsController;
+use Admin\Entities\Repository\UnitRepository;
 use Admin\Entities\Unit\Unit;
 use Admin\Tests\Factory\UnitFactory;
-use Admin\UseCases\Gateway\UnitRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
@@ -43,7 +43,7 @@ final class ChangeUnitLabelControllerTest extends BaseFunctionalTestCase
         $translator = self::getContainer()->get('translator');
 
         $unit = UnitFactory::createOne(['label' => 'Kilogramme', 'abbreviation' => 'kg']);
-        $units = $unitRepository->findAllUnits();
+        $units = $unitRepository->getAllUnits();
         self::assertCount(1, $units);
 
         // Act
@@ -75,10 +75,10 @@ final class ChangeUnitLabelControllerTest extends BaseFunctionalTestCase
         self::assertSame($translator->trans('admin.unit.changeLabel.success'), $flash);
 
         /** @var Unit $unitUpdated */
-        $unitUpdated = $unitRepository->findBySlug('kilogrammes');
+        $unitUpdated = $unitRepository->getBySlug('kilogrammes');
         self::assertSame('Kilogrammes', $unitUpdated->label()->toString());
         self::assertSame('kg', $unitUpdated->abbreviation());
-        $units = $unitRepository->findAllUnits();
+        $units = $unitRepository->getAllUnits();
         self::assertCount(1, $units);
     }
 
@@ -92,7 +92,7 @@ final class ChangeUnitLabelControllerTest extends BaseFunctionalTestCase
         $translator = self::getContainer()->get('translator');
 
         $unit = UnitFactory::createOne(['label' => 'Kilogramme', 'abbreviation' => 'kg']);
-        $units = $unitRepository->findAllUnits();
+        $units = $unitRepository->getAllUnits();
         self::assertCount(1, $units);
 
         // Act
@@ -124,10 +124,10 @@ final class ChangeUnitLabelControllerTest extends BaseFunctionalTestCase
         self::assertSame($translator->trans('admin.unit.changeLabel.success'), $flash);
 
         /** @var Unit $unitUpdated */
-        $unitUpdated = $unitRepository->findBySlug('kilogramme');
+        $unitUpdated = $unitRepository->getBySlug('kilogramme');
         self::assertSame('Kilogramme', $unitUpdated->label()->toString());
         self::assertSame('KG', $unitUpdated->abbreviation());
-        $units = $unitRepository->findAllUnits();
+        $units = $unitRepository->getAllUnits();
         self::assertCount(1, $units);
     }
 
@@ -142,7 +142,7 @@ final class ChangeUnitLabelControllerTest extends BaseFunctionalTestCase
 
         $unit1 = UnitFactory::createOne(['label' => 'Kilogramme', 'abbreviation' => 'kg']);
         UnitFactory::createOne(['label' => 'Litre', 'abbreviation' => 'L']);
-        $units = $unitRepository->findAllUnits();
+        $units = $unitRepository->getAllUnits();
         self::assertCount(2, $units);
 
         // Act
@@ -173,7 +173,7 @@ final class ChangeUnitLabelControllerTest extends BaseFunctionalTestCase
 
         self::assertSame('Unit already exists.', $flash);
 
-        $units = $unitRepository->findAllUnits();
+        $units = $unitRepository->getAllUnits();
         self::assertCount(2, $units);
     }
 
@@ -226,7 +226,7 @@ final class ChangeUnitLabelControllerTest extends BaseFunctionalTestCase
         );
         self::assertSame('Cette valeur ne doit pas être vide.', $abbreviationField->children('ul > li')->text());
 
-        $units = $unitRepository->findAllUnits();
+        $units = $unitRepository->getAllUnits();
         self::assertCount(1, $units);
     }
 
@@ -238,7 +238,7 @@ final class ChangeUnitLabelControllerTest extends BaseFunctionalTestCase
         /** @var UnitRepository $unitRepository */
         $unitRepository = self::getContainer()->get(UnitRepository::class);
         UnitFactory::createOne(['label' => 'Kilogramme', 'abbreviation' => 'kg']);
-        $units = $unitRepository->findAllUnits();
+        $units = $unitRepository->getAllUnits();
         self::assertCount(1, $units);
 
         // Act
@@ -263,7 +263,7 @@ final class ChangeUnitLabelControllerTest extends BaseFunctionalTestCase
         $translator = self::getContainer()->get('translator');
 
         $unit = UnitFactory::createOne(['label' => 'Kilogramme', 'abbreviation' => 'kg']);
-        $units = $unitRepository->findAllUnits();
+        $units = $unitRepository->getAllUnits();
         self::assertCount(1, $units);
 
         // Act
@@ -288,11 +288,11 @@ final class ChangeUnitLabelControllerTest extends BaseFunctionalTestCase
         self::assertRouteSame(GetUnitsController::ROUTE_NAME);
 
         /** @var Unit $unitAfterCancel */
-        $unitAfterCancel = $unitRepository->findBySlug($unit->_real()->slug());
+        $unitAfterCancel = $unitRepository->getBySlug($unit->_real()->slug());
         self::assertSame($unit->_real()->label(), $unitAfterCancel->label()->toString());
         self::assertSame($unit->_real()->abbreviation(), $unitAfterCancel->abbreviation());
 
-        $units = $unitRepository->findAllUnits();
+        $units = $unitRepository->getAllUnits();
         self::assertCount(1, $units);
     }
 }

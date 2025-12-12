@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\FamilyLog\GetFamilyLogs;
 
-use Admin\UseCases\Gateway\FamilyLogRepository;
+use Admin\Entities\Repository\FamilyLogRepository;
 
 final readonly class GetFamilyLogs
 {
@@ -23,7 +23,7 @@ final readonly class GetFamilyLogs
 
     public function execute(): GetFamilyLogsResponse
     {
-        $familyLogs = $this->repository->findFamilyLogsOrderingBySlug();
+        $familyLogs = $this->repository->getFamilyLogsOrderingBySlug();
 
         return new GetFamilyLogsResponse($familyLogs);
     }

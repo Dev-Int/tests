@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Company\UpdateCompany;
 
+use Admin\Entities\Repository\CompanyRepository;
 use Admin\Tests\Factory\CompanyFactory;
-use Admin\UseCases\Gateway\CompanyRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -46,7 +46,7 @@ final class UpdateCompanyControllerTest extends BaseFunctionalTestCase
             'city' => 'Paris',
         ]);
 
-        $companyCreated = $companyRepository->findByName('Dev-Int Création');
+        $companyCreated = $companyRepository->getByName('Dev-Int Création');
         self::assertSame('5, rue des Plantes', $companyCreated->address()->address());
         self::assertSame('75000', $companyCreated->address()->postalCode());
         self::assertSame('Paris', $companyCreated->address()->city());
@@ -78,7 +78,7 @@ final class UpdateCompanyControllerTest extends BaseFunctionalTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/admin/company');
 
-        $companyCreated = $companyRepository->findByName('Dev-Int Création');
+        $companyCreated = $companyRepository->getByName('Dev-Int Création');
         self::assertSame('12, rue des Singes', $companyCreated->address()->address());
         self::assertSame('56000', $companyCreated->address()->postalCode());
         self::assertSame('Vannes', $companyCreated->address()->city());

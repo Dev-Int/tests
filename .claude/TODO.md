@@ -1,41 +1,6 @@
 # TODO List
 
-**Dernière mise à jour** : 2025-12-11
-
----
-
-## Domain Entities & Repository
-
-### ✅ Récupération des FamilyLog avec leurs enfants depuis le domaine
-
-**Priority** : Medium
-**Context** : Domain Repository pattern
-**Status** : ✅ **DONE** (2025-12-07)
-**GitHub Issue** : [#113](https://github.com/Dev-Int/tests/issues/113)
-
-**Solution implémentée** : Option A - Méthode dédiée dans le repository
-
-**Modifications apportées** :
-1. Ajout de `findByUuidWithChildren(ResourceUuid $uuid): FamilyLog` dans l'interface `FamilyLogRepository`
-2. Implémentation avec chargement récursif de tous les niveaux de l'arborescence dans `DoctrineFamilyLogRepository`
-3. Méthode privée `toDomainWithChildren()` pour convertir récursivement ORM → Domaine
-4. Refactoring des 2 tests fonctionnels concernés pour utiliser la nouvelle méthode
-
-**Fichiers modifiés** :
-- `src/Admin/UseCases/Gateway/FamilyLogRepository.php` (ligne 34)
-- `src/Admin/Adapters/Gateway/ORM/Repository/DoctrineFamilyLogRepository.php` (lignes 193-295)
-- `src/Admin/Tests/Adapters/Controller/Symfony/Controller/FamilyLog/AssignParentFamilyLog/AssignParentFamilyLogControllerTest.php`
-- `src/Admin/Tests/Adapters/Controller/Symfony/Controller/FamilyLog/ChangeLabelFamilyLog/ChangeLabelFamilyLogControllerTest.php`
-
-**Résultats** :
-- ✅ 17 tests FamilyLog passent (146 assertions)
-- ✅ 119 tests fonctionnels passent (799 assertions)
-- ✅ PHPStan : aucune erreur
-- ✅ Architecture DDD respectée (pas de fuite Doctrine dans le domaine)
-- ✅ Chargement récursif fonctionnel (parent → enfant → petit-enfant)
-
-**Created** : 2025-12-04
-**Completed** : 2025-12-07
+**Dernière mise à jour** : 2025-12-12
 
 ---
 
@@ -43,8 +8,8 @@
 
 ### État actuel de la couverture E2E
 
-**Priority** : Low
-**Context** : E2E testing coverage
+**Priority** : Low  
+**Context** : E2E testing coverage  
 **Status** : 🟢 **BONNE COUVERTURE** (améliorations optionnelles possibles)
 
 #### ✅ Tests E2E créés et fonctionnels
@@ -149,18 +114,76 @@ Moins critique car Supplier est plus simple qu'Article et déjà bien couvert pa
 - Tests fonctionnels : `src/Admin/Tests/Adapters/Controller/**/*Test.php`
 - Configuration workflow : `src/Admin/Tests/Adapters/Controller/Symfony/Controller/ConfigurationControllerTest.php`
 
-**Created** : 2025-11-26
+**Created** : 2025-11-26  
 **Updated** : 2025-12-06
 
 ---
 
-## Fixtures Architecture
+## ✅ COMPLETED TASKS
 
-### ✅ Uniformiser l'enregistrement des fixtures avec Foundry
+### ~~Séparer Repository (CRUD) et Finder (queries)~~ ✅
 
-**Priority** : Medium
-**Context** : DataFixtures consistency & Test maintainability
-**Status** : ✅ **DONE** (2025-12-11)
+**Priority** : High  
+**Context** : DDD Architecture - Separation of concerns  
+**Status** : ✅ **DONE** (2025-12-12)  
+**GitHub Issue** : [#145](https://github.com/Dev-Int/tests/issues/145)
+
+**Objectif atteint** : Séparation complète des responsabilités des repositories selon les principes DDD
+
+#### Architecture finale
+
+1. **Repository** (dans `Entities/`) :
+   - Opérations CRUD basiques (save, delete)
+   - Méthodes `get*` qui DOIVENT trouver une entité
+   - Lèvent des exceptions `*NotFound` si l'entité n'existe pas
+
+2. **Finder** (dans `UseCases/Gateway/Finder/`) :
+   - Méthodes `find*` qui PEUVENT ne pas trouver
+   - Retournent `null` ou tableau vide si aucun résultat
+   - Utilisées pour les requêtes de recherche
+
+#### Travaux réalisés
+
+**7 entités refactorées** :
+- ✅ Company : CompanyRepository + CompanyFinder
+- ✅ Tax : TaxRepository + TaxFinder
+- ✅ Unit : UnitRepository + UnitFinder
+- ✅ ZoneStorage : ZoneStorageRepository + ZoneStorageFinder
+- ✅ FamilyLog : FamilyLogRepository + FamilyLogFinder
+- ✅ Supplier : SupplierRepository + SupplierFinder
+- ✅ Article : ArticleRepository + ArticleFinder
+
+**Fichiers créés** :
+- 7 interfaces Repository dans `src/Admin/Entities/[Entity]/`
+- 7 interfaces Finder dans `src/Admin/UseCases/Gateway/Finder/`
+- 7 implémentations Doctrine mises à jour (implémentent les 2 interfaces)
+
+**Fichiers modifiés** :
+- ~50-70 use cases mis à jour
+- ~100+ tests mis à jour (unitaires + fonctionnels)
+- Configuration DI (`services.yaml`)
+- Règles Deptrac (`deptrac.yaml`)
+
+#### Résultats
+
+- ✅ Architecture DDD respectée : Repository dans le domaine
+- ✅ Séparation claire CRUD vs Queries
+- ✅ Expressivité améliorée : `get*` = obligatoire, `find*` = optionnel
+- ✅ Testabilité améliorée : Mocks plus ciblés
+- ✅ PHPStan : 0 erreur
+- ✅ Deptrac : Architecture validée
+- ✅ Tous les tests passent (unit, functional, e2e)
+
+**Created** : 2025-12-11  
+**Completed** : 2025-12-12
+
+---
+
+### ~~Uniformiser l'enregistrement des fixtures avec Foundry~~ ✅
+
+**Priority** : Medium  
+**Context** : DataFixtures consistency & Test maintainability  
+**Status** : ✅ **DONE** (2025-12-11)  
 **GitHub Issue** : [#110](https://github.com/Dev-Int/tests/issues/110), [#143](https://github.com/Dev-Int/tests/issues/143)
 
 **Décision prise** : ✅ **Option B - Foundry** retenue pour uniformiser les fixtures et les tests
@@ -174,7 +197,7 @@ Ce mix causait des problèmes avec LiipTestFixturesBundle (problème de contexte
 
 ---
 
-#### ✅ Phase 1 : Tests fonctionnels refactorés (TERMINÉ)
+#### ~~Phase 1 : Tests fonctionnels refactorés~~  ✅
 
 **Travaux réalisés** (2025-12-11) :
 
@@ -244,7 +267,7 @@ $familyLog = FamilyLogFactory::createOne(['label' => 'Surgelé']);
 
 ---
 
-#### ✅ Phase 2 : DataFixtures refactorées (TERMINÉ)
+#### ~~Phase 2 : DataFixtures refactorées~~ ✅
 
 **Fichiers migrés vers Foundry** :
 - ✅ `src/Admin/Adapters/DataFixtures/TaxFixtures.php`
@@ -267,7 +290,7 @@ $familyLog = FamilyLogFactory::createOne(['label' => 'Surgelé']);
 - ✅ Plus de bugs liés au contexte d'EntityManager
 - ✅ Même pattern que les tests fonctionnels
 
-**Created** : 2025-11-29
+**Created** : 2025-11-29  
 **Completed** : 2025-12-11
 
 ---
@@ -296,13 +319,44 @@ $familyLog = FamilyLogFactory::createOne(['label' => 'Surgelé']);
 
 ---
 
-## Routes Refactoring
+### ~~Récupération des FamilyLog avec leurs enfants depuis le domaine~~ ✅
 
-### ✅ Refactorer les noms de routes en dur en constantes de controller
+**Priority** : Medium  
+**Context** : Domain Repository pattern  
+**Status** : ✅ **DONE** (2025-12-07)  
+**GitHub Issue** : [#113](https://github.com/Dev-Int/tests/issues/113)
 
-**Priority** : Medium
-**Context** : Code maintainability and refactoring
-**Status** : ✅ **DONE** (2025-12-07)
+**Solution implémentée** : Option A - Méthode dédiée dans le repository
+
+**Modifications apportées** :
+1. Ajout de `findByUuidWithChildren(ResourceUuid $uuid): FamilyLog` dans l'interface `FamilyLogRepository`
+2. Implémentation avec chargement récursif de tous les niveaux de l'arborescence dans `DoctrineFamilyLogRepository`
+3. Méthode privée `toDomainWithChildren()` pour convertir récursivement ORM → Domaine
+4. Refactoring des 2 tests fonctionnels concernés pour utiliser la nouvelle méthode
+
+**Fichiers modifiés** :
+- `src/Admin/UseCases/Gateway/FamilyLogRepository.php` (ligne 34)
+- `src/Admin/Adapters/Gateway/ORM/Repository/DoctrineFamilyLogRepository.php` (lignes 193-295)
+- `src/Admin/Tests/Adapters/Controller/Symfony/Controller/FamilyLog/AssignParentFamilyLog/AssignParentFamilyLogControllerTest.php`
+- `src/Admin/Tests/Adapters/Controller/Symfony/Controller/FamilyLog/ChangeLabelFamilyLog/ChangeLabelFamilyLogControllerTest.php`
+
+**Résultats** :
+- ✅ 17 tests FamilyLog passent (146 assertions)
+- ✅ 119 tests fonctionnels passent (799 assertions)
+- ✅ PHPStan : aucune erreur
+- ✅ Architecture DDD respectée (pas de fuite Doctrine dans le domaine)
+- ✅ Chargement récursif fonctionnel (parent → enfant → petit-enfant)
+
+**Created** : 2025-12-04  
+**Completed** : 2025-12-07
+
+---
+
+### ~~Refactorer les noms de routes en dur en constantes de controller~~ ✅
+
+**Priority** : Medium  
+**Context** : Code maintainability and refactoring  
+**Status** : ✅ **DONE** (2025-12-07)  
 **GitHub Issue** : [#105](https://github.com/Dev-Int/tests/issues/105)
 
 **Travaux réalisés** :
@@ -336,18 +390,16 @@ $familyLog = FamilyLogFactory::createOne(['label' => 'Surgelé']);
 - ✅ Templates Twig : routes en dur conservées (décision architecturale)
 - ✅ PHPStan : OK
 
-**Created** : 2025-11-30
+**Created** : 2025-11-30  
 **Completed** : 2025-12-07
 
 ---
 
-## ✅ COMPLETED TASKS
-
 ### ~~Warning: Deprecated config option `checkGenericClassInNonGenericObjectType`~~ ✅
 
-**Priority** : ~~Medium~~ **COMPLETED**
-**Context** : PHPStan analysis
-**Status** : ✅ **RESOLVED on 2025-11-29**
+**Priority** : ~~Medium~~ **COMPLETED**  
+**Context** : PHPStan analysis  
+**Status** : ✅ **RESOLVED on 2025-11-29**  
 
 **Issue** :
 PHPStan displays a deprecation warning during analysis:
@@ -372,16 +424,16 @@ To: `@implements Collection<EntityType>`
 
 **Verification** : `make stan` returns no errors
 
-**Created** : 2025-11-25
+**Created** : 2025-11-25  
 **Resolved** : 2025-11-29
 
 ---
 
 ### ~~Tests E2E pour l'annulation de formulaires (Cancel)~~ ✅
 
-**Priority** : ~~Medium~~ **COMPLETED**
-**Context** : E2E testing coverage
-**Status** : ✅ **COMPLETED on 2025-12-03**
+**Priority** : ~~Medium~~ **COMPLETED**  
+**Context** : E2E testing coverage  
+**Status** : ✅ **COMPLETED on 2025-12-03**  
 
 **Objectif** :
 Implémenter des tests Cancel pour toutes les opérations (Create et Update) de toutes les entités principales de configuration.
@@ -416,15 +468,15 @@ Implémenter des tests Cancel pour toutes les opérations (Create et Update) de 
 - Utilisation de `{{ 'cancel'|trans }}` au lieu de texte en dur
 - Ajout de constantes `ROUTE_NAME` dans les 14 controllers Update concernés
 
-**Created** : 2025-11-30
+**Created** : 2025-11-30  
 **Resolved** : 2025-12-03
 
 ---
 
 ### ~~Tests E2E pour la pagination des listes~~ ✅
 
-**Priority** : ~~Medium~~ **COMPLETED**
-**Context** : E2E testing coverage
+**Priority** : ~~Medium~~ **COMPLETED**  
+**Context** : E2E testing coverage  
 **Status** : ✅ **RESOLVED on 2025-12-01**
 
 **Objectif** :
@@ -441,5 +493,5 @@ Créer des tests E2E complets pour valider tous les aspects de la pagination sur
 - Détection précoce des régressions
 - Validation du calcul du nombre de pages
 
-**Created** : 2025-12-01
+**Created** : 2025-12-01  
 **Resolved** : 2025-12-01

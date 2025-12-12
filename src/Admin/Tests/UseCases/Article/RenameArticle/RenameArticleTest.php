@@ -13,8 +13,9 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\Article\RenameArticle;
 
-use Admin\Entities\Exception\Article\ArticleAlreadyExistsException;
-use Admin\Entities\Exception\Article\ArticleNotFoundException;
+use Admin\Entities\Exception\Article\ArticleAlreadyExists;
+use Admin\Entities\Exception\Article\ArticleNotFound;
+use Admin\Entities\Repository\ArticleRepository;
 use Admin\Tests\DataBuilder\ArticleDataBuilder;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\SupplierDataBuilder;
@@ -23,7 +24,6 @@ use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
 use Admin\UseCases\Article\RenameArticle\RenameArticle;
 use Admin\UseCases\Article\RenameArticle\RenameArticleRequest;
-use Admin\UseCases\Gateway\ArticleRepository;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -69,7 +69,7 @@ final class RenameArticleTest extends TestCase
             ->willReturn(false)
         ;
         $articleRepository->expects(self::once())
-            ->method('findByUuid')
+            ->method('getByUuid')
             ->with($article->uuid()->toString())
             ->willReturn($article)
         ;
@@ -125,7 +125,7 @@ final class RenameArticleTest extends TestCase
             ->willReturn(true)
         ;
         $articleRepository->expects(self::never())
-            ->method('findByUuid')
+            ->method('getByUuid')
             ->with($article->uuid()->toString())
             ->willReturn($article)
         ;
@@ -136,8 +136,8 @@ final class RenameArticleTest extends TestCase
         ;
 
         // Act && Assert
-        $this->expectException(ArticleAlreadyExistsException::class);
-        $this->expectExceptionMessage(ArticleAlreadyExistsException::MESSAGE);
+        $this->expectException(ArticleAlreadyExists::class);
+        $this->expectExceptionMessage(ArticleAlreadyExists::MESSAGE);
         $useCase->execute($request);
     }
 
@@ -179,9 +179,9 @@ final class RenameArticleTest extends TestCase
             ->willReturn(false)
         ;
         $articleRepository->expects(self::once())
-            ->method('findByUuid')
+            ->method('getByUuid')
             ->with($article->uuid()->toString())
-            ->will(self::throwException(new ArticleNotFoundException($article->uuid()->toString())))
+            ->will(self::throwException(new ArticleNotFound($article->uuid()->toString())))
         ;
 
         $articleRepository->expects(self::never())
@@ -190,8 +190,8 @@ final class RenameArticleTest extends TestCase
         ;
 
         // Act && Assert
-        $this->expectException(ArticleNotFoundException::class);
-        $this->expectExceptionMessage(ArticleNotFoundException::MESSAGE);
+        $this->expectException(ArticleNotFound::class);
+        $this->expectExceptionMessage(ArticleNotFound::MESSAGE);
         $useCase->execute($request);
     }
 }

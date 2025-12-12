@@ -13,13 +13,13 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Gateway;
 
-use Admin\UseCases\Gateway\ArticleRepository;
-use Admin\UseCases\Gateway\CompanyRepository;
-use Admin\UseCases\Gateway\FamilyLogRepository;
-use Admin\UseCases\Gateway\SupplierRepository;
-use Admin\UseCases\Gateway\TaxRepository;
-use Admin\UseCases\Gateway\UnitRepository;
-use Admin\UseCases\Gateway\ZoneStorageRepository;
+use Admin\Entities\Repository\ArticleRepository;
+use Admin\Entities\Repository\CompanyRepository;
+use Admin\Entities\Repository\FamilyLogRepository;
+use Admin\Entities\Repository\SupplierRepository;
+use Admin\Entities\Repository\TaxRepository;
+use Admin\Entities\Repository\UnitRepository;
+use Admin\Entities\Repository\ZoneStorageRepository;
 
 final readonly class ConfigurationService
 {

@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Unit\ChangeUnitLabel;
 
-use Admin\Entities\Exception\Unit\UnitAlreadyExistsException;
-use Admin\UseCases\Gateway\UnitRepository;
+use Admin\Entities\Exception\Unit\UnitAlreadyExists;
+use Admin\Entities\Repository\UnitRepository;
 use Shared\Entities\VO\NameField;
 
 final readonly class ChangeUnitLabel
@@ -25,10 +25,10 @@ final readonly class ChangeUnitLabel
 
     public function execute(ChangeUnitLabelRequest $request): ChangeUnitLabelResponse
     {
-        $unit = $this->unitRepository->findBySlug($request->slug());
+        $unit = $this->unitRepository->getBySlug($request->slug());
         $isExists = $this->unitRepository->exists($request->label(), $unit->uuid()->toString());
         if ($isExists) {
-            throw new UnitAlreadyExistsException($request->label());
+            throw new UnitAlreadyExists($request->label());
         }
 
         $unit->changeLabel(NameField::fromString($request->label()), $request->abbreviation());
