@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\Tests\Entities\Article\VO;
 
 use Admin\Entities\Article\VO\ArticleQuantity;
-use Admin\Entities\Exception\Article\NegativeValueException;
+use Admin\Entities\Exception\Article\NegativeValue;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -35,8 +35,8 @@ final class ArticleQuantityTest extends TestCase
     public function testArticleQuantityThrowNegativeValueException(): void
     {
         // Assert
-        $this->expectException(NegativeValueException::class);
-        $this->expectExceptionMessage(NegativeValueException::MESSAGE);
+        $this->expectException(NegativeValue::class);
+        $this->expectExceptionMessage(NegativeValue::MESSAGE);
 
         // Arrange && Act
         ArticleQuantity::fromFloat(-1.25);

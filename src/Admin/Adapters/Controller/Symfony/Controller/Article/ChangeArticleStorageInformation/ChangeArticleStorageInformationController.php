@@ -18,7 +18,7 @@ use Admin\Adapters\Gateway\ORM\Entity\Article\Article;
 use Admin\Adapters\Gateway\ORM\Entity\ReadModel\Packaging;
 use Admin\Adapters\Gateway\ORM\Entity\ReadModel\Storage;
 use Admin\Adapters\Gateway\ORM\Entity\Unit;
-use Admin\Entities\Exception\Article\ArticleNotFoundException;
+use Admin\Entities\Exception\Article\ArticleNotFound;
 use Admin\Entities\Unit\Unit as UnitDomain;
 use Admin\UseCases\Article\ChangeStorageInformation\ChangeArticleStorageInformation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -90,7 +90,7 @@ final class ChangeArticleStorageInformationController extends AbstractController
                     uuid: $article->uuid()
                 ));
                 // @codeCoverageIgnoreStart
-            } catch (ArticleNotFoundException $exception) {
+            } catch (ArticleNotFound $exception) {
                 $this->addFlash('error', $exception->getMessage());
 
                 return $this->render('@admin/articles/change-storage-information.html.twig', [

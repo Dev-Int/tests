@@ -16,15 +16,15 @@ namespace Admin\Entities\Exception\Article;
 use Shared\Entities\Exception\DomainException;
 use Shared\Entities\Exception\ExceptionSerializableTrait;
 
-final class NegativeValueException extends DomainException implements \JsonSerializable
+final class ArticleAlreadyExists extends \DomainException implements \JsonSerializable
 {
     use ExceptionSerializableTrait;
 
-    public const MESSAGE = 'The value cannot be negative.';
+    public const MESSAGE = 'Article already exists.';
 
-    public function __construct(private readonly float $value, ?\Throwable $previous = null)
+    public function __construct(private readonly string $name, ?\Throwable $previous = null)
     {
-        parent::__construct(self::MESSAGE, DomainException::INVALID_ARGUMENT_CODE, $previous);
+        parent::__construct(self::MESSAGE, DomainException::BAD_ENTITY_CODE, $previous);
     }
 
     /**
@@ -35,7 +35,7 @@ final class NegativeValueException extends DomainException implements \JsonSeria
     public function jsonSerialize(): iterable
     {
         return $this->toJson() + [
-            'value' => $this->value,
+            'name' => $this->name,
         ];
     }
 }

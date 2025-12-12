@@ -15,7 +15,7 @@ namespace Admin\Adapters\Controller\Symfony\Controller\Article\GetArticles;
 
 use Admin\Adapters\Controller\Symfony\Controller\ConfigurationController;
 use Admin\Adapters\Gateway\Pagination\Pagination;
-use Admin\Entities\Exception\Article\NoArticleRegisteredException;
+use Admin\Entities\Exception\Article\NoArticleRegistered;
 use Admin\UseCases\Article\GetArticles\GetArticles;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,7 +45,7 @@ final class GetArticlesController extends AbstractController
 
         try {
             $articles = $this->useCase->execute(new GetArticlesApiRequest($page, $itemPerPage));
-        } catch (NoArticleRegisteredException $exception) {
+        } catch (NoArticleRegistered $exception) {
             $this->addFlash('error', $exception->getMessage());
 
             return $this->redirectToRoute(ConfigurationController::ROUTE_NAME);

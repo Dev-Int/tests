@@ -13,13 +13,13 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Article\ChangeArticleFinancialInformation;
 
+use Admin\Entities\Repository\ArticleRepository;
 use Admin\Tests\Factory\ArticleFactory;
 use Admin\Tests\Factory\FamilyLogFactory;
 use Admin\Tests\Factory\SupplierFactory;
 use Admin\Tests\Factory\TaxFactory;
 use Admin\Tests\Factory\UnitFactory;
 use Admin\Tests\Factory\ZoneStorageFactory;
-use Admin\UseCases\Gateway\ArticleRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
@@ -95,7 +95,7 @@ final class ChangeArticleFinancialInformationControllerTest extends BaseFunction
 
         self::assertEquals($translator->trans('admin.article.changeFinancialInformation.success'), $flash);
 
-        $articleUpdated = $articleRepository->findByUuid($article->uuid()->toString());
+        $articleUpdated = $articleRepository->getByUuid($article->uuid()->toString());
         self::assertSame(725, $articleUpdated->unitPrice()->toInt());
         self::assertSame(0.055, $articleUpdated->tax()->rate());
     }
