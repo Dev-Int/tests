@@ -13,13 +13,13 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Article\ChangeArticleStorageInformation;
 
+use Admin\Entities\Repository\ArticleRepository;
 use Admin\Tests\Factory\ArticleFactory;
 use Admin\Tests\Factory\FamilyLogFactory;
 use Admin\Tests\Factory\SupplierFactory;
 use Admin\Tests\Factory\TaxFactory;
 use Admin\Tests\Factory\UnitFactory;
 use Admin\Tests\Factory\ZoneStorageFactory;
-use Admin\UseCases\Gateway\ArticleRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
@@ -101,7 +101,7 @@ class ChangeArticleStorageInformationControllerTest extends BaseFunctionalTestCa
 
         static::assertEquals($translator->trans('admin.article.changeStorageInformation.success'), $flash);
 
-        $articleUpdated = $articleRepository->findByUuid($article->uuid()->toString());
+        $articleUpdated = $articleRepository->getByUuid($article->uuid()->toString());
         static::assertEquals([$colis->_real()->toDomain(), 1.0], $articleUpdated->packaging()->parcel());
         static::assertEquals([$piece->_real()->toDomain(), 2.0], $articleUpdated->packaging()->subPackage());
         static::assertEquals([$kilogramme->_real()->toDomain(), 6.800], $articleUpdated->packaging()->consumerUnit());

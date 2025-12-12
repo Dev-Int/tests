@@ -13,14 +13,14 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Article\RenameArticle;
 
-use Admin\Entities\Exception\Article\ArticleAlreadyExistsException;
+use Admin\Entities\Exception\Article\ArticleAlreadyExists;
+use Admin\Entities\Repository\ArticleRepository;
 use Admin\Tests\Factory\ArticleFactory;
 use Admin\Tests\Factory\FamilyLogFactory;
 use Admin\Tests\Factory\SupplierFactory;
 use Admin\Tests\Factory\TaxFactory;
 use Admin\Tests\Factory\UnitFactory;
 use Admin\Tests\Factory\ZoneStorageFactory;
-use Admin\UseCases\Gateway\ArticleRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
@@ -90,7 +90,7 @@ final class RenameArticleControllerTest extends BaseFunctionalTestCase
 
         self::assertEquals($translator->trans('admin.article.rename.success'), $flash);
 
-        $articleUpdated = $articleRepository->findByUuid($article->uuid()->toString());
+        $articleUpdated = $articleRepository->getByUuid($article->uuid()->toString());
         self::assertSame('Jambon 6kg', $articleUpdated->name()->toString());
     }
 
@@ -154,7 +154,7 @@ final class RenameArticleControllerTest extends BaseFunctionalTestCase
         $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
-        self::assertEquals(ArticleAlreadyExistsException::MESSAGE, $flash);
+        self::assertEquals(ArticleAlreadyExists::MESSAGE, $flash);
     }
 
     public function testRenameArticleFailWithArticleNotFound(): void

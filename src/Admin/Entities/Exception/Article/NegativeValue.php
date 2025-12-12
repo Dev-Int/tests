@@ -16,15 +16,15 @@ namespace Admin\Entities\Exception\Article;
 use Shared\Entities\Exception\DomainException;
 use Shared\Entities\Exception\ExceptionSerializableTrait;
 
-final class ArticleNotFoundException extends DomainException implements \JsonSerializable
+final class NegativeValue extends DomainException implements \JsonSerializable
 {
     use ExceptionSerializableTrait;
 
-    public const MESSAGE = 'Article not found.';
+    public const MESSAGE = 'The value cannot be negative.';
 
-    public function __construct(private readonly string $name, ?\Throwable $previous = null)
+    public function __construct(private readonly float $value, ?\Throwable $previous = null)
     {
-        parent::__construct(self::MESSAGE, DomainException::NOT_FOUND_CODE, $previous);
+        parent::__construct(self::MESSAGE, DomainException::INVALID_ARGUMENT_CODE, $previous);
     }
 
     /**
@@ -35,7 +35,7 @@ final class ArticleNotFoundException extends DomainException implements \JsonSer
     public function jsonSerialize(): iterable
     {
         return $this->toJson() + [
-            'name' => $this->name,
+            'value' => $this->value,
         ];
     }
 }

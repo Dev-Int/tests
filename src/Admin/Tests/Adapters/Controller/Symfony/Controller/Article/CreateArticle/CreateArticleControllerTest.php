@@ -13,8 +13,9 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Article\CreateArticle;
 
-use Admin\Entities\Exception\Article\ArticleAlreadyExistsException;
+use Admin\Entities\Exception\Article\ArticleAlreadyExists;
 use Admin\Entities\Exception\Supplier\NoSupplierRegistered;
+use Admin\Entities\Repository\ArticleRepository;
 use Admin\Tests\Factory\ArticleFactory;
 use Admin\Tests\Factory\CompanyFactory;
 use Admin\Tests\Factory\FamilyLogFactory;
@@ -22,7 +23,6 @@ use Admin\Tests\Factory\SupplierFactory;
 use Admin\Tests\Factory\TaxFactory;
 use Admin\Tests\Factory\UnitFactory;
 use Admin\Tests\Factory\ZoneStorageFactory;
-use Admin\UseCases\Gateway\ArticleRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -100,7 +100,7 @@ final class CreateArticleControllerTest extends BaseFunctionalTestCase
 
         self::assertEquals($translator->trans('admin.article.create.success'), $flash);
 
-        $articleCreated = $articleRepository->findBySlug('jambon-trad-6kg');
+        $articleCreated = $articleRepository->getBySlug('jambon-trad-6kg');
         self::assertSame('Jambon Trad 6kg', $articleCreated->name()->toString());
         self::assertSame('Supplier 1', $articleCreated->supplier()->name()->toString());
         self::assertSame('Alimentaire', $articleCreated->supplier()->familyLog()->label()->toString());
@@ -180,7 +180,7 @@ final class CreateArticleControllerTest extends BaseFunctionalTestCase
         $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
-        self::assertEquals(ArticleAlreadyExistsException::MESSAGE, $flash);
+        self::assertEquals(ArticleAlreadyExists::MESSAGE, $flash);
     }
 
     public function testCreateArticleFailWithNoSupplierRegisteredException(): void

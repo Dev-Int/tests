@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Article\ChangeFinancialInformation;
 
-use Admin\UseCases\Gateway\ArticleRepository;
+use Admin\Entities\Repository\ArticleRepository;
 use Shared\Entities\VO\Amount;
 
 final readonly class ChangeArticleFinancialInformation
@@ -24,7 +24,7 @@ final readonly class ChangeArticleFinancialInformation
 
     public function execute(ChangeArticleFinancialInformationRequest $request): ChangeArticleFinancialInformationResponse
     {
-        $article = $this->articleRepository->findByUuid($request->uuid());
+        $article = $this->articleRepository->getByUuid($request->uuid());
 
         $article->changeFinancialInformation(Amount::fromInt($request->amount()), $request->tax());
 

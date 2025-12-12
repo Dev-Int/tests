@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Admin\Tests\UseCases\Article\GetArticles;
 
 use Admin\Entities\Article\ArticleCollection;
+use Admin\Entities\Repository\ArticleRepository;
 use Admin\Tests\DataBuilder\ArticleDataBuilder;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\SupplierDataBuilder;
@@ -22,7 +23,6 @@ use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
 use Admin\UseCases\Article\GetArticles\GetArticles;
 use Admin\UseCases\Article\GetArticles\GetArticlesRequest;
-use Admin\UseCases\Gateway\ArticleRepository;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -73,7 +73,7 @@ final class GetArticlesTest extends TestCase
         $request->expects(self::once())->method('itemsPerPage')->willReturn(10);
 
         $articleRepository->expects(self::once())
-            ->method('findAllArticlesPaginated')
+            ->method('getAllArticlesPaginated')
             ->with(1, 10)
             ->willReturn($articles)
         ;

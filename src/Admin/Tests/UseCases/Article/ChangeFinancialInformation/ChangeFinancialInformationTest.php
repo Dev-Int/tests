@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\Article\ChangeFinancialInformation;
 
+use Admin\Entities\Repository\ArticleRepository;
 use Admin\Tests\DataBuilder\ArticleDataBuilder;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\SupplierDataBuilder;
@@ -21,7 +22,6 @@ use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
 use Admin\UseCases\Article\ChangeFinancialInformation\ChangeArticleFinancialInformation;
 use Admin\UseCases\Article\ChangeFinancialInformation\ChangeArticleFinancialInformationRequest;
-use Admin\UseCases\Gateway\ArticleRepository;
 use PHPUnit\Framework\TestCase;
 
 final class ChangeFinancialInformationTest extends TestCase
@@ -66,7 +66,7 @@ final class ChangeFinancialInformationTest extends TestCase
         $request->expects(self::once())->method('uuid')->willReturn($article->uuid()->toString());
 
         $articleRepository->expects(self::once())
-            ->method('findByUuid')
+            ->method('getByUuid')
             ->with($article->uuid()->toString())
             ->willReturn($article)
         ;

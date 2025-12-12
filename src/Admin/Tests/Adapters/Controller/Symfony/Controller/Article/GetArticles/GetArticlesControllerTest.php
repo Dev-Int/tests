@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Article\GetArticles;
 
 use Admin\Adapters\Gateway\Pagination\Pagination;
-use Admin\Entities\Exception\Article\NoArticleRegisteredException;
+use Admin\Entities\Exception\Article\NoArticleRegistered;
 use Admin\Tests\Factory\ArticleFactory;
 use Admin\Tests\Factory\FamilyLogFactory;
 use Admin\Tests\Factory\SupplierFactory;
@@ -101,6 +101,6 @@ final class GetArticlesControllerTest extends BaseFunctionalTestCase
         $admin = $this->client->followRedirect();
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
-        self::assertSame(NoArticleRegisteredException::MESSAGE, $flash);
+        self::assertSame(NoArticleRegistered::MESSAGE, $flash);
     }
 }

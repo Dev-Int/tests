@@ -16,7 +16,7 @@ namespace Admin\Entities\Exception\Article;
 use Shared\Entities\Exception\DomainException;
 use Shared\Entities\Exception\ExceptionSerializableTrait;
 
-final class PackagingNotFoundException extends DomainException implements \JsonSerializable
+final class PackagingNotFound extends DomainException implements \JsonSerializable
 {
     use ExceptionSerializableTrait;
 
