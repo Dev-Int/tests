@@ -1,131 +1,6 @@
 # TODO List
 
-**Dernière mise à jour** : 2025-12-11
-
----
-
-## Repository/Finder Separation Refactoring
-
-**Priority** : High  
-**Context** : DDD Architecture - Separation of concerns  
-**Status** : 🔄 **IN PROGRESS**  
-**GitHub Issue** : [#145](https://github.com/Dev-Int/tests/issues/145)
-
-### Objectif
-
-Séparer les responsabilités des repositories selon les principes DDD :
-
-1. **Repository** (dans `Entities/`) :
-   - Opérations CRUD basiques (save, delete)
-   - Méthodes `get*` qui DOIVENT trouver une entité
-   - Lèvent des exceptions `*NotFound` si l'entité n'existe pas
-
-2. **Finder** (dans `UseCases/Gateway/Finder/`) :
-   - Méthodes `find*` qui PEUVENT ne pas trouver
-   - Retournent `null` ou tableau vide si aucun résultat
-   - Utilisées pour les requêtes de recherche
-
-### État actuel
-
-**Problème** : Actuellement, toutes les interfaces sont dans `UseCases/Gateway/` et mélangent CRUD + Finder, sans distinction claire entre opérations obligatoires et optionnelles.
-
-**Fichiers impactés** :
-- 7 interfaces Repository dans `src/Admin/UseCases/Gateway/`
-- 7 implémentations Doctrine dans `src/Admin/Adapters/Gateway/ORM/Repository/`
-- Multiples use cases utilisant ces interfaces
-- Tests unitaires et fonctionnels
-
-### Plan de refactorisation (7 entités)
-
-#### 1. Company
-- [ ] Créer `Admin/Entities/Company/CompanyRepository` (interface)
-- [ ] Créer `Admin/UseCases/Gateway/Finder/CompanyFinder` (interface)
-- [ ] Mettre à jour `DoctrineCompanyRepository` pour implémenter les 2 interfaces
-- [ ] Mettre à jour les use cases concernés
-- [ ] Mettre à jour les tests
-
-#### 2. Tax
-- [ ] Créer `Admin/Entities/Tax/TaxRepository` (interface)
-- [ ] Créer `Admin/UseCases/Gateway/Finder/TaxFinder` (interface)
-- [ ] Mettre à jour `DoctrineTaxRepository` pour implémenter les 2 interfaces
-- [ ] Mettre à jour les use cases concernés
-- [ ] Mettre à jour les tests
-
-#### 3. Unit
-- [ ] Créer `Admin/Entities/Unit/UnitRepository` (interface)
-- [ ] Créer `Admin/UseCases/Gateway/Finder/UnitFinder` (interface)
-- [ ] Mettre à jour `DoctrineUnitRepository` pour implémenter les 2 interfaces
-- [ ] Mettre à jour les use cases concernés
-- [ ] Mettre à jour les tests
-
-#### 4. ZoneStorage
-- [ ] Créer `Admin/Entities/ZoneStorage/ZoneStorageRepository` (interface)
-- [ ] Créer `Admin/UseCases/Gateway/Finder/ZoneStorageFinder` (interface)
-- [ ] Mettre à jour `DoctrineZoneStorageRepository` pour implémenter les 2 interfaces
-- [ ] Mettre à jour les use cases concernés
-- [ ] Mettre à jour les tests
-
-#### 5. FamilyLog
-- [ ] Créer `Admin/Entities/FamilyLog/FamilyLogRepository` (interface)
-- [ ] Créer `Admin/UseCases/Gateway/Finder/FamilyLogFinder` (interface)
-- [ ] Mettre à jour `DoctrineFamilyLogRepository` pour implémenter les 2 interfaces
-- [ ] Mettre à jour les use cases concernés
-- [ ] Mettre à jour les tests
-
-#### 6. Supplier
-- [ ] Créer `Admin/Entities/Supplier/SupplierRepository` (interface)
-- [ ] Créer `Admin/UseCases/Gateway/Finder/SupplierFinder` (interface)
-- [ ] Mettre à jour `DoctrineSupplierRepository` pour implémenter les 2 interfaces
-- [ ] Mettre à jour les use cases concernés
-- [ ] Mettre à jour les tests
-
-#### 7. Article
-- [ ] Créer `Admin/Entities/Article/ArticleRepository` (interface)
-- [ ] Créer `Admin/UseCases/Gateway/Finder/ArticleFinder` (interface)
-- [ ] Mettre à jour `DoctrineArticleRepository` pour implémenter les 2 interfaces
-- [ ] Mettre à jour les use cases concernés
-- [ ] Mettre à jour les tests
-
-### Règles de séparation
-
-#### Repository (Entities/)
-```php
-interface TaxRepository
-{
-    public function save(Tax $tax): void;
-    public function delete(Tax $tax): void;
-    public function exists(string $name, float $rate): bool;
-    public function getById(string $uuid): Tax; // throw TaxNotFoundException
-    public function getByName(string $name): Tax; // throw TaxNotFoundException
-}
-```
-
-#### Finder (UseCases/Gateway/Finder/)
-```php
-interface TaxFinder
-{
-    public function findAll(): TaxCollection; // peut retourner collection vide
-    public function findById(string $uuid): ?Tax; // peut retourner null
-    public function findByName(string $name): ?Tax; // peut retourner null
-}
-```
-
-### Avantages attendus
-
-1. **Séparation claire des responsabilités** : CRUD vs Queries
-2. **Respect des principes DDD** : Repository dans le domaine
-3. **Meilleure expressivité** : `get*` vs `find*` indique clairement le comportement
-4. **Architecture plus propre** : Moins de couplage entre layers
-5. **Facilité de test** : Mocks plus simples et ciblés
-
-### Dépendances
-
-- ✅ Implémentation de Foundry terminée (fixtures uniformisées)
-- ⚠️ Vérifier impact sur Deptrac rules (nouvelles interfaces dans Entities/)
-- ⚠️ Possibles mises à jour des services.yaml (DI)
-
-**Created** : 2025-12-11
-**Target completion** : TBD
+**Dernière mise à jour** : 2025-12-12
 
 ---
 
@@ -246,6 +121,64 @@ Moins critique car Supplier est plus simple qu'Article et déjà bien couvert pa
 
 ## ✅ COMPLETED TASKS
 
+### ~~Séparer Repository (CRUD) et Finder (queries)~~ ✅
+
+**Priority** : High  
+**Context** : DDD Architecture - Separation of concerns  
+**Status** : ✅ **DONE** (2025-12-12)  
+**GitHub Issue** : [#145](https://github.com/Dev-Int/tests/issues/145)
+
+**Objectif atteint** : Séparation complète des responsabilités des repositories selon les principes DDD
+
+#### Architecture finale
+
+1. **Repository** (dans `Entities/`) :
+   - Opérations CRUD basiques (save, delete)
+   - Méthodes `get*` qui DOIVENT trouver une entité
+   - Lèvent des exceptions `*NotFound` si l'entité n'existe pas
+
+2. **Finder** (dans `UseCases/Gateway/Finder/`) :
+   - Méthodes `find*` qui PEUVENT ne pas trouver
+   - Retournent `null` ou tableau vide si aucun résultat
+   - Utilisées pour les requêtes de recherche
+
+#### Travaux réalisés
+
+**7 entités refactorées** :
+- ✅ Company : CompanyRepository + CompanyFinder
+- ✅ Tax : TaxRepository + TaxFinder
+- ✅ Unit : UnitRepository + UnitFinder
+- ✅ ZoneStorage : ZoneStorageRepository + ZoneStorageFinder
+- ✅ FamilyLog : FamilyLogRepository + FamilyLogFinder
+- ✅ Supplier : SupplierRepository + SupplierFinder
+- ✅ Article : ArticleRepository + ArticleFinder
+
+**Fichiers créés** :
+- 7 interfaces Repository dans `src/Admin/Entities/[Entity]/`
+- 7 interfaces Finder dans `src/Admin/UseCases/Gateway/Finder/`
+- 7 implémentations Doctrine mises à jour (implémentent les 2 interfaces)
+
+**Fichiers modifiés** :
+- ~50-70 use cases mis à jour
+- ~100+ tests mis à jour (unitaires + fonctionnels)
+- Configuration DI (`services.yaml`)
+- Règles Deptrac (`deptrac.yaml`)
+
+#### Résultats
+
+- ✅ Architecture DDD respectée : Repository dans le domaine
+- ✅ Séparation claire CRUD vs Queries
+- ✅ Expressivité améliorée : `get*` = obligatoire, `find*` = optionnel
+- ✅ Testabilité améliorée : Mocks plus ciblés
+- ✅ PHPStan : 0 erreur
+- ✅ Deptrac : Architecture validée
+- ✅ Tous les tests passent (unit, functional, e2e)
+
+**Created** : 2025-12-11  
+**Completed** : 2025-12-12
+
+---
+
 ### ~~Uniformiser l'enregistrement des fixtures avec Foundry~~ ✅
 
 **Priority** : Medium  
@@ -357,7 +290,7 @@ $familyLog = FamilyLogFactory::createOne(['label' => 'Surgelé']);
 - ✅ Plus de bugs liés au contexte d'EntityManager
 - ✅ Même pattern que les tests fonctionnels
 
-**Created** : 2025-11-29
+**Created** : 2025-11-29  
 **Completed** : 2025-12-11
 
 ---
@@ -414,7 +347,7 @@ $familyLog = FamilyLogFactory::createOne(['label' => 'Surgelé']);
 - ✅ Architecture DDD respectée (pas de fuite Doctrine dans le domaine)
 - ✅ Chargement récursif fonctionnel (parent → enfant → petit-enfant)
 
-**Created** : 2025-12-04
+**Created** : 2025-12-04  
 **Completed** : 2025-12-07
 
 ---
@@ -457,7 +390,7 @@ $familyLog = FamilyLogFactory::createOne(['label' => 'Surgelé']);
 - ✅ Templates Twig : routes en dur conservées (décision architecturale)
 - ✅ PHPStan : OK
 
-**Created** : 2025-11-30
+**Created** : 2025-11-30  
 **Completed** : 2025-12-07
 
 ---
@@ -491,7 +424,7 @@ To: `@implements Collection<EntityType>`
 
 **Verification** : `make stan` returns no errors
 
-**Created** : 2025-11-25
+**Created** : 2025-11-25  
 **Resolved** : 2025-11-29
 
 ---
@@ -535,7 +468,7 @@ Implémenter des tests Cancel pour toutes les opérations (Create et Update) de 
 - Utilisation de `{{ 'cancel'|trans }}` au lieu de texte en dur
 - Ajout de constantes `ROUTE_NAME` dans les 14 controllers Update concernés
 
-**Created** : 2025-11-30
+**Created** : 2025-11-30  
 **Resolved** : 2025-12-03
 
 ---
