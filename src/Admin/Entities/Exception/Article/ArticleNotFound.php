@@ -16,15 +16,15 @@ namespace Admin\Entities\Exception\Article;
 use Shared\Entities\Exception\DomainException;
 use Shared\Entities\Exception\ExceptionSerializableTrait;
 
-final class NoArticleRegisteredException extends DomainException implements \JsonSerializable
+final class ArticleNotFound extends DomainException implements \JsonSerializable
 {
     use ExceptionSerializableTrait;
 
-    public const MESSAGE = 'No article is registered.';
+    public const MESSAGE = 'Article not found.';
 
-    public function __construct(?\Throwable $previous = null)
+    public function __construct(private readonly string $name, ?\Throwable $previous = null)
     {
-        parent::__construct(self::MESSAGE, DomainException::BAD_ENTITY_CODE, $previous);
+        parent::__construct(self::MESSAGE, DomainException::NOT_FOUND_CODE, $previous);
     }
 
     /**
@@ -34,6 +34,8 @@ final class NoArticleRegisteredException extends DomainException implements \Jso
      */
     public function jsonSerialize(): iterable
     {
-        return $this->toJson();
+        return $this->toJson() + [
+            'name' => $this->name,
+        ];
     }
 }

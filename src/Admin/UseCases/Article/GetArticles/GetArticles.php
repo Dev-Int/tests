@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Article\GetArticles;
 
-use Admin\UseCases\Gateway\ArticleRepository;
+use Admin\Entities\Repository\ArticleRepository;
 
 final readonly class GetArticles
 {
@@ -23,7 +23,7 @@ final readonly class GetArticles
 
     public function execute(GetArticlesRequest $request): GetArticlesResponse
     {
-        $articles = $this->articleRepository->findAllArticlesPaginated($request->page(), $request->itemsPerPage());
+        $articles = $this->articleRepository->getAllArticlesPaginated($request->page(), $request->itemsPerPage());
 
         return new GetArticlesResponse($articles);
     }

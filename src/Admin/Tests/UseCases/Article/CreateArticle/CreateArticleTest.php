@@ -13,9 +13,10 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\Article\CreateArticle;
 
-use Admin\Entities\Exception\Article\ArticleAlreadyExistsException;
+use Admin\Entities\Exception\Article\ArticleAlreadyExists;
 use Admin\Entities\Exception\FamilyLog\BadFamilyLogAssigned;
 use Admin\Entities\FamilyLog\FamilyLog;
+use Admin\Entities\Repository\ArticleRepository;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\SupplierDataBuilder;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
@@ -23,7 +24,6 @@ use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
 use Admin\UseCases\Article\CreateArticle\CreateArticle;
 use Admin\UseCases\Article\CreateArticle\CreateArticleRequest;
-use Admin\UseCases\Gateway\ArticleRepository;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -189,8 +189,8 @@ final class CreateArticleTest extends TestCase
         ;
 
         // Act && Assert
-        $this->expectException(ArticleAlreadyExistsException::class);
-        $this->expectExceptionMessage(ArticleAlreadyExistsException::MESSAGE);
+        $this->expectException(ArticleAlreadyExists::class);
+        $this->expectExceptionMessage(ArticleAlreadyExists::MESSAGE);
         $useCase->execute($request);
     }
 }

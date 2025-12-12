@@ -14,11 +14,11 @@ declare(strict_types=1);
 namespace Admin\Adapters\Controller\Symfony\Controller;
 
 use Admin\Adapters\Gateway\ConfigurationService;
+use Admin\Entities\Repository\ArticleRepository;
 use Admin\Entities\Repository\CompanyRepository;
 use Admin\Entities\Repository\FamilyLogRepository;
 use Admin\Entities\Repository\SupplierRepository;
 use Admin\Entities\Repository\ZoneStorageRepository;
-use Admin\UseCases\Gateway\ArticleRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;

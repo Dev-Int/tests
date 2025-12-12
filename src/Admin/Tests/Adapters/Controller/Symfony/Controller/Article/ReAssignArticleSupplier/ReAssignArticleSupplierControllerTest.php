@@ -13,13 +13,13 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Article\ReAssignArticleSupplier;
 
+use Admin\Entities\Repository\ArticleRepository;
 use Admin\Tests\Factory\ArticleFactory;
 use Admin\Tests\Factory\FamilyLogFactory;
 use Admin\Tests\Factory\SupplierFactory;
 use Admin\Tests\Factory\TaxFactory;
 use Admin\Tests\Factory\UnitFactory;
 use Admin\Tests\Factory\ZoneStorageFactory;
-use Admin\UseCases\Gateway\ArticleRepository;
 use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
@@ -101,7 +101,7 @@ final class ReAssignArticleSupplierControllerTest extends BaseFunctionalTestCase
 
         self::assertEquals($translator->trans('admin.article.reassignSupplier.success'), $flash);
 
-        $articleUpdated = $articleRepository->findByUuid($article->uuid()->toString());
+        $articleUpdated = $articleRepository->getByUuid($article->uuid()->toString());
 
         self::assertSame('Supplier Surgelé', $articleUpdated->supplier()->name()->toString());
         $zoneStorages = $articleUpdated->zoneStorages()->toArray();
