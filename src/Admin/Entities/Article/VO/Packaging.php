@@ -11,9 +11,8 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Shared\Entities\VO;
+namespace Admin\Entities\Article\VO;
 
-use Admin\Entities\Article\VO\Storage;
 use Admin\Entities\Unit\Unit;
 
 final readonly class Packaging

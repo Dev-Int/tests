@@ -14,9 +14,9 @@ declare(strict_types=1);
 namespace Admin\Adapters\Gateway\ORM\Entity\Article;
 
 use Admin\Adapters\Gateway\ORM\Entity\Unit;
+use Admin\Entities\Article\VO\Packaging as PackagingDomain;
 use Admin\Entities\Unit\Unit as UnitDomain;
 use Doctrine\ORM\Mapping as ORM;
-use Shared\Entities\VO\Packaging as PackagingDomain;
 
 #[ORM\Entity]
 class Packaging

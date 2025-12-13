@@ -11,12 +11,12 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Shared\Tests\Entities\VO;
+namespace Admin\Tests\Entities\Article\VO;
 
+use Admin\Entities\Article\VO\Packaging;
 use Admin\Entities\Unit\Unit;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
 use PHPUnit\Framework\TestCase;
-use Shared\Entities\VO\Packaging;
 
 /**
  * @group unitTest

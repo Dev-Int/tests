@@ -1,0 +1,22 @@
+deptrac:
+    layers:
+        - name: Shared\Entities
+          collectors:
+              - type: className
+                regex: Shared\\Entities\\.*
+        - name: Shared\UseCases
+          collectors:
+              - type: className
+                regex: Shared\\UseCases\\.*
+        - name: Shared\Adapters
+          collectors:
+              - type: className
+                regex: Shared\\Adapters\\.*
+    ruleset:
+        Shared\Entities:
+        Shared\UseCases:
+            - Shared\Entities
+        Shared\Adapters:
+            - Shared\Entities
+            - Shared\UseCases
+    skip_violations: []
