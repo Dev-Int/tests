@@ -42,7 +42,7 @@ RUN set -eux; \
 
 ###> symfony/panther ###
 # Chromium and ChromeDriver
-ENV PANTHER_NO_SANDBOX 1
+ENV PANTHER_NO_SANDBOX=1
 # Not mandatory, but recommended
 ENV PANTHER_CHROME_ARGUMENTS='--disable-dev-shm-usage'
 RUN apk add --no-cache chromium chromium-chromedriver
