@@ -22,6 +22,7 @@ use Admin\Adapters\Gateway\ORM\Entity\Unit;
 use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
 use Admin\Entities\Article\Article as ArticleDomain;
 use Admin\Entities\Article\ArticleCollection;
+use Admin\Entities\Article\VO\Packaging as PackagingDomain;
 use Admin\Entities\Exception\Article\ArticleNotFound;
 use Admin\Entities\Exception\Article\NoArticleRegistered;
 use Admin\Entities\Exception\Article\PackagingNotFound;
@@ -39,7 +40,6 @@ use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\ORM\UnexpectedResultException;
 use Doctrine\Persistence\ManagerRegistry;
-use Shared\Entities\VO\Packaging as PackagingDomain;
 
 /**
  * @template-extends ServiceEntityRepository<Article>

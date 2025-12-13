@@ -2,11 +2,12 @@ includes:
     - phpstan-baseline.neon
 
 parameters:
-    level: 9
+    level: max
     paths:
         - src
         - tests
     excludePaths:
         - tests/bootstrap.php
+        - src/Shared/Adapters/Symfony/Maker/Templates/*.php
     bootstrapFiles:
         - vendor/autoload.php
