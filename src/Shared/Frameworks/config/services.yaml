@@ -12,6 +12,13 @@ services:
 
     Shared\Entities\Clock\Clock: '@Shared\Entities\Clock\SystemClock'
 
+when@dev:
+    services:
+        Shared\Adapters\Symfony\Maker\MakeBoundedContextInit:
+            tags: ['maker.command']
+        Shared\Adapters\Symfony\Maker\MakeUseCaseCreate:
+            tags: ['maker.command']
+
 when@test:
     services:
         Shared\Entities\Clock\Clock: '@Shared\Entities\Clock\FrozenClock'

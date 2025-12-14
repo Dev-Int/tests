@@ -1,22 +1,22 @@
 deptrac:
     layers:
-        - name: <?php echo $moduleName; ?>\Entities
+        - name: <?php echo $boundedContextName; ?>\Entities
           collectors:
-              - type: className
-                regex: <?php echo $moduleName; ?>\\Entities\\.*
-        - name: <?php echo $moduleName; ?>\UseCases
+              - type: classNameRegex
+                value: '#<?php echo $boundedContextName; ?>\\Entities\\.*#'
+        - name: <?php echo $boundedContextName; ?>\UseCases
           collectors:
-              - type: className
-                regex: <?php echo $moduleName; ?>\\UseCases\\.*
-        - name: <?php echo $moduleName; ?>\Adapters
+              - type: classNameRegex
+                value: '#<?php echo $boundedContextName; ?>\\UseCases\\.*#'
+        - name: <?php echo $boundedContextName; ?>\Adapters
           collectors:
-              - type: className
-                regex: <?php echo $moduleName; ?>\\Adapters\\.*
+              - type: classNameRegex
+                value: '#<?php echo $boundedContextName; ?>\\Adapters\\.*#'
     ruleset:
-        <?php echo $moduleName; ?>\Entities:
-        <?php echo $moduleName; ?>\UseCases:
-            - <?php echo $moduleName; ?>\Entities
-        <?php echo $moduleName; ?>\Adapters:
-            - <?php echo $moduleName; ?>\Entities
-            - <?php echo $moduleName; ?>\UseCases
+        <?php echo $boundedContextName; ?>\Entities:
+        <?php echo $boundedContextName; ?>\UseCases:
+            - <?php echo $boundedContextName; ?>\Entities
+        <?php echo $boundedContextName; ?>\Adapters:
+            - <?php echo $boundedContextName; ?>\Entities
+            - <?php echo $boundedContextName; ?>\UseCases
     skip_violations: []

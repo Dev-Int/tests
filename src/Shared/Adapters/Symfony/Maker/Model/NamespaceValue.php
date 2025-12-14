@@ -16,7 +16,7 @@ namespace Shared\Adapters\Symfony\Maker\Model;
 use Symfony\Component\String\AbstractString;
 use Symfony\Component\String\UnicodeString;
 
-final class NamespaceValue
+final readonly class NamespaceValue
 {
     public static function fromString(string $namespace): self
     {
