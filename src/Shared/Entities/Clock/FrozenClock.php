@@ -15,8 +15,7 @@ namespace Shared\Entities\Clock;
 
 final class FrozenClock implements Clock
 {
-    /** @var \DateTimeImmutable */
-    private $now;
+    private \DateTimeImmutable $now;
 
     public function __construct(?\DateTimeImmutable $now = null)
     {
