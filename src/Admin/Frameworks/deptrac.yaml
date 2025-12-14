@@ -1,0 +1,25 @@
+deptrac:
+    layers:
+        - name: Admin\Entities
+          collectors:
+              - type: className
+                regex: Admin\\Entities\\.*
+        - name: Admin\UseCases
+          collectors:
+              - type: className
+                regex: Admin\\UseCases\\.*
+        - name: Admin\Adapters
+          collectors:
+              - type: className
+                regex: Admin\\Adapters\\.*
+    ruleset:
+        Admin\Entities:
+            - Shared\Entities
+        Admin\UseCases:
+            - Admin\Entities
+            - Shared\Entities
+        Admin\Adapters:
+            - Admin\Entities
+            - Admin\UseCases
+            - Shared\Entities
+    skip_violations: []

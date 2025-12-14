@@ -25,7 +25,8 @@
       "Bash(fi)",
       "Bash(composer show:*)",
       "Bash(ls:*)",
-      "Bash(xargs:*)"
+      "Bash(xargs:*)",
+      "Bash(tree:*)"
     ],
     "deny": [],
     "ask": []

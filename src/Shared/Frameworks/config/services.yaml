@@ -3,8 +3,15 @@ services:
         autowire: true
         autoconfigure: true
         public: false
-        
+
     Shared\:
         resource: '%kernel.project_dir%/src/Shared/*'
         exclude:
-            - '%kernel.project_dir%/src/Shared/{Frameworks,Tests,Entities}'
+            - '%kernel.project_dir%/src/Shared/{Frameworks,Tests}'
+            - '%kernel.project_dir%/src/Shared/Adapters/Symfony/Maker'
+
+    Shared\Entities\Clock\Clock: '@Shared\Entities\Clock\SystemClock'
+
+when@test:
+    services:
+        Shared\Entities\Clock\Clock: '@Shared\Entities\Clock\FrozenClock'

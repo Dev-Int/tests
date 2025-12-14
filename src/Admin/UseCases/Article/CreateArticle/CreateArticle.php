@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Admin\UseCases\Article\CreateArticle;
 
 use Admin\Entities\Article\Article;
+use Admin\Entities\Article\VO\Packaging;
 use Admin\Entities\Exception\Article\ArticleAlreadyExists;
 use Admin\Entities\Exception\FamilyLog\BadFamilyLogAssigned;
 use Admin\Entities\FamilyLog\FamilyLog;
@@ -22,7 +23,6 @@ use Admin\Entities\ZoneStorage\ZoneStorage;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\Amount;
 use Shared\Entities\VO\NameField;
-use Shared\Entities\VO\Packaging;
 
 final readonly class CreateArticle
 {

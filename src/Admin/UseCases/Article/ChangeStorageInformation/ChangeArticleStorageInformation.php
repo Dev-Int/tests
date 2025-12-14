@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Article\ChangeStorageInformation;
 
+use Admin\Entities\Article\VO\Packaging;
 use Admin\Entities\Repository\ArticleRepository;
-use Shared\Entities\VO\Packaging;
 
 final readonly class ChangeArticleStorageInformation
 {

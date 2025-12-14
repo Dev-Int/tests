@@ -43,3 +43,7 @@ clover.xml
 ###< Claude code ###
 
 /.gitconfig
+
+###> phpstan/phpstan ###
+phpstan.neon
+###< phpstan/phpstan ###

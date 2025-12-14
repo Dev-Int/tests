@@ -20,12 +20,10 @@ return RectorConfig::configure()
         __DIR__ . '/src',
         __DIR__ . '/tests',
     ])
-    ->withPHPStanConfigs([__DIR__ . '/phpstan.neon'])
-    // register single rule
+    ->withPHPStanConfigs([__DIR__ . '/phpstan.dist.neon'])
     ->withRules([
         TypedPropertyFromStrictConstructorRector::class,
     ])
-    // here we can define, what prepared sets of rules will be applied
     ->withPreparedSets(
         deadCode: true,
         codeQuality: true

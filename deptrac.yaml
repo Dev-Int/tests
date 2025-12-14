@@ -1,26 +1,6 @@
 deptrac:
-  paths:
-    - ./src
-  exclude_files:
-    - '#.*test.*#'
-  layers:
-    - name: Entities
-      collectors:
-        - type: directory
-          value: src/.*/Entities/.*
-    - name: UseCases
-      collectors:
-        - type: directory
-          value: .src/.*/UseCases/.*
-    - name: Adapters
-      collectors:
-        - type: directory
-          value: src/.*/Adapters/.*
-  ruleset:
-    Entities:
-      - Shared\Entities
-    UseCases:
-      - Entities
-    Adapters:
-      - Entities
-      - UseCases
+    paths: [./src]
+    exclude_files: ['#.*Tests.*#']
+imports:
+    - src/Shared/Frameworks/deptrac.yaml
+    - src/Admin/Frameworks/deptrac.yaml

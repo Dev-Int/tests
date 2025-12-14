@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Admin\Entities\Article;
 
 use Admin\Entities\Article\VO\ArticleQuantity;
+use Admin\Entities\Article\VO\Packaging;
 use Admin\Entities\FamilyLog\FamilyLog;
 use Admin\Entities\Supplier\Supplier;
 use Admin\Entities\Tax\Tax;
@@ -22,7 +23,6 @@ use Admin\Entities\ZoneStorage\ZoneStorageCollection;
 use Shared\Entities\ResourceUuidInterface;
 use Shared\Entities\VO\Amount;
 use Shared\Entities\VO\NameField;
-use Shared\Entities\VO\Packaging;
 
 final class Article
 {

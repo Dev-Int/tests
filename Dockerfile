@@ -1,7 +1,7 @@
 #syntax=docker/dockerfile:1.4
 
 # Versions
-FROM dunglas/frankenphp:latest-php8.2-alpine AS frankenphp_upstream
+FROM dunglas/frankenphp:latest-php8.3-alpine AS frankenphp_upstream
 FROM composer/composer:2-bin AS composer_upstream
 
 
@@ -42,7 +42,7 @@ RUN set -eux; \
 
 ###> symfony/panther ###
 # Chromium and ChromeDriver
-ENV PANTHER_NO_SANDBOX 1
+ENV PANTHER_NO_SANDBOX=1
 # Not mandatory, but recommended
 ENV PANTHER_CHROME_ARGUMENTS='--disable-dev-shm-usage'
 RUN apk add --no-cache chromium chromium-chromedriver
