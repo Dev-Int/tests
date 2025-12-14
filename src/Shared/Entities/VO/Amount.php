@@ -17,25 +17,32 @@ final readonly class Amount
 {
     public static function fromInt(int $amount): self
     {
-        return new self($amount);
+        return new self((string) $amount);
     }
 
     public static function fromFloat(float $amount): self
     {
-        return new self((int) ($amount * 100));
+        $amountInCents = $amount * 100;
+
+        return new self((string) $amountInCents);
     }
 
-    private function __construct(private int $amount)
+    public static function zero(): self
+    {
+        return new self('0');
+    }
+
+    private function __construct(private string $amount)
     {
     }
 
     public function toInt(): int
     {
-        return $this->amount;
+        return (int) $this->amount;
     }
 
     public function toFloat(): float
     {
-        return $this->amount / 100;
+        return (float) bcdiv($this->amount, '100', 2);
     }
 }

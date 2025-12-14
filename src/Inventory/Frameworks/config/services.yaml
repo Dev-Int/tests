@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../../../vendor/symfony/dependency-injection/Loader/schema/services.schema.json
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Inventory\:
+        resource: '%kernel.project_dir%/src/Inventory/*'
+        exclude:
+            - '%kernel.project_dir%/src/Inventory/{Frameworks,Entities,Tests}'

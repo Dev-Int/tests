@@ -4,3 +4,4 @@ deptrac:
 imports:
     - src/Shared/Frameworks/deptrac.yaml
     - src/Admin/Frameworks/deptrac.yaml
+    - src/Inventory/Frameworks/deptrac.yaml
