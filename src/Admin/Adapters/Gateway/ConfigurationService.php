@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Gateway;
 
+use Admin\Contracts\Services\Provider\ConfigurationServiceProvider;
 use Admin\Entities\Repository\ArticleRepository;
 use Admin\Entities\Repository\CompanyRepository;
 use Admin\Entities\Repository\FamilyLogRepository;
@@ -21,7 +22,7 @@ use Admin\Entities\Repository\TaxRepository;
 use Admin\Entities\Repository\UnitRepository;
 use Admin\Entities\Repository\ZoneStorageRepository;
 
-final readonly class ConfigurationService
+final readonly class ConfigurationService implements ConfigurationServiceProvider
 {
     public function __construct(
         private CompanyRepository $companyRepository,

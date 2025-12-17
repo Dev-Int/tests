@@ -31,7 +31,7 @@ final class ChangeArticleFinancialInformationControllerTest extends BaseFunction
 {
     use Factories;
 
-    public const CHANGE_ARTICLE_FINANCIAL_INFORMATION_URI = '/admin/articles/%s/change-financial-information';
+    public const string CHANGE_ARTICLE_FINANCIAL_INFORMATION_URI = '/admin/articles/%s/change-financial-information';
 
     public function testChangeArticleFinancialInformationWillSucceed(): void
     {
@@ -95,7 +95,7 @@ final class ChangeArticleFinancialInformationControllerTest extends BaseFunction
 
         self::assertEquals($translator->trans('admin.article.changeFinancialInformation.success'), $flash);
 
-        $articleUpdated = $articleRepository->getByUuid($article->uuid()->toString());
+        $articleUpdated = $articleRepository->getByUuid($article->uuid());
         self::assertSame(725, $articleUpdated->unitPrice()->toInt());
         self::assertSame(0.055, $articleUpdated->tax()->rate());
     }

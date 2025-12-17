@@ -11,16 +11,17 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\UseCases\Article\ChangeFinancialInformation;
+namespace Admin\Contracts\Services\Provider\ZoneStorage\Result;
 
-use Admin\Entities\Tax\Tax;
 use Shared\Entities\ResourceUuid;
+use Shared\Entities\VO\NameField;
 
-interface ChangeArticleFinancialInformationRequest
+final readonly class ZoneStorage
 {
-    public function amount(): int;
-
-    public function tax(): Tax;
-
-    public function uuid(): ResourceUuid;
+    public function __construct(
+        public ResourceUuid $uuid,
+        public NameField $label,
+        public string $slug,
+    ) {
+    }
 }

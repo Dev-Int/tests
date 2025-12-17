@@ -34,7 +34,7 @@ class ChangeArticleStorageInformationControllerTest extends BaseFunctionalTestCa
 {
     use Factories;
 
-    public const CHANGE_ARTICLE_STORAGE_INFORMATION_URI = '/admin/articles/%s/change-article-storage-information';
+    public const string CHANGE_ARTICLE_STORAGE_INFORMATION_URI = '/admin/articles/%s/change-article-storage-information';
 
     public function testChangeArticleStorageInformationWillSucceed(): void
     {
@@ -101,7 +101,7 @@ class ChangeArticleStorageInformationControllerTest extends BaseFunctionalTestCa
 
         static::assertEquals($translator->trans('admin.article.changeStorageInformation.success'), $flash);
 
-        $articleUpdated = $articleRepository->getByUuid($article->uuid()->toString());
+        $articleUpdated = $articleRepository->getByUuid($article->uuid());
         static::assertEquals([$colis->_real()->toDomain(), 1.0], $articleUpdated->packaging()->parcel());
         static::assertEquals([$piece->_real()->toDomain(), 2.0], $articleUpdated->packaging()->subPackage());
         static::assertEquals([$kilogramme->_real()->toDomain(), 6.800], $articleUpdated->packaging()->consumerUnit());

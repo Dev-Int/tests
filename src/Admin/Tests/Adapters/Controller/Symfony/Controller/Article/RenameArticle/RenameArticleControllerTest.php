@@ -90,7 +90,7 @@ final class RenameArticleControllerTest extends BaseFunctionalTestCase
 
         self::assertEquals($translator->trans('admin.article.rename.success'), $flash);
 
-        $articleUpdated = $articleRepository->getByUuid($article->uuid()->toString());
+        $articleUpdated = $articleRepository->getByUuid($article->uuid());
         self::assertSame('Jambon 6kg', $articleUpdated->name()->toString());
     }
 

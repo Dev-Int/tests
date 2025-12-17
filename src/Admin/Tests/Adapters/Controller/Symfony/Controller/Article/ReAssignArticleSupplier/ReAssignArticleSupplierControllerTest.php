@@ -101,7 +101,7 @@ final class ReAssignArticleSupplierControllerTest extends BaseFunctionalTestCase
 
         self::assertEquals($translator->trans('admin.article.reassignSupplier.success'), $flash);
 
-        $articleUpdated = $articleRepository->getByUuid($article->uuid()->toString());
+        $articleUpdated = $articleRepository->getByUuid($article->uuid());
 
         self::assertSame('Supplier Surgelé', $articleUpdated->supplier()->name()->toString());
         $zoneStorages = $articleUpdated->zoneStorages()->toArray();

@@ -60,7 +60,18 @@ final class ArticleFactory extends PersistentProxyObjectFactory
     {
         return $this->instantiateWith(
             /**
-             * @param array{name: string, uuid: string, supplier: Supplier, tax: Tax, zoneStorages: array<ZoneStorage>, familyLog: FamilyLog, packaging: array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null}, unitPrice: int, minStock: float, quantity: float} $attributes
+             * @param array{
+             *     name: string,
+             *     uuid: string,
+             *     supplier: Supplier,
+             *     tax: Tax,
+             *     zoneStorages: array<ZoneStorage>,
+             *     familyLog: FamilyLog,
+             *     packaging: array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null},
+             *     unitPrice: int,
+             *     minStock: float,
+             *     quantity: float
+             * } $attributes
              */
             static function (array $attributes): Article {
                 \assert(\is_string($attributes['name']));

@@ -61,7 +61,7 @@ final class RenameArticleTest extends TestCase
         $request = $this->createMock(RenameArticleRequest::class);
 
         $request->expects(self::exactly(2))->method('name')->willReturn('Jambon 6kg');
-        $request->expects(self::once())->method('uuid')->willReturn($article->uuid()->toString());
+        $request->expects(self::once())->method('uuid')->willReturn($article->uuid());
 
         $articleRepository->expects(self::once())
             ->method('isExists')
@@ -70,7 +70,7 @@ final class RenameArticleTest extends TestCase
         ;
         $articleRepository->expects(self::once())
             ->method('getByUuid')
-            ->with($article->uuid()->toString())
+            ->with($article->uuid())
             ->willReturn($article)
         ;
 
@@ -117,7 +117,7 @@ final class RenameArticleTest extends TestCase
         $request = $this->createMock(RenameArticleRequest::class);
 
         $request->expects(self::exactly(2))->method('name')->willReturn('Jambon 6kg');
-        $request->expects(self::never())->method('uuid')->willReturn($article->uuid()->toString());
+        $request->expects(self::never())->method('uuid')->willReturn($article->uuid());
 
         $articleRepository->expects(self::once())
             ->method('isExists')
@@ -126,7 +126,7 @@ final class RenameArticleTest extends TestCase
         ;
         $articleRepository->expects(self::never())
             ->method('getByUuid')
-            ->with($article->uuid()->toString())
+            ->with($article->uuid())
             ->willReturn($article)
         ;
 
@@ -171,7 +171,7 @@ final class RenameArticleTest extends TestCase
         $request = $this->createMock(RenameArticleRequest::class);
 
         $request->expects(self::once())->method('name')->willReturn('Jambon 6kg');
-        $request->expects(self::once())->method('uuid')->willReturn($article->uuid()->toString());
+        $request->expects(self::once())->method('uuid')->willReturn($article->uuid());
 
         $articleRepository->expects(self::once())
             ->method('isExists')
@@ -180,7 +180,7 @@ final class RenameArticleTest extends TestCase
         ;
         $articleRepository->expects(self::once())
             ->method('getByUuid')
-            ->with($article->uuid()->toString())
+            ->with($article->uuid())
             ->will(self::throwException(new ArticleNotFound($article->uuid()->toString())))
         ;
 

@@ -20,9 +20,9 @@ final class ZoneStorageNotFound extends DomainException implements \JsonSerializ
 {
     use ExceptionSerializableTrait;
 
-    public const MESSAGE = 'Zone storage not found.';
+    public const string MESSAGE = 'Zone storage not found.';
 
-    public function __construct(private readonly string $slug, ?\Throwable $previous = null)
+    public function __construct(private readonly string $slugOrUuid, ?\Throwable $previous = null)
     {
         parent::__construct(self::MESSAGE, DomainException::NOT_FOUND_CODE, $previous);
     }
@@ -35,7 +35,7 @@ final class ZoneStorageNotFound extends DomainException implements \JsonSerializ
     public function jsonSerialize(): iterable
     {
         return $this->toJson() + [
-            'slug' => $this->slug,
+            'slugOrUuid' => $this->slugOrUuid,
         ];
     }
 }

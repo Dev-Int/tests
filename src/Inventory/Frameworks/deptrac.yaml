@@ -21,4 +21,7 @@ deptrac:
         Inventory\Adapters:
             - Inventory\Entities
             - Inventory\UseCases
+            - Admin\Contracts
+            - Shared\Entities
+            - Shared\Adapters
     skip_violations: []

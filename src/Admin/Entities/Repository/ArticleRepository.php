@@ -21,6 +21,7 @@ use Admin\Entities\Exception\FamilyLog\FamilyLogNotFound;
 use Admin\Entities\Exception\Supplier\SupplierNotFound;
 use Admin\Entities\Exception\Tax\TaxNotFound;
 use Admin\Entities\Exception\ZoneStorage\ZoneStorageNotFound;
+use Shared\Entities\ResourceUuid;
 
 interface ArticleRepository
 {
@@ -61,7 +62,7 @@ interface ArticleRepository
     /**
      * @throws ArticleNotFound
      */
-    public function getByUuid(string $uuid): Article;
+    public function getByUuid(ResourceUuid $uuid): Article;
 
     /**
      * @throws ArticleNotFound

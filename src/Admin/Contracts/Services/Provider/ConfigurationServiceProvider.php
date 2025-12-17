@@ -11,16 +11,13 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\UseCases\Article\ChangeFinancialInformation;
+namespace Admin\Contracts\Services\Provider;
 
-use Admin\Entities\Tax\Tax;
-use Shared\Entities\ResourceUuid;
+use Admin\Adapters\Controller\Symfony\Controller\ConfigurationController;
 
-interface ChangeArticleFinancialInformationRequest
+interface ConfigurationServiceProvider
 {
-    public function amount(): int;
+    public const string ROUTE_NAME = ConfigurationController::ROUTE_NAME;
 
-    public function tax(): Tax;
-
-    public function uuid(): ResourceUuid;
+    public function isArticleConfigured(): bool;
 }

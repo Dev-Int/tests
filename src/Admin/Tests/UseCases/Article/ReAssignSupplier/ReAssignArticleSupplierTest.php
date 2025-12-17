@@ -76,11 +76,11 @@ final class ReAssignArticleSupplierTest extends TestCase
         $request->expects(self::exactly(2))->method('supplier')->willReturn($supplier2);
         $request->expects(self::exactly(2))->method('familyLog')->willReturn($surgeleViande);
         $request->expects(self::exactly(2))->method('zoneStorages')->willReturn([$storageSurgele]);
-        $request->expects(self::once())->method('uuid')->willReturn($article->uuid()->toString());
+        $request->expects(self::once())->method('uuid')->willReturn($article->uuid());
 
         $articleRepository->expects(self::once())
             ->method('getByUuid')
-            ->with($article->uuid()->toString())
+            ->with($article->uuid())
             ->willReturn($article)
         ;
 
@@ -150,11 +150,11 @@ final class ReAssignArticleSupplierTest extends TestCase
         $request->expects(self::once())->method('supplier')->willReturn($supplier2);
         $request->expects(self::exactly(2))->method('familyLog')->willReturn($fraisViande);
         $request->expects(self::once())->method('zoneStorages')->willReturn([$storageFrais, $storageSurgele]);
-        $request->expects(self::never())->method('uuid')->willReturn($article->uuid()->toString());
+        $request->expects(self::never())->method('uuid')->willReturn($article->uuid());
 
         $articleRepository->expects(self::never())
             ->method('getByUuid')
-            ->with($article->uuid()->toString())
+            ->with($article->uuid())
             ->willReturn($article)
         ;
 

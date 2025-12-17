@@ -15,7 +15,7 @@ namespace Inventory\Entities\Exception;
 
 use Shared\Entities\Exception\ExceptionSerializableTrait;
 
-final class PastDateExpected extends \DomainException implements \JsonSerializable
+final class EqualOrFutureDateExpected extends \DomainException implements \JsonSerializable
 {
     use ExceptionSerializableTrait;
 

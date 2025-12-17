@@ -17,6 +17,7 @@ use Admin\Entities\FamilyLog\FamilyLog;
 use Admin\Entities\Supplier\Supplier;
 use Admin\Entities\ZoneStorage\ZoneStorage;
 use Admin\UseCases\Article\ReAssignSupplier\ReAssignArticleSupplierRequest;
+use Shared\Entities\ResourceUuid;
 
 final class ReAssignArticleSupplierApiRequest implements ReAssignArticleSupplierRequest
 {
@@ -49,8 +50,8 @@ final class ReAssignArticleSupplierApiRequest implements ReAssignArticleSupplier
         return $this->zoneStorages;
     }
 
-    public function uuid(): string
+    public function uuid(): ResourceUuid
     {
-        return $this->uuid;
+        return ResourceUuid::fromString($this->uuid);
     }
 }

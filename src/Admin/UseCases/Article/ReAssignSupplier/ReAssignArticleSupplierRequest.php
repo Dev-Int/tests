@@ -16,6 +16,7 @@ namespace Admin\UseCases\Article\ReAssignSupplier;
 use Admin\Entities\FamilyLog\FamilyLog;
 use Admin\Entities\Supplier\Supplier;
 use Admin\Entities\ZoneStorage\ZoneStorage;
+use Shared\Entities\ResourceUuid;
 
 interface ReAssignArticleSupplierRequest
 {
@@ -28,5 +29,5 @@ interface ReAssignArticleSupplierRequest
      */
     public function zoneStorages(): array;
 
-    public function uuid(): string;
+    public function uuid(): ResourceUuid;
 }

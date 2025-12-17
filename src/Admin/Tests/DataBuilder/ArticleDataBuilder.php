@@ -105,7 +105,7 @@ final class ArticleDataBuilder implements DataBuilderInterface
             NameField::fromString($this->name),
             $this->supplier,
             Packaging::fromArray($this->packaging),
-            Amount::fromInt($this->amount),
+            Amount::fromCents($this->amount),
             $this->tax,
             $this->minStock,
             $this->zoneStorages,

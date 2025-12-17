@@ -19,7 +19,7 @@ use Admin\Entities\Supplier\Supplier;
 use Admin\Entities\Tax\Tax;
 use Admin\Entities\ZoneStorage\ZoneStorage;
 use Admin\Entities\ZoneStorage\ZoneStorageCollection;
-use Shared\Entities\ResourceUuidInterface;
+use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\Amount;
 use Shared\Entities\VO\NameField;
 use Shared\Entities\VO\Quantity;
@@ -32,7 +32,7 @@ final class Article
      * @param array<ZoneStorage> $zoneStorages
      */
     public static function create(
-        ResourceUuidInterface $uuid,
+        ResourceUuid $uuid,
         NameField $name,
         Supplier $supplier,
         Packaging $packaging,
@@ -65,7 +65,7 @@ final class Article
     }
 
     private function __construct(
-        private readonly ResourceUuidInterface $uuid,
+        private readonly ResourceUuid $uuid,
         private NameField $name,
         private Supplier $supplier,
         private Packaging $packaging,
@@ -80,7 +80,7 @@ final class Article
         $this->slug = $name->slugify();
     }
 
-    public function uuid(): ResourceUuidInterface
+    public function uuid(): ResourceUuid
     {
         return $this->uuid;
     }

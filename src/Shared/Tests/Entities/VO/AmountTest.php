@@ -34,7 +34,7 @@ final class AmountTest extends TestCase
     public function testInstantiateAmountFromInt(): void
     {
         // Arrange && Act
-        $amount = Amount::fromInt(250035);
+        $amount = Amount::fromCents(250035);
 
         // Assert
         self::assertEquals(2500.35, $amount->toFloat());

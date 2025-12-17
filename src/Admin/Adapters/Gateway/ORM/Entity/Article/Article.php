@@ -107,7 +107,7 @@ class Article
             NameField::fromString($this->name),
             $this->supplier->toDomain(),
             $this->packaging->toDomain(),
-            Amount::fromInt($this->unitPrice),
+            Amount::fromCents($this->unitPrice),
             $this->tax->toDomain(),
             $this->minStock,
             $zoneStorages,

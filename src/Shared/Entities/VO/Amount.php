@@ -15,7 +15,7 @@ namespace Shared\Entities\VO;
 
 final readonly class Amount
 {
-    public static function fromInt(int $amount): self
+    public static function fromCents(int $amount): self
     {
         return new self((string) $amount);
     }

@@ -15,6 +15,7 @@ namespace Admin\Adapters\Controller\Symfony\Controller\Article\ChangeArticleStor
 
 use Admin\Entities\Unit\Unit;
 use Admin\UseCases\Article\ChangeStorageInformation\ChangeArticleStorageInformationRequest;
+use Shared\Entities\ResourceUuid;
 
 final class ChangeArticleStorageInformationApiRequest implements ChangeArticleStorageInformationRequest
 {
@@ -35,8 +36,8 @@ final class ChangeArticleStorageInformationApiRequest implements ChangeArticleSt
         return $this->minStock;
     }
 
-    public function uuid(): string
+    public function uuid(): ResourceUuid
     {
-        return $this->uuid;
+        return ResourceUuid::fromString($this->uuid);
     }
 }

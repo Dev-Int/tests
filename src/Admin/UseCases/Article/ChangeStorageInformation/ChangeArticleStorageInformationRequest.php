@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Admin\UseCases\Article\ChangeStorageInformation;
 
 use Admin\Entities\Unit\Unit;
+use Shared\Entities\ResourceUuid;
 
 interface ChangeArticleStorageInformationRequest
 {
@@ -24,5 +25,5 @@ interface ChangeArticleStorageInformationRequest
 
     public function minStock(): float;
 
-    public function uuid(): string;
+    public function uuid(): ResourceUuid;
 }
