@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Inventory\Tests\UseCases\CreateInventory;
 
+use Inventory\Entities\Exception\EqualOrFutureDateExpected;
 use Inventory\Entities\Exception\InventoryAlreadyActiveForZone;
-use Inventory\Entities\Exception\PastDateExpected;
 use Inventory\Entities\Inventory;
 use Inventory\Entities\Repository\InventoryRepository;
 use Inventory\Entities\VO\InventoryStatus;
@@ -43,13 +43,13 @@ final class CreateInventoryTest extends TestCase
     {
         yield 'date in the past' => [
             'invalidDate' => new \DateTimeImmutable('2020-01-01'),
-            'expectedException' => PastDateExpected::class,
+            'expectedException' => EqualOrFutureDateExpected::class,
             'expectedMessage' => 'Inventory date must be today or in the future.',
         ];
 
         yield 'date yesterday' => [
             'invalidDate' => new \DateTimeImmutable('yesterday'),
-            'expectedException' => PastDateExpected::class,
+            'expectedException' => EqualOrFutureDateExpected::class,
             'expectedMessage' => 'Inventory date must be today or in the future.',
         ];
     }

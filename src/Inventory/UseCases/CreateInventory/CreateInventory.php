@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Inventory\UseCases\CreateInventory;
 
+use Inventory\Entities\Exception\EqualOrFutureDateExpected;
 use Inventory\Entities\Exception\InventoryAlreadyActiveForZone;
-use Inventory\Entities\Exception\PastDateExpected;
 use Inventory\Entities\Inventory;
 use Inventory\Entities\Repository\InventoryRepository;
 use Shared\Entities\Clock\ClockFactory;
@@ -30,7 +30,7 @@ final readonly class CreateInventory
         $date = $request->date();
         $now = ClockFactory::clock()->now();
         if ($date < $now) {
-            throw new PastDateExpected($date);
+            throw new EqualOrFutureDateExpected($date);
         }
 
         $hasActive = $this->inventoryRepository->hasActiveForZone($request->zoneStorages());
