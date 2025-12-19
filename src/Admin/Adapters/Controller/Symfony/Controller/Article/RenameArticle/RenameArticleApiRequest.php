@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Admin\Adapters\Controller\Symfony\Controller\Article\RenameArticle;
 
 use Admin\UseCases\Article\RenameArticle\RenameArticleRequest;
-use Shared\Entities\ResourceUuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final class RenameArticleApiRequest implements RenameArticleRequest
@@ -33,8 +32,8 @@ final class RenameArticleApiRequest implements RenameArticleRequest
         return $this->name;
     }
 
-    public function uuid(): ResourceUuid
+    public function uuid(): string
     {
-        return ResourceUuid::fromString($this->uuid);
+        return $this->uuid;
     }
 }

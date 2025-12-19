@@ -15,6 +15,7 @@ namespace Admin\UseCases\Article\RenameArticle;
 
 use Admin\Entities\Exception\Article\ArticleAlreadyExists;
 use Admin\Entities\Repository\ArticleRepository;
+use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
 
 final readonly class RenameArticle
@@ -30,7 +31,7 @@ final readonly class RenameArticle
             throw new ArticleAlreadyExists($request->name());
         }
 
-        $article = $this->articleRepository->getByUuid($request->uuid());
+        $article = $this->articleRepository->getByUuid(ResourceUuid::fromString($request->uuid()));
 
         $article->rename(NameField::fromString($request->name()));
 

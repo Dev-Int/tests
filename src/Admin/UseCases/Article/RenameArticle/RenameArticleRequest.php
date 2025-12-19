@@ -13,11 +13,9 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Article\RenameArticle;
 
-use Shared\Entities\ResourceUuid;
-
 interface RenameArticleRequest
 {
     public function name(): string;
 
-    public function uuid(): ResourceUuid;
+    public function uuid(): string;
 }
