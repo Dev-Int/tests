@@ -30,7 +30,8 @@ final readonly class Inventory
             date: $date,
             status: InventoryStatus::DRAFT,
             amount: Amount::zero(),
-            items: new InventoryCollection(totalItems: 0)
+            items: new InventoryItemCollection(totalItems: 0)
+        );
         );
     }
 
@@ -43,7 +44,7 @@ final readonly class Inventory
         private \DateTimeImmutable $date,
         private InventoryStatus $status,
         private Amount $amount,
-        private InventoryCollection $items
+        private InventoryItemCollection $items
     ) {
     }
 
@@ -75,8 +76,13 @@ final readonly class Inventory
         return $this->amount;
     }
 
-    public function items(): InventoryCollection
+    public function items(): InventoryItemCollection
     {
         return $this->items;
+    }
+
+    public function addItem(InventoryItem $itemDomain): void
+    {
+        $this->items->add($itemDomain);
     }
 }

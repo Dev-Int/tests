@@ -18,12 +18,12 @@ use Shared\Entities\Exception\InvalidCollectionIterationException;
 use Webmozart\Assert\Assert;
 
 /**
- * @implements Collection<Inventory>
+ * @implements Collection<InventoryItem>
  */
-final class InventoryCollection implements Collection, \Countable
+final class InventoryItemCollection implements Collection, \Countable
 {
-    /** @var array<array-key, Inventory> */
-    private array $inventories = [];
+    /** @var array<array-key, InventoryItem> */
+    private array $items = [];
     private int $key = 0;
 
     public function __construct(private readonly int $totalItems)
@@ -32,15 +32,15 @@ final class InventoryCollection implements Collection, \Countable
 
     public function add(object $item): void
     {
-        Assert::isInstanceOf($item, Inventory::class);
+        Assert::isInstanceOf($item, InventoryItem::class);
 
-        $this->inventories[] = $item;
+        $this->items[] = $item;
     }
 
-    public function current(): Inventory
+    public function current(): InventoryItem
     {
         if ($this->valid()) {
-            return $this->inventories[$this->key];
+            return $this->items[$this->key];
         }
 
         // @codeCoverageIgnoreStart
@@ -63,7 +63,7 @@ final class InventoryCollection implements Collection, \Countable
 
     public function valid(): bool
     {
-        return isset($this->inventories[$this->key]);
+        return isset($this->items[$this->key]);
     }
 
     public function rewind(): void
@@ -72,11 +72,11 @@ final class InventoryCollection implements Collection, \Countable
     }
 
     /**
-     * @return iterable<Inventory>
+     * @return iterable<InventoryItem>
      */
     public function toArray(): iterable
     {
-        return $this->inventories;
+        return $this->items;
     }
 
     public function count(): int
