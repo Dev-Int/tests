@@ -16,7 +16,7 @@ namespace Inventory\Entities\Exception;
 use Shared\Entities\Exception\ExceptionSerializableTrait;
 use Shared\Entities\ResourceUuid;
 
-final class InventoryAlreadyActiveForZone extends \RuntimeException implements \JsonSerializable
+final class InventoryAlreadyActiveForZone extends \DomainException implements \JsonSerializable
 {
     use ExceptionSerializableTrait;
 

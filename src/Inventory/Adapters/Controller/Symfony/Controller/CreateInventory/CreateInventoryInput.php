@@ -23,7 +23,6 @@ final class CreateInventoryInput
     public function __construct(
         #[Assert\NotBlank]
         public ?\DateTimeImmutable $date = null,
-        #[Assert\NotBlank]
         #[Assert\All([
             new Assert\Uuid(),
         ])]

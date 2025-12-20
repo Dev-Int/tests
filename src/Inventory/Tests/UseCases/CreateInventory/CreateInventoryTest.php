@@ -45,6 +45,9 @@ final class CreateInventoryTest extends TestCase
      */
     public static function provideCreateInventoryFailsWithInvalidDateCases(): iterable
     {
+        ClockFactory::initialize(new FrozenClock(new \DateTimeImmutable('2025-12-01')));
+        $now = ClockFactory::clock()->now();
+
         yield 'date in the past' => [
             'invalidDate' => new \DateTimeImmutable('2020-01-01'),
             'expectedException' => EqualOrFutureDateExpected::class,
@@ -52,7 +55,7 @@ final class CreateInventoryTest extends TestCase
         ];
 
         yield 'date yesterday' => [
-            'invalidDate' => new \DateTimeImmutable('yesterday'),
+            'invalidDate' => $now->modify('-1 day'),
             'expectedException' => EqualOrFutureDateExpected::class,
             'expectedMessage' => 'Inventory date must be today or in the future.',
         ];
@@ -61,6 +64,7 @@ final class CreateInventoryTest extends TestCase
     public function testCreateInventoryWithSuccess(): void
     {
         // Arrange
+        ClockFactory::initialize(new FrozenClock(new \DateTimeImmutable('2025-12-01')));
         $inventoryRepository = $this->createMock(InventoryRepository::class);
         $useCase = new CreateInventory($inventoryRepository);
         $request = $this->createMock(CreateInventoryRequest::class);

@@ -66,9 +66,18 @@ final class CreateInventoryController extends AbstractController
             }
 
             $zoneStorages = [];
-            foreach ($inventory->zoneStorages as $zoneStorage) {
-                $zone = $this->zoneStorageProvider->provide(ResourceUuid::fromString($zoneStorage));
-                $zoneStorages[] = new ZoneStorage($zone->uuid, $zone->label);
+
+            // Si aucune zone sélectionnée, on prend toutes les zones
+            if ($inventory->zoneStorages === []) {
+                $allZones = $this->zoneStorageProvider->provideAll();
+                foreach ($allZones as $zone) {
+                    $zoneStorages[] = new ZoneStorage($zone->uuid, $zone->label);
+                }
+            } else {
+                foreach ($inventory->zoneStorages as $zoneStorage) {
+                    $zone = $this->zoneStorageProvider->provide(ResourceUuid::fromString($zoneStorage));
+                    $zoneStorages[] = new ZoneStorage($zone->uuid, $zone->label);
+                }
             }
 
             try {

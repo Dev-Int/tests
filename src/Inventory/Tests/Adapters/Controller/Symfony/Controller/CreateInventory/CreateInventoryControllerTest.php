@@ -14,37 +14,30 @@ declare(strict_types=1);
 namespace Inventory\Tests\Adapters\Controller\Symfony\Controller\CreateInventory;
 
 use Admin\Tests\Factory\ZoneStorageFactory;
+use App\Shared\Tests\BaseFunctionalTestCase;
 use Inventory\Adapters\Controller\Symfony\Controller\CreateInventory\CreateInventoryController;
 use Inventory\Adapters\Gateway\ORM\Entity\InventoryStatus;
 use Inventory\Entities\Exception\EqualOrFutureDateExpected;
 use Inventory\Entities\Exception\InventoryAlreadyActiveForZone;
 use Inventory\Tests\Factory\InventoryFactory;
 use Inventory\Tests\Story\InventoryStory;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Shared\Entities\Clock\ClockFactory;
+use Shared\Entities\Clock\FrozenClock;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Zenstruck\Foundry\Test\Factories;
-use Zenstruck\Foundry\Test\ResetDatabase;
 
 /**
  * @group functionalTest
  *
  * @covers \Inventory\Adapters\Controller\Symfony\Controller\CreateInventory\CreateInventoryController
  */
-final class CreateInventoryControllerTest extends WebTestCase
+final class CreateInventoryControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
-    use ResetDatabase;
 
     public const string CREATE_INVENTORY_URI = '/inventories/create';
-    private KernelBrowser $client;
-
-    protected function setUp(): void
-    {
-        $this->client = self::createClient();
-    }
 
     public function testCreateInventoryFormIsDisplayed(): void
     {
@@ -100,7 +93,7 @@ final class CreateInventoryControllerTest extends WebTestCase
         self::assertResponseRedirects('/inventories');
 
         $inventory = $this->client->followRedirect();
-        $flash = $inventory->filter('body > div.container > div')->children('div.flash.flash-success')->text();
+        $flash = $inventory->filter('.flash-success')->text();
 
         self::assertEquals($translator->trans('inventory.create.success'), $flash);
 
@@ -117,11 +110,14 @@ final class CreateInventoryControllerTest extends WebTestCase
     public function testCreateInventoryFailWithPastDate(): void
     {
         // Arrange
+        ClockFactory::initialize(new FrozenClock(new \DateTimeImmutable('2025-12-01')));
+        $now = ClockFactory::clock()->now();
+
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
         InventoryStory::load();
         $zoneStorages = ZoneStorageFactory::all();
-        $pastDate = new \DateTimeImmutable('-1 day');
+        $pastDate = $now->modify('-1 day');
 
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_INVENTORY_URI);
@@ -133,14 +129,17 @@ final class CreateInventoryControllerTest extends WebTestCase
         ]);
         $this->client->submit($form);
 
-        // Assert - Pas de redirection (erreur validation)
+        // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
+        self::assertResponseRedirects();
 
         $inventory = $this->client->followRedirect();
-        $flash = $inventory->filter('body > div.container > div')->children('div.flash.flash-error')->text();
+
+        $flashElements = $inventory->filter('.flash-error');
+        $flash = $flashElements->text();
         self::assertSame(EqualOrFutureDateExpected::MESSAGE, $flash);
 
-        // Assert - Pas de création en base
+        // Assert
         self::assertCount(0, InventoryFactory::all());
     }
 
@@ -151,13 +150,15 @@ final class CreateInventoryControllerTest extends WebTestCase
         $translator = self::getContainer()->get('translator');
         InventoryStory::load();
         $zoneStorages = ZoneStorageFactory::all();
-        InventoryFactory::createOne([
-            'date' => new \DateTimeImmutable('+1 day'),
-            'zoneStorages' => [$zoneStorages[0]->_real()],
-            'status' => InventoryStatus::DRAFT->value,
-        ]);
+        $firstZone = $zoneStorages[0]->_real();
+        $zoneUuid = $firstZone->uuid();
 
         $futureDate = new \DateTimeImmutable('+1 day');
+        InventoryFactory::createOne([
+            'date' => $futureDate,
+            'zoneStorages' => [$zoneUuid],
+            'status' => InventoryStatus::DRAFT->value,
+        ]);
 
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_INVENTORY_URI);
@@ -165,18 +166,18 @@ final class CreateInventoryControllerTest extends WebTestCase
             'createInventory[date][day]' => (int) $futureDate->format('d'),
             'createInventory[date][month]' => (int) $futureDate->format('m'),
             'createInventory[date][year]' => (int) $futureDate->format('Y'),
-            'createInventory[zoneStorages]' => [$zoneStorages[0]->uuid()],
+            'createInventory[zoneStorages]' => [$zoneUuid],
         ]);
         $this->client->submit($form);
 
-        // Assert - Pas de redirection (erreur validation)
+        // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
 
         $inventory = $this->client->followRedirect();
-        $flash = $inventory->filter('body > div.container > div')->children('div.flash.flash-error')->text();
+        $flash = $inventory->filter('.flash-error')->text();
         self::assertSame(InventoryAlreadyActiveForZone::MESSAGE, $flash);
 
-        // Assert - Pas de nouveau inventaire créé
+        // Assert
         self::assertCount(1, InventoryFactory::all());
     }
 
@@ -186,6 +187,7 @@ final class CreateInventoryControllerTest extends WebTestCase
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
         InventoryStory::load();
+        $allZones = ZoneStorageFactory::all();
         $futureDate = new \DateTimeImmutable('+1 day');
 
         // Act
@@ -198,13 +200,27 @@ final class CreateInventoryControllerTest extends WebTestCase
         ]);
         $this->client->submit($form);
 
-        // Assert - Pas de redirection (erreur validation)
+        // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
+        self::assertResponseRedirects('/inventories');
 
-        $this->client->followRedirect();
+        $inventory = $this->client->followRedirect();
+        $flash = $inventory->filter('.flash-success')->text();
 
-        // Assert - Pas de création en base
-        self::assertCount(0, InventoryFactory::all());
+        self::assertEquals($translator->trans('inventory.create.success'), $flash);
+
+        self::assertCount(1, InventoryFactory::all());
+        $createdInventory = InventoryFactory::first(sortBy: 'date')->_real();
+        self::assertSame($futureDate->format('Y-m-d'), $createdInventory->date()->format('Y-m-d'));
+
+        self::assertCount(\count($allZones), $createdInventory->zoneStorages());
+
+        $createdZoneUuids = $createdInventory->zoneStorages();
+        sort($createdZoneUuids);
+        $expectedZoneUuids = array_map(static fn ($zone) => $zone->_real()->uuid(), $allZones);
+        sort($expectedZoneUuids);
+
+        self::assertSame($expectedZoneUuids, $createdZoneUuids);
     }
 
     public function testCreateInventoryRouteNameConstantExists(): void
