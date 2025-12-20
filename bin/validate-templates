@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+
+# Validate PHP syntax of all .tpl template files
+# Usage: bin/validate-templates
+# Exit code: 0 if all templates are valid, 1 otherwise
+
+set -e
+
+TEMPLATES_DIR=".claude/templates"
+TEMP_FILE=$(mktemp)
+EXIT_CODE=0
+TOTAL=0
+SUCCESS=0
+FAILED=0
+
+# Color codes for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "  Template Syntax Validator"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
+# Check if templates directory exists
+if [ ! -d "$TEMPLATES_DIR" ]; then
+    echo -e "${RED}✗ Error: Templates directory not found: $TEMPLATES_DIR${NC}"
+    exit 1
+fi
+
+# Function to replace all placeholders with valid PHP identifiers
+replace_placeholders() {
+    sed 's/{BC}/Admin/g;
+         s/{Entity}/Article/g;
+         s/{Action}/Create/g;
+         s/{actionMethod}/create/g;
+         s/{field}/name/g;
+         s/{param}/name/g;
+         s/{Name}/Article/g;
+         s/{ProviderBC}/Admin/g;
+         s/{ConsumerBC}/Inventory/g;
+         s/{ControllerName}/GetArticlesController/g;
+         s/{Namespace}/Admin/g;
+         s/{Type}/string/g;
+         s/{FactoryType}/String/g;
+         s/{WorkflowName}/CreateArticle/g;
+         s/scalar|VO|ReadModel/string/g'
+}
+
+# Validate each template file
+for tpl_file in "$TEMPLATES_DIR"/*.php.tpl; do
+    if [ ! -f "$tpl_file" ]; then
+        continue
+    fi
+
+    TOTAL=$((TOTAL + 1))
+    filename=$(basename "$tpl_file")
+
+    # Replace placeholders and validate syntax
+    replace_placeholders < "$tpl_file" > "$TEMP_FILE"
+
+    if php -l "$TEMP_FILE" >/dev/null 2>&1; then
+        echo -e "${GREEN}✓${NC} $filename"
+        SUCCESS=$((SUCCESS + 1))
+    else
+        echo -e "${RED}✗${NC} $filename"
+        echo ""
+        echo "  Error details:"
+        php -l "$TEMP_FILE" 2>&1 | sed 's/^/    /'
+        echo ""
+        FAILED=$((FAILED + 1))
+        EXIT_CODE=1
+    fi
+done
+
+# Cleanup
+rm -f "$TEMP_FILE"
+
+# Summary
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "  Summary"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo -e "Total:   $TOTAL templates"
+echo -e "${GREEN}Success: $SUCCESS${NC}"
+if [ $FAILED -gt 0 ]; then
+    echo -e "${RED}Failed:  $FAILED${NC}"
+fi
+echo ""
+
+if [ $EXIT_CODE -eq 0 ]; then
+    echo -e "${GREEN}✓ All templates are syntactically valid!${NC}"
+else
+    echo -e "${RED}✗ Some templates have syntax errors.${NC}"
+fi
+
+exit $EXIT_CODE

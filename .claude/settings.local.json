@@ -26,9 +26,17 @@
       "Bash(composer show:*)",
       "Bash(ls:*)",
       "Bash(xargs:*)",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(find:*)",
+      "Bash(head:*)",
+      "Bash(touch:*)",
+      "Bash(while read f)",
+      "Bash(do wc -w $f)"
     ],
-    "deny": [],
+    "deny": [
+      "../.env",
+      "../.env.*"
+    ],
     "ask": []
   }
 }
