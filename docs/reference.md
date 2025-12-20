@@ -96,13 +96,14 @@ php bin/phpunit path/to/Test.php
 ## Quality Commands
 
 ```bash
-make qa          # All quality checks (PHPStan + CS-Fixer + PHPCS + Rector + Deptrac + Lint)
+make qa                 # All quality checks (PHPStan + CS-Fixer + PHPCS + Rector + Deptrac + Lint + Templates)
 
 # Individual tools
-make phpcs       # Run PHP_CodeSniffer
-make cs-fixer    # Run PHP-CS-Fixer (auto-fixes code style)
-make stan        # Run PHPStan analysis
-make rector      # Run Rector (dry-run)
+make phpcs              # Run PHP_CodeSniffer
+make cs-fixer           # Run PHP-CS-Fixer (auto-fixes code style)
+make stan               # Run PHPStan analysis
+make rector             # Run Rector (dry-run)
+make validate-templates # Validate PHP syntax of .claude/templates/*.tpl files
 
 # Alternative commands
 composer phpcs
@@ -208,6 +209,14 @@ make qa
 
 - Validates: Entities ← UseCases ← Adapters
 - Config: `{BC}/Frameworks/deptrac.yaml` + root `deptrac.yaml`
+
+### Templates Validation
+
+- Validates: PHP syntax of all `.claude/templates/*.tpl` files
+- Script: `bin/validate-templates`
+- Process: Replaces placeholders ({BC}, {Entity}, etc.) then runs `php -l`
+- Exit code: 0 (success) / 1 (syntax errors)
+- Integrated in: `make qa`
 
 ### Tests
 

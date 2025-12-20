@@ -66,7 +66,14 @@ Common questions:
 
 ---
 
-## Skills
+## Skills vs Makers
+
+**Skills** (IA workflows) : Processus guidés TDD complets (RED-GREEN-REFACTOR)
+**Makers** (Symfony CLI) : Générateurs rapides de fichiers (`bin/console make:...`)
+
+**Quand utiliser** :
+- Skills → Process complet avec tests (recommandé pour IA)
+- Makers → Génération rapide manuelle (si tu codes toi-même)
 
 | Skill | Usage | Ref |
 |-------|-------|-----|

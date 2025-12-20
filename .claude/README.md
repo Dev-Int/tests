@@ -34,7 +34,7 @@ Index of available skills, workflows, and templates for AI-assisted development.
 
 #### tdd-workflow (MANDATORY)
 
-**Location**: skills/tdd/  
+**Location**: skills/tdd-workflow/  
 **Type**: Workflow  
 **Usage**: All implementations (MANDATORY)
 
@@ -44,13 +44,13 @@ Index of available skills, workflows, and templates for AI-assisted development.
 **Prerequisites**: Basic PHP, PHPUnit  
 **Outputs**: Test, Request, UseCase
 
-**Reference**: skills/tdd/SKILL.md
+**Reference**: skills/tdd-workflow/SKILL.md
 
 ---
 
 #### create-use-case
 
-**Location**: skills/use-case/  
+**Location**: skills/create-use-case/  
 **Type**: Generator  
 **Usage**: New business use case
 
@@ -63,13 +63,13 @@ Index of available skills, workflows, and templates for AI-assisted development.
 **Prerequisites**: TDD workflow  
 **Related**: tdd-workflow
 
-**Reference**: skills/use-case/SKILL.md
+**Reference**: skills/create-use-case/SKILL.md
 
 ---
 
 #### add-bc-contract
 
-**Location**: skills/bc-contract/  
+**Location**: skills/add-bc-contract/  
 **Type**: Generator  
 **Usage**: Inter-BC communication
 
@@ -83,13 +83,13 @@ Index of available skills, workflows, and templates for AI-assisted development.
 **Prerequisites**: Inter-BC communication understanding  
 **Related**: None
 
-**Reference**: skills/bc-contract/SKILL.md
+**Reference**: skills/add-bc-contract/SKILL.md
 
 ---
 
 #### create-functional-test
 
-**Location**: skills/functional-test/  
+**Location**: skills/create-functional-test/  
 **Type**: Generator  
 **Usage**: HTTP/LiveComponent test
 
@@ -100,7 +100,7 @@ Index of available skills, workflows, and templates for AI-assisted development.
 **Prerequisites**: HTTP, Symfony forms  
 **Related**: tdd-workflow
 
-**Reference**: skills/functional-test/SKILL.md
+**Reference**: skills/create-functional-test/SKILL.md
 
 ---
 
@@ -242,8 +242,8 @@ skills/SKILL_NAME/
 ```
 User: "Create use case to rename article"
 → Use skill: create-use-case
-→ Read: skills/use-case/SKILL.md
-→ Follow: TDD workflow (skills/tdd/SKILL.md)
+→ Read: skills/create-use-case/SKILL.md
+→ Follow: TDD workflow (skills/tdd-workflow/SKILL.md)
 → Templates: test-unit.php.tpl, request.php.tpl, use-case.php.tpl
 → Validate: make qa
 ```

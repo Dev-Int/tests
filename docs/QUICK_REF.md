@@ -86,7 +86,10 @@ final class Entity {
 ```php
 final readonly class ActionEntity {
     public function __construct(private EntityRepository $repo) {}
-    public function execute(ActionEntityRequest $req): void {}
+    public function execute(ActionEntityRequest $req): ActionEntityResponse {
+        // Business logic
+        return new ActionEntityResponse($entity);
+    }
 }
 ```
 

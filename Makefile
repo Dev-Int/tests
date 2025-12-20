@@ -119,7 +119,7 @@ tc: phpunit.xml clean-db-test ## Launch all tests with coverage
 
 
 ## —— Coding standards ✨ ——————————————————————————————————————————————————————
-qa: schema-validate cs-fixer phpcs stan rector # lint ## Launch all static analysis tools
+qa: schema-validate cs-fixer phpcs stan rector validate-templates # lint ## Launch all static analysis tools
 	$(SYMFONY) lint:yaml config
 	$(SYMFONY) lint:twig templates/ src/**/Frameworks/templates/
 	bin/deptrac analyse --config-file=deptrac.yaml
@@ -139,7 +139,10 @@ rector: ## Run rector analysis
 	php ./vendor/bin/rector process src --dry-run
 schema-validate: ## Run schema validation
 	bin/console doctrine:schema:validate
-.PHONY: qa phpcs cs-fixer stan stan-baseline rector schema-validate
+
+validate-templates: ## Validate PHP syntax of .claude/templates/*.tpl files
+	bin/validate-templates
+.PHONY: qa phpcs cs-fixer stan stan-baseline rector schema-validate validate-templates
 
 
 ## —— Github 🐙 ———————————————————————————————————————————————————————————————————

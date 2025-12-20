@@ -58,13 +58,16 @@ interface ActionEntityRequest {
 ```php
 final readonly class ActionEntity {
     public function __construct(private EntityRepository $repo) {} // OR Finder
-    public function execute(ActionEntityRequest $req): void {}
+    public function execute(ActionEntityRequest $req): ActionEntityResponse {
+        // Business logic
+        return new ActionEntityResponse($entity);
+    }
 }
 ```
 
 **See**: `docs/QUICK_REF.md#usecase-pattern` for complete structure
 
-**Alternative**: Symfony Maker `bin/console make:use-case:create <bc> <name>` generates Request-Response-Presenter pattern (more complex)
+**Note**: Project uses Request-Response-Presenter pattern. Symfony Maker `bin/console make:use-case:create <bc> <name>` generates all 3 files (Request, UseCase, Response).
 
 ---
 
