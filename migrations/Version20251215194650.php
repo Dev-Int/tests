@@ -11,12 +11,11 @@ final class Version20251215194650 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Add inventory table and its dependencies.';
     }
 
     public function up(Schema $schema): void
     {
-        $this->addSql('DROP SEQUENCE packaging_id_seq CASCADE');
         $this->addSql(
             'CREATE TABLE inventory (' .
             'uuid UUID NOT NULL, ' .
@@ -47,7 +46,6 @@ final class Version20251215194650 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql('CREATE SEQUENCE packaging_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('ALTER TABLE inventory_item DROP CONSTRAINT FK_55BDEA309EEA759');
         $this->addSql('DROP TABLE inventory');
         $this->addSql('DROP TABLE inventory_item');

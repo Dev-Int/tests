@@ -1,12 +1,19 @@
-parameters:
+<?php echo '<?php'; ?>
 
-services:
-    _defaults:
-        autowire: true
-        autoconfigure: true
-        public: false
+use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
-    <?php echo $namespace; ?>\:
-        resource: '%kernel.project_dir%/src/<?php echo $boundedContextName; ?>/*'
-        exclude:
-            - '%kernel.project_dir%/src/<?php echo $boundedContextName; ?>/{Frameworks,Entities,Tests}'
+return function (ContainerConfigurator $configurator) {
+    $services = $configurator->services();
+
+    $services->defaults()
+        ->autowire()
+        ->autoconfigure()
+        ->private()
+    ;
+
+    $services->load(
+        namespace: '<?php echo $namespace; ?>\\',
+        resource: __DIR__ . '/../../../<?php echo $boundedContextName; ?>'
+    )
+        ->exclude(__DIR__ . '/../../../<?php echo $boundedContextName; ?>/{Frameworks,Entities,Tests}')
+    ;

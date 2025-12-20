@@ -13,13 +13,15 @@ declare(strict_types=1);
 
 namespace Admin\Contracts\Services\Provider\Exception;
 
-final class ZoneStorageNotFound extends \Exception implements \JsonSerializable
+use Shared\Entities\Exception\DomainException;
+
+final class ZoneStorageNotFound extends DomainException implements \JsonSerializable
 {
     public const string MESSAGE = 'Zone storage not found.';
 
     public function __construct(private readonly string $uuid)
     {
-        parent::__construct(self::MESSAGE);
+        parent::__construct(self::MESSAGE, DomainException::NOT_FOUND_CODE);
     }
 
     /**

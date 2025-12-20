@@ -76,7 +76,7 @@ final class MakeBoundedContextInit extends AbstractMaker
         );
 
         $generator->generateFile(
-            $boundedContext->absolutePath()->append('Frameworks', 'config', 'services.yaml')->toString(),
+            $boundedContext->absolutePath()->append('Frameworks', 'config', 'services.php')->toString(),
             __DIR__ . '/Templates/services.tpl.php',
             [
                 'boundedContextName' => $boundedContext->name(),

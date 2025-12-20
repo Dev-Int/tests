@@ -13,13 +13,15 @@ declare(strict_types=1);
 
 namespace Admin\Contracts\Services\Provider\Exception;
 
-final class ArticleNotFound extends \Exception implements \JsonSerializable
+use Shared\Entities\Exception\DomainException;
+
+final class ArticleNotFound extends DomainException implements \JsonSerializable
 {
     public const string MESSAGE = 'Article not found.';
 
     public function __construct(private readonly string $uuid)
     {
-        parent::__construct(self::MESSAGE);
+        parent::__construct(self::MESSAGE, DomainException::NOT_FOUND_CODE);
     }
 
     /**

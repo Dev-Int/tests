@@ -13,9 +13,10 @@ declare(strict_types=1);
 
 namespace Inventory\Entities\Exception;
 
+use Shared\Entities\Exception\DomainException;
 use Shared\Entities\Exception\ExceptionSerializableTrait;
 
-final class EqualOrFutureDateExpected extends \DomainException implements \JsonSerializable
+final class EqualOrFutureDateExpected extends DomainException implements \JsonSerializable
 {
     use ExceptionSerializableTrait;
 
@@ -23,7 +24,7 @@ final class EqualOrFutureDateExpected extends \DomainException implements \JsonS
 
     public function __construct(private readonly \DateTimeImmutable $date)
     {
-        parent::__construct(self::MESSAGE);
+        parent::__construct(self::MESSAGE, DomainException::INVALID_ARGUMENT_CODE);
     }
 
     public function jsonSerialize(): mixed
