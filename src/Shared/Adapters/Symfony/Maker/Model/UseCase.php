@@ -18,7 +18,6 @@ final readonly class UseCase
     public const TEMPLATE_FILENAME = __DIR__ . '/../Templates/useCaseClass.tpl.php';
     public const REQUEST_TEMPLATE_FILENAME = __DIR__ . '/../Templates/useCaseRequest.tpl.php';
     public const RESPONSE_TEMPLATE_FILENAME = __DIR__ . '/../Templates/useCaseResponse.tpl.php';
-    public const PRESENTER_TEMPLATE_FILENAME = __DIR__ . '/../Templates/useCasePresenter.tpl.php';
     public const TEST_TEMPLATE_FILENAME = __DIR__ . '/../Templates/useCaseTest.tpl.php';
 
     public function __construct(
@@ -28,7 +27,6 @@ final readonly class UseCase
         private Path $absolutePath,
         private string $requestClassName,
         private string $responseClassName,
-        private string $presenterClassName,
     ) {
     }
 
@@ -97,20 +95,5 @@ final readonly class UseCase
     public function absoluteResponseClassFilenamePath(): string
     {
         return $this->absolutePath->append($this->responseClassName . '.php')->toString();
-    }
-
-    public function presenterClassName(): string
-    {
-        return $this->presenterClassName;
-    }
-
-    public function presenterClassFilename(): string
-    {
-        return $this->presenterClassName . '.php';
-    }
-
-    public function absolutePresenterClassFilenamePath(): string
-    {
-        return $this->absolutePath->append($this->presenterClassName . '.php')->toString();
     }
 }

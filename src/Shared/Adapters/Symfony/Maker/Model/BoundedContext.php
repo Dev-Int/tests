@@ -47,7 +47,6 @@ final readonly class BoundedContext
 
         $requestClassName = Str::asClassName($useCaseName, 'Request');
         $responseClassName = Str::asClassName($useCaseName, 'Response');
-        $presenterClassName = Str::asClassName($useCaseName, 'Presenter');
 
         return new UseCase(
             $useCaseName,
@@ -65,7 +64,6 @@ final readonly class BoundedContext
                 ->append('UseCases', $useCaseName),
             $requestClassName,
             $responseClassName,
-            $presenterClassName
         );
     }
 

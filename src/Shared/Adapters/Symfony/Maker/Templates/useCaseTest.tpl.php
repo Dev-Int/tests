@@ -6,7 +6,6 @@ declare(strict_types=1);
 namespace <?php echo $testNamespace; ?>;
 
 use <?php echo $useCaseNamespace; ?>\<?php echo $useCaseName; ?>;
-use <?php echo $useCaseNamespace; ?>\<?php echo $useCasePresenterClass; ?>;
 use <?php echo $useCaseNamespace; ?>\<?php echo $useCaseRequestClass; ?>;
 use <?php echo $useCaseNamespace; ?>\<?php echo $useCaseResponseClass; ?>;
 use PHPUnit\Framework\TestCase;
@@ -25,12 +24,6 @@ final class <?php echo $useCaseName; ?>Test extends TestCase
         $useCase = new <?php echo $useCaseName; ?>();
         $expectedResponse = new <?php echo $useCaseResponseClass; ?>();
 
-        $presenter = $this->createMock(<?php echo $useCasePresenterClass; ?>::class);
-        $presenter
-            ->expects($this->once())
-            ->method('present')
-            ->with($expectedResponse);
-
-        $useCase->execute($request, $presenter);
+        $useCase->execute($request);
     }
 }

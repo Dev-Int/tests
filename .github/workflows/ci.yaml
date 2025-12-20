@@ -54,7 +54,7 @@ jobs:
                   php bin/console lint:yaml config
                   php bin/console lint:twig templates/ src/**/Frameworks/templates/
 
-            - name: Validate IA docs templates
+            - name: Validate docs templates
               run: bin/validate-templates
 
     test:

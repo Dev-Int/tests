@@ -83,7 +83,6 @@ final class MakeUseCaseCreate extends AbstractMaker
                 'useCaseName' => $useCase->name(),
                 'useCaseRequestClass' => $useCase->requestClassName(),
                 'useCaseResponseClass' => $useCase->responseClassName(),
-                'useCasePresenterClass' => $useCase->presenterClassName(),
             ]
         );
 
@@ -106,16 +105,6 @@ final class MakeUseCaseCreate extends AbstractMaker
         );
 
         $generator->generateFile(
-            $useCase->absolutePresenterClassFilenamePath(),
-            UseCase::PRESENTER_TEMPLATE_FILENAME,
-            [
-                'namespace' => $useCase->namespace()->toString(),
-                'useCasePresenterClass' => $useCase->presenterClassName(),
-                'useCaseResponseClass' => $useCase->responseClassName(),
-            ]
-        );
-
-        $generator->generateFile(
             $useCase->absoluteTestClassFilenamePath(),
             UseCase::TEST_TEMPLATE_FILENAME,
             [
@@ -124,7 +113,6 @@ final class MakeUseCaseCreate extends AbstractMaker
                 'useCaseName' => $useCase->name(),
                 'useCaseRequestClass' => $useCase->requestClassName(),
                 'useCaseResponseClass' => $useCase->responseClassName(),
-                'useCasePresenterClass' => $useCase->presenterClassName(),
             ]
         );
 

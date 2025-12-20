@@ -67,7 +67,7 @@ final readonly class ActionEntity {
 
 **See**: `docs/QUICK_REF.md#usecase-pattern` for complete structure
 
-**Note**: Project uses Request-Response-Presenter pattern. Symfony Maker `bin/console make:use-case:create <bc> <name>` generates all 3 files (Request, UseCase, Response).
+**Note**: Project uses Request-Response pattern. Symfony Maker `bin/console make:use-case:create <bc> <name>` generates all 3 files (Request, UseCase, Response).
 
 ---
 
