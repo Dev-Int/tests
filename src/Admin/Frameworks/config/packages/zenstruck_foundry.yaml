@@ -1,0 +1,6 @@
+when@dev:
+    services:
+        Admin\Tests\Factory\:
+            resource: '%kernel.project_dir%/src/Admin/Tests/Factory/'
+            autowire: true
+            autoconfigure: true

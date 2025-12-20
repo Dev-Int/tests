@@ -2,4 +2,7 @@ framework:
     default_locale: fr
     translator:
         default_path: '%kernel.project_dir%/translations'
+        paths:
+            - '%kernel.project_dir%/src/Admin/Frameworks/translations'
+            - '%kernel.project_dir%/src/Inventory/Frameworks/translations'
         providers:

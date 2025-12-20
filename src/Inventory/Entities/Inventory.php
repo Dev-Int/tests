@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Inventory\Entities;
 
+use Inventory\Entities\ReadModel\ZoneStorage;
 use Inventory\Entities\VO\InventoryStatus;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\Amount;
@@ -20,27 +21,46 @@ use Shared\Entities\VO\Amount;
 final readonly class Inventory
 {
     /**
-     * @param array<ResourceUuid> $zoneStorageIds
+     * @param array<ZoneStorage> $zoneStorages
      */
-    public static function create(ResourceUuid $uuid, array $zoneStorageIds, \DateTimeImmutable $date): self
+    public static function create(ResourceUuid $uuid, array $zoneStorages, \DateTimeImmutable $date): self
     {
         return new self(
             uuid: $uuid,
-            zoneStorageIds: $zoneStorageIds,
+            zoneStorages: $zoneStorages,
             date: $date,
             status: InventoryStatus::DRAFT,
             amount: Amount::zero(),
             items: new InventoryItemCollection(totalItems: 0)
         );
+    }
+
+    /**
+     * @param array<ZoneStorage> $zoneStorages
+     */
+    public static function reconstitute(
+        ResourceUuid $uuid,
+        array $zoneStorages,
+        \DateTimeImmutable $date,
+        InventoryStatus $status,
+        Amount $amount
+    ): self {
+        return new self(
+            uuid: $uuid,
+            zoneStorages: $zoneStorages,
+            date: $date,
+            status: $status,
+            amount: $amount,
+            items: new InventoryItemCollection(totalItems: 0)
         );
     }
 
     /**
-     * @param array<ResourceUuid> $zoneStorageIds
+     * @param array<ZoneStorage> $zoneStorages
      */
     private function __construct(
         private ResourceUuid $uuid,
-        private array $zoneStorageIds,
+        private array $zoneStorages,
         private \DateTimeImmutable $date,
         private InventoryStatus $status,
         private Amount $amount,
@@ -54,11 +74,11 @@ final readonly class Inventory
     }
 
     /**
-     * @return array<ResourceUuid>
+     * @return array<ZoneStorage>
      */
-    public function zoneStorageIds(): array
+    public function zoneStorages(): array
     {
-        return $this->zoneStorageIds;
+        return $this->zoneStorages;
     }
 
     public function date(): \DateTimeImmutable

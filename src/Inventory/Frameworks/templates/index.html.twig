@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ 'inventory.titlePage'|trans }} | {{ parent() }}
+{% endblock %}
+
+{% block importmap %}
+    {{ importmap('app') }}
+{% endblock %}
+
+{% block body %}
+
+    <h1><twig:Icon:Entities:Inventory /> {{ 'inventory.titlePage'|trans }}</h1>
+
+    <main>
+        <article>
+            <div>
+                <turbo-frame id="inventory_create" class="flex-between">
+                    <span></span>
+                    <twig:Button:CreateEntity
+                        href="{{ path('inventory_create') }}"
+                        label="{{ 'inventory.create.titleShort'|trans }}"
+                    />
+                </turbo-frame>
+            </div>
+            <ul class="table">
+                <li class="li-unstyled flex-between head">
+                    <span>{{ 'inventory.form.date.label'|trans }}</span>
+                    <span>{{ 'inventory.status'|trans }}</span>
+                    <span>{{ 'inventory.form.zoneStorages.label'|trans }}</span>
+                    <span>{{ 'actions'|trans }}</span>
+                </li>
+                {% for inventory in inventories %}
+                   <turbo-frame id="inventory_{{ inventory.uuid }}">
+                       <li class="li-unstyled flex-between">
+                           <span>{{ inventory.date }}</span>
+                           <span>{{ inventory.status }}</span>
+                           <span>
+                               {% for zone in inventory.zoneStorageIds %}
+                               {{ zone.label }}<br />
+                               {% endfor %}
+                           </span>
+                           <span>
+                               <twig:Button:UpdateEntity href="#" class="btn-small" label="Edit" />
+                           </span>
+                       </li>
+                   </turbo-frame>
+                {% endfor %}
+            </ul>
+
+            <twig:Button:BackTo href="{{ path('home') }}" label="{{ 'home.titlePage'|trans }}" />
+        </article>
+    </main>
+
+{% endblock %}

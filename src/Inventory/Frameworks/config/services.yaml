@@ -9,3 +9,6 @@ services:
         resource: '%kernel.project_dir%/src/Inventory/*'
         exclude:
             - '%kernel.project_dir%/src/Inventory/{Frameworks,Entities,Tests}'
+
+    Inventory\Entities\Repository\:
+        resource: '%kernel.project_dir%/src/Inventory/Entities/Repository'

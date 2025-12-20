@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Inventory\Entities\Repository;
 
 use Inventory\Entities\Inventory;
+use Inventory\UseCase\GetInventories\InventoryCollection;
 use Shared\Entities\ResourceUuid;
 
 interface InventoryRepository
@@ -24,4 +25,6 @@ interface InventoryRepository
     public function hasActiveForZone(array $zoneStorageIds): bool;
 
     public function save(Inventory $inventory): void;
+
+    public function getAllInventories(): InventoryCollection;
 }

@@ -1,0 +1,9 @@
+when@dev:
+    services:
+        Inventory\Tests\Factory\:
+            resource: '%kernel.project_dir%/src/Inventory/Tests/Factory/'
+            autowire: true
+            autoconfigure: true
+
+    zenstruck_foundry:
+#        enable_auto_refresh_with_lazy_objects: false
