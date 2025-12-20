@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ 'inventory.create.titleShort'|trans }} | {{ parent() }}
+{% endblock %}
+
+{% block importmap %}
+    {{ importmap(['app']) }}
+{% endblock %}
+
+{% block body %}
+
+    <h1><twig:Icon:Entities:Inventory /> {{ 'inventory.create.titlePage'|trans }}</h1>
+
+    <turbo-frame id="inventory_create">
+        <twig:Form:Inventory:CreateForm form="{{ form }}" />
+    </turbo-frame>
+
+{% endblock %}

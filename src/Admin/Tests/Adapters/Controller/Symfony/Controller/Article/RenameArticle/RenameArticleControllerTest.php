@@ -30,12 +30,14 @@ use Zenstruck\Foundry\Test\Factories;
 
 /**
  * @group functionalTest
+ *
+ * @covers \Admin\Adapters\Controller\Symfony\Controller\Article\RenameArticle\RenameArticleController
  */
 final class RenameArticleControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
 
-    private const RENAME_ARTICLE_URI = '/admin/articles/%s/rename';
+    private const string RENAME_ARTICLE_URI = '/admin/articles/%s/rename';
 
     public function testRenameArticleWillSucceed(): void
     {

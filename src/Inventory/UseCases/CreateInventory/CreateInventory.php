@@ -16,6 +16,7 @@ namespace Inventory\UseCases\CreateInventory;
 use Inventory\Entities\Exception\EqualOrFutureDateExpected;
 use Inventory\Entities\Exception\InventoryAlreadyActiveForZone;
 use Inventory\Entities\Inventory;
+use Inventory\Entities\ReadModel\ZoneStorage;
 use Inventory\Entities\Repository\InventoryRepository;
 use Shared\Entities\Clock\ClockFactory;
 
@@ -32,10 +33,13 @@ final readonly class CreateInventory
         if ($date < $now) {
             throw new EqualOrFutureDateExpected($date);
         }
-
-        $hasActive = $this->inventoryRepository->hasActiveForZone($request->zoneStorages());
+        $zoneStorageIds = array_map(
+            static fn (ZoneStorage $zoneStorage) => $zoneStorage->uuid,
+            $request->zoneStorages()
+        );
+        $hasActive = $this->inventoryRepository->hasActiveForZone($zoneStorageIds);
         if ($hasActive) {
-            throw new InventoryAlreadyActiveForZone($request->zoneStorages());
+            throw new InventoryAlreadyActiveForZone($zoneStorageIds);
         }
 
         $inventory = Inventory::create(

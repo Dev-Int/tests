@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Inventory\UseCases\CreateInventory;
 
+use Inventory\Entities\ReadModel\ZoneStorage;
 use Shared\Entities\ResourceUuid;
 
 interface CreateInventoryRequest
@@ -22,7 +23,7 @@ interface CreateInventoryRequest
     public function date(): \DateTimeImmutable;
 
     /**
-     * @return array<ResourceUuid>
+     * @return array<ZoneStorage>
      */
     public function zoneStorages(): array;
 }

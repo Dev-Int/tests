@@ -16,6 +16,7 @@ namespace Inventory\Tests\UseCases\CreateInventory;
 use Inventory\Entities\Exception\EqualOrFutureDateExpected;
 use Inventory\Entities\Exception\InventoryAlreadyActiveForZone;
 use Inventory\Entities\Inventory;
+use Inventory\Entities\ReadModel\ZoneStorage;
 use Inventory\Entities\Repository\InventoryRepository;
 use Inventory\Entities\VO\InventoryStatus;
 use Inventory\UseCases\CreateInventory\CreateInventory;
@@ -24,6 +25,9 @@ use PHPUnit\Framework\TestCase;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\Clock\FrozenClock;
 use Shared\Entities\ResourceUuid;
+use Shared\Entities\VO\NameField;
+
+use function PHPUnit\Framework\assertCount;
 
 /**
  * @group unitTest
@@ -62,22 +66,23 @@ final class CreateInventoryTest extends TestCase
         $request = $this->createMock(CreateInventoryRequest::class);
 
         $date = new \DateTimeImmutable('2025-12-20');
-        $zoneStorageUuid = ResourceUuid::generate();
+        $zoneStorage = new ZoneStorage(ResourceUuid::generate(), NameField::fromString('Zone de stockage'));
+        $zoneStorageId = $zoneStorage->uuid;
         $inventoryId = ResourceUuid::generate();
 
         $request->expects(self::once())->method('uuid')->willReturn($inventoryId);
         $request->expects(self::once())->method('date')->willReturn($date);
-        $request->expects(self::exactly(2))->method('zoneStorages')->willReturn([$zoneStorageUuid]);
+        $request->expects(self::exactly(2))->method('zoneStorages')->willReturn([$zoneStorage]);
 
         $inventoryRepository->expects(self::once())
             ->method('hasActiveForZone')
-            ->with([$zoneStorageUuid])
+            ->with([$zoneStorageId])
             ->willReturn(false)
         ;
 
         $inventoryRepository->expects(self::once())
             ->method('save')
-            ->with(Inventory::create($inventoryId, [$zoneStorageUuid], $date))
+            ->with(Inventory::create($inventoryId, [$zoneStorage], $date))
         ;
 
         // Act
@@ -86,7 +91,9 @@ final class CreateInventoryTest extends TestCase
 
         // Assert
         self::assertSame($date, $inventory->date());
-        self::assertSame($zoneStorageUuid->toString(), $inventory->zoneStorageIds()[0]->toString());
+        $zoneStorages = $inventory->zoneStorages();
+        self::assertCount(1, $zoneStorages);
+        self::assertSame($zoneStorage->uuid->toString(), $zoneStorages[0]->uuid->toString());
         self::assertTrue($inventory->status()->equals(InventoryStatus::DRAFT));
         self::assertSame(0, $inventory->amount()->toInt());
     }
@@ -106,12 +113,12 @@ final class CreateInventoryTest extends TestCase
         $useCase = new CreateInventory($inventoryRepository);
         $request = $this->createMock(CreateInventoryRequest::class);
 
-        $zoneStorageUuid = ResourceUuid::generate();
+        $zoneStorage = new ZoneStorage(ResourceUuid::generate(), NameField::fromString('Zone de stockage'));
         $inventoryId = ResourceUuid::generate();
 
         $request->expects(self::never())->method('uuid')->willReturn($inventoryId);
         $request->expects(self::once())->method('date')->willReturn($invalidDate);
-        $request->expects(self::never())->method('zoneStorages')->willReturn([$zoneStorageUuid]);
+        $request->expects(self::never())->method('zoneStorages')->willReturn([$zoneStorage]);
 
         $inventoryRepository->expects(self::never())->method('hasActiveForZone');
         $inventoryRepository->expects(self::never())->method('save');
@@ -133,16 +140,17 @@ final class CreateInventoryTest extends TestCase
         $request = $this->createMock(CreateInventoryRequest::class);
 
         $date = new \DateTimeImmutable('2025-12-20');
-        $zoneStorageUuid = ResourceUuid::generate();
+        $zoneStorage = new ZoneStorage(ResourceUuid::generate(), NameField::fromString('Zone de stockage'));
+        $zoneStorageId = $zoneStorage->uuid;
         $inventoryId = ResourceUuid::generate();
 
         $request->expects(self::never())->method('uuid')->willReturn($inventoryId);
         $request->expects(self::once())->method('date')->willReturn($date);
-        $request->expects(self::exactly(2))->method('zoneStorages')->willReturn([$zoneStorageUuid]);
+        $request->expects(self::once())->method('zoneStorages')->willReturn([$zoneStorage]);
 
         $inventoryRepository->expects(self::once())
             ->method('hasActiveForZone')
-            ->with([$zoneStorageUuid])
+            ->with([$zoneStorageId])
             ->willReturn(true)
         ;
 
@@ -164,8 +172,11 @@ final class CreateInventoryTest extends TestCase
 
         $date = new \DateTimeImmutable('2025-12-20');
         ClockFactory::initialize(new FrozenClock($date));
-        $zone1Uuid = ResourceUuid::generate();
-        $zone2Uuid = ResourceUuid::generate();
+        $zoneStorage1 = new ZoneStorage(ResourceUuid::generate(), NameField::fromString('zone 1'));
+        $zoneStorage2 = new ZoneStorage(ResourceUuid::generate(), NameField::fromString('zone 2'));
+        $zoneStorage1Ids = [$zoneStorage1->uuid];
+        $zoneStorage2Ids = [$zoneStorage2->uuid];
+
         $inventory1Id = ResourceUuid::generate();
         $inventory2Id = ResourceUuid::generate();
 
@@ -173,19 +184,19 @@ final class CreateInventoryTest extends TestCase
         $request1 = $this->createMock(CreateInventoryRequest::class);
         $request1->expects(self::once())->method('uuid')->willReturn($inventory1Id);
         $request1->expects(self::once())->method('date')->willReturn($date);
-        $request1->expects(self::exactly(2))->method('zoneStorages')->willReturn([$zone1Uuid]);
+        $request1->expects(self::exactly(2))->method('zoneStorages')->willReturn([$zoneStorage1]);
 
         $inventoryRepository->expects(self::exactly(2))
             ->method('hasActiveForZone')
-            ->withConsecutive([[$zone1Uuid]], [[$zone2Uuid]])
+            ->withConsecutive([$zoneStorage1Ids], [$zoneStorage2Ids])
             ->willReturnOnConsecutiveCalls(false, false)
         ;
 
         $inventoryRepository->expects(self::exactly(2))
             ->method('save')
             ->withConsecutive(
-                [Inventory::create($inventory1Id, [$zone1Uuid], $date)],
-                [Inventory::create($inventory2Id, [$zone2Uuid], $date)]
+                [Inventory::create($inventory1Id, [$zoneStorage1], $date)],
+                [Inventory::create($inventory2Id, [$zoneStorage2], $date)]
             )
         ;
 
@@ -196,13 +207,17 @@ final class CreateInventoryTest extends TestCase
         $request2 = $this->createMock(CreateInventoryRequest::class);
         $request2->expects(self::once())->method('uuid')->willReturn($inventory2Id);
         $request2->expects(self::once())->method('date')->willReturn($date);
-        $request2->expects(self::exactly(2))->method('zoneStorages')->willReturn([$zone2Uuid]);
+        $request2->expects(self::exactly(2))->method('zoneStorages')->willReturn([$zoneStorage2]);
 
         $response2 = $useCase->execute($request2);
 
         // Assert
-        self::assertSame($zone1Uuid->toString(), $response1->inventory->zoneStorageIds()[0]->toString());
-        self::assertSame($zone2Uuid->toString(), $response2->inventory->zoneStorageIds()[0]->toString());
+        $zoneStorages1 = $response1->inventory->zoneStorages();
+        assertCount(1, $zoneStorages1);
+        self::assertSame($zoneStorage1->uuid->toString(), $zoneStorages1[0]->uuid->toString());
+        $zoneStorages2 = $response2->inventory->zoneStorages();
+        assertCount(1, $zoneStorages2);
+        self::assertSame($zoneStorage2->uuid->toString(), $zoneStorages2[0]->uuid->toString());
         self::assertNotSame(
             $response1->inventory->uuid()->toString(),
             $response2->inventory->uuid()->toString()
@@ -217,12 +232,12 @@ final class CreateInventoryTest extends TestCase
         $request = $this->createMock(CreateInventoryRequest::class);
 
         $date = new \DateTimeImmutable('2025-12-20');
-        $zoneStorageUuid = ResourceUuid::generate();
+        $zoneStorage = new ZoneStorage(ResourceUuid::generate(), NameField::fromString('Zone de stockage'));
         $inventoryId = ResourceUuid::generate();
 
         $request->expects(self::once())->method('uuid')->willReturn($inventoryId);
         $request->expects(self::once())->method('date')->willReturn($date);
-        $request->expects(self::exactly(2))->method('zoneStorages')->willReturn([$zoneStorageUuid]);
+        $request->expects(self::exactly(2))->method('zoneStorages')->willReturn([$zoneStorage]);
 
         $inventoryRepository->expects(self::once())
             ->method('hasActiveForZone')
