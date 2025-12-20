@@ -2,16 +2,16 @@ deptrac:
     layers:
         - name: Admin\Entities
           collectors:
-              - type: className
-                regex: Admin\\Entities\\.*
+              - type: classLike
+                value: Admin\\Entities\\.*
         - name: Admin\UseCases
           collectors:
-              - type: className
-                regex: Admin\\UseCases\\.*
+              - type: classLike
+                value: Admin\\UseCases\\.*
         - name: Admin\Adapters
           collectors:
-              - type: className
-                regex: Admin\\Adapters\\.*
+              - type: classLike
+                value: Admin\\Adapters\\.*
     ruleset:
         Admin\Entities:
             - Shared\Entities
