@@ -3,12 +3,6 @@ name: Claude Code Review
 on:
   pull_request:
     types: [opened, synchronize]
-    # Optional: Only run on specific file changes
-    # paths:
-    #   - "src/**/*.ts"
-    #   - "src/**/*.tsx"
-    #   - "src/**/*.js"
-    #   - "src/**/*.jsx"
 
 jobs:
   claude-review:
@@ -21,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: read
+      pull-requests: write
       issues: read
       id-token: write
 
@@ -40,16 +34,34 @@ jobs:
             REPO: ${{ github.repository }}
             PR NUMBER: ${{ github.event.pull_request.number }}
 
-            Please review this pull request and provide feedback on:
-            - Code quality and best practices
-            - Potential bugs or issues
-            - Performance considerations
-            - Security concerns
-            - Test coverage
+            Analyse cette pull request en te basant sur CLAUDE.md du projet pour les conventions.
 
-            Use the repository's CLAUDE.md for guidance on style and conventions. Be constructive and helpful in your feedback.
+            IMPORTANT - Contraintes de format :
+            - Maximum 200 lignes de commentaire (c'est strict !)
+            - Focus sur les problèmes critiques et bloquants uniquement
+            - Pas de tableaux complexes, utilise des listes simples
+            - Sois concis et direct
 
-            Use `gh pr comment` with your Bash tool to leave your review as a comment on the PR.
+            Structure attendue :
+            ## 🔴 Problèmes Bloquants (si présents)
+            - Liste des bugs critiques avec fichier:ligne
+
+            ## ⚠️ Points d'Attention (max 5)
+            - Problèmes importants mais non-bloquants
+
+            ## ✅ Points Positifs (optionnel, max 3 items)
+            - Ce qui est bien fait
+
+            ## 💡 Suggestions (optionnel, max 3 items)
+            - Améliorations possibles
+
+            Focus sur :
+            - Architecture DDD (respect des couches Entities → UseCases → Adapters)
+            - Dépendances Deptrac (pas de violations)
+            - Tests (présence et qualité)
+            - Bugs évidents ou problèmes de sécurité
+
+            Utilise `gh pr comment` pour poster ta review. Sois constructif et pragmatique.
 
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
           # or https://code.claude.com/docs/en/cli-reference for available options
