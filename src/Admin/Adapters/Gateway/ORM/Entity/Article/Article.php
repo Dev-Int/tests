@@ -53,7 +53,7 @@ class Article
             $article->minStock(),
             $zoneStorages,
             $familyLog,
-            $article->quantity()->toFloat(),
+            $article->quantity()->toUnit(),
             $article->slug(),
             $article->active(),
         );

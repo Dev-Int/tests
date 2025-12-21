@@ -92,7 +92,7 @@ final class CreateArticleTest extends TestCase
         $parent = $article->familyLog()->parent();
         self::assertInstanceOf(FamilyLog::class, $parent);
         self::assertSame('Frais', $parent->label()->toString());
-        self::assertSame(0.0, $article->quantity()->toFloat());
+        self::assertSame(0.0, $article->quantity()->toUnit());
         self::assertTrue($article->active());
     }
 

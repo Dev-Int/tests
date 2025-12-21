@@ -116,7 +116,7 @@ final class CreateArticleControllerTest extends BaseFunctionalTestCase
         self::assertSame('Réserve froide', $firstZoneStorage->label()->toString());
         self::assertSame('Frais', $firstZoneStorage->familyLog()->label()->toString());
         self::assertSame('Viande', $articleCreated->familyLog()->label()->toString());
-        self::assertSame(12.500, $articleCreated->quantity()->toFloat());
+        self::assertSame(12.500, $articleCreated->quantity()->toUnit());
         self::assertSame('jambon-trad-6kg', $articleCreated->slug());
         self::assertTrue($articleCreated->active());
     }
