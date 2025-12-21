@@ -46,7 +46,8 @@ final class DoctrineTaxRepository extends ServiceEntityRepository implements Tax
         $tax = $this->createQueryBuilder($alias)
             ->where("{$alias}.rate = :rate")
             ->andWhere("{$alias}.name = :name")
-            ->setParameters(['rate' => $rate, 'name' => $name])
+            ->setParameter('rate', $rate)
+            ->setParameter('name', $name)
             ->getQuery()
             ->getOneOrNullResult()
         ;
@@ -80,8 +81,8 @@ final class DoctrineTaxRepository extends ServiceEntityRepository implements Tax
     {
         $taxOrm = (new Tax())->fromDomain($tax);
 
-        $this->_em->persist($taxOrm);
-        $this->_em->flush();
+        $this->getEntityManager()->persist($taxOrm);
+        $this->getEntityManager()->flush();
     }
 
     public function rename(TaxDomain $tax): void
@@ -96,7 +97,7 @@ final class DoctrineTaxRepository extends ServiceEntityRepository implements Tax
 
         $taxToRename->setName($tax->name()->toString());
 
-        $this->_em->flush();
+        $this->getEntityManager()->flush();
     }
 
     public function revaluate(TaxDomain $tax): void
@@ -111,7 +112,7 @@ final class DoctrineTaxRepository extends ServiceEntityRepository implements Tax
 
         $taxToRevaluate->setRate($tax->rate());
 
-        $this->_em->flush();
+        $this->getEntityManager()->flush();
     }
 
     public function getAllTaxes(): TaxCollection

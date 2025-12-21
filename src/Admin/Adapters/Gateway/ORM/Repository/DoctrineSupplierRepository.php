@@ -90,8 +90,8 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
             // @codeCoverageIgnoreEnd
         }
 
-        $this->_em->persist((new Supplier())->fromDomain($supplier, $familyLog));
-        $this->_em->flush();
+        $this->getEntityManager()->persist((new Supplier())->fromDomain($supplier, $familyLog));
+        $this->getEntityManager()->flush();
     }
 
     public function renameSupplier(SupplierDomain $supplier): void
@@ -108,7 +108,7 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
             ->setSlug($supplier->slug())
         ;
 
-        $this->_em->flush();
+        $this->getEntityManager()->flush();
     }
 
     public function changeDomiciliation(SupplierDomain $supplier): void
@@ -129,7 +129,7 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
             ->setEmail($supplier->email()->toString())
         ;
 
-        $this->_em->flush();
+        $this->getEntityManager()->flush();
     }
 
     public function changeContact(SupplierDomain $supplier): void
@@ -146,7 +146,7 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
             ->setCellphone($supplier->cellphone()->toNumber())
         ;
 
-        $this->_em->flush();
+        $this->getEntityManager()->flush();
     }
 
     public function changeDeliverySpecifications(SupplierDomain $supplier): void
@@ -170,7 +170,7 @@ final class DoctrineSupplierRepository extends ServiceEntityRepository implement
             ->setOrderDays($supplier->orderDays())
         ;
 
-        $this->_em->flush();
+        $this->getEntityManager()->flush();
     }
 
     public function getAllSuppliers(): SupplierCollection

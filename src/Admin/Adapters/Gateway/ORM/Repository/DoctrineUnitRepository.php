@@ -46,7 +46,8 @@ final class DoctrineUnitRepository extends ServiceEntityRepository implements Un
         $unit = $this->createQueryBuilder($alias)
             ->where("{$alias}.label = :label")
             ->andWhere("{$alias}.uuid != :uuid")
-            ->setParameters(['label' => $label, 'uuid' => $uuid])
+            ->setParameter('label', $label)
+            ->setParameter('uuid', $uuid)
             ->getQuery()
             ->getOneOrNullResult()
         ;
@@ -80,8 +81,8 @@ final class DoctrineUnitRepository extends ServiceEntityRepository implements Un
     {
         $unitOrm = (new Unit())->fromDomain($unit);
 
-        $this->_em->persist($unitOrm);
-        $this->_em->flush();
+        $this->getEntityManager()->persist($unitOrm);
+        $this->getEntityManager()->flush();
     }
 
     public function changeLabel(UnitDomain $unit): void
@@ -99,7 +100,7 @@ final class DoctrineUnitRepository extends ServiceEntityRepository implements Un
             ->setSlug($unit->slug())
         ;
 
-        $this->_em->flush();
+        $this->getEntityManager()->flush();
     }
 
     public function getAllUnits(): UnitCollection

@@ -23,12 +23,12 @@ class Packaging
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
-    #[ORM\SequenceGenerator(sequenceName: 'packaging_seq_id', allocationSize: 1, initialValue: 1)]
+    #[ORM\SequenceGenerator(sequenceName: 'packaging_id_seq', allocationSize: 1, initialValue: 1)]
     #[ORM\Column(type: 'integer')]
     private int $id;
 
     public function __construct(
-        #[ORM\OneToOne(inversedBy: 'packaging', targetEntity: Article::class)]
+        #[ORM\OneToOne(targetEntity: Article::class, inversedBy: 'packaging')]
         #[ORM\JoinColumn(name: 'article_id', referencedColumnName: 'uuid', nullable: false)]
         private Article $article,
         #[ORM\ManyToOne(targetEntity: Unit::class)]
