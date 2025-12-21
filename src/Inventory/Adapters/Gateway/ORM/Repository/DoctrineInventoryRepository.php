@@ -18,11 +18,11 @@ use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 use Inventory\Adapters\Gateway\ORM\Entity\Inventory;
-use Inventory\Adapters\Gateway\ORM\Entity\InventoryStatus;
 use Inventory\Adapters\Gateway\ORM\InventoryMapper;
 use Inventory\Entities\Inventory as InventoryDomain;
+use Inventory\Entities\InventoryCollection;
 use Inventory\Entities\Repository\InventoryRepository;
-use Inventory\UseCase\GetInventories\InventoryCollection;
+use Inventory\Entities\VO\InventoryStatus;
 use Shared\Entities\ResourceUuid;
 
 /**

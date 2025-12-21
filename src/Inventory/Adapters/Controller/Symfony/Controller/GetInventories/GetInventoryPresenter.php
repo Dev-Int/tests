@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Inventory\Adapters\Controller\Symfony\Controller\GetInventories;
 
-use Inventory\Entities\ReadModel\ZoneStorage;
-use Inventory\UseCase\GetInventories\InventoryCollection;
+use Inventory\Entities\InventoryCollection;
+use Inventory\Entities\VO\ZoneStorage;
 
 final readonly class GetInventoryPresenter
 {
@@ -30,7 +30,7 @@ final readonly class GetInventoryPresenter
         foreach ($this->inventories as $inventory) {
             yield new InventoryResult(
                 uuid: $inventory->uuid()->toString(),
-                date: $inventory->date()->format('Y-m-d'),
+                date: $inventory->date()->toDateTimeImmutable()->format('Y-m-d'),
                 status: $inventory->status()->value,
                 zoneStorageIds: $this->getZoneStorageIds($inventory->zoneStorages()),
             );
@@ -48,7 +48,7 @@ final readonly class GetInventoryPresenter
         foreach ($zoneStorages as $zoneStorage) {
             $zones[] = [
                 'uuid' => $zoneStorage->uuid->toString(),
-                'label' => $zoneStorage->label->toString(),
+                'label' => $zoneStorage->name->toString(),
             ];
         }
 

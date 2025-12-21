@@ -11,19 +11,16 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Inventory\UseCases\CreateInventory;
+namespace Inventory\Entities\VO;
 
-use Inventory\Entities\VO\ZoneStorage;
 use Shared\Entities\ResourceUuid;
+use Shared\Entities\VO\NameField;
 
-interface CreateInventoryRequest
+final readonly class ZoneStorage
 {
-    public function uuid(): ResourceUuid;
-
-    public function date(): \DateTimeImmutable;
-
-    /**
-     * @return array<ZoneStorage>
-     */
-    public function zoneStorages(): array;
+    public function __construct(
+        public ResourceUuid $uuid,
+        public NameField $name
+    ) {
+    }
 }

@@ -15,14 +15,15 @@ namespace Inventory\Entities;
 
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\Amount;
+use Shared\Entities\VO\Quantity;
 
 final readonly class InventoryItem
 {
     public function __construct(
         private ResourceUuid $article,
         private Amount $price,
-        private float $theoreticalStock,
-        private float $realStock,
+        private Quantity $theoreticalStock,
+        private Quantity $realStock,
         private Amount $amount,
     ) {
     }
@@ -37,12 +38,12 @@ final readonly class InventoryItem
         return $this->price;
     }
 
-    public function theoreticalStock(): float
+    public function theoreticalStock(): Quantity
     {
         return $this->theoreticalStock;
     }
 
-    public function realStock(): float
+    public function realStock(): Quantity
     {
         return $this->realStock;
     }

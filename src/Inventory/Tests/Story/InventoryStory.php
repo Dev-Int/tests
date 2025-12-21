@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Inventory\Tests\Story;
 
+use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
 use Admin\Tests\Factory\ArticleFactory;
 use Admin\Tests\Factory\CompanyFactory;
 use Admin\Tests\Factory\FamilyLogFactory;
@@ -20,6 +21,7 @@ use Admin\Tests\Factory\SupplierFactory;
 use Admin\Tests\Factory\TaxFactory;
 use Admin\Tests\Factory\UnitFactory;
 use Admin\Tests\Factory\ZoneStorageFactory;
+use Zenstruck\Foundry\Persistence\Proxy;
 use Zenstruck\Foundry\Story;
 
 /**
@@ -29,6 +31,14 @@ use Zenstruck\Foundry\Story;
  */
 final class InventoryStory extends Story
 {
+    /**
+     * @return Proxy<ZoneStorage>[]
+     */
+    public static function getAllZones(): array
+    {
+        return ZoneStorageFactory::all();
+    }
+
     public function build(): void
     {
         // === Admin Fixtures ===

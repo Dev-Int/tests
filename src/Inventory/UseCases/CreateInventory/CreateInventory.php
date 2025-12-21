@@ -13,39 +13,44 @@ declare(strict_types=1);
 
 namespace Inventory\UseCases\CreateInventory;
 
-use Inventory\Entities\Exception\EqualOrFutureDateExpected;
 use Inventory\Entities\Exception\InventoryAlreadyActiveForZone;
 use Inventory\Entities\Inventory;
-use Inventory\Entities\ReadModel\ZoneStorage;
 use Inventory\Entities\Repository\InventoryRepository;
-use Shared\Entities\Clock\ClockFactory;
+use Inventory\Entities\VO\InventoryDate;
+use Inventory\Entities\VO\ZoneStorage;
+use Inventory\UseCases\Gateway\ZoneStorageGateway;
 
 final readonly class CreateInventory
 {
-    public function __construct(private InventoryRepository $inventoryRepository)
-    {
+    public function __construct(
+        private InventoryRepository $inventoryRepository,
+        private ZoneStorageGateway $zoneStorageGateway,
+    ) {
     }
 
     public function execute(CreateInventoryRequest $request): CreateInventoryResponse
     {
-        $date = $request->date();
-        $now = ClockFactory::clock()->now();
-        if ($date < $now) {
-            throw new EqualOrFutureDateExpected($date);
-        }
+        $inventoryDate = InventoryDate::fromDateTimeImmutable($request->date());
+        $zoneStorages = $request->zoneStorages();
         $zoneStorageIds = array_map(
             static fn (ZoneStorage $zoneStorage) => $zoneStorage->uuid,
-            $request->zoneStorages()
+            $zoneStorages
         );
+        if ($zoneStorages === []) {
+            $zoneStorages = $this->zoneStorageGateway->provideAll();
+            $zoneStorageIds = array_map(
+                static fn (ZoneStorage $zone) => $zone->uuid,
+                $zoneStorages
+            );
+        }
         $hasActive = $this->inventoryRepository->hasActiveForZone($zoneStorageIds);
         if ($hasActive) {
             throw new InventoryAlreadyActiveForZone($zoneStorageIds);
         }
-
         $inventory = Inventory::create(
             $request->uuid(),
-            $request->zoneStorages(),
-            $date
+            $zoneStorages,
+            $inventoryDate
         );
 
         $this->inventoryRepository->save($inventory);

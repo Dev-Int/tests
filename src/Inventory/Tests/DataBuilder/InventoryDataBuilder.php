@@ -14,8 +14,9 @@ declare(strict_types=1);
 namespace Inventory\Tests\DataBuilder;
 
 use Inventory\Entities\Inventory;
-use Inventory\Entities\ReadModel\ZoneStorage;
+use Inventory\Entities\VO\InventoryDate;
 use Inventory\Entities\VO\InventoryStatus;
+use Inventory\Entities\VO\ZoneStorage;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\Amount;
@@ -25,14 +26,14 @@ final class InventoryDataBuilder
     private int $amount = 0;
     private \DateTimeImmutable $createdAt;
     private \DateTimeImmutable $updatedAt;
-    private \DateTimeImmutable $settledAt;
+    private ?\DateTimeImmutable $settledAt;
 
     /**
      * @param array<ZoneStorage> $zoneStorages
      */
     public static function create(
         ResourceUuid $uuid,
-        \DateTimeImmutable $date,
+        InventoryDate $date,
         array $zoneStorages,
         InventoryStatus $status
     ): self {
@@ -44,14 +45,14 @@ final class InventoryDataBuilder
      */
     public function __construct(
         private ResourceUuid $uuid,
-        private \DateTimeImmutable $date,
+        private InventoryDate $date,
         private array $zoneStorages,
         private InventoryStatus $status
     ) {
         $now = ClockFactory::clock()->now();
         $this->createdAt = $now;
         $this->updatedAt = $now;
-        $this->settledAt = $now;
+        $this->settledAt = $status === InventoryStatus::DRAFT ? null : $now;
     }
 
     public function withUuid(ResourceUuid $uuid): self
@@ -71,7 +72,7 @@ final class InventoryDataBuilder
         return $this;
     }
 
-    public function withDate(\DateTimeImmutable $date): self
+    public function withDate(InventoryDate $date): self
     {
         $this->date = $date;
 
@@ -106,7 +107,7 @@ final class InventoryDataBuilder
         return $this;
     }
 
-    public function withSettledAt(\DateTimeImmutable $settledAt): self
+    public function withSettledAt(?\DateTimeImmutable $settledAt): self
     {
         $this->settledAt = $settledAt;
 
@@ -120,10 +121,10 @@ final class InventoryDataBuilder
             zoneStorages: $this->zoneStorages,
             date: $this->date,
             status: $this->status,
+            amount: Amount::fromCents($this->amount),
             createdAt: $this->createdAt,
             updatedAt: $this->updatedAt,
-            settledAt: $this->settledAt,
-            amount: Amount::fromCents($this->amount)
+            statusUpdatedAt: $this->settledAt
         );
     }
 }

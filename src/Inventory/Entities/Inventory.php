@@ -14,8 +14,9 @@ declare(strict_types=1);
 namespace Inventory\Entities;
 
 use Inventory\Entities\Exception\InvalidStatusTransition;
-use Inventory\Entities\ReadModel\ZoneStorage;
+use Inventory\Entities\VO\InventoryDate;
 use Inventory\Entities\VO\InventoryStatus;
+use Inventory\Entities\VO\ZoneStorage;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\Amount;
@@ -25,7 +26,7 @@ final class Inventory
     /**
      * @param array<ZoneStorage> $zoneStorages
      */
-    public static function create(ResourceUuid $uuid, array $zoneStorages, \DateTimeImmutable $date): self
+    public static function create(ResourceUuid $uuid, array $zoneStorages, InventoryDate $date): self
     {
         return new self(
             uuid: $uuid,
@@ -35,8 +36,8 @@ final class Inventory
             amount: Amount::zero(),
             createdAt: ClockFactory::clock()->now(),
             updatedAt: ClockFactory::clock()->now(),
-            settledAt: ClockFactory::clock()->now(),
-            items: new InventoryItemCollection(totalItems: 0)
+            statusUpdatedAt: null,
+            items: new InventoryItemCollection(totalItems: 0),
         );
     }
 
@@ -46,12 +47,12 @@ final class Inventory
     public static function reconstitute(
         ResourceUuid $uuid,
         array $zoneStorages,
-        \DateTimeImmutable $date,
+        InventoryDate $date,
         InventoryStatus $status,
+        Amount $amount,
         \DateTimeImmutable $createdAt,
         \DateTimeImmutable $updatedAt,
-        \DateTimeImmutable $settledAt,
-        Amount $amount
+        ?\DateTimeImmutable $statusUpdatedAt,
     ): self {
         return new self(
             uuid: $uuid,
@@ -61,7 +62,7 @@ final class Inventory
             amount: $amount,
             createdAt: $createdAt,
             updatedAt: $updatedAt,
-            settledAt: $settledAt,
+            statusUpdatedAt: $statusUpdatedAt,
             items: new InventoryItemCollection(totalItems: 0)
         );
     }
@@ -72,13 +73,13 @@ final class Inventory
     private function __construct(
         private readonly ResourceUuid $uuid,
         private readonly array $zoneStorages,
-        private readonly \DateTimeImmutable $date,
+        private readonly InventoryDate $date,
         private InventoryStatus $status,
         private readonly Amount $amount,
         private readonly \DateTimeImmutable $createdAt,
-        private readonly \DateTimeImmutable $updatedAt,
-        private \DateTimeImmutable $settledAt,
-        private readonly InventoryItemCollection $items
+        private \DateTimeImmutable $updatedAt,
+        private ?\DateTimeImmutable $statusUpdatedAt,
+        private readonly InventoryItemCollection $items,
     ) {
     }
 
@@ -95,7 +96,7 @@ final class Inventory
         return $this->zoneStorages;
     }
 
-    public function date(): \DateTimeImmutable
+    public function date(): InventoryDate
     {
         return $this->date;
     }
@@ -120,9 +121,9 @@ final class Inventory
         return $this->updatedAt;
     }
 
-    public function settledAt(): \DateTimeImmutable
+    public function statusUpdatedAt(): ?\DateTimeImmutable
     {
-        return $this->settledAt;
+        return $this->statusUpdatedAt;
     }
 
     public function items(): InventoryItemCollection
@@ -144,7 +145,7 @@ final class Inventory
             throw new InvalidStatusTransition(fromStatus: $this->status, toStatus: InventoryStatus::IN_PROGRESS);
         }
         $this->status = InventoryStatus::IN_PROGRESS;
-        $this->settledAt = ClockFactory::clock()->now();
+        $this->statusUpdatedAt = ClockFactory::clock()->now();
     }
 
     /**
@@ -156,19 +157,7 @@ final class Inventory
             throw new InvalidStatusTransition(fromStatus: $this->status, toStatus: InventoryStatus::REVIEW);
         }
         $this->status = InventoryStatus::REVIEW;
-        $this->settledAt = ClockFactory::clock()->now();
-    }
-
-    /**
-     * Finalise l'inventaire (REVIEW → COMPLETED).
-     */
-    public function complete(): void
-    {
-        if (InventoryStatus::REVIEW !== $this->status) {
-            throw new InvalidStatusTransition(fromStatus: $this->status, toStatus: InventoryStatus::COMPLETED);
-        }
-        $this->status = InventoryStatus::COMPLETED;
-        $this->settledAt = ClockFactory::clock()->now();
+        $this->statusUpdatedAt = ClockFactory::clock()->now();
     }
 
     /**
@@ -180,6 +169,19 @@ final class Inventory
             throw new InvalidStatusTransition(fromStatus: $this->status, toStatus: InventoryStatus::IN_PROGRESS);
         }
         $this->status = InventoryStatus::IN_PROGRESS;
-        $this->settledAt = ClockFactory::clock()->now();
+        $this->statusUpdatedAt = ClockFactory::clock()->now();
+    }
+
+    /**
+     * Finalise l'inventaire (REVIEW → COMPLETED).
+     */
+    public function complete(): void
+    {
+        if (InventoryStatus::REVIEW !== $this->status) {
+            throw new InvalidStatusTransition(fromStatus: $this->status, toStatus: InventoryStatus::COMPLETED);
+        }
+        $this->status = InventoryStatus::COMPLETED;
+        $this->statusUpdatedAt = ClockFactory::clock()->now();
+        $this->updatedAt = ClockFactory::clock()->now();
     }
 }

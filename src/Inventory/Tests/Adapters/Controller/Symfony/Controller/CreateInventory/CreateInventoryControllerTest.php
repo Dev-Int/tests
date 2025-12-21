@@ -56,9 +56,7 @@ final class CreateInventoryControllerTest extends BaseFunctionalTestCase
         // Assert
         self::assertResponseIsSuccessful();
         self::assertSelectorExists('form[name="createInventory"]');
-        self::assertSelectorExists('select[name="createInventory[date][day]"]');
-        self::assertSelectorExists('select[name="createInventory[date][month]"]');
-        self::assertSelectorExists('select[name="createInventory[date][year]"]');
+        self::assertSelectorExists('input[name="createInventory[date]"]');
         self::assertSelectorExists('select[name="createInventory[zoneStorages][]"]');
         self::assertSelectorTextContains(
             'select[name="createInventory[zoneStorages][]"] option',
@@ -82,9 +80,7 @@ final class CreateInventoryControllerTest extends BaseFunctionalTestCase
         self::assertSelectorTextContains('h1', $translator->trans('inventory.create.titlePage'));
 
         $form = $crawler->selectButton($translator->trans('add'))->form([
-            'createInventory[date][day]' => (int) $futureDate->format('d'),
-            'createInventory[date][month]' => (int) $futureDate->format('m'),
-            'createInventory[date][year]' => (int) $futureDate->format('Y'),
+            'createInventory[date]' => $futureDate->format('Y-m-d'),
             'createInventory[zoneStorages]' => [$zoneStorages[0]->uuid()],
         ]);
         $this->client->submit($form);
@@ -122,9 +118,7 @@ final class CreateInventoryControllerTest extends BaseFunctionalTestCase
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_INVENTORY_URI);
         $form = $crawler->selectButton($translator->trans('add'))->form([
-            'createInventory[date][day]' => (int) $pastDate->format('d'),
-            'createInventory[date][month]' => (int) $pastDate->format('m'),
-            'createInventory[date][year]' => (int) $pastDate->format('Y'),
+            'createInventory[date]' => $pastDate->format('Y-m-d'),
             'createInventory[zoneStorages]' => [$zoneStorages[0]->uuid()],
         ]);
         $this->client->submit($form);
@@ -167,9 +161,7 @@ final class CreateInventoryControllerTest extends BaseFunctionalTestCase
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_INVENTORY_URI);
         $form = $crawler->selectButton($translator->trans('add'))->form([
-            'createInventory[date][day]' => (int) $futureDate->format('d'),
-            'createInventory[date][month]' => (int) $futureDate->format('m'),
-            'createInventory[date][year]' => (int) $futureDate->format('Y'),
+            'createInventory[date]' => $futureDate->format('Y-m-d'),
             'createInventory[zoneStorages]' => [$zoneUuid],
         ]);
         $this->client->submit($form);
@@ -197,9 +189,7 @@ final class CreateInventoryControllerTest extends BaseFunctionalTestCase
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_INVENTORY_URI);
         $form = $crawler->selectButton($translator->trans('add'))->form([
-            'createInventory[date][day]' => (int) $futureDate->format('d'),
-            'createInventory[date][month]' => (int) $futureDate->format('m'),
-            'createInventory[date][year]' => (int) $futureDate->format('Y'),
+            'createInventory[date]' => $futureDate->format('Y-m-d'),
             'createInventory[zoneStorages]' => [],
         ]);
         $this->client->submit($form);

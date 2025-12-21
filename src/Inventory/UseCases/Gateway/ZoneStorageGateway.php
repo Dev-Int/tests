@@ -11,16 +11,17 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Inventory\Entities\ReadModel;
+namespace Inventory\UseCases\Gateway;
 
+use Inventory\Entities\VO\ZoneStorage;
 use Shared\Entities\ResourceUuid;
-use Shared\Entities\VO\NameField;
 
-final readonly class ZoneStorage
+interface ZoneStorageGateway
 {
-    public function __construct(
-        public ResourceUuid $uuid,
-        public NameField $label
-    ) {
-    }
+    /**
+     * @return array<ZoneStorage>
+     */
+    public function provideAll(): array;
+
+    public function provide(ResourceUuid $fromString): ZoneStorage;
 }

@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Inventory\Entities\Repository;
 
 use Inventory\Entities\Inventory;
-use Inventory\UseCase\GetInventories\InventoryCollection;
+use Inventory\Entities\InventoryCollection;
 use Shared\Entities\ResourceUuid;
 
 interface InventoryRepository

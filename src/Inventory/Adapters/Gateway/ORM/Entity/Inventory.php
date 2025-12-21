@@ -19,7 +19,10 @@ use Inventory\Adapters\Gateway\ORM\Repository\DoctrineInventoryRepository;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: DoctrineInventoryRepository::class)]
+#[ORM\Table(name: 'inventory')]
 #[UniqueEntity(fields: ['date', 'zoneStorages'])]
+#[ORM\Index(name: 'idx_inventory_status', columns: ['status'])]
+#[ORM\Index(name: 'idx_inventory_date', columns: ['date'])]
 class Inventory
 {
     /**
@@ -42,8 +45,8 @@ class Inventory
         private readonly \DateTimeImmutable $createdAt,
         #[ORM\Column(name: 'updated_at', type: 'datetimetz_immutable')]
         private readonly \DateTimeImmutable $updatedAt,
-        #[ORM\Column(name: 'settled_at', type: 'datetimetz_immutable')]
-        private readonly \DateTimeImmutable $settledAt,
+        #[ORM\Column(name: 'settled_at', type: 'datetimetz_immutable', nullable: true)]
+        private readonly ?\DateTimeImmutable $settledAt,
         #[ORM\OneToMany(mappedBy: 'inventory', targetEntity: InventoryItem::class, cascade: ['persist', 'remove'])]
         private array|Collection $items,
     ) {
@@ -87,7 +90,7 @@ class Inventory
         return $this->updatedAt;
     }
 
-    public function settledAt(): \DateTimeImmutable
+    public function settledAt(): ?\DateTimeImmutable
     {
         return $this->settledAt;
     }

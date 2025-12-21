@@ -16,6 +16,7 @@ namespace Inventory\Tests\Factory;
 use Admin\Tests\Factory\ZoneStorageFactory;
 use Inventory\Adapters\Gateway\ORM\Entity\Inventory;
 use Inventory\Adapters\Gateway\ORM\Entity\InventoryStatus;
+use Inventory\Entities\VO\InventoryStatus as InventoryStatusDomain;
 use Shared\Entities\Clock\ClockFactory;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
@@ -46,7 +47,7 @@ final class InventoryFactory extends PersistentProxyObjectFactory
             'uuid' => self::faker()->uuid(),
             'date' => self::faker()->dateTime(),
             'zoneStorages' => [ZoneStorageFactory::new()],
-            'status' => self::faker()->randomElement(InventoryStatus::ACTIVE_STATUSES),
+            'status' => self::faker()->randomElement(InventoryStatusDomain::ACTIVE_STATUSES),
             'amount' => self::faker()->numberBetween(100, 10000),
             'createdAt' => $this->now,
             'updatedAt' => $this->now,

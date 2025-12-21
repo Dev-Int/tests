@@ -34,13 +34,14 @@ final class CreateInventoryType extends AbstractType
     {
         $builder
             ->add('date', DateType::class, [
-                'widget' => 'choice',
+                'widget' => 'single_text',
                 'input' => 'datetime_immutable',
-                'html5' => false,
+                'html5' => true,
                 'label' => $this->translator->trans('inventory.form.date.label'),
                 'required' => true,
                 'attr' => [
                     'autofocus' => true,
+                    'data-controller' => 'datepicker',
                 ],
             ])
             ->add('zoneStorages', ChoiceType::class, [

@@ -11,9 +11,8 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Inventory\UseCase\GetInventories;
+namespace Inventory\Entities;
 
-use Inventory\Entities\Inventory;
 use Shared\Entities\Collection;
 use Shared\Entities\Exception\InvalidCollectionIterationException;
 use Webmozart\Assert\Assert;

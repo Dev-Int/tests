@@ -1,4 +1,4 @@
-<div>
+<div class="flex-1">
 
     <h3>{{ 'inventory.create.titlePage'|trans }}</h3>
 
@@ -7,8 +7,8 @@
 
     <div class="grid">
         {{ form_row(form.date) }}
+        {{ form_row(form.zoneStorages) }}
     </div>
-    {{ form_row(form.zoneStorages) }}
 
     <div class="grid">
         <twig:Form:Button:Cancel href="{{ path('inventory_index') }}" label="{{ 'cancel'|trans }}" turboFrame="_top" />

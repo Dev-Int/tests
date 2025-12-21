@@ -13,8 +13,10 @@ declare(strict_types=1);
 
 namespace App\Inventory\Tests\Factory;
 
+use Inventory\Entities\VO\InventoryDate;
 use Inventory\Entities\VO\InventoryStatus;
 use Inventory\Tests\DataBuilder\InventoryDataBuilder;
+use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\ResourceUuid;
 
 final class InventoryFakerFactory
@@ -25,7 +27,7 @@ final class InventoryFakerFactory
     {
         return (new InventoryDataBuilder(
             uuid: ResourceUuid::fromString(self::UUID_VALID),
-            date: new \DateTimeImmutable(),
+            date: InventoryDate::fromDateTimeImmutable(ClockFactory::clock()->now()),
             zoneStorages: [],
             status: InventoryStatus::DRAFT
         ))
@@ -37,7 +39,7 @@ final class InventoryFakerFactory
     {
         return (new InventoryDataBuilder(
             uuid: ResourceUuid::fromString(self::UUID_VALID),
-            date: new \DateTimeImmutable(),
+            date: InventoryDate::fromDateTimeImmutable(ClockFactory::clock()->now()),
             zoneStorages: [],
             status: InventoryStatus::IN_PROGRESS
         ))
@@ -49,7 +51,7 @@ final class InventoryFakerFactory
     {
         return (new InventoryDataBuilder(
             uuid: ResourceUuid::fromString(self::UUID_VALID),
-            date: new \DateTimeImmutable(),
+            date: InventoryDate::fromDateTimeImmutable(ClockFactory::clock()->now()),
             zoneStorages: [],
             status: InventoryStatus::REVIEW
         ))
@@ -61,7 +63,7 @@ final class InventoryFakerFactory
     {
         return (new InventoryDataBuilder(
             uuid: ResourceUuid::fromString(self::UUID_VALID),
-            date: new \DateTimeImmutable(),
+            date: InventoryDate::fromDateTimeImmutable(ClockFactory::clock()->now()),
             zoneStorages: [],
             status: InventoryStatus::COMPLETED
         ))

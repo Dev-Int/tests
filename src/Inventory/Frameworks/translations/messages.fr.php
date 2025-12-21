@@ -14,11 +14,21 @@ return [
                 'label' => 'Zone de stockage',
             ],
         ],
-        'status' => 'Statut',
+        'status' => [
+            'label' => 'Statut',
+            'draft' => 'Brouillon',
+            'inProgress' => 'En cours',
+            'review' => 'En révision',
+            'completed' => 'Terminé',
+        ],
         'create' => [
             'titlePage' => 'Créer un inventaire',
             'titleShort' => 'Nouvel inventaire',
             'success' => 'Inventaire créé avec succès',
+        ],
+        'errors' => [
+            'date_past' => 'La date doit être aujourd\'hui ou dans le futur',
+            'zone_active' => 'Un inventaire actif existe pour cette zone',
         ],
     ],
 ];

@@ -11,7 +11,9 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Inventory\UseCase\GetInventories;
+namespace Inventory\UseCases\GetInventories;
+
+use Inventory\Entities\InventoryCollection;
 
 final class GetInventoriesResponse
 {

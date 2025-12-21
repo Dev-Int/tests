@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Inventory\Adapters\Controller\Symfony\Controller\CreateInventory;
 
-use Inventory\Entities\ReadModel\ZoneStorage;
+use Inventory\Entities\VO\ZoneStorage;
 use Inventory\UseCases\CreateInventory\CreateInventoryRequest;
 use Shared\Entities\ResourceUuid;
 

@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Inventory\Adapters\Controller\Symfony\Controller\GetInventories;
 
-use Inventory\UseCase\GetInventories\GetInventories;
+use Inventory\UseCases\GetInventories\GetInventories;
 use Shared\Adapters\Controller\Symfony\Controller\HomeController;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;

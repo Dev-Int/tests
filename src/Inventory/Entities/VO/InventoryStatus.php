@@ -15,6 +15,12 @@ namespace Inventory\Entities\VO;
 
 enum InventoryStatus: string
 {
+    public const array ACTIVE_STATUSES = [
+        self::DRAFT->value,
+        self::IN_PROGRESS->value,
+        self::REVIEW->value,
+    ];
+
     public function equals(InventoryStatus $otherStatus): bool
     {
         return $this->value === $otherStatus->value;
@@ -23,4 +29,5 @@ enum InventoryStatus: string
     case IN_PROGRESS = 'inProgress';
     case REVIEW = 'review';
     case COMPLETED = 'completed';
+    case CANCELLED = 'cancelled';
 }

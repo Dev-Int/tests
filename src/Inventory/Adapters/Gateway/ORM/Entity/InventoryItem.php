@@ -32,10 +32,10 @@ final readonly class InventoryItem
         private string $articleId,
         #[ORM\Column(name: 'price', type: 'integer')]
         private int $price,
-        #[ORM\Column(name: 'theoretical_stock', type: 'float')]
-        private float $theoreticalStock,
-        #[ORM\Column(name: 'real_stock', type: 'float')]
-        private float $realStock,
+        #[ORM\Column(name: 'theoretical_stock', type: 'integer')]
+        private int $theoreticalStock,
+        #[ORM\Column(name: 'real_stock', type: 'integer')]
+        private int $realStock,
         #[ORM\Column(name: 'amount', type: 'integer')]
         private int $amount,
     ) {
@@ -61,12 +61,12 @@ final readonly class InventoryItem
         return $this->price;
     }
 
-    public function theoreticalStock(): float
+    public function theoreticalStock(): int
     {
         return $this->theoreticalStock;
     }
 
-    public function realStock(): float
+    public function realStock(): int
     {
         return $this->realStock;
     }

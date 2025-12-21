@@ -15,11 +15,11 @@ namespace Inventory\Adapters\Controller\Symfony\Controller\CreateInventory;
 
 use Admin\Contracts\Services\Provider\ConfigurationServiceProvider;
 use Admin\Contracts\Services\Provider\Exception\NoArticleRegistered;
-use Admin\Contracts\Services\Provider\ZoneStorage\ZoneStorageProvider;
 use Inventory\Adapters\Controller\Symfony\Controller\GetInventories\GetInventoriesController;
 use Inventory\Adapters\Form\Type\CreateInventoryType;
-use Inventory\Entities\ReadModel\ZoneStorage;
+use Inventory\Entities\VO\ZoneStorage;
 use Inventory\UseCases\CreateInventory\CreateInventory;
+use Inventory\UseCases\Gateway\ZoneStorageGateway;
 use Shared\Entities\ResourceUuid;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,7 +37,7 @@ final class CreateInventoryController extends AbstractController
         private readonly CreateInventory $useCase,
         private readonly ConfigurationServiceProvider $configurationService,
         private readonly TranslatorInterface $translator,
-        private readonly ZoneStorageProvider $zoneStorageProvider,
+        private readonly ZoneStorageGateway $zoneStorageFinder,
     ) {
     }
 
@@ -66,18 +66,9 @@ final class CreateInventoryController extends AbstractController
             }
 
             $zoneStorages = [];
-
-            // Si aucune zone sélectionnée, on prend toutes les zones
-            if ($inventory->zoneStorages === []) {
-                $allZones = $this->zoneStorageProvider->provideAll();
-                foreach ($allZones as $zone) {
-                    $zoneStorages[] = new ZoneStorage($zone->uuid, $zone->label);
-                }
-            } else {
-                foreach ($inventory->zoneStorages as $zoneStorage) {
-                    $zone = $this->zoneStorageProvider->provide(ResourceUuid::fromString($zoneStorage));
-                    $zoneStorages[] = new ZoneStorage($zone->uuid, $zone->label);
-                }
+            foreach ($inventory->zoneStorages as $zoneStorage) {
+                $zone = $this->zoneStorageFinder->provide(ResourceUuid::fromString($zoneStorage));
+                $zoneStorages[] = new ZoneStorage($zone->uuid, $zone->name);
             }
 
             try {
