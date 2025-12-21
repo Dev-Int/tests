@@ -23,9 +23,15 @@ final class Version20251215194650 extends AbstractMigration
             'date TIMESTAMP(0) WITH TIME ZONE NOT NULL, ' .
             'status VARCHAR(255) NOT NULL, ' .
             'amount INT NOT NULL, ' .
+            'created_at TIMESTAMP(0) WITH TIME ZONE NOT NULL, ' .
+            'updated_at TIMESTAMP(0) WITH TIME ZONE NOT NULL, ' .
+            'settled_at TIMESTAMP(0) WITH TIME ZONE NOT NULL, ' .
             'PRIMARY KEY(uuid))'
         );
         $this->addSql('COMMENT ON COLUMN inventory.date IS \'(DC2Type:datetimetz_immutable)\'');
+        $this->addSql('COMMENT ON COLUMN inventory.created_at IS \'(DC2Type:datetimetz_immutable)\'');
+        $this->addSql('COMMENT ON COLUMN inventory.updated_at IS \'(DC2Type:datetimetz_immutable)\'');
+        $this->addSql('COMMENT ON COLUMN inventory.settled_at IS \'(DC2Type:datetimetz_immutable)\'');
         $this->addSql(
             'CREATE TABLE inventory_item (' .
             'id SERIAL NOT NULL, ' .

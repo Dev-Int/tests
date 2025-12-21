@@ -154,10 +154,14 @@ final class CreateInventoryControllerTest extends BaseFunctionalTestCase
         $zoneUuid = $firstZone->uuid();
 
         $futureDate = new \DateTimeImmutable('+1 day');
+        $now = ClockFactory::clock()->now();
         InventoryFactory::createOne([
             'date' => $futureDate,
             'zoneStorages' => [$zoneUuid],
             'status' => InventoryStatus::DRAFT->value,
+            'createdAt' => $now,
+            'updatedAt' => $now,
+            'settledAt' => $now,
         ]);
 
         // Act

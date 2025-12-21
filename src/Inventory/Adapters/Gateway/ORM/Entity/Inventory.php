@@ -38,6 +38,12 @@ class Inventory
         private InventoryStatus $status,
         #[ORM\Column(name: 'amount', type: 'integer')]
         private int $amount,
+        #[ORM\Column(name: 'created_at', type: 'datetimetz_immutable')]
+        private readonly \DateTimeImmutable $createdAt,
+        #[ORM\Column(name: 'updated_at', type: 'datetimetz_immutable')]
+        private readonly \DateTimeImmutable $updatedAt,
+        #[ORM\Column(name: 'settled_at', type: 'datetimetz_immutable')]
+        private readonly \DateTimeImmutable $settledAt,
         #[ORM\OneToMany(mappedBy: 'inventory', targetEntity: InventoryItem::class, cascade: ['persist', 'remove'])]
         private array|Collection $items,
     ) {
@@ -69,6 +75,21 @@ class Inventory
     public function amount(): int
     {
         return $this->amount;
+    }
+
+    public function createdAt(): \DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function updatedAt(): \DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function settledAt(): \DateTimeImmutable
+    {
+        return $this->settledAt;
     }
 
     /**

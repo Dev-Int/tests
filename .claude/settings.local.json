@@ -31,7 +31,8 @@
       "Bash(head:*)",
       "Bash(touch:*)",
       "Bash(while read f)",
-      "Bash(do wc -w $f)"
+      "Bash(do wc -w $f)",
+      "WebFetch(domain:github.com)"
     ],
     "deny": [
       "../.env",

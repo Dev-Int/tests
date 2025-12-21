@@ -33,15 +33,20 @@ final readonly class InventoryMapper
 
     public function fromDomain(InventoryDomain $inventoryDomain): Inventory
     {
-        $zoneStorageIds = array_map(static fn (ZoneStorage $zoneStorage) => $zoneStorage->uuid->toString(), $inventoryDomain->zoneStorages());
-
+        $zoneStorageIds = array_map(
+            static fn (ZoneStorage $zoneStorage) => $zoneStorage->uuid->toString(),
+            $inventoryDomain->zoneStorages()
+        );
         $inventory = new Inventory(
-            $inventoryDomain->uuid()->toString(),
-            $inventoryDomain->date(),
-            $zoneStorageIds,
-            InventoryStatus::fromDomain($inventoryDomain->status()),
-            $inventoryDomain->amount()->toInt(),
-            []
+            uuid: $inventoryDomain->uuid()->toString(),
+            date: $inventoryDomain->date(),
+            zoneStorages: $zoneStorageIds,
+            status: InventoryStatus::fromDomain($inventoryDomain->status()),
+            amount: $inventoryDomain->amount()->toInt(),
+            createdAt: $inventoryDomain->createdAt(),
+            updatedAt: $inventoryDomain->updatedAt(),
+            settledAt: $inventoryDomain->settledAt(),
+            items: []
         );
         $this->getItemsFromDomain($inventoryDomain->items(), $inventory);
 
@@ -56,15 +61,16 @@ final readonly class InventoryMapper
             $zone = $this->zoneStorageProvider->provide($zoneUuid);
             $zoneStorages[] = new ZoneStorage(uuid: $zoneUuid, label: $zone->label);
         }
-
         $inventoryDomain = InventoryDomain::reconstitute(
             uuid: ResourceUuid::fromString($inventory->uuid()),
             zoneStorages: $zoneStorages,
             date: $inventory->date(),
             status: InventoryStatusDomain::from($inventory->status()->value),
+            createdAt: $inventory->createdAt(),
+            updatedAt: $inventory->updatedAt(),
+            settledAt: $inventory->settledAt(),
             amount: Amount::fromCents($inventory->amount()),
         );
-
         foreach ($inventory->items() as $item) {
             $itemDomain = new InventoryItemDomain(
                 article: ResourceUuid::fromString($item->articleId()),
@@ -82,15 +88,17 @@ final readonly class InventoryMapper
     private function getItemsFromDomain(InventoryItemCollection $items, Inventory &$inventory): void
     {
         foreach ($items->toArray() as $item) {
-            $inventory->addItem(new InventoryItem(
-                id: null,
-                inventory: $inventory,
-                articleId: $item->article()->toString(),
-                price: $item->price()->toInt(),
-                theoreticalStock: $item->theoreticalStock(),
-                realStock: $item->realStock(),
-                amount: $item->amount()->toInt(),
-            ));
+            $inventory->addItem(
+                new InventoryItem(
+                    id: null,
+                    inventory: $inventory,
+                    articleId: $item->article()->toString(),
+                    price: $item->price()->toInt(),
+                    theoreticalStock: $item->theoreticalStock(),
+                    realStock: $item->realStock(),
+                    amount: $item->amount()->toInt(),
+                )
+            );
         }
     }
 }
