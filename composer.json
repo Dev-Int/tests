@@ -8,6 +8,7 @@
     "version": "0.9.0",
     "require": {
         "php": ">=8.3",
+        "ext-bcmath": "*",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "ext-intl": "*",
@@ -15,7 +16,7 @@
         "cocur/slugify": "^4.5",
         "doctrine/doctrine-bundle": "^2.2",
         "doctrine/doctrine-migrations-bundle": "^3.3",
-        "doctrine/orm": "^2.17",
+        "doctrine/orm": "^3.1",
         "fakerphp/faker": "^1.23",
         "jzonta/faker-restaurant": "^2.0",
         "nikic/php-parser": "^5.3",

@@ -107,8 +107,8 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
         }
         $familyLogOrm->setParent($parent);
 
-        $this->_em->persist($familyLogOrm);
-        $this->_em->flush();
+        $this->getEntityManager()->persist($familyLogOrm);
+        $this->getEntityManager()->flush();
     }
 
     public function updateLabel(FamilyLogDomain $familyLog): void
@@ -131,7 +131,7 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
             }
         }
 
-        $this->_em->flush();
+        $this->getEntityManager()->flush();
     }
 
     public function assignParent(FamilyLogDomain $familyLog, string $uuid): void
@@ -165,7 +165,7 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
             }
         }
 
-        $this->_em->flush();
+        $this->getEntityManager()->flush();
     }
 
     /**

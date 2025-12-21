@@ -63,11 +63,11 @@ final class ChangeFinancialInformationTest extends TestCase
         ;
         $request->expects(self::once())->method('amount')->willReturn(725);
         $request->expects(self::once())->method('tax')->willReturn($tax55);
-        $request->expects(self::once())->method('uuid')->willReturn($article->uuid()->toString());
+        $request->expects(self::once())->method('uuid')->willReturn($article->uuid());
 
         $articleRepository->expects(self::once())
             ->method('getByUuid')
-            ->with($article->uuid()->toString())
+            ->with($article->uuid())
             ->willReturn($article)
         ;
 

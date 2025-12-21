@@ -142,8 +142,8 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         $packaging = $this->getPackagingFromDomain($article->packaging(), $articleOrm);
         $articleOrm->setPackaging($packaging);
 
-        $this->_em->persist($articleOrm);
-        $this->_em->flush();
+        $this->getEntityManager()->persist($articleOrm);
+        $this->getEntityManager()->flush();
     }
 
     public function renameArticle(ArticleDomain $article): void
@@ -160,7 +160,7 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
             ->setSlug($article->slug())
         ;
 
-        $this->_em->flush();
+        $this->getEntityManager()->flush();
     }
 
     public function reAssignSupplier(ArticleDomain $article): void
@@ -199,7 +199,7 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
             ->setZoneStorages($zoneStorages)
         ;
 
-        $this->_em->flush();
+        $this->getEntityManager()->flush();
     }
 
     public function changeStorageInformation(ArticleDomain $article): void
@@ -214,7 +214,7 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         $articleToUpdate = $this->updateArticlePackaging($article->packaging(), $articleToUpdate);
         $articleToUpdate->setMinStock($article->minStock());
 
-        $this->_em->flush();
+        $this->getEntityManager()->flush();
     }
 
     public function changeFinancialInformation(ArticleDomain $article): void
@@ -238,7 +238,7 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
             ->setTax($tax)
         ;
 
-        $this->_em->flush();
+        $this->getEntityManager()->flush();
     }
 
     public function getAllArticlesPaginated(int $page, int $itemPerPage): ArticleCollection

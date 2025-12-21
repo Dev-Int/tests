@@ -92,8 +92,8 @@ final class DoctrineZoneStorageRepository extends ServiceEntityRepository implem
 
         $zoneStorageOrm->fromDomain($zoneStorage, $familyLog);
 
-        $this->_em->persist($zoneStorageOrm);
-        $this->_em->flush();
+        $this->getEntityManager()->persist($zoneStorageOrm);
+        $this->getEntityManager()->flush();
     }
 
     public function changeLabel(ZoneStorageDomain $zoneStorage): void
@@ -110,7 +110,7 @@ final class DoctrineZoneStorageRepository extends ServiceEntityRepository implem
             ->setSlug($zoneStorage->slug())
         ;
 
-        $this->_em->flush();
+        $this->getEntityManager()->flush();
     }
 
     public function changeFamilyLog(ZoneStorageDomain $zoneStorage): void
@@ -132,7 +132,7 @@ final class DoctrineZoneStorageRepository extends ServiceEntityRepository implem
 
         $zoneStorageToUpdate->setFamilyLog($familyLog);
 
-        $this->_em->flush();
+        $this->getEntityManager()->flush();
     }
 
     public function getAllZones(): ZoneStorageCollection

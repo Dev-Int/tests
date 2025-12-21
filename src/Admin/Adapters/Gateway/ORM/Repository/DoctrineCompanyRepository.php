@@ -38,8 +38,8 @@ final class DoctrineCompanyRepository extends ServiceEntityRepository implements
 
     public function save(CompanyDomain $company): void
     {
-        $this->_em->persist(Company::fromDomain($company));
-        $this->_em->flush();
+        $this->getEntityManager()->persist(Company::fromDomain($company));
+        $this->getEntityManager()->flush();
     }
 
     /**
@@ -98,7 +98,7 @@ final class DoctrineCompanyRepository extends ServiceEntityRepository implements
 
         $companyToUpdate->update($company);
 
-        $this->_em->flush();
+        $this->getEntityManager()->flush();
     }
 
     /**

@@ -25,7 +25,7 @@ final class Version20240712210900 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('CREATE SEQUENCE packaging_seq_id INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE packaging_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql(
             'CREATE TABLE article (' .
             'uuid UUID NOT NULL, ' .
@@ -54,7 +54,7 @@ final class Version20240712210900 extends AbstractMigration
 
         $this->addSql(
             'CREATE TABLE packaging (' .
-            'id SERIAL NOT NULL, ' .
+            'id INT NOT NULL, ' .
             'article_id UUID NOT NULL,' .
             'parcel_unit_id UUID NOT NULL, ' .
             'parcel_quantity DOUBLE PRECISION NOT NULL, ' .
@@ -91,7 +91,8 @@ final class Version20240712210900 extends AbstractMigration
         );
         $this->addSql(
             'ALTER TABLE packaging ADD CONSTRAINT FK_BF8B0D857294869C FOREIGN KEY (article_id) ' .
-            'REFERENCES article (uuid) NOT DEFERRABLE INITIALLY IMMEDIATE');
+            'REFERENCES article (uuid) NOT DEFERRABLE INITIALLY IMMEDIATE'
+        );
         $this->addSql(
             'ALTER TABLE packaging ADD CONSTRAINT FK_BF8B0D858DB8D596 FOREIGN KEY (parcel_unit_id) ' .
             'REFERENCES unit (uuid) NOT DEFERRABLE INITIALLY IMMEDIATE'
@@ -108,7 +109,7 @@ final class Version20240712210900 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql('DROP SEQUENCE packaging_seq_id CASCADE');
+        $this->addSql('DROP SEQUENCE packaging_id_seq CASCADE');
         $this->addSql('ALTER TABLE article DROP CONSTRAINT FK_23A0E662ADD6D8C');
         $this->addSql('ALTER TABLE article DROP CONSTRAINT FK_23A0E66B2A824D8');
         $this->addSql('ALTER TABLE article DROP CONSTRAINT FK_23A0E6623570A93');
