@@ -21,7 +21,8 @@ final readonly class InventoryItem
 {
     public function __construct(
         #[ORM\Id]
-        #[ORM\GeneratedValue]
+        #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
+        #[ORM\SequenceGenerator(sequenceName: 'inventory_item_id_seq')]
         #[ORM\Column(name: 'id', type: 'integer', unique: true)]
         private ?int $id,
         #[ORM\ManyToOne(targetEntity: Inventory::class, inversedBy: 'items')]

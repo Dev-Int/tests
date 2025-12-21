@@ -15,6 +15,7 @@ namespace Inventory\Adapters\Gateway\ORM\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 use Inventory\Adapters\Gateway\ORM\Entity\Inventory;
 use Inventory\Adapters\Gateway\ORM\Entity\InventoryStatus;
@@ -52,7 +53,7 @@ final class DoctrineInventoryRepository extends ServiceEntityRepository implemen
             WHERE inventory.status IN (:status)
             AND inventory.zone_storage_ids::jsonb ??| :zoneStorageIds::text[]
             SQL;
-        $stmt = $this->_em->getConnection()->executeQuery(
+        $stmt = $this->getEntityManager()->getConnection()->executeQuery(
             $sql,
             [
                 'status' => InventoryStatus::ACTIVE_STATUSES,
@@ -60,7 +61,7 @@ final class DoctrineInventoryRepository extends ServiceEntityRepository implemen
             ],
             [
                 'status' => ArrayParameterType::STRING,
-                'zoneStorageIds' => \PDO::PARAM_STR,
+                'zoneStorageIds' => ParameterType::STRING,
             ]
         );
 
@@ -73,8 +74,8 @@ final class DoctrineInventoryRepository extends ServiceEntityRepository implemen
     {
         $inventoryOrm = $this->mapper->fromDomain($inventory);
 
-        $this->_em->persist($inventoryOrm);
-        $this->_em->flush();
+        $this->getEntityManager()->persist($inventoryOrm);
+        $this->getEntityManager()->flush();
     }
 
     public function getAllInventories(): InventoryCollection

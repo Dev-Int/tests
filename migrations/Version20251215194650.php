@@ -16,6 +16,7 @@ final class Version20251215194650 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
+        $this->addSql('CREATE SEQUENCE inventory_item_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql(
             'CREATE TABLE inventory (' .
             'uuid UUID NOT NULL, ' .
@@ -28,13 +29,9 @@ final class Version20251215194650 extends AbstractMigration
             'settled_at TIMESTAMP(0) WITH TIME ZONE NOT NULL, ' .
             'PRIMARY KEY(uuid))'
         );
-        $this->addSql('COMMENT ON COLUMN inventory.date IS \'(DC2Type:datetimetz_immutable)\'');
-        $this->addSql('COMMENT ON COLUMN inventory.created_at IS \'(DC2Type:datetimetz_immutable)\'');
-        $this->addSql('COMMENT ON COLUMN inventory.updated_at IS \'(DC2Type:datetimetz_immutable)\'');
-        $this->addSql('COMMENT ON COLUMN inventory.settled_at IS \'(DC2Type:datetimetz_immutable)\'');
         $this->addSql(
             'CREATE TABLE inventory_item (' .
-            'id SERIAL NOT NULL, ' .
+            'id INT NOT NULL, ' .
             'inventory_id UUID NOT NULL, ' .
             'article_id UUID NOT NULL, ' .
             'price INT NOT NULL, ' .
@@ -52,6 +49,7 @@ final class Version20251215194650 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
+        $this->addSql('DROP SEQUENCE inventory_item_id_seq CASCADE');
         $this->addSql('ALTER TABLE inventory_item DROP CONSTRAINT FK_55BDEA309EEA759');
         $this->addSql('DROP TABLE inventory');
         $this->addSql('DROP TABLE inventory_item');
