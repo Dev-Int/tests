@@ -89,6 +89,6 @@ final class ChangeArticleStorageInformationTest extends TestCase
         self::assertSame($kilogramme, $articleUpdated->packaging()->consumerUnit()[0]);
         self::assertSame(6.000, $articleUpdated->packaging()->consumerUnit()[1]);
         self::assertSame(12.000, $articleUpdated->minStock());
-        self::assertSame(12.5, $articleUpdated->quantity()->toFloat());
+        self::assertSame(12.5, $articleUpdated->quantity()->toUnit());
     }
 }

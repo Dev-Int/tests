@@ -11,20 +11,17 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Entities\Exception\Article;
+namespace Shared\Entities\Exception;
 
-use Shared\Entities\Exception\DomainException;
-use Shared\Entities\Exception\ExceptionSerializableTrait;
-
-final class NegativeValue extends DomainException implements \JsonSerializable
+final class NegativeQuantity extends DomainException implements \JsonSerializable
 {
     use ExceptionSerializableTrait;
 
-    public const MESSAGE = 'The value cannot be negative.';
+    public const string MESSAGE = 'The value cannot be negative.';
 
-    public function __construct(private readonly float $value, ?\Throwable $previous = null)
+    public function __construct(private readonly float $value)
     {
-        parent::__construct(self::MESSAGE, DomainException::INVALID_ARGUMENT_CODE, $previous);
+        parent::__construct(self::MESSAGE, DomainException::INVALID_ARGUMENT_CODE);
     }
 
     /**

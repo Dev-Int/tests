@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Admin\Entities\Article;
 
-use Admin\Entities\Article\VO\ArticleQuantity;
 use Admin\Entities\Article\VO\Packaging;
 use Admin\Entities\FamilyLog\FamilyLog;
 use Admin\Entities\Supplier\Supplier;
@@ -23,6 +22,7 @@ use Admin\Entities\ZoneStorage\ZoneStorageCollection;
 use Shared\Entities\ResourceUuidInterface;
 use Shared\Entities\VO\Amount;
 use Shared\Entities\VO\NameField;
+use Shared\Entities\VO\Quantity;
 
 final class Article
 {
@@ -59,7 +59,7 @@ final class Article
             $minStock,
             $storages,
             $familyLog,
-            ArticleQuantity::fromFloat($quantity ?? 0.0),
+            Quantity::fromUnit($quantity ?? 0.0),
             $active
         );
     }
@@ -74,7 +74,7 @@ final class Article
         private float $minStock,
         private ZoneStorageCollection $zoneStorages,
         private FamilyLog $familyLog,
-        private ArticleQuantity $quantity,
+        private Quantity $quantity,
         private readonly bool $active
     ) {
         $this->slug = $name->slugify();
@@ -152,7 +152,7 @@ final class Article
         return $this->familyLog;
     }
 
-    public function quantity(): ArticleQuantity
+    public function quantity(): Quantity
     {
         return $this->quantity;
     }
