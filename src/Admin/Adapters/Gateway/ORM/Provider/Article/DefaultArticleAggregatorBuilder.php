@@ -11,7 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Adapters\Gateway\Contracts\Provider\Article;
+namespace Admin\Adapters\Gateway\ORM\Provider\Article;
 
 use Admin\Adapters\Gateway\ORM\Entity\Article\Article;
 use Admin\Contracts\Services\Provider\Article\ArticleAggregatorBuilder;
@@ -37,6 +37,12 @@ use Shared\Entities\VO\NameField;
  * @performance Le count total utilise un clone du QueryBuilder (2 requêtes SQL).
  *              Si besoin d'optimisation sur gros volumes, envisager DBAL avec
  *              COUNT(*) OVER() AS total_count (1 seule requête).
+ *
+ * @refactoring Si passage en DBAL, envisager architecture DTO :
+ *              1. Créer ArticleSearchCriteria DTO dans UseCases
+ *              2. Enrichir ArticleFinder avec findByCriteria(ArticleSearchCriteria)
+ *              3. Ce Builder devient simple constructeur de DTO
+ *              4. Logique DBAL isolée dans implémentation Doctrine du Finder
  */
 final class DefaultArticleAggregatorBuilder implements ArticleAggregatorBuilder
 {

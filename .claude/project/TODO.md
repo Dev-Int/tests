@@ -151,6 +151,30 @@ if (!$article instanceof Article) {
 
 ---
 
+### Refactoring ArticleAggregatorBuilder vers DBAL (optionnel)
+
+**Status** : ⬜ À faire si besoin de performance
+**Fichier** : `src/Admin/Adapters/Gateway/ORM/Provider/Article/DefaultArticleAggregatorBuilder.php`
+
+**Contexte** :
+Le Builder actuel utilise Doctrine ORM avec 2 requêtes SQL (data + count).
+Si volumes importants, envisager passage en DBAL avec `COUNT(*) OVER()`.
+
+**Architecture cible** :
+1. Créer `ArticleSearchCriteria` DTO dans `Admin/UseCases/`
+2. Enrichir `ArticleFinder` avec `findByCriteria(ArticleSearchCriteria)`
+3. Builder devient simple constructeur de DTO (sans Doctrine)
+4. Implémentation DBAL dans `DoctrineArticleFinder`
+
+**Bénéfices** :
+- 1 requête SQL au lieu de 2
+- Meilleure séparation des responsabilités
+- Builder utilisable sans dépendance ORM
+
+**Déclencheur** : Implémenter si latence détectée sur listings articles.
+
+---
+
 ## 📚 Archive
 
 Historique des tâches complétées :

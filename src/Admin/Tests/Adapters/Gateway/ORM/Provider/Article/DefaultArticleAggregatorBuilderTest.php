@@ -11,7 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Tests\Adapters\Gateway\Contracts\Provider\Article;
+namespace Admin\Tests\Adapters\Gateway\ORM\Provider\Article;
 
 use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
 use Admin\Contracts\Services\Provider\Article\ArticleFilter;

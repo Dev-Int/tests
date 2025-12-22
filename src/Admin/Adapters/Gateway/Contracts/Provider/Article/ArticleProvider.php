@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Gateway\Contracts\Provider\Article;
 
+use Admin\Adapters\Gateway\ORM\Provider\Article\DefaultArticleAggregatorBuilder;
 use Admin\Contracts\Services\Provider\Article\ArticleAggregatorBuilder;
 use Admin\Contracts\Services\Provider\Article\ArticleProvider as ArticleProviderContract;
 use Admin\Contracts\Services\Provider\Article\Result\ArticleResult;
