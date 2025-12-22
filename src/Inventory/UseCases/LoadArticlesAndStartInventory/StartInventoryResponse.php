@@ -11,11 +11,14 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Inventory\UseCases\LoadArticlesIntoInventory;
+namespace Inventory\UseCases\LoadArticlesAndStartInventory;
 
-use Shared\Entities\ResourceUuid;
+use Inventory\Entities\Inventory;
 
-interface LoadArticlesIntoInventoryRequest
+final readonly class StartInventoryResponse
 {
-    public function inventoryUuid(): ResourceUuid;
+    public function __construct(
+        public Inventory $inventory,
+    ) {
+    }
 }

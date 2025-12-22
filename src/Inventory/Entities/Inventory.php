@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace Inventory\Entities;
 
 use Inventory\Entities\Exception\InvalidStatusTransition;
+use Inventory\Entities\Exception\NoArticlesToLoad;
+use Inventory\Entities\VO\Article;
 use Inventory\Entities\VO\InventoryDate;
 use Inventory\Entities\VO\InventoryStatus;
 use Inventory\Entities\VO\ZoneStorage;
@@ -144,6 +146,26 @@ final class Inventory
     public function clearItems(): void
     {
         $this->items = new InventoryItemCollection(totalItems: 0);
+    }
+
+    /**
+     * @param iterable<Article> $articles
+     *
+     * @throws NoArticlesToLoad
+     */
+    public function loadArticles(iterable $articles): void
+    {
+        $this->clearItems();
+
+        $count = 0;
+        foreach ($articles as $article) {
+            $this->addItem(InventoryItem::createFromArticle($article));
+            ++$count;
+        }
+
+        if ($count === 0) {
+            throw new NoArticlesToLoad();
+        }
     }
 
     /**
