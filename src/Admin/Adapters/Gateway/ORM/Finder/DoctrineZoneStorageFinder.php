@@ -56,7 +56,7 @@ final readonly class DoctrineZoneStorageFinder implements ZoneStorageFinder
     {
         $alias = self::ALIAS;
 
-        /** @var ZoneStorageOrm[] $zoneStoragesOrm */
+        /** @var array<ZoneStorageOrm> $zoneStoragesOrm */
         $zoneStoragesOrm = $this->entityManager->createQueryBuilder()
             ->select($alias)
             ->from(ZoneStorageOrm::class, $alias)

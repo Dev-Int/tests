@@ -21,7 +21,7 @@ use Shared\Entities\ResourceUuid;
 
 final readonly class DoctrineArticleFinder implements ArticleFinder
 {
-    private const ALIAS = 'article';
+    private const string ALIAS = 'article';
 
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -58,7 +58,7 @@ final readonly class DoctrineArticleFinder implements ArticleFinder
     {
         $alias = self::ALIAS;
 
-        /** @var ArticleOrm[] $articlesOrm */
+        /** @var array<ArticleOrm> $articlesOrm */
         $articlesOrm = $this->entityManager->createQueryBuilder()
             ->select($alias)
             ->from(ArticleOrm::class, $alias)
@@ -74,7 +74,7 @@ final readonly class DoctrineArticleFinder implements ArticleFinder
     }
 
     /**
-     * @param string[] $uuids
+     * @param array<string> $uuids
      *
      * @return iterable<Article>
      */
@@ -86,7 +86,7 @@ final readonly class DoctrineArticleFinder implements ArticleFinder
 
         $alias = self::ALIAS;
 
-        /** @var ArticleOrm[] $articlesOrm */
+        /** @var array<ArticleOrm> $articlesOrm */
         $articlesOrm = $this->entityManager->createQueryBuilder()
             ->select($alias)
             ->from(ArticleOrm::class, $alias)

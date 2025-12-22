@@ -15,7 +15,8 @@ interface {Entity}Finder
     public function findAll__ENTITIES__(): iterable;
 
     /**
-     * @param string[] $uuids
+     * @param array<string> $uuids
+     *
      * @return iterable<{Entity}>
      */
     public function findByUuids(array $uuids): iterable;

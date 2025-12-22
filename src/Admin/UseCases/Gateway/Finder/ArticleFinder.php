@@ -26,7 +26,7 @@ interface ArticleFinder
     public function findAllArticles(): iterable;
 
     /**
-     * @param string[] $uuids
+     * @param array<string> $uuids
      *
      * @return iterable<Article>
      */
