@@ -23,8 +23,11 @@ Generate Repository (commands) and Finder (queries) interfaces.
 |-------|---------|--------|
 | bc | Admin | `BC/Entities/Repository/EntityRepository.php` |
 | entity | Article | `BC/UseCases/Gateway/Finder/EntityFinder.php` |
+| entityPlural | Articles | Used in `findAll{EntityPlural}()` method |
 | commands | ['save', 'delete'] | - |
 | queries | ['find', 'findAll'] | - |
+
+> **Note**: `entityPlural` handles irregular plurals (Category→Categories, Entity→Entities).
 
 ---
 

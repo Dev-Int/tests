@@ -12,7 +12,7 @@ interface {Entity}Finder
     /**
      * @return iterable<{Entity}>
      */
-    public function findAll__ENTITIES__(): iterable;
+    public function findAll{EntityPlural}(): iterable;
 
     /**
      * @param array<string> $uuids

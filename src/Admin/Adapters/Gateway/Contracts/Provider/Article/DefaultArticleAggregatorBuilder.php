@@ -33,6 +33,10 @@ use Shared\Entities\VO\NameField;
  *
  * ✅ $provider->forArticles([])->withFilter(...)->provideAll();
  * ❌ $builder = $provider->forArticles([]); $builder->...; $builder->...;
+ *
+ * @performance Le count total utilise un clone du QueryBuilder (2 requêtes SQL).
+ *              Si besoin d'optimisation sur gros volumes, envisager DBAL avec
+ *              COUNT(*) OVER() AS total_count (1 seule requête).
  */
 final class DefaultArticleAggregatorBuilder implements ArticleAggregatorBuilder
 {
@@ -80,14 +84,7 @@ final class DefaultArticleAggregatorBuilder implements ArticleAggregatorBuilder
 
     public function orderBy(ArticleOrderField $field, QueryOrder $direction = QueryOrder::ASC): self
     {
-        $normalizedDirection = strtoupper($direction->value);
-        if (!\in_array($normalizedDirection, ['ASC', 'DESC'], true)) {
-            throw new \InvalidArgumentException(
-                \sprintf('Invalid order direction: %s. Allowed: ASC, DESC', $direction->value)
-            );
-        }
-
-        $this->orderBy[$field->value] = $normalizedDirection;
+        $this->orderBy[$field->value] = $direction->value;
 
         return $this;
     }
@@ -118,7 +115,7 @@ final class DefaultArticleAggregatorBuilder implements ArticleAggregatorBuilder
         // Execute and map results
         $collection = new ArticleCollectionResult($totalCount);
 
-        /** @var list<Article> $articles */
+        /** @var array<array{uuid: string, name:string, unitPrice: int, quantity: int, slug: string}> $articles */
         $articles = $queryBuilder->getQuery()->getResult();
 
         foreach ($articles as $article) {
@@ -180,10 +177,12 @@ final class DefaultArticleAggregatorBuilder implements ArticleAggregatorBuilder
 
     private function createBaseQueryBuilder(): QueryBuilder
     {
+        $alias = self::ALIAS;
+
         return $this->entityManager
             ->createQueryBuilder()
-            ->select(self::ALIAS)
-            ->from(Article::class, self::ALIAS)
+            ->select(["{$alias}.uuid", "{$alias}.name", "{$alias}.unitPrice", "{$alias}.quantity", "{$alias}.slug"])
+            ->from(Article::class, $alias)
         ;
     }
 
@@ -273,14 +272,17 @@ final class DefaultArticleAggregatorBuilder implements ArticleAggregatorBuilder
         ;
     }
 
-    private function mapToResult(Article $article): ArticleResult
+    /**
+     * @param array{uuid: string, name:string, unitPrice: int, quantity: int, slug: string} $article
+     */
+    private function mapToResult(array $article): ArticleResult
     {
         return new ArticleResult(
-            uuid: ResourceUuid::fromString($article->uuid()),
-            name: NameField::fromString($article->name()),
-            unitPrice: Amount::fromCents($article->unitPrice()),
-            quantity: $article->quantity(),
-            slug: $article->slug(),
+            uuid: ResourceUuid::fromString($article['uuid']),
+            name: NameField::fromString($article['name']),
+            unitPrice: Amount::fromCents($article['unitPrice']),
+            quantity: $article['quantity'],
+            slug: $article['slug'],
         );
     }
 }

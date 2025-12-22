@@ -1,6 +1,6 @@
 # TODO List - Tâches actives
 
-**Dernière mise à jour** : 2025-12-18
+**Dernière mise à jour** : 2025-12-22
 
 ---
 
@@ -89,6 +89,39 @@ make rector
 - [ ] PHPStan : 0 erreur
 - [ ] CS-Fixer : code formatté
 - [ ] Tous les tests passent (make ta + make e2e)
+
+---
+
+### Implémenter le logging applicatif
+
+**Status** : ⬜ À faire
+**GitHub Issue** : TBD
+
+**Objectif** :
+Ajouter un système de logging pour faciliter le debug et le monitoring en production.
+
+**Cas d'usage identifiés** :
+- `ArticleProvider::forArticle()` : Logger l'UUID quand un article n'est pas trouvé
+- Erreurs métier (validation, contraintes)
+- Appels inter-BC (Contracts/Providers)
+
+**Architecture proposée** :
+- Utiliser `Psr\Log\LoggerInterface` (injecté via Symfony DI)
+- Niveaux : `warning` pour entités non trouvées, `error` pour erreurs métier
+- Format structuré pour exploitation (ELK, Datadog, etc.)
+
+**Exemple** :
+```php
+if (!$article instanceof Article) {
+    $this->logger->warning('Article not found', ['uuid' => $articleId->toString()]);
+    return null;
+}
+```
+
+**Vérifications** :
+- [ ] Logger injecté dans les services critiques
+- [ ] Tests unitaires vérifient les appels de log
+- [ ] Configuration Monolog adaptée (dev vs prod)
 
 ---
 
