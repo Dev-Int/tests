@@ -26,6 +26,14 @@ use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\Amount;
 use Shared\Entities\VO\NameField;
 
+/**
+ * Mutable article aggregator builder for query construction.
+ *
+ * USAGE: Single-use per query. Create a new instance via ArticleProvider::forArticles().
+ *
+ * ✅ $provider->forArticles([])->withFilter(...)->provideAll();
+ * ❌ $builder = $provider->forArticles([]); $builder->...; $builder->...;
+ */
 final class DefaultArticleAggregatorBuilder implements ArticleAggregatorBuilder
 {
     private const string ALIAS = 'a';
@@ -48,8 +56,9 @@ final class DefaultArticleAggregatorBuilder implements ArticleAggregatorBuilder
     ) {
     }
 
-    public function withFilter(ArticleFilter $filter, mixed $value): self
+    public function withFilter(ArticleFilter $filter, array|bool|ResourceUuid $value): self
     {
+        $this->validateFilterValue($filter, $value);
         $this->filters[$filter->value] = $value;
 
         return $this;
@@ -119,6 +128,56 @@ final class DefaultArticleAggregatorBuilder implements ArticleAggregatorBuilder
         return $collection;
     }
 
+    /**
+     * @param array<ResourceUuid>|bool|ResourceUuid $value
+     */
+    private function validateFilterValue(ArticleFilter $filter, array|bool|ResourceUuid $value): void
+    {
+        match ($filter) {
+            ArticleFilter::ZONE_STORAGE,
+            ArticleFilter::FAMILY_LOG,
+            ArticleFilter::SUPPLIER => $this->assertResourceUuidOrArray($value),
+            ArticleFilter::ACTIVE => $this->assertBoolean($value),
+        };
+    }
+
+    /**
+     * Validates that value is ResourceUuid or array of ResourceUuid.
+     *
+     * @throws \InvalidArgumentException if validation fails
+     */
+    private function assertResourceUuidOrArray(mixed $value): void
+    {
+        if ($value instanceof ResourceUuid) {
+            return;
+        }
+
+        if (\is_array($value)) {
+            foreach ($value as $item) {
+                if (!$item instanceof ResourceUuid) {
+                    throw new \InvalidArgumentException(
+                        \sprintf('Expected ResourceUuid, got %s in array', get_debug_type($item))
+                    );
+                }
+            }
+
+            return;
+        }
+
+        throw new \InvalidArgumentException(
+            \sprintf('Expected ResourceUuid or array of ResourceUuid, got %s', get_debug_type($value))
+        );
+    }
+
+    private function assertBoolean(mixed $value): void
+    {
+        if (!\is_bool($value)) {
+            throw new \InvalidArgumentException(
+                \sprintf('Expected bool, got %s', get_debug_type($value))
+            );
+        }
+    }
+
     private function createBaseQueryBuilder(): QueryBuilder
     {
         return $this->entityManager
@@ -150,13 +209,7 @@ final class DefaultArticleAggregatorBuilder implements ArticleAggregatorBuilder
         $alias = self::ALIAS;
 
         if (isset($this->filters[ArticleFilter::ZONE_STORAGE->value])) {
-            /** @var ResourceUuid $zoneStorageUuid */
-            $zoneStorageUuid = $this->filters[ArticleFilter::ZONE_STORAGE->value];
-            $queryBuilder
-                ->innerJoin("{$alias}.zoneStorages", 'zs')
-                ->andWhere('zs.uuid = :zoneStorageId')
-                ->setParameter('zoneStorageId', $zoneStorageUuid->toString())
-            ;
+            $this->applyZoneStorageFilter($queryBuilder, $alias);
         }
 
         if (isset($this->filters[ArticleFilter::FAMILY_LOG->value])) {
@@ -181,6 +234,30 @@ final class DefaultArticleAggregatorBuilder implements ArticleAggregatorBuilder
             $queryBuilder
                 ->andWhere("{$alias}.active = :active")
                 ->setParameter('active', $this->filters[ArticleFilter::ACTIVE->value])
+            ;
+        }
+    }
+
+    private function applyZoneStorageFilter(QueryBuilder $queryBuilder, string $alias): void
+    {
+        /** @var array<ResourceUuid>|ResourceUuid $value */
+        $value = $this->filters[ArticleFilter::ZONE_STORAGE->value];
+
+        $queryBuilder->innerJoin("{$alias}.zoneStorages", 'zs');
+
+        if (\is_array($value)) {
+            $uuids = array_map(
+                static fn (ResourceUuid $uuid): string => $uuid->toString(),
+                $value
+            );
+            $queryBuilder
+                ->andWhere('zs.uuid IN (:zoneStorageIds)')
+                ->setParameter('zoneStorageIds', $uuids)
+            ;
+        } else {
+            $queryBuilder
+                ->andWhere('zs.uuid = :zoneStorageId')
+                ->setParameter('zoneStorageId', $value->toString())
             ;
         }
     }

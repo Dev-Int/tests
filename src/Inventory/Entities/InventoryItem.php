@@ -22,20 +22,12 @@ final readonly class InventoryItem
 {
     public static function createFromArticle(Article $article): self
     {
-        $realStock = Quantity::fromMilliemes(0);
-        // amount = price (cents) × quantity (units) = cents
-        $amountCents = (int) bcmul(
-            (string) $article->unitPrice->toInt(),
-            bcdiv((string) $article->quantity->toMilliemes(), '1000', 3),
-            0
-        );
-
         return new self(
             article: $article->uuid,
             price: $article->unitPrice,
             theoreticalStock: $article->quantity,
-            realStock: $realStock,
-            amount: Amount::fromCents($amountCents),
+            realStock: Quantity::fromMilliemes(0),
+            amount: $article->unitPrice->computeQuantity($article->quantity),
         );
     }
 

@@ -37,7 +37,9 @@
       "mcp__jetbrains-phpstorm__search_in_files_by_text",
       "mcp__jetbrains-phpstorm__find_files_by_name_keyword",
       "mcp__jetbrains-phpstorm__list_directory_tree",
-      "mcp__plugin_playwright_playwright__browser_navigate"
+      "mcp__plugin_playwright_playwright__browser_navigate",
+      "mcp__plugin_greptile_greptile__get_merge_request",
+      "mcp__plugin_greptile_greptile__list_merge_request_comments"
     ],
     "deny": [
       "../.env",

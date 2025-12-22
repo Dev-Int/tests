@@ -33,20 +33,22 @@ final readonly class ArticleGateway implements ArticleGatewayInterface
      */
     public function provideForZones(array $zoneStorageUuids): iterable
     {
-        foreach ($zoneStorageUuids as $zoneUuid) {
-            $articles = $this->articleProvider
-                ->forArticles([])
-                ->withFilter(ArticleFilter::ZONE_STORAGE, $zoneUuid->toString())
-                ->provideAll()
-            ;
+        if ($zoneStorageUuids === []) {
+            return;
+        }
 
-            foreach ($articles as $articleResult) {
-                yield new Article(
-                    uuid: $articleResult->uuid,
-                    unitPrice: $articleResult->unitPrice,
-                    quantity: Quantity::fromUnit($articleResult->quantity),
-                );
-            }
+        $articles = $this->articleProvider
+            ->forArticles([])
+            ->withFilter(ArticleFilter::ZONE_STORAGE, $zoneStorageUuids)
+            ->provideAll()
+        ;
+
+        foreach ($articles as $articleResult) {
+            yield new Article(
+                uuid: $articleResult->uuid,
+                unitPrice: $articleResult->unitPrice,
+                quantity: Quantity::fromUnit($articleResult->quantity),
+            );
         }
     }
 }

@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Gateway\Contracts\Provider\Article;
 
+use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
 use Admin\Contracts\Services\Provider\Article\ArticleFilter;
 use Admin\Contracts\Services\Provider\Article\ArticleOrderField;
 use Admin\Contracts\Services\Provider\Article\ArticleProvider;
@@ -71,6 +72,32 @@ final class DefaultArticleAggregatorBuilderTest extends BaseFunctionalTestCase
 
         // Assert
         self::assertCount(2, $articles);
+    }
+
+    public function testProvideArticlesWithMultipleZoneStorageFilter(): void
+    {
+        // Arrange
+        ArticleStory::load();
+
+        /** @var ArticleProvider $provider */
+        $provider = self::getContainer()->get(ArticleProvider::class);
+
+        $zoneStorages = ZoneStorageFactory::findBy(['label' => ['Réserve maraîchère', 'Réserve positive']]);
+        self::assertCount(2, $zoneStorages);
+        self::assertNotEmpty($zoneStorages, 'ZoneStorage "Réserve maraîchère" and "Réserve positive" not found');
+        $zoneStorageUuids = array_map(
+            static fn (ZoneStorage $zoneStorage): ResourceUuid => ResourceUuid::fromString($zoneStorage->_real()->uuid()),
+            $zoneStorages
+        );
+
+        // Act
+        $articles = $provider->forArticles(articleIds: [])
+            ->withFilter(filter: ArticleFilter::ZONE_STORAGE, value: $zoneStorageUuids)
+            ->provideAll()
+        ;
+
+        // Assert
+        self::assertCount(4, $articles);
     }
 
     public function testProvideArticlesWithFamilyLogFilter(): void

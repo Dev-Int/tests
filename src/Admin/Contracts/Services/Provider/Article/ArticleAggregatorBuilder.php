@@ -15,10 +15,14 @@ namespace Admin\Contracts\Services\Provider\Article;
 
 use Admin\Contracts\Services\Provider\Article\Result\ArticleCollectionResult;
 use Shared\Entities\Enum\QueryOrder;
+use Shared\Entities\ResourceUuid;
 
 interface ArticleAggregatorBuilder
 {
-    public function withFilter(ArticleFilter $filter, mixed $value): self;
+    /**
+     * @param array<ResourceUuid>|bool|ResourceUuid $value
+     */
+    public function withFilter(ArticleFilter $filter, array|bool|ResourceUuid $value): self;
 
     public function limit(int $limit): self;
 
