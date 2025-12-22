@@ -16,6 +16,7 @@ namespace Admin\Contracts\Services\Provider\Article\Result;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\Amount;
 use Shared\Entities\VO\NameField;
+use Shared\Entities\VO\Quantity;
 
 final readonly class ArticleResult
 {
@@ -23,7 +24,7 @@ final readonly class ArticleResult
         public ResourceUuid $uuid,
         public NameField $name,
         public Amount $unitPrice,
-        public float $quantity,
+        public Quantity $quantity,
         public string $slug,
     ) {
     }

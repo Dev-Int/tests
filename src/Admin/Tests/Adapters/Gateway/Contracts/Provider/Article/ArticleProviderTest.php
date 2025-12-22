@@ -79,7 +79,7 @@ final class ArticleProviderTest extends TestCase
         self::assertSame($uuid->toString(), $result->uuid->toString());
         self::assertSame('Jambon Trad 6kg', $result->name->toString());
         self::assertSame(685, $result->unitPrice->toInt());
-        self::assertSame(12.5, $result->quantity);
+        self::assertSame(12.5, $result->quantity->toUnit());
         self::assertSame('jambon-trad-6kg', $result->slug);
     }
 

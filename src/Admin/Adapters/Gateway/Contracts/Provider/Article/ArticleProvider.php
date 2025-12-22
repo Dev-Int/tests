@@ -43,7 +43,7 @@ final readonly class ArticleProvider implements ArticleProviderContract
             uuid: $uuid,
             name: $article->name(),
             unitPrice: $article->unitPrice(),
-            quantity: $article->quantity()->toUnit(),
+            quantity: $article->quantity(),
             slug: $article->slug()
         );
     }

@@ -18,7 +18,6 @@ use Admin\Contracts\Services\Provider\Article\ArticleProvider;
 use Inventory\Entities\VO\Article;
 use Inventory\UseCases\Gateway\ArticleGateway as ArticleGatewayInterface;
 use Shared\Entities\ResourceUuid;
-use Shared\Entities\VO\Quantity;
 
 final readonly class ArticleGateway implements ArticleGatewayInterface
 {
@@ -46,8 +45,10 @@ final readonly class ArticleGateway implements ArticleGatewayInterface
         foreach ($articles as $articleResult) {
             yield new Article(
                 uuid: $articleResult->uuid,
+                name: $articleResult->name,
                 unitPrice: $articleResult->unitPrice,
-                quantity: Quantity::fromUnit($articleResult->quantity),
+                quantity: $articleResult->quantity,
+                slug: $articleResult->slug,
             );
         }
     }

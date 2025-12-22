@@ -15,14 +15,17 @@ namespace Inventory\Entities\VO;
 
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\Amount;
+use Shared\Entities\VO\NameField;
 use Shared\Entities\VO\Quantity;
 
 final readonly class Article
 {
     public function __construct(
         public ResourceUuid $uuid,
+        public NameField $name,
         public Amount $unitPrice,
         public Quantity $quantity,
+        public string $slug,
     ) {
     }
 }

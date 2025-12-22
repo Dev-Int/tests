@@ -25,6 +25,7 @@ use Shared\Entities\Enum\QueryOrder;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\Amount;
 use Shared\Entities\VO\NameField;
+use Shared\Entities\VO\Quantity;
 
 /**
  * Mutable article aggregator builder for query construction.
@@ -121,7 +122,7 @@ final class DefaultArticleAggregatorBuilder implements ArticleAggregatorBuilder
         // Execute and map results
         $collection = new ArticleCollectionResult($totalCount);
 
-        /** @var array<array{uuid: string, name:string, unitPrice: int, quantity: int, slug: string}> $articles */
+        /** @var array<array{uuid: string, name:string, unitPrice: int, quantity: float|int, slug: string}> $articles */
         $articles = $queryBuilder->getQuery()->getResult();
 
         foreach ($articles as $article) {
@@ -279,7 +280,7 @@ final class DefaultArticleAggregatorBuilder implements ArticleAggregatorBuilder
     }
 
     /**
-     * @param array{uuid: string, name:string, unitPrice: int, quantity: int, slug: string} $article
+     * @param array{uuid: string, name:string, unitPrice: int, quantity: float|int, slug: string} $article
      */
     private function mapToResult(array $article): ArticleResult
     {
@@ -287,7 +288,7 @@ final class DefaultArticleAggregatorBuilder implements ArticleAggregatorBuilder
             uuid: ResourceUuid::fromString($article['uuid']),
             name: NameField::fromString($article['name']),
             unitPrice: Amount::fromCents($article['unitPrice']),
-            quantity: $article['quantity'],
+            quantity: Quantity::fromMilliemes((int) $article['quantity']),
             slug: $article['slug'],
         );
     }

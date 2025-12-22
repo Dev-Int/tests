@@ -59,8 +59,10 @@ final class LoadArticlesIntoInventoryTest extends TestCase
 
         $article = new Article(
             uuid: ResourceUuid::generate(),
+            name: NameField::fromString('Yaourt'),
             unitPrice: Amount::fromCents(1000),
             quantity: Quantity::fromUnit(5.0),
+            slug: 'yaourt'
         );
 
         $repository = $this->createMock(InventoryRepository::class);
@@ -115,15 +117,19 @@ final class LoadArticlesIntoInventoryTest extends TestCase
 
         $existingArticle = new Article(
             uuid: ResourceUuid::generate(),
+            name: NameField::fromString('Yaourt'),
             unitPrice: Amount::fromCents(500),
             quantity: Quantity::fromUnit(2.0),
+            slug: 'yaourt'
         );
         $inventory->addItem(InventoryItem::createFromArticle($existingArticle));
 
         $newArticle = new Article(
             uuid: ResourceUuid::generate(),
+            name: NameField::fromString('Yaourt'),
             unitPrice: Amount::fromCents(1500),
             quantity: Quantity::fromUnit(3.0),
+            slug: 'yaourt'
         );
 
         $repository = $this->createMock(InventoryRepository::class);
@@ -176,13 +182,17 @@ final class LoadArticlesIntoInventoryTest extends TestCase
 
         $article1 = new Article(
             uuid: ResourceUuid::generate(),
+            name: NameField::fromString('Yaourt'),
             unitPrice: Amount::fromCents(1000),
             quantity: Quantity::fromUnit(5.0),
+            slug: 'yaourt'
         );
         $article2 = new Article(
             uuid: ResourceUuid::generate(),
+            name: NameField::fromString('Article 2'),
             unitPrice: Amount::fromCents(2000),
             quantity: Quantity::fromUnit(10.0),
+            slug: 'article-2'
         );
 
         $repository = $this->createMock(InventoryRepository::class);
