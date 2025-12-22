@@ -7,12 +7,12 @@ use Shared\Entities\VO\ResourceUuid;
 
 interface {Entity}Finder
 {
-    public function find(ResourceUuid|string $uuid): ?{Entity};
+    public function findByUuid(ResourceUuid|string $uuid): ?{Entity};
 
     /**
      * @return iterable<{Entity}>
      */
-    public function findAll(): iterable;
+    public function findAll__ENTITIES__(): iterable;
 
     /**
      * @param string[] $uuids

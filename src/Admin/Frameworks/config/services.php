@@ -32,6 +32,11 @@ return static function (ContainerConfigurator $configurator): void {
         resource: __DIR__ . '/../../../Admin/Entities/Repository'
     );
 
+    $services->load(
+        namespace: 'Admin\UseCases\Gateway\Finder\\',
+        resource: __DIR__ . '/../../../Admin/UseCases/Gateway/Finder'
+    );
+
     $services->alias(
         id: 'Admin\Contracts\Services\Provider\Article\ArticleProvider',
         referencedId: 'Admin\Adapters\Gateway\Contracts\Provider\Article\ArticleProvider'

@@ -17,20 +17,21 @@ use Admin\Contracts\Services\Provider\Exception\ZoneStorageNotFound;
 use Admin\Contracts\Services\Provider\ZoneStorage\Result\ZoneStorageCollectionResult;
 use Admin\Contracts\Services\Provider\ZoneStorage\Result\ZoneStorageResult;
 use Admin\Contracts\Services\Provider\ZoneStorage\ZoneStorageProvider as ZoneStorageProviderContract;
-use Admin\Entities\Repository\ZoneStorageRepository;
+use Admin\Entities\ZoneStorage\ZoneStorage;
+use Admin\UseCases\Gateway\Finder\ZoneStorageFinder;
 use Shared\Entities\ResourceUuid;
 
 final readonly class ZoneStorageProvider implements ZoneStorageProviderContract
 {
-    public function __construct(private ZoneStorageRepository $repository)
+    public function __construct(private ZoneStorageFinder $finder)
     {
     }
 
     public function provide(ResourceUuid $uuid): ZoneStorageResult
     {
-        try {
-            $zoneStorage = $this->repository->getByUuid($uuid);
-        } catch (\Throwable) {
+        $zoneStorage = $this->finder->findByUuid($uuid);
+
+        if (!$zoneStorage instanceof ZoneStorage) {
             throw new ZoneStorageNotFound($uuid->toString());
         }
 
@@ -40,9 +41,9 @@ final readonly class ZoneStorageProvider implements ZoneStorageProviderContract
     public function provideAll(?iterable $ids = null): ZoneStorageCollectionResult
     {
         $zoneStorages = new ZoneStorageCollectionResult(0);
-        if (null === $ids) {
-            $zoneStoragesOrm = $this->repository->getAllZones();
-            foreach ($zoneStoragesOrm as $zoneStorage) {
+
+        if ($ids === null) {
+            foreach ($this->finder->findAllZoneStorages() as $zoneStorage) {
                 $zoneStorages->add(
                     new ZoneStorageResult($zoneStorage->uuid(), $zoneStorage->label(), $zoneStorage->slug())
                 );
