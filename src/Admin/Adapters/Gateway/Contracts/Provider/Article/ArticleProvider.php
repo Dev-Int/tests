@@ -13,19 +13,23 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Gateway\Contracts\Provider\Article;
 
+use Admin\Contracts\Services\Provider\Article\ArticleAggregatorBuilder;
 use Admin\Contracts\Services\Provider\Article\ArticleProvider as ArticleProviderContract;
-use Admin\Contracts\Services\Provider\Article\Result\Article;
+use Admin\Contracts\Services\Provider\Article\Result\ArticleResult;
 use Admin\Contracts\Services\Provider\Exception\ArticleNotFound;
 use Admin\Entities\Repository\ArticleRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Shared\Entities\ResourceUuid;
 
 final readonly class ArticleProvider implements ArticleProviderContract
 {
-    public function __construct(private ArticleRepository $repository)
-    {
+    public function __construct(
+        private ArticleRepository $repository,
+        private EntityManagerInterface $entityManager,
+    ) {
     }
 
-    public function provide(ResourceUuid $uuid): Article
+    public function provide(ResourceUuid $uuid): ArticleResult
     {
         try {
             $article = $this->repository->getByUuid($uuid);
@@ -33,7 +37,7 @@ final readonly class ArticleProvider implements ArticleProviderContract
             throw new ArticleNotFound($uuid->toString());
         }
 
-        return new Article(
+        return new ArticleResult(
             uuid: $uuid,
             name: $article->name(),
             unitPrice: $article->unitPrice(),
@@ -42,10 +46,11 @@ final readonly class ArticleProvider implements ArticleProviderContract
         );
     }
 
-    public function provideAll(iterable $ids): iterable
+    public function forArticles(array $articleIds): ArticleAggregatorBuilder
     {
-        foreach ($ids as $id) {
-            yield $this->provide($id);
-        }
+        return new DefaultArticleAggregatorBuilder(
+            $this->entityManager,
+            array_values($articleIds)
+        );
     }
 }

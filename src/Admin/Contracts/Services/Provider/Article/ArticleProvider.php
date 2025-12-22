@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Contracts\Services\Provider\Article;
 
-use Admin\Contracts\Services\Provider\Article\Result\Article;
+use Admin\Contracts\Services\Provider\Article\Result\ArticleResult;
 use Admin\Contracts\Services\Provider\Exception\ArticleNotFound;
 use Shared\Entities\ResourceUuid;
 
@@ -22,14 +22,10 @@ interface ArticleProvider
     /**
      * @throws ArticleNotFound
      */
-    public function provide(ResourceUuid $uuid): Article;
+    public function provide(ResourceUuid $uuid): ArticleResult;
 
     /**
-     * @param iterable<ResourceUuid> $ids
-     *
-     * @return iterable<Article>
-     *
-     * @throws ArticleNotFound
+     * @param array<int, ResourceUuid> $articleIds
      */
-    public function provideAll(iterable $ids): iterable;
+    public function forArticles(array $articleIds): ArticleAggregatorBuilder;
 }

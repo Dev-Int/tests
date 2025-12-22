@@ -17,7 +17,7 @@ use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\Amount;
 use Shared\Entities\VO\NameField;
 
-final readonly class Article
+final readonly class ArticleResult
 {
     public function __construct(
         public ResourceUuid $uuid,

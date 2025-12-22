@@ -12,3 +12,7 @@ services:
             - '%kernel.project_dir%/src/Admin/Adapters/Gateway/ORM/Entity'
     Admin\Entities\Repository\:
         resource: '%kernel.project_dir%/src/Admin/Entities/Repository/*'
+
+    Admin\Contracts\Services\Provider\Article\ArticleProvider:
+        alias: Admin\Adapters\Gateway\Contracts\Provider\Article\ArticleProvider
+        public: true
