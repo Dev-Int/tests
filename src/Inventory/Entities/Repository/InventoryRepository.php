@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Inventory\Entities\Repository;
 
+use Inventory\Entities\Exception\InventoryNotFound;
 use Inventory\Entities\Inventory;
 use Inventory\Entities\InventoryCollection;
 use Shared\Entities\ResourceUuid;
@@ -27,4 +28,9 @@ interface InventoryRepository
     public function save(Inventory $inventory): void;
 
     public function getAllInventories(): InventoryCollection;
+
+    /**
+     * @throws InventoryNotFound
+     */
+    public function getByUuid(ResourceUuid $uuid): Inventory;
 }

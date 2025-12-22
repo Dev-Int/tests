@@ -34,6 +34,7 @@ fi
 replace_placeholders() {
     sed 's/{BC}/Admin/g;
          s/{Entity}/Article/g;
+         s/{EntityPlural}/Articles/g;
          s/{Action}/Create/g;
          s/{actionMethod}/create/g;
          s/{field}/name/g;

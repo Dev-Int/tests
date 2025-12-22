@@ -11,19 +11,15 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Shared\Entities;
+namespace Inventory\UseCases\LoadArticlesIntoInventory;
 
-/**
- * @template T
- *
- * @extends \Iterator<array-key, T>
- */
-interface Collection extends \Iterator
+use Inventory\Entities\Inventory;
+
+final readonly class LoadArticlesIntoInventoryResponse
 {
-    public function add(object $item): void;
-
-    /**
-     * @return iterable<T>
-     */
-    public function toArray(): iterable;
+    public function __construct(
+        public Inventory $inventory,
+        public int $itemsLoaded,
+    ) {
+    }
 }

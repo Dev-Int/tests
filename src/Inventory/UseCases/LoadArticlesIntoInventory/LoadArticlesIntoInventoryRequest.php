@@ -11,19 +11,11 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Shared\Entities;
+namespace Inventory\UseCases\LoadArticlesIntoInventory;
 
-/**
- * @template T
- *
- * @extends \Iterator<array-key, T>
- */
-interface Collection extends \Iterator
+use Shared\Entities\ResourceUuid;
+
+interface LoadArticlesIntoInventoryRequest
 {
-    public function add(object $item): void;
-
-    /**
-     * @return iterable<T>
-     */
-    public function toArray(): iterable;
+    public function inventoryUuid(): ResourceUuid;
 }

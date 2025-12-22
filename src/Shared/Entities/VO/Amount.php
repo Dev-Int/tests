@@ -45,4 +45,11 @@ final readonly class Amount
     {
         return (float) bcdiv($this->amount, '100', 2);
     }
+
+    public function computeQuantity(Quantity $quantity): self
+    {
+        $result = bcmul($this->amount, (string) $quantity->toUnit(), 0);
+
+        return new self($result);
+    }
 }

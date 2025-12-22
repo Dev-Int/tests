@@ -1,6 +1,6 @@
 # TODO List - Tâches actives
 
-**Dernière mise à jour** : 2025-12-18
+**Dernière mise à jour** : 2025-12-22
 
 ---
 
@@ -92,6 +92,39 @@ make rector
 
 ---
 
+### Implémenter le logging applicatif
+
+**Status** : ⬜ À faire
+**GitHub Issue** : TBD
+
+**Objectif** :
+Ajouter un système de logging pour faciliter le debug et le monitoring en production.
+
+**Cas d'usage identifiés** :
+- `ArticleProvider::forArticle()` : Logger l'UUID quand un article n'est pas trouvé
+- Erreurs métier (validation, contraintes)
+- Appels inter-BC (Contracts/Providers)
+
+**Architecture proposée** :
+- Utiliser `Psr\Log\LoggerInterface` (injecté via Symfony DI)
+- Niveaux : `warning` pour entités non trouvées, `error` pour erreurs métier
+- Format structuré pour exploitation (ELK, Datadog, etc.)
+
+**Exemple** :
+```php
+if (!$article instanceof Article) {
+    $this->logger->warning('Article not found', ['uuid' => $articleId->toString()]);
+    return null;
+}
+```
+
+**Vérifications** :
+- [ ] Logger injecté dans les services critiques
+- [ ] Tests unitaires vérifient les appels de log
+- [ ] Configuration Monolog adaptée (dev vs prod)
+
+---
+
 ## 🟢 Priority Low
 
 ### End-to-End Tests Coverage - Améliorations optionnelles
@@ -115,6 +148,30 @@ make rector
 - ❌ `ChangeDeliverySpecificationsSupplierTest` - Test nominal de modification specs livraison réussie
 
 **Recommandation** : Ces tests sont peu prioritaires car les workflows sont déjà couverts par les tests fonctionnels.
+
+---
+
+### Refactoring ArticleAggregatorBuilder vers DBAL (optionnel)
+
+**Status** : ⬜ À faire si besoin de performance
+**Fichier** : `src/Admin/Adapters/Gateway/ORM/Provider/Article/DefaultArticleAggregatorBuilder.php`
+
+**Contexte** :
+Le Builder actuel utilise Doctrine ORM avec 2 requêtes SQL (data + count).
+Si volumes importants, envisager passage en DBAL avec `COUNT(*) OVER()`.
+
+**Architecture cible** :
+1. Créer `ArticleSearchCriteria` DTO dans `Admin/UseCases/`
+2. Enrichir `ArticleFinder` avec `findByCriteria(ArticleSearchCriteria)`
+3. Builder devient simple constructeur de DTO (sans Doctrine)
+4. Implémentation DBAL dans `DoctrineArticleFinder`
+
+**Bénéfices** :
+- 1 requête SQL au lieu de 2
+- Meilleure séparation des responsabilités
+- Builder utilisable sans dépendance ORM
+
+**Déclencheur** : Implémenter si latence détectée sur listings articles.
 
 ---
 

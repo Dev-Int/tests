@@ -15,6 +15,7 @@ namespace Shared\Tests\Entities\VO;
 
 use PHPUnit\Framework\TestCase;
 use Shared\Entities\VO\Amount;
+use Shared\Entities\VO\Quantity;
 
 /**
  * @group unitTest
@@ -39,5 +40,18 @@ final class AmountTest extends TestCase
         // Assert
         self::assertEquals(2500.35, $amount->toFloat());
         self::assertEquals(250035, $amount->toInt());
+    }
+
+    public function testComputeQuantity(): void
+    {
+        // Arrange
+        $amount = Amount::fromCents(1000);
+        $quantity = Quantity::fromUnit(5.0);
+
+        // Act
+        $result = $amount->computeQuantity($quantity);
+
+        // Assert
+        self::assertSame(expected: 5000, actual: $result->toInt());
     }
 }

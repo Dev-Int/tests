@@ -11,19 +11,10 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Shared\Entities;
+namespace Shared\Entities\Enum;
 
-/**
- * @template T
- *
- * @extends \Iterator<array-key, T>
- */
-interface Collection extends \Iterator
+enum QueryOrder: string
 {
-    public function add(object $item): void;
-
-    /**
-     * @return iterable<T>
-     */
-    public function toArray(): iterable;
+    case ASC = 'ASC';
+    case DESC = 'DESC';
 }

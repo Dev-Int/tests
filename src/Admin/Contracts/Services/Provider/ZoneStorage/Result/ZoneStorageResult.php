@@ -11,19 +11,16 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\Contracts\Services\Provider\Article\Result;
+namespace Admin\Contracts\Services\Provider\ZoneStorage\Result;
 
 use Shared\Entities\ResourceUuid;
-use Shared\Entities\VO\Amount;
 use Shared\Entities\VO\NameField;
 
-final readonly class Article
+final readonly class ZoneStorageResult
 {
     public function __construct(
         public ResourceUuid $uuid,
-        public NameField $name,
-        public Amount $unitPrice,
-        public float $quantity,
+        public NameField $label,
         public string $slug,
     ) {
     }

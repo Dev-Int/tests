@@ -13,12 +13,24 @@ declare(strict_types=1);
 
 namespace Inventory\Entities;
 
+use Inventory\Entities\VO\Article;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\Amount;
 use Shared\Entities\VO\Quantity;
 
 final readonly class InventoryItem
 {
+    public static function createFromArticle(Article $article): self
+    {
+        return new self(
+            article: $article->uuid,
+            price: $article->unitPrice,
+            theoreticalStock: $article->quantity,
+            realStock: Quantity::fromMilliemes(0),
+            amount: $article->unitPrice->computeQuantity($article->quantity),
+        );
+    }
+
     public function __construct(
         private ResourceUuid $article,
         private Amount $price,

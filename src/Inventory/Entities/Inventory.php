@@ -79,7 +79,7 @@ final class Inventory
         private readonly \DateTimeImmutable $createdAt,
         private \DateTimeImmutable $updatedAt,
         private ?\DateTimeImmutable $statusUpdatedAt,
-        private readonly InventoryItemCollection $items,
+        private InventoryItemCollection $items,
     ) {
     }
 
@@ -134,6 +134,16 @@ final class Inventory
     public function addItem(InventoryItem $itemDomain): void
     {
         $this->items->add($itemDomain);
+    }
+
+    public function isDraft(): bool
+    {
+        return InventoryStatus::DRAFT === $this->status;
+    }
+
+    public function clearItems(): void
+    {
+        $this->items = new InventoryItemCollection(totalItems: 0);
     }
 
     /**

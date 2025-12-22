@@ -11,19 +11,17 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Shared\Entities;
+namespace Inventory\UseCases\Gateway;
 
-/**
- * @template T
- *
- * @extends \Iterator<array-key, T>
- */
-interface Collection extends \Iterator
+use Inventory\Entities\VO\Article;
+use Shared\Entities\ResourceUuid;
+
+interface ArticleGateway
 {
-    public function add(object $item): void;
-
     /**
-     * @return iterable<T>
+     * @param array<ResourceUuid> $zoneStorageUuids
+     *
+     * @return iterable<Article>
      */
-    public function toArray(): iterable;
+    public function provideForZones(array $zoneStorageUuids): iterable;
 }
