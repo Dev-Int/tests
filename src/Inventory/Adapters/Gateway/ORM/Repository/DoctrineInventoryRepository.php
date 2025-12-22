@@ -19,6 +19,7 @@ use Doctrine\DBAL\ParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 use Inventory\Adapters\Gateway\ORM\Entity\Inventory;
 use Inventory\Adapters\Gateway\ORM\InventoryMapper;
+use Inventory\Entities\Exception\InventoryNotFound;
 use Inventory\Entities\Inventory as InventoryDomain;
 use Inventory\Entities\InventoryCollection;
 use Inventory\Entities\Repository\InventoryRepository;
@@ -99,5 +100,16 @@ final class DoctrineInventoryRepository extends ServiceEntityRepository implemen
         }
 
         return $collection;
+    }
+
+    public function getByUuid(ResourceUuid $uuid): InventoryDomain
+    {
+        $inventory = $this->find($uuid->toString());
+
+        if (!$inventory instanceof Inventory) {
+            throw new InventoryNotFound($uuid);
+        }
+
+        return $this->mapper->toDomain($inventory);
     }
 }

@@ -47,7 +47,7 @@ final class InventoryMapperTest extends TestCase
         // Arrange
         $zoneStorageGateway = $this->createMock(ZoneStorageGateway::class);
         $mapper = new InventoryMapper($zoneStorageGateway);
-        $inventory = (new InventoryFakerFactory())->buildDraft()->build();
+        $inventory = (new InventoryFakerFactory())->createDraft()->build();
 
         // Act
         $inventoryOrm = $mapper->fromDomain($inventory);
@@ -63,7 +63,7 @@ final class InventoryMapperTest extends TestCase
         // Arrange
         $zoneStorageGateway = $this->createMock(ZoneStorageGateway::class);
         $mapper = new InventoryMapper($zoneStorageGateway);
-        $inventory = (new InventoryFakerFactory())->buildInProgress()->build();
+        $inventory = (new InventoryFakerFactory())->createInProgress()->build();
 
         // Act
         $inventoryOrm = $mapper->fromDomain($inventory);

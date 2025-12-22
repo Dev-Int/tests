@@ -22,20 +22,19 @@ use Shared\Entities\ResourceUuid;
 final class InventoryFakerFactory
 {
     public const string UUID_VALID = '852313f1-e2c6-4fea-a0f6-69e881091c0f';
+    public const int AMOUNT_VALID = 1000;
 
-    public function buildDraft(): InventoryDataBuilder
+    public function createDraft(): InventoryDataBuilder
     {
-        return (new InventoryDataBuilder(
+        return new InventoryDataBuilder(
             uuid: ResourceUuid::fromString(self::UUID_VALID),
             date: InventoryDate::fromDateTimeImmutable(ClockFactory::clock()->now()),
             zoneStorages: [],
             status: InventoryStatus::DRAFT
-        ))
-            ->withAmount(0)
-        ;
+        );
     }
 
-    public function buildInProgress(): InventoryDataBuilder
+    public function createInProgress(): InventoryDataBuilder
     {
         return (new InventoryDataBuilder(
             uuid: ResourceUuid::fromString(self::UUID_VALID),
@@ -47,7 +46,7 @@ final class InventoryFakerFactory
         ;
     }
 
-    public function buildReview(): InventoryDataBuilder
+    public function createReviewed(): InventoryDataBuilder
     {
         return (new InventoryDataBuilder(
             uuid: ResourceUuid::fromString(self::UUID_VALID),
@@ -55,11 +54,11 @@ final class InventoryFakerFactory
             zoneStorages: [],
             status: InventoryStatus::REVIEW
         ))
-            ->withAmount(1000)
+            ->withAmount(self::AMOUNT_VALID)
         ;
     }
 
-    public function buildCompleted(): InventoryDataBuilder
+    public function createCompleted(): InventoryDataBuilder
     {
         return (new InventoryDataBuilder(
             uuid: ResourceUuid::fromString(self::UUID_VALID),
@@ -67,7 +66,7 @@ final class InventoryFakerFactory
             zoneStorages: [],
             status: InventoryStatus::COMPLETED
         ))
-            ->withAmount(1000)
+            ->withAmount(self::AMOUNT_VALID)
         ;
     }
 }

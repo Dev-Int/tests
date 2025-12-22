@@ -29,7 +29,7 @@ final class InventoryTransitionStatusTest extends TestCase
     public function testCreatesInventoryWithDraftStatus(): void
     {
         // Arrange & Act
-        $inventory = (new InventoryFakerFactory())->buildDraft()->build();
+        $inventory = (new InventoryFakerFactory())->createDraft()->build();
 
         // Assert
         self::assertTrue($inventory->status()->equals(InventoryStatus::DRAFT));
@@ -40,7 +40,7 @@ final class InventoryTransitionStatusTest extends TestCase
     public function testReconstitutesInventoryWithGivenStatus(): void
     {
         // Arrange & Act
-        $inventory = (new InventoryFakerFactory())->buildInProgress()->build();
+        $inventory = (new InventoryFakerFactory())->createInProgress()->build();
 
         // Assert
         self::assertTrue($inventory->status()->equals(InventoryStatus::IN_PROGRESS));
@@ -50,7 +50,7 @@ final class InventoryTransitionStatusTest extends TestCase
     public function testTransitionsFromDraftToInProgress(): void
     {
         // Arrange
-        $inventory = (new InventoryFakerFactory())->buildDraft()->build();
+        $inventory = (new InventoryFakerFactory())->createDraft()->build();
 
         // Act
         $inventory->startProcessing();
@@ -62,7 +62,7 @@ final class InventoryTransitionStatusTest extends TestCase
     public function testTransitionsFromInProgressToReview(): void
     {
         // Arrange
-        $inventory = (new InventoryFakerFactory())->buildInProgress()->build();
+        $inventory = (new InventoryFakerFactory())->createInProgress()->build();
 
         // Act
         $inventory->submitForReview();
@@ -74,7 +74,7 @@ final class InventoryTransitionStatusTest extends TestCase
     public function testTransitionsFromReviewToCompleted(): void
     {
         // Arrange
-        $inventory = (new InventoryFakerFactory())->buildReview()->build();
+        $inventory = (new InventoryFakerFactory())->createReviewed()->build();
 
         // Act
         $inventory->complete();
@@ -86,7 +86,7 @@ final class InventoryTransitionStatusTest extends TestCase
     public function testTransitionsFromReviewBackToInProgress(): void
     {
         // Arrange
-        $inventory = (new InventoryFakerFactory())->buildReview()->build();
+        $inventory = (new InventoryFakerFactory())->createReviewed()->build();
 
         // Act
         $inventory->sendBackToProcessing();
@@ -98,7 +98,7 @@ final class InventoryTransitionStatusTest extends TestCase
     public function testThrowsExceptionWhenTransitioningFromDraftToCompleted(): void
     {
         // Arrange
-        $inventory = (new InventoryFakerFactory())->buildDraft()->build();
+        $inventory = (new InventoryFakerFactory())->createDraft()->build();
 
         // Act & Assert
         try {
@@ -117,7 +117,7 @@ final class InventoryTransitionStatusTest extends TestCase
     public function testThrowsExceptionWhenTransitioningFromCompletedToStartProcessing(): void
     {
         // Arrange
-        $inventory = (new InventoryFakerFactory())->buildCompleted()->build();
+        $inventory = (new InventoryFakerFactory())->createCompleted()->build();
 
         // Act & Assert
         try {
@@ -136,7 +136,7 @@ final class InventoryTransitionStatusTest extends TestCase
     public function testThrowsExceptionWhenTransitioningFromCompletedBackToProcessing(): void
     {
         // Arrange
-        $inventory = (new InventoryFakerFactory())->buildCompleted()->build();
+        $inventory = (new InventoryFakerFactory())->createCompleted()->build();
 
         // Act & Assert
         try {
@@ -155,7 +155,7 @@ final class InventoryTransitionStatusTest extends TestCase
     public function testThrowsExceptionWhenTransitioningFromCompletedToReview(): void
     {
         // Arrange
-        $inventory = (new InventoryFakerFactory())->buildCompleted()->build();
+        $inventory = (new InventoryFakerFactory())->createCompleted()->build();
 
         // Act & Assert
         try {
@@ -174,7 +174,7 @@ final class InventoryTransitionStatusTest extends TestCase
     public function testThrowsExceptionWhenSubmittingDraftForReview(): void
     {
         // Arrange
-        $inventory = (new InventoryFakerFactory())->buildDraft()->build();
+        $inventory = (new InventoryFakerFactory())->createDraft()->build();
 
         // Act & Assert
         try {

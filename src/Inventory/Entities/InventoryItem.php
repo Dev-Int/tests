@@ -13,12 +13,32 @@ declare(strict_types=1);
 
 namespace Inventory\Entities;
 
+use Inventory\Entities\VO\Article;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\Amount;
 use Shared\Entities\VO\Quantity;
 
 final readonly class InventoryItem
 {
+    public static function createFromArticle(Article $article): self
+    {
+        $realStock = Quantity::fromMilliemes(0);
+        // amount = price (cents) × quantity (units) = cents
+        $amountCents = (int) bcmul(
+            (string) $article->unitPrice->toInt(),
+            bcdiv((string) $article->quantity->toMilliemes(), '1000', 3),
+            0
+        );
+
+        return new self(
+            article: $article->uuid,
+            price: $article->unitPrice,
+            theoreticalStock: $article->quantity,
+            realStock: $realStock,
+            amount: Amount::fromCents($amountCents),
+        );
+    }
+
     public function __construct(
         private ResourceUuid $article,
         private Amount $price,

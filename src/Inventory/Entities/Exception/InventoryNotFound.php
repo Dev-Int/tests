@@ -1,0 +1,40 @@
+<?php
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the Tests package.
+ *
+ * (c) Dev-Int Création <info@developpement-interessant.com>.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Inventory\Entities\Exception;
+
+use Shared\Entities\Exception\DomainException;
+use Shared\Entities\Exception\ExceptionSerializableTrait;
+use Shared\Entities\ResourceUuid;
+
+final class InventoryNotFound extends DomainException implements \JsonSerializable
+{
+    use ExceptionSerializableTrait;
+
+    public const string MESSAGE = 'Inventory not found.';
+
+    public function __construct(private readonly ResourceUuid $inventoryUuid)
+    {
+        parent::__construct(self::MESSAGE, DomainException::NOT_FOUND_CODE);
+    }
+
+    /**
+     * @return iterable<string, array<int, string>|int|string>
+     */
+    public function jsonSerialize(): iterable
+    {
+        return $this->toJson() + [
+            'inventoryUuid' => $this->inventoryUuid->toString(),
+        ];
+    }
+}
