@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace Admin\Contracts\Services\Provider\ZoneStorage;
 
 use Admin\Contracts\Services\Provider\Exception\ZoneStorageNotFound;
-use Admin\Contracts\Services\Provider\ZoneStorage\Result\ZoneStorage;
-use Admin\Contracts\Services\Provider\ZoneStorage\Result\ZoneStorageCollection;
+use Admin\Contracts\Services\Provider\ZoneStorage\Result\ZoneStorageCollectionResult;
+use Admin\Contracts\Services\Provider\ZoneStorage\Result\ZoneStorageResult;
 use Shared\Entities\ResourceUuid;
 
 interface ZoneStorageProvider
@@ -25,12 +25,12 @@ interface ZoneStorageProvider
     /**
      * @throws ZoneStorageNotFound
      */
-    public function provide(ResourceUuid $uuid): ZoneStorage;
+    public function provide(ResourceUuid $uuid): ZoneStorageResult;
 
     /**
      * @param iterable<ResourceUuid>|null $ids
      *
      * @throws ZoneStorageNotFound
      */
-    public function provideAll(?iterable $ids = null): ZoneStorageCollection;
+    public function provideAll(?iterable $ids = null): ZoneStorageCollectionResult;
 }

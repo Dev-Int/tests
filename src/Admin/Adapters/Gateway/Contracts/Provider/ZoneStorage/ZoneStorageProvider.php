@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace Admin\Adapters\Gateway\Contracts\Provider\ZoneStorage;
 
 use Admin\Contracts\Services\Provider\Exception\ZoneStorageNotFound;
-use Admin\Contracts\Services\Provider\ZoneStorage\Result\ZoneStorage;
-use Admin\Contracts\Services\Provider\ZoneStorage\Result\ZoneStorageCollection;
+use Admin\Contracts\Services\Provider\ZoneStorage\Result\ZoneStorageCollectionResult;
+use Admin\Contracts\Services\Provider\ZoneStorage\Result\ZoneStorageResult;
 use Admin\Contracts\Services\Provider\ZoneStorage\ZoneStorageProvider as ZoneStorageProviderContract;
 use Admin\Entities\Repository\ZoneStorageRepository;
 use Shared\Entities\ResourceUuid;
@@ -26,7 +26,7 @@ final readonly class ZoneStorageProvider implements ZoneStorageProviderContract
     {
     }
 
-    public function provide(ResourceUuid $uuid): ZoneStorage
+    public function provide(ResourceUuid $uuid): ZoneStorageResult
     {
         try {
             $zoneStorage = $this->repository->getByUuid($uuid);
@@ -34,16 +34,18 @@ final readonly class ZoneStorageProvider implements ZoneStorageProviderContract
             throw new ZoneStorageNotFound($uuid->toString());
         }
 
-        return new ZoneStorage($uuid, $zoneStorage->label(), $zoneStorage->slug());
+        return new ZoneStorageResult($uuid, $zoneStorage->label(), $zoneStorage->slug());
     }
 
-    public function provideAll(?iterable $ids = null): ZoneStorageCollection
+    public function provideAll(?iterable $ids = null): ZoneStorageCollectionResult
     {
-        $zoneStorages = new ZoneStorageCollection();
+        $zoneStorages = new ZoneStorageCollectionResult(0);
         if (null === $ids) {
             $zoneStoragesOrm = $this->repository->getAllZones();
             foreach ($zoneStoragesOrm as $zoneStorage) {
-                $zoneStorages->add(new ZoneStorage($zoneStorage->uuid(), $zoneStorage->label(), $zoneStorage->slug()));
+                $zoneStorages->add(
+                    new ZoneStorageResult($zoneStorage->uuid(), $zoneStorage->label(), $zoneStorage->slug())
+                );
             }
         } else {
             foreach ($ids as $id) {

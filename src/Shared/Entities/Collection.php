@@ -23,7 +23,7 @@ interface Collection extends \Iterator
     public function add(object $item): void;
 
     /**
-     * @return iterable<object>
+     * @return iterable<T>
      */
     public function toArray(): iterable;
 }
