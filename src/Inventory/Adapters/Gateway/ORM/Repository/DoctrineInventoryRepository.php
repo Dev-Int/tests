@@ -1,0 +1,103 @@
+<?php
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the Tests package.
+ *
+ * (c) Dev-Int Création <info@developpement-interessant.com>.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Inventory\Adapters\Gateway\ORM\Repository;
+
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
+use Doctrine\Persistence\ManagerRegistry;
+use Inventory\Adapters\Gateway\ORM\Entity\Inventory;
+use Inventory\Adapters\Gateway\ORM\InventoryMapper;
+use Inventory\Entities\Inventory as InventoryDomain;
+use Inventory\Entities\InventoryCollection;
+use Inventory\Entities\Repository\InventoryRepository;
+use Inventory\Entities\VO\InventoryStatus;
+use Shared\Entities\ResourceUuid;
+
+/**
+ * @template-extends ServiceEntityRepository<Inventory>
+ */
+final class DoctrineInventoryRepository extends ServiceEntityRepository implements InventoryRepository
+{
+    public const string ALIAS = 'inventory';
+
+    public function __construct(ManagerRegistry $registry, private readonly InventoryMapper $mapper)
+    {
+        parent::__construct($registry, Inventory::class);
+    }
+
+    /**
+     * @param array<ResourceUuid> $zoneStorageIds
+     */
+    public function hasActiveForZone(array $zoneStorageIds): bool
+    {
+        $zoneIds = '{' . implode(
+            ',',
+            array_map(static fn (ResourceUuid $id) => '"' . $id->toString() . '"', $zoneStorageIds)
+        ) . '}';
+
+        $sql = <<<'SQL'
+            SELECT inventory.uuid
+            FROM inventory
+            WHERE inventory.status IN (:status)
+            AND inventory.zone_storage_ids::jsonb ??| :zoneStorageIds::text[]
+            SQL;
+        $stmt = $this->getEntityManager()->getConnection()->executeQuery(
+            $sql,
+            [
+                'status' => InventoryStatus::ACTIVE_STATUSES,
+                'zoneStorageIds' => $zoneIds,
+            ],
+            [
+                'status' => ArrayParameterType::STRING,
+                'zoneStorageIds' => ParameterType::STRING,
+            ]
+        );
+
+        $inventories = $stmt->fetchAllAssociative();
+
+        return $inventories !== [];
+    }
+
+    public function save(InventoryDomain $inventory): void
+    {
+        $inventoryOrm = $this->mapper->fromDomain($inventory);
+
+        $this->getEntityManager()->persist($inventoryOrm);
+        $this->getEntityManager()->flush();
+    }
+
+    public function getAllInventories(): InventoryCollection
+    {
+        $count = $this->count([]);
+
+        $alias = self::ALIAS;
+        $inventories = $this->createQueryBuilder($alias)
+            ->getQuery()
+            ->getResult()
+        ;
+        if (!\is_array($inventories) || $inventories === []) {
+            return new InventoryCollection(0);
+        }
+
+        $collection = new InventoryCollection($count);
+
+        /** @var Inventory $inventory */
+        foreach ($inventories as $inventory) {
+            $collection->add($this->mapper->toDomain($inventory));
+        }
+
+        return $collection;
+    }
+}

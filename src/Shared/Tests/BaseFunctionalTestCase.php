@@ -15,6 +15,8 @@ namespace App\Shared\Tests;
 
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
 use Liip\TestFixturesBundle\Services\DatabaseTools\AbstractDatabaseTool;
+use Shared\Entities\Clock\ClockFactory;
+use Shared\Entities\Clock\SystemClock;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
@@ -32,16 +34,18 @@ abstract class BaseFunctionalTestCase extends WebTestCase
     {
         parent::setUp();
 
+        // Reset the clock to system time before each test
+        ClockFactory::initialize(new SystemClock());
+
         // Create the client first to boot the kernel
         $this->client = static::createClient();
 
-        // Get database tool for resetting the database
+        // Get a database tool for resetting the database
         /** @var DatabaseToolCollection $databaseToolCollection */
         $databaseToolCollection = static::getContainer()->get(DatabaseToolCollection::class);
         $this->databaseTool = $databaseToolCollection->get();
 
         // Reset database before each test
-        // This ensures a clean state and makes data visible to HTTP requests
         $this->databaseTool->loadFixtures([]);
     }
 

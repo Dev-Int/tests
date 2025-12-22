@@ -2,16 +2,16 @@ deptrac:
     layers:
         - name: Shared\Entities
           collectors:
-              - type: classLike
-                value: Shared\\Entities\\.*
+              - type: classNameRegex
+                value: '#Shared\\Entities\\.*#'
         - name: Shared\UseCases
           collectors:
-              - type: classLike
-                value: Shared\\UseCases\\.*
+              - type: classNameRegex
+                value: '#Shared\\UseCases\\.*#'
         - name: Shared\Adapters
           collectors:
-              - type: classLike
-                value: Shared\\Adapters\\.*
+              - type: classNameRegex
+                value: '#Shared\\Adapters\\.*#'
     ruleset:
         Shared\Entities:
         Shared\UseCases:

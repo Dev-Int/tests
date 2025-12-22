@@ -97,6 +97,13 @@ Full index: `.claude/README.md`
 
 ---
 
+## Implementation Plans
+
+Recent implementation plans:
+- [Inventory BC Implementation](~/.claude/plans/compressed-gathering-engelbart.md) - Value Objects, settled_at nullable, stocks INTEGER (millièmes)
+
+---
+
 ## Workflow
 
 Before: `make cs-fixer && make stan`  

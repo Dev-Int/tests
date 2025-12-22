@@ -27,7 +27,7 @@ jobs:
                     - '5432:5432'
                 options: '--health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5'
         steps:
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v4
 
             - name: Setup PHP with PECL extension
               uses: shivammathur/setup-php@v2
@@ -48,6 +48,7 @@ jobs:
                   composer run-script phpcs
                   composer run-script phpstan
                   composer run-script rector
+                  bin/deptrac analyse --config-file=deptrac.yaml
 
             - name: Run linters
               run: |
@@ -75,7 +76,7 @@ jobs:
                     - '5432:5432'
                 options: '--health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5'
         steps:
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v4
 
             - name: Setup PHP with PECL extension
               uses: shivammathur/setup-php@v2

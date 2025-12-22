@@ -65,11 +65,11 @@ final class ChangeArticleStorageInformationTest extends TestCase
 
         $request->expects(self::once())->method('packaging')->willReturn([[$colis, 1], null, [$kilogramme, 6.000]]);
         $request->expects(self::once())->method('minStock')->willReturn(12.000);
-        $request->expects(self::once())->method('uuid')->willReturn($article->uuid()->toString());
+        $request->expects(self::once())->method('uuid')->willReturn($article->uuid());
 
         $articleRepository->expects(self::once())
             ->method('getByUuid')
-            ->with($article->uuid()->toString())
+            ->with($article->uuid())
             ->willReturn($article)
         ;
 

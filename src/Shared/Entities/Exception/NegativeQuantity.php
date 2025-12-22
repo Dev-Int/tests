@@ -17,7 +17,7 @@ final class NegativeQuantity extends DomainException implements \JsonSerializabl
 {
     use ExceptionSerializableTrait;
 
-    public const string MESSAGE = 'The value cannot be negative.';
+    public const string MESSAGE = 'The quantity cannot be negative.';
 
     public function __construct(private readonly float $value)
     {

@@ -47,7 +47,7 @@ final readonly class CreateArticle
             NameField::fromString($request->name()),
             $request->supplier(),
             Packaging::fromArray($request->packaging()),
-            Amount::fromInt($request->unitPrice()),
+            Amount::fromCents($request->unitPrice()),
             $request->tax(),
             $request->minStock(),
             $request->zoneStorages(),

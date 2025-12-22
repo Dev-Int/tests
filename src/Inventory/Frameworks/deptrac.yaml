@@ -1,0 +1,27 @@
+deptrac:
+    layers:
+        - name: Inventory\Entities
+          collectors:
+              - type: classNameRegex
+                value: '#Inventory\\Entities\\.*#'
+        - name: Inventory\UseCases
+          collectors:
+              - type: classNameRegex
+                value: '#Inventory\\UseCases\\.*#'
+        - name: Inventory\Adapters
+          collectors:
+              - type: classNameRegex
+                value: '#Inventory\\Adapters\\.*#'
+    ruleset:
+        Inventory\Entities:
+            - Shared\Entities
+        Inventory\UseCases:
+            - Inventory\Entities
+            - Shared\Entities
+        Inventory\Adapters:
+            - Inventory\Entities
+            - Inventory\UseCases
+            - Admin\Contracts
+            - Shared\Entities
+            - Shared\Adapters
+    skip_violations: []

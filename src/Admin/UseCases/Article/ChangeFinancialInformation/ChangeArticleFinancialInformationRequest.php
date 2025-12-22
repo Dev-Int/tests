@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Admin\UseCases\Article\ChangeFinancialInformation;
 
 use Admin\Entities\Tax\Tax;
+use Shared\Entities\ResourceUuid;
 
 interface ChangeArticleFinancialInformationRequest
 {
@@ -21,5 +22,5 @@ interface ChangeArticleFinancialInformationRequest
 
     public function tax(): Tax;
 
-    public function uuid(): string;
+    public function uuid(): ResourceUuid;
 }

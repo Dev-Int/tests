@@ -40,6 +40,7 @@ use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\ORM\UnexpectedResultException;
 use Doctrine\Persistence\ManagerRegistry;
+use Shared\Entities\ResourceUuid;
 
 /**
  * @template-extends ServiceEntityRepository<Article>
@@ -266,21 +267,21 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         return $collection;
     }
 
-    public function getByUuid(string $uuid): ArticleDomain
+    public function getByUuid(ResourceUuid $uuid): ArticleDomain
     {
         $alias = self::ALIAS;
         $article = $this->createQueryBuilder($alias)
             ->leftJoin("{$alias}.packaging", 'packaging')
             ->addSelect('packaging')
             ->where("{$alias}.uuid = :uuid")
-            ->setParameter('uuid', $uuid)
+            ->setParameter('uuid', $uuid->toString())
             ->getQuery()
             ->getOneOrNullResult()
         ;
 
         if (!$article instanceof Article) {
             // @codeCoverageIgnoreStart
-            throw new ArticleNotFound($uuid);
+            throw new ArticleNotFound($uuid->toString());
             // @codeCoverageIgnoreEnd
         }
 

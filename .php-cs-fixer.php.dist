@@ -26,6 +26,7 @@ $finder = (new PhpCsFixer\Finder())
         'public',
         'vendor',
         'var',
+        'translations',
     ])
     ->notPath([
         'src/Shared/Kernel.php',

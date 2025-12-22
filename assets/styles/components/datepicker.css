@@ -1,0 +1,38 @@
+/* Flatpickr integration with PicoCSS */
+
+/* Ajuster les couleurs pour correspondre à PicoCSS */
+.flatpickr-calendar {
+    background: var(--pico-background-color, #fff);
+    border: 1px solid var(--pico-muted-border-color, #e0e0e0);
+    border-radius: var(--pico-border-radius, 0.25rem);
+    box-shadow: var(--pico-card-box-shadow, 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075));
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange {
+    background: var(--pico-primary, #1095c1);
+    border-color: var(--pico-primary, #1095c1);
+}
+
+.flatpickr-day:hover {
+    background: var(--pico-secondary-hover, #e6f4f8);
+}
+
+.flatpickr-day.today {
+    border-color: var(--pico-primary, #1095c1);
+}
+
+.flatpickr-months .flatpickr-month {
+    background: var(--pico-background-color, #fff);
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+    background: var(--pico-background-color, #fff);
+}
+
+/* S'assurer que l'input alternatif (altInput) soit bien stylé */
+input.flatpickr-input[readonly] {
+    cursor: pointer;
+    background-color: var(--pico-background-color, #fff);
+}

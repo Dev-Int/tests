@@ -2,16 +2,20 @@ deptrac:
     layers:
         - name: Admin\Entities
           collectors:
-              - type: classLike
-                value: Admin\\Entities\\.*
+              - type: classNameRegex
+                value: '#Admin\\Entities\\.*#'
         - name: Admin\UseCases
           collectors:
-              - type: classLike
-                value: Admin\\UseCases\\.*
+              - type: classNameRegex
+                value: '#Admin\\UseCases\\.*#'
         - name: Admin\Adapters
           collectors:
-              - type: classLike
-                value: Admin\\Adapters\\.*
+              - type: classNameRegex
+                value: '#Admin\\Adapters\\.*#'
+        - name: Admin\Contracts
+          collectors:
+              - type: classNameRegex
+                value: '#Admin\\Contracts\\.*#'
     ruleset:
         Admin\Entities:
             - Shared\Entities
@@ -21,5 +25,9 @@ deptrac:
         Admin\Adapters:
             - Admin\Entities
             - Admin\UseCases
+            - Admin\Contracts
+            - Shared\Entities
+        Admin\Contracts:
+            - Admin\Adapters
             - Shared\Entities
     skip_violations: []

@@ -31,7 +31,13 @@
       "Bash(head:*)",
       "Bash(touch:*)",
       "Bash(while read f)",
-      "Bash(do wc -w $f)"
+      "Bash(do wc -w $f)",
+      "WebFetch(domain:github.com)",
+      "Skill(create-value-object)",
+      "mcp__jetbrains-phpstorm__search_in_files_by_text",
+      "mcp__jetbrains-phpstorm__find_files_by_name_keyword",
+      "mcp__jetbrains-phpstorm__list_directory_tree",
+      "mcp__plugin_playwright_playwright__browser_navigate"
     ],
     "deny": [
       "../.env",

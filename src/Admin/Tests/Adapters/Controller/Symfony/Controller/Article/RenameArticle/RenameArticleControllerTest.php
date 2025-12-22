@@ -30,12 +30,14 @@ use Zenstruck\Foundry\Test\Factories;
 
 /**
  * @group functionalTest
+ *
+ * @covers \Admin\Adapters\Controller\Symfony\Controller\Article\RenameArticle\RenameArticleController
  */
 final class RenameArticleControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
 
-    private const RENAME_ARTICLE_URI = '/admin/articles/%s/rename';
+    private const string RENAME_ARTICLE_URI = '/admin/articles/%s/rename';
 
     public function testRenameArticleWillSucceed(): void
     {
@@ -90,7 +92,7 @@ final class RenameArticleControllerTest extends BaseFunctionalTestCase
 
         self::assertEquals($translator->trans('admin.article.rename.success'), $flash);
 
-        $articleUpdated = $articleRepository->getByUuid($article->uuid()->toString());
+        $articleUpdated = $articleRepository->getByUuid($article->uuid());
         self::assertSame('Jambon 6kg', $articleUpdated->name()->toString());
     }
 

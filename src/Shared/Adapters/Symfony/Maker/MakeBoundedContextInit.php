@@ -28,7 +28,7 @@ use Symfony\Component\Yaml\Yaml;
 
 final class MakeBoundedContextInit extends AbstractMaker
 {
-    private const COMMAND_NAME = 'make:bounded-context:init';
+    private const string COMMAND_NAME = 'make:bounded-context:init';
 
     public static function getCommandName(): string
     {
@@ -76,7 +76,7 @@ final class MakeBoundedContextInit extends AbstractMaker
         );
 
         $generator->generateFile(
-            $boundedContext->absolutePath()->append('Frameworks', 'config', 'services.yaml')->toString(),
+            $boundedContext->absolutePath()->append('Frameworks', 'config', 'services.php')->toString(),
             __DIR__ . '/Templates/services.tpl.php',
             [
                 'boundedContextName' => $boundedContext->name(),

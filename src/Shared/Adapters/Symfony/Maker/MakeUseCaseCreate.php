@@ -26,7 +26,7 @@ use Symfony\Component\Console\Input\InputInterface;
 
 final class MakeUseCaseCreate extends AbstractMaker
 {
-    private const COMMAND_NAME = 'make:use-case:create';
+    private const string COMMAND_NAME = 'make:use-case:create';
 
     public static function getCommandName(): string
     {
@@ -35,13 +35,13 @@ final class MakeUseCaseCreate extends AbstractMaker
 
     public static function getCommandDescription(): string
     {
-        return 'Creates a new use case with the minimal classes in the specified module.';
+        return 'Creates a new use case with the minimal classes in the specified bounded context.';
     }
 
     public function configureCommand(Command $command, InputConfiguration $inputConfig): void
     {
         $command
-            ->addArgument('module', InputArgument::OPTIONAL, 'Enter the module\'s name.', '')
+            ->addArgument('bounded context', InputArgument::OPTIONAL, 'Enter the bounded context\'s name.', '')
             ->addArgument('use-case', InputArgument::OPTIONAL, 'Enter the use case\'s name.', '')
         ;
     }
@@ -52,11 +52,11 @@ final class MakeUseCaseCreate extends AbstractMaker
 
     public function generate(InputInterface $input, ConsoleStyle $io, Generator $generator): void
     {
-        /** @var string $moduleName */
-        $moduleName = $input->getArgument('module') ?? '';
-        if ('' === $moduleName) {
-            /** @var string $moduleName */
-            $moduleName = $io->ask('Enter the name of the module ?');
+        /** @var string $boundedContextName */
+        $boundedContextName = $input->getArgument('bounded context') ?? '';
+        if ('' === $boundedContextName) {
+            /** @var string $boundedContextName */
+            $boundedContextName = $io->ask('Enter the name of the bounded context ?');
         }
 
         /** @var string $useCaseName */
@@ -67,7 +67,7 @@ final class MakeUseCaseCreate extends AbstractMaker
         }
 
         $module = BoundedContext::new(
-            $moduleName,
+            $boundedContextName,
             $generator->getRootNamespace(),
             $generator->getRootDirectory(),
             'src'

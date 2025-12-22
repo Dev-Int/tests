@@ -26,7 +26,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[AsController]
 final class RenameArticleController extends AbstractController
 {
-    public const ROUTE_NAME = 'admin_articles_rename';
+    public const string ROUTE_NAME = 'admin_articles_rename';
 
     public function __construct(
         private readonly RenameArticle $useCase,

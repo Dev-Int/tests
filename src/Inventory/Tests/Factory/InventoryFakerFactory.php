@@ -1,0 +1,73 @@
+<?php
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the Tests package.
+ *
+ * (c) Dev-Int Création <info@developpement-interessant.com>.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace App\Inventory\Tests\Factory;
+
+use Inventory\Entities\VO\InventoryDate;
+use Inventory\Entities\VO\InventoryStatus;
+use Inventory\Tests\DataBuilder\InventoryDataBuilder;
+use Shared\Entities\Clock\ClockFactory;
+use Shared\Entities\ResourceUuid;
+
+final class InventoryFakerFactory
+{
+    public const string UUID_VALID = '852313f1-e2c6-4fea-a0f6-69e881091c0f';
+
+    public function buildDraft(): InventoryDataBuilder
+    {
+        return (new InventoryDataBuilder(
+            uuid: ResourceUuid::fromString(self::UUID_VALID),
+            date: InventoryDate::fromDateTimeImmutable(ClockFactory::clock()->now()),
+            zoneStorages: [],
+            status: InventoryStatus::DRAFT
+        ))
+            ->withAmount(0)
+        ;
+    }
+
+    public function buildInProgress(): InventoryDataBuilder
+    {
+        return (new InventoryDataBuilder(
+            uuid: ResourceUuid::fromString(self::UUID_VALID),
+            date: InventoryDate::fromDateTimeImmutable(ClockFactory::clock()->now()),
+            zoneStorages: [],
+            status: InventoryStatus::IN_PROGRESS
+        ))
+            ->withAmount(1000)
+        ;
+    }
+
+    public function buildReview(): InventoryDataBuilder
+    {
+        return (new InventoryDataBuilder(
+            uuid: ResourceUuid::fromString(self::UUID_VALID),
+            date: InventoryDate::fromDateTimeImmutable(ClockFactory::clock()->now()),
+            zoneStorages: [],
+            status: InventoryStatus::REVIEW
+        ))
+            ->withAmount(1000)
+        ;
+    }
+
+    public function buildCompleted(): InventoryDataBuilder
+    {
+        return (new InventoryDataBuilder(
+            uuid: ResourceUuid::fromString(self::UUID_VALID),
+            date: InventoryDate::fromDateTimeImmutable(ClockFactory::clock()->now()),
+            zoneStorages: [],
+            status: InventoryStatus::COMPLETED
+        ))
+            ->withAmount(1000)
+        ;
+    }
+}

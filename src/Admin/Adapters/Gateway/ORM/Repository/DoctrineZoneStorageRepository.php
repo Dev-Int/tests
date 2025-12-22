@@ -26,6 +26,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\UnexpectedResultException;
 use Doctrine\Persistence\ManagerRegistry;
+use Shared\Entities\ResourceUuid;
 
 /**
  * @template-extends ServiceEntityRepository<ZoneStorage>
@@ -167,6 +168,25 @@ final class DoctrineZoneStorageRepository extends ServiceEntityRepository implem
         if (!$zoneStorage instanceof ZoneStorage) {
             // @codeCoverageIgnoreStart
             throw new ZoneStorageNotFound($slug);
+            // @codeCoverageIgnoreEnd
+        }
+
+        return $zoneStorage->toDomain();
+    }
+
+    public function getByUuid(ResourceUuid $uuid): ZoneStorageDomain
+    {
+        $alias = self::ALIAS;
+        $zoneStorage = $this->createQueryBuilder($alias)
+            ->where("{$alias}.uuid = :uuid")
+            ->setParameter('uuid', $uuid->toString())
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+
+        if (!$zoneStorage instanceof ZoneStorage) {
+            // @codeCoverageIgnoreStart
+            throw new ZoneStorageNotFound($uuid->toString());
             // @codeCoverageIgnoreEnd
         }
 

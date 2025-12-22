@@ -49,8 +49,9 @@ sf: ## List all Symfony commands or pass the parameter "c=" to run a given comma
 cc: c=c:c ## Clear the cache
 cc: sf
 
-fix-perms: ## Fix permissions of all var files
-	chmod -R 777 var/*
+fix-perms: ## Fix permissions of all files
+	chmod -R 777 var/*; \
+	find /app/src -type d -exec chmod 755 {} + && find /app/src -type f -exec chmod 664 {} +
 
 assets: purge ## Install the assets with symlinks in the public folder
 	$(SYMFONY) assets:install public/ --symlink --relative

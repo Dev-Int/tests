@@ -26,7 +26,7 @@ final readonly class ChangeArticleFinancialInformation
     {
         $article = $this->articleRepository->getByUuid($request->uuid());
 
-        $article->changeFinancialInformation(Amount::fromInt($request->amount()), $request->tax());
+        $article->changeFinancialInformation(Amount::fromCents($request->amount()), $request->tax());
 
         $this->articleRepository->changeFinancialInformation($article);
 

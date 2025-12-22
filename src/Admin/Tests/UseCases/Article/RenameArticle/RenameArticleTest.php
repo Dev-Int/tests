@@ -70,7 +70,7 @@ final class RenameArticleTest extends TestCase
         ;
         $articleRepository->expects(self::once())
             ->method('getByUuid')
-            ->with($article->uuid()->toString())
+            ->with($article->uuid())
             ->willReturn($article)
         ;
 
@@ -126,7 +126,7 @@ final class RenameArticleTest extends TestCase
         ;
         $articleRepository->expects(self::never())
             ->method('getByUuid')
-            ->with($article->uuid()->toString())
+            ->with($article->uuid())
             ->willReturn($article)
         ;
 
@@ -180,7 +180,7 @@ final class RenameArticleTest extends TestCase
         ;
         $articleRepository->expects(self::once())
             ->method('getByUuid')
-            ->with($article->uuid()->toString())
+            ->with($article->uuid())
             ->will(self::throwException(new ArticleNotFound($article->uuid()->toString())))
         ;
 

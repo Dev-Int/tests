@@ -1,0 +1,20 @@
+<div class="flex-1">
+
+    <h3>{{ 'inventory.create.titlePage'|trans }}</h3>
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    <div class="grid">
+        {{ form_row(form.date) }}
+        {{ form_row(form.zoneStorages) }}
+    </div>
+
+    <div class="grid">
+        <twig:Form:Button:Cancel href="{{ path('inventory_index') }}" label="{{ 'cancel'|trans }}" turboFrame="_top" />
+        <twig:Form:Button:Submit label="{{ 'add'|trans }}" icon="fa-plus" />
+    </div>
+
+    {{ form_end(form) }}
+
+</div>

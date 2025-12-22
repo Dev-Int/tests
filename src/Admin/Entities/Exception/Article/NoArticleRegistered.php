@@ -20,7 +20,7 @@ final class NoArticleRegistered extends DomainException implements \JsonSerializ
 {
     use ExceptionSerializableTrait;
 
-    public const MESSAGE = 'No article is registered.';
+    public const string MESSAGE = 'No article is registered.';
 
     public function __construct(?\Throwable $previous = null)
     {

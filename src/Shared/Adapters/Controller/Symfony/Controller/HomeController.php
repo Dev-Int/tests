@@ -21,7 +21,9 @@ use Symfony\Component\Routing\Attribute\Route;
 #[AsController]
 final class HomeController extends AbstractController
 {
-    #[Route(path: '/', name: 'home')]
+    public const string ROUTE_NAME = 'home';
+
+    #[Route(path: '/', name: self::ROUTE_NAME)]
     public function __invoke(): Response
     {
         return $this->render('home.html.twig');

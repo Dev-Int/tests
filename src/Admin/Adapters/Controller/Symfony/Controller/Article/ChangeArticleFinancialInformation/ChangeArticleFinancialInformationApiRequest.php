@@ -15,6 +15,7 @@ namespace Admin\Adapters\Controller\Symfony\Controller\Article\ChangeArticleFina
 
 use Admin\Entities\Tax\Tax;
 use Admin\UseCases\Article\ChangeFinancialInformation\ChangeArticleFinancialInformationRequest;
+use Shared\Entities\ResourceUuid;
 
 final readonly class ChangeArticleFinancialInformationApiRequest implements ChangeArticleFinancialInformationRequest
 {
@@ -32,8 +33,8 @@ final readonly class ChangeArticleFinancialInformationApiRequest implements Chan
         return $this->tax;
     }
 
-    public function uuid(): string
+    public function uuid(): ResourceUuid
     {
-        return $this->uuid;
+        return ResourceUuid::fromString($this->uuid);
     }
 }

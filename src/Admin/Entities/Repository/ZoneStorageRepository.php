@@ -17,6 +17,7 @@ use Admin\Entities\Exception\ZoneStorage\NoZoneStorageRegistered;
 use Admin\Entities\Exception\ZoneStorage\ZoneStorageNotFound;
 use Admin\Entities\ZoneStorage\ZoneStorage;
 use Admin\Entities\ZoneStorage\ZoneStorageCollection;
+use Shared\Entities\ResourceUuid;
 
 interface ZoneStorageRepository
 {
@@ -45,4 +46,6 @@ interface ZoneStorageRepository
      * @throws ZoneStorageNotFound
      */
     public function getBySlug(string $slug): ZoneStorage;
+
+    public function getByUuid(ResourceUuid $uuid): ZoneStorage;
 }
