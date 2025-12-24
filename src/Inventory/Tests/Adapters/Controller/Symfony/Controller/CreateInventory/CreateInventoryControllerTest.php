@@ -155,7 +155,7 @@ final class CreateInventoryControllerTest extends BaseFunctionalTestCase
             'status' => InventoryStatus::DRAFT->value,
             'createdAt' => $now,
             'updatedAt' => $now,
-            'settledAt' => $now,
+            'statusUpdatedAt' => $now,
         ]);
 
         // Act

@@ -111,7 +111,7 @@ final class InventoryStory extends Story
             'supplier' => $supplier1->_real(),
             'tax' => $taxReduite->_real(),
             'packaging' => [[$unitKg->_real()->toDomain(), 1.0], null, null],
-            'zoneStorage' => $zoneMaraichere->_real(),
+            'zoneStorages' => [$zoneMaraichere->_real()],
             'quantity' => 10.0, // 10 kg
         ]);
         ArticleFactory::createOne([
@@ -119,7 +119,7 @@ final class InventoryStory extends Story
             'supplier' => $supplier2->_real(),
             'tax' => $taxReduite->_real(),
             'packaging' => [[$unitLitre->_real()->toDomain(), 1.0], null, null],
-            'zoneStorage' => $zonePositive->_real(),
+            'zoneStorages' => [$zonePositive->_real()],
             'quantity' => 15.0, // 15 L
         ]);
     }

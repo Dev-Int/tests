@@ -11,15 +11,14 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Inventory\UseCases\LoadArticlesIntoInventory;
+namespace Inventory\UseCases\LoadArticlesAndStartInventory;
 
 use Inventory\Entities\Inventory;
 
-final readonly class LoadArticlesIntoInventoryResponse
+final readonly class LoadArticlesAndStartInventoryResponse
 {
     public function __construct(
         public Inventory $inventory,
-        public int $itemsLoaded,
     ) {
     }
 }

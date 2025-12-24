@@ -15,10 +15,10 @@ namespace Inventory\Adapters\Gateway;
 
 use Admin\Contracts\Services\Provider\ZoneStorage\ZoneStorageProvider;
 use Inventory\Entities\VO\ZoneStorage;
-use Inventory\UseCases\Gateway\ZoneStorageGateway as ZoneStorageFinderInterface;
+use Inventory\UseCases\Gateway\ZoneStorageGatewayInterface;
 use Shared\Entities\ResourceUuid;
 
-final readonly class ZoneStorageGateway implements ZoneStorageFinderInterface
+final readonly class ZoneStorageGateway implements ZoneStorageGatewayInterface
 {
     public function __construct(private ZoneStorageProvider $zoneStorageProvider)
     {

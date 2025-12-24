@@ -11,17 +11,11 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Inventory\UseCases\Gateway;
+namespace Inventory\UseCases\LoadArticlesAndStartInventory;
 
-use Inventory\Entities\VO\Article;
 use Shared\Entities\ResourceUuid;
 
-interface ArticleGateway
+interface LoadArticlesAndStartInventoryRequest
 {
-    /**
-     * @param array<ResourceUuid> $zoneStorageUuids
-     *
-     * @return iterable<Article>
-     */
-    public function provideForZones(array $zoneStorageUuids): iterable;
+    public function inventoryUuid(): ResourceUuid;
 }

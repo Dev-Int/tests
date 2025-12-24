@@ -13,15 +13,15 @@ declare(strict_types=1);
 
 namespace Inventory\UseCases\Gateway;
 
-use Inventory\Entities\VO\ZoneStorage;
+use Inventory\Entities\VO\Article;
 use Shared\Entities\ResourceUuid;
 
-interface ZoneStorageGateway
+interface ArticleGatewayInterface
 {
     /**
-     * @return array<ZoneStorage>
+     * @param array<ResourceUuid> $zoneStorageUuids
+     *
+     * @return iterable<Article>
      */
-    public function provideAll(): array;
-
-    public function provide(ResourceUuid $fromString): ZoneStorage;
+    public function provideForZones(array $zoneStorageUuids): iterable;
 }

@@ -11,23 +11,28 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Inventory\UseCases\LoadArticlesIntoInventory;
+namespace Inventory\UseCases\LoadArticlesAndStartInventory;
 
 use Inventory\Entities\Exception\CannotLoadArticlesOnNonDraftInventory;
-use Inventory\Entities\InventoryItem;
+use Inventory\Entities\Exception\InventoryNotFound;
+use Inventory\Entities\Inventory;
 use Inventory\Entities\Repository\InventoryRepository;
 use Inventory\Entities\VO\ZoneStorage;
-use Inventory\UseCases\Gateway\ArticleGateway;
+use Inventory\UseCases\Gateway\ArticleGatewayInterface;
 
-final readonly class LoadArticlesIntoInventory
+final readonly class LoadArticlesAndStartInventory
 {
     public function __construct(
         private InventoryRepository $inventoryRepository,
-        private ArticleGateway $articleGateway,
+        private ArticleGatewayInterface $articleGateway,
     ) {
     }
 
-    public function execute(LoadArticlesIntoInventoryRequest $request): LoadArticlesIntoInventoryResponse
+    /**
+     * @throws CannotLoadArticlesOnNonDraftInventory
+     * @throws InventoryNotFound
+     */
+    public function execute(LoadArticlesAndStartInventoryRequest $request): LoadArticlesAndStartInventoryResponse
     {
         $inventory = $this->inventoryRepository->getByUuid($request->inventoryUuid());
 
@@ -35,22 +40,24 @@ final readonly class LoadArticlesIntoInventory
             throw new CannotLoadArticlesOnNonDraftInventory($inventory->status());
         }
 
-        $inventory->clearItems();
+        $this->loadArticles($inventory);
 
+        $inventory->startProcessing();
+
+        $this->inventoryRepository->start($inventory);
+
+        return new LoadArticlesAndStartInventoryResponse($inventory);
+    }
+
+    private function loadArticles(Inventory $inventory): void
+    {
         $zoneUuids = array_map(
             static fn (ZoneStorage $zone) => $zone->uuid,
             $inventory->zoneStorages()
         );
 
-        $itemsLoaded = 0;
         $articles = $this->articleGateway->provideForZones($zoneUuids);
-        foreach ($articles as $article) {
-            $inventory->addItem(InventoryItem::createFromArticle($article));
-            ++$itemsLoaded;
-        }
 
-        $this->inventoryRepository->save($inventory);
-
-        return new LoadArticlesIntoInventoryResponse($inventory, $itemsLoaded);
+        $inventory->loadArticles($articles);
     }
 }

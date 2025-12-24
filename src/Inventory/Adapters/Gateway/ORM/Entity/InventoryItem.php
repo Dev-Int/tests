@@ -17,7 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'inventory_item')]
-final readonly class InventoryItem
+final class InventoryItem
 {
     public function __construct(
         #[ORM\Id]

@@ -18,6 +18,7 @@ use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 use Inventory\Adapters\Gateway\ORM\Entity\Inventory;
+use Inventory\Adapters\Gateway\ORM\Entity\InventoryItem;
 use Inventory\Adapters\Gateway\ORM\InventoryMapper;
 use Inventory\Entities\Exception\InventoryNotFound;
 use Inventory\Entities\Inventory as InventoryDomain;
@@ -71,11 +72,41 @@ final class DoctrineInventoryRepository extends ServiceEntityRepository implemen
         return $inventories !== [];
     }
 
-    public function save(InventoryDomain $inventory): void
+    public function create(InventoryDomain $inventory): void
     {
         $inventoryOrm = $this->mapper->fromDomain($inventory);
 
         $this->getEntityManager()->persist($inventoryOrm);
+        $this->getEntityManager()->flush();
+    }
+
+    public function start(InventoryDomain $inventory): void
+    {
+        $inventoryOrm = $this->find($inventory->uuid()->toString());
+
+        if (!$inventoryOrm instanceof Inventory) {
+            throw new InventoryNotFound($inventory->uuid());
+        }
+
+        $statusUpdatedAt = $inventory->statusUpdatedAt();
+        \assert($statusUpdatedAt instanceof \DateTimeImmutable, 'statusUpdatedAt must be set when starting inventory');
+
+        $inventoryOrm->start($statusUpdatedAt);
+
+        foreach ($inventory->items()->toArray() as $item) {
+            $inventoryOrm->addItem(
+                new InventoryItem(
+                    id: null,
+                    inventory: $inventoryOrm,
+                    articleId: $item->article()->toString(),
+                    price: $item->price()->toInt(),
+                    theoreticalStock: $item->theoreticalStock()->toMilliemes(),
+                    realStock: $item->realStock()->toMilliemes(),
+                    amount: $item->amount()->toInt(),
+                )
+            );
+        }
+
         $this->getEntityManager()->flush();
     }
 

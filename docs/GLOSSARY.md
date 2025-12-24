@@ -125,9 +125,14 @@
 **Methods**:
 ```php
 public function getByUuid(ResourceUuid $uuid): Entity; // throws NotFound
-public function save(Entity $entity): void;
+public function create(Entity $entity): void;          // Création
+public function rename(Entity $entity): void;          // Action métier spécifique
+public function start(Entity $entity): void;           // Action métier spécifique
 public function delete(Entity $entity): void;
 ```
+
+**Pattern**: Prefer business-named methods (`rename`, `start`, `revaluate`) over generic (`update`).
+This documents allowed transitions and enables optimized persistence per operation.
 
 **NOT**: Query operations (use Finder instead)
 
@@ -165,7 +170,7 @@ public function findByName(string $name): ?Entity;
 |--------|-----------|--------|
 | **Purpose** | Commands (CUD) | Queries (R) |
 | **Not found** | Throws exception | Returns null/[] |
-| **Methods** | `get*()`, `save()`, `delete()` | `find*()`, `findAll()`, `findBy*()` |
+| **Methods** | `get*()`, `create()`, `rename()`, `start()`, `delete()` | `find*()`, `findAll()`, `findBy*()` |
 | **Location** | `BC/Entities/Repository/` | `BC/UseCases/Gateway/Finder/` |
 | **Used by** | Use cases modifying state | Use cases reading state |
 

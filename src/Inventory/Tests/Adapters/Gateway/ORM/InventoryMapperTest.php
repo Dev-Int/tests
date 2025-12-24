@@ -21,7 +21,7 @@ use Inventory\Entities\Inventory;
 use Inventory\Entities\InventoryItem;
 use Inventory\Entities\VO\InventoryDate;
 use Inventory\Entities\VO\ZoneStorage;
-use Inventory\UseCases\Gateway\ZoneStorageGateway;
+use Inventory\UseCases\Gateway\ZoneStorageGatewayInterface;
 use PHPUnit\Framework\TestCase;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\Clock\FrozenClock;
@@ -45,7 +45,7 @@ final class InventoryMapperTest extends TestCase
     public function testMapsFromDomainToOrmWithNullableSettledAt(): void
     {
         // Arrange
-        $zoneStorageGateway = $this->createMock(ZoneStorageGateway::class);
+        $zoneStorageGateway = $this->createMock(ZoneStorageGatewayInterface::class);
         $mapper = new InventoryMapper($zoneStorageGateway);
         $inventory = (new InventoryFakerFactory())->createDraft()->build();
 
@@ -53,7 +53,7 @@ final class InventoryMapperTest extends TestCase
         $inventoryOrm = $mapper->fromDomain($inventory);
 
         // Assert
-        self::assertNull($inventoryOrm->settledAt(), 'settled_at should be null for DRAFT status');
+        self::assertNull($inventoryOrm->statusUpdatedAt(), 'settled_at should be null for DRAFT status');
         self::assertSame($inventory->uuid()->toString(), $inventoryOrm->uuid());
         self::assertEquals($inventory->date()->toDateTimeImmutable(), $inventoryOrm->date());
     }
@@ -61,7 +61,7 @@ final class InventoryMapperTest extends TestCase
     public function testMapsFromDomainToOrmWithSettledAt(): void
     {
         // Arrange
-        $zoneStorageGateway = $this->createMock(ZoneStorageGateway::class);
+        $zoneStorageGateway = $this->createMock(ZoneStorageGatewayInterface::class);
         $mapper = new InventoryMapper($zoneStorageGateway);
         $inventory = (new InventoryFakerFactory())->createInProgress()->build();
 
@@ -69,13 +69,13 @@ final class InventoryMapperTest extends TestCase
         $inventoryOrm = $mapper->fromDomain($inventory);
 
         // Assert
-        self::assertNotNull($inventoryOrm->settledAt(), 'settled_at should not be null for IN_PROGRESS status');
+        self::assertNotNull($inventoryOrm->statusUpdatedAt(), 'settled_at should not be null for IN_PROGRESS status');
     }
 
     public function testConvertStocksToMilliemesFromDomainToOrm(): void
     {
         // Arrange
-        $zoneStorageGateway = $this->createMock(ZoneStorageGateway::class);
+        $zoneStorageGateway = $this->createMock(ZoneStorageGatewayInterface::class);
         $mapper = new InventoryMapper($zoneStorageGateway);
         $uuid = ResourceUuid::generate();
         $zoneStorage = new ZoneStorage(ResourceUuid::generate(), NameField::fromString('Zone 1'));
@@ -113,7 +113,7 @@ final class InventoryMapperTest extends TestCase
     public function testConvertStocksFromMilliemesOrmToDomain(): void
     {
         // Arrange
-        $zoneStorageGateway = $this->createMock(ZoneStorageGateway::class);
+        $zoneStorageGateway = $this->createMock(ZoneStorageGatewayInterface::class);
         $mapper = new InventoryMapper($zoneStorageGateway);
         $uuid = ResourceUuid::generate();
         $zoneUuid = ResourceUuid::generate();
@@ -137,8 +137,8 @@ final class InventoryMapperTest extends TestCase
             amount: 0,
             createdAt: $date,
             updatedAt: $date,
-            settledAt: null,
-            items: []
+            items: [],
+            statusUpdatedAt: null
         );
 
         // Add an item with stocks in millièmes
@@ -176,7 +176,7 @@ final class InventoryMapperTest extends TestCase
     public function testHandlesNullableSettledAtFromOrmToDomain(): void
     {
         // Arrange
-        $zoneStorageGateway = $this->createMock(ZoneStorageGateway::class);
+        $zoneStorageGateway = $this->createMock(ZoneStorageGatewayInterface::class);
         $mapper = new InventoryMapper($zoneStorageGateway);
         $uuid = ResourceUuid::generate();
         $zoneUuid = ResourceUuid::generate();
@@ -200,8 +200,8 @@ final class InventoryMapperTest extends TestCase
             amount: 0,
             createdAt: $date,
             updatedAt: $date,
-            settledAt: null, // NULL for DRAFT
-            items: []
+            items: [], // NULL for DRAFT
+            statusUpdatedAt: null
         );
 
         // Act
@@ -214,7 +214,7 @@ final class InventoryMapperTest extends TestCase
     public function testRoundTripConversionPreservesData(): void
     {
         // Arrange
-        $zoneStorageGateway = $this->createMock(ZoneStorageGateway::class);
+        $zoneStorageGateway = $this->createMock(ZoneStorageGatewayInterface::class);
         $mapper = new InventoryMapper($zoneStorageGateway);
         $uuid = ResourceUuid::generate();
         $zoneStorage = new ZoneStorage(ResourceUuid::generate(), NameField::fromString('Zone 1'));

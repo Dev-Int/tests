@@ -180,77 +180,71 @@ bin/console doctrine:schema:validate
 
 ---
 
-### ⬜ Itération 2 : Charger les Articles d'une Zone
-**Status** : ⬜ À faire  
-**GitHub Issue** : #167  
+### ✅ Itération 2 : Démarrer l'Inventaire (Charger Articles + Transition)
+**Status** : ✅ Terminé
+**GitHub Issues** : #167, #165
 **Estimation** : 1 jour
 
-#### 2.1 - 🔴 RED : Test LoadArticlesIntoInventory
-**Fichiers** :
-- `src/Inventory/Tests/UseCases/LoadArticlesIntoInventory/LoadArticlesIntoInventoryTest.php`
+> **Note** : Cette itération fusionne le chargement des articles et le démarrage.
+> Le UseCase `StartInventory` fait les deux opérations en une seule action.
 
-**Scénarios** :
-- Charger 3 articles d'une zone
-- Vérifier theoreticalStock = Article.quantity
-- Vérifier realStock = 0.0
-- Vérifier unitPrice = Article.price
-- Refuser si inventaire status ≠ DRAFT
+#### 2.1 - 🔴 RED : Tests StartInventory
+**Fichiers** :
+- `src/Inventory/Tests/UseCases/StartInventory/StartInventoryTest.php`
+- `src/Inventory/Tests/Entities/InventoryLoadArticlesTest.php`
+
+**Scénarios testés** :
+- [x] Charger articles et passer en IN_PROGRESS
+- [x] Refuser si inventaire non trouvé
+- [x] Refuser si aucun article dans les zones (NoArticlesToLoad)
+- [x] Refuser si status ≠ DRAFT
 
 ---
 
-#### 2.2 - 🟢 GREEN : Implémenter LoadArticlesIntoInventory
+#### 2.2 - 🟢 GREEN : Implémenter StartInventory
+**Fichiers créés** :
+- [x] `src/Inventory/Entities/Inventory.php` - méthode `loadArticles()`
+- [x] `src/Inventory/Entities/Exception/NoArticlesToLoad.php`
+- [x] `src/Inventory/UseCases/StartInventory/StartInventory.php`
+- [x] `src/Inventory/UseCases/StartInventory/StartInventoryRequest.php`
+- [x] `src/Inventory/UseCases/StartInventory/StartInventoryResponse.php`
+
+**Workflow du UseCase** :
+1. Récupère l'inventaire
+2. Vérifie status DRAFT
+3. Charge les articles via `ArticleGateway`
+4. `inventory->loadArticles()` (crée InventoryItems)
+5. `inventory->startProcessing()` (DRAFT → IN_PROGRESS)
+6. Sauvegarde
+
+**Critères validés** :
+- ✅ Tous les tests passent
+- ✅ PHPStan : 0 erreur
+- ✅ Deptrac : architecture respectée
+
+---
+
+#### 2.3 - Adapter : Bouton "Démarrer"
+**Status** : ⬜ À faire
+
 **Fichiers à créer** :
-- `src/Inventory/Entities/InventoryItem/InventoryItem.php` (entité)
-- `src/Inventory/Entities/InventoryItem/VO/TheoreticalStock.php`
-- `src/Inventory/Entities/InventoryItem/VO/RealStock.php`
-- `src/Inventory/UseCases/LoadArticlesIntoInventory/*`
-
-**Intégration Admin BC** :
-- Ajouter méthode `ArticleRepository::findByZone(zoneId): ArticleCollection` dans Admin
-
----
-
-#### 2.3 - Adapter : Page Chargement Articles
-**Fichiers** :
-- Controller (bouton "Charger articles")
-- Template (confirmation + affichage résultat)
+- [ ] Controller (bouton "Démarrer l'inventaire")
+- [ ] Template (confirmation + affichage résultat)
+- [ ] Flash message succès/erreur
 
 ---
 
 #### 2.4 - Persistence : Table inventory_item
+**Status** : ⬜ À faire
+
 **Actions** :
-- Migration pour `inventory_item`
-- ORM mapping
-- Repository implementation
+- [ ] Migration pour `inventory_item`
+- [ ] ORM mapping
+- [ ] Repository implementation
 
 ---
 
-### ⬜ Itération 3 : Démarrer le Comptage
-**Status** : ⬜ À faire  
-**GitHub Issue** : #165  
-**Estimation** : 0.5 jour
-
-#### 3.1 - 🔴 RED : Test StartInventory
-- Transition DRAFT → IN_PROGRESS
-- Refuser si status ≠ DRAFT
-- Refuser si aucun item
-
----
-
-#### 3.2 - 🟢 GREEN : Implémenter StartInventory
-- Méthode `Inventory->start()`
-- Validation transitions dans InventoryStatus
-
----
-
-#### 3.3 - Adapter : Bouton "Démarrer"
-- Bouton POST dans page détail
-- Flash message
-- Changement visuel du status
-
----
-
-### ⬜ Itération 4 : Saisir Stock Réel
+### ⬜ Itération 3 : Saisir Stock Réel
 **Status** : ⬜ À faire  
 **GitHub Issue** : #164  
 **Estimation** : 1 jour
@@ -277,7 +271,7 @@ bin/console doctrine:schema:validate
 
 ---
 
-### ⬜ Itération 5 : Finaliser l'Inventaire (CRITIQUE)
+### ⬜ Itération 4 : Finaliser l'Inventaire (CRITIQUE)
 **Status** : ⬜ À faire  
 **GitHub Issue** : #170  
 **Estimation** : 2 jours
@@ -320,7 +314,7 @@ bin/console doctrine:schema:validate
 
 ---
 
-### ⬜ Itération 6 : Annuler un Inventaire
+### ⬜ Itération 5 : Annuler un Inventaire
 **Status** : ⬜ À faire  
 **GitHub Issue** : #166  
 **Estimation** : 0.5 jour
@@ -343,7 +337,7 @@ bin/console doctrine:schema:validate
 
 ---
 
-### ⬜ Itération 7 : Finitions
+### ⬜ Itération 6 : Finitions
 **Status** : ⬜ À faire  
 **Estimation** : 1 jour
 
@@ -363,13 +357,12 @@ bin/console doctrine:schema:validate
 |-----------|--------------|--------|--------|------------|
 | Itération 0 : Setup Infrastructure | N/A | ✅ Terminé | 1/1 | 100% |
 | Itération 1 : Créer un Inventaire | #163 | 🔄 En cours | 2/5 | 40% |
-| Itération 2 : Charger Articles | #167 | ⬜ À faire | 0/4 | 0% |
-| Itération 3 : Démarrer Comptage | #165 | ⬜ À faire | 0/3 | 0% |
-| Itération 4 : Saisir Stock Réel | #164 | ⬜ À faire | 0/3 | 0% |
-| Itération 5 : Finaliser (CRITIQUE) | #170 | ⬜ À faire | 0/4 | 0% |
-| Itération 6 : Annuler Inventaire | #166 | ⬜ À faire | 0/3 | 0% |
-| Itération 7 : Finitions | N/A | ⬜ À faire | 0/5 | 0% |
-| **TOTAL** | | | **3/28** | **11%** |
+| Itération 2 : Démarrer Inventaire | #167, #165 | ✅ Terminé | 2/4 | 50% |
+| Itération 3 : Saisir Stock Réel | #164 | ⬜ À faire | 0/3 | 0% |
+| Itération 4 : Finaliser (CRITIQUE) | #170 | ⬜ À faire | 0/4 | 0% |
+| Itération 5 : Annuler Inventaire | #166 | ⬜ À faire | 0/3 | 0% |
+| Itération 6 : Finitions | N/A | ⬜ À faire | 0/5 | 0% |
+| **TOTAL** | | | **5/25** | **20%** |
 
 ### Légende Status
 - ⬜ À faire
@@ -393,8 +386,7 @@ bin/console doctrine:schema:validate
 - [x] UseCase CreateInventory avec tests unitaires
 - [ ] Formulaire + Controller pour créer inventaire
 - [ ] Migration + Repository Doctrine
-- [ ] UseCase LoadArticlesIntoInventory
-- [ ] UseCase StartInventory (DRAFT → IN_PROGRESS)
+- [x] UseCase StartInventory (charge articles + DRAFT → IN_PROGRESS)
 - [ ] UseCase RecordRealStock (saisie comptage)
 - [ ] UseCase CompleteInventory (ajustement stocks Article)
 - [ ] UseCase CancelInventory

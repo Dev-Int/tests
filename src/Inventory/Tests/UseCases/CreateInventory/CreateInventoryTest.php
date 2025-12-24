@@ -22,7 +22,7 @@ use Inventory\Entities\VO\InventoryStatus;
 use Inventory\Entities\VO\ZoneStorage;
 use Inventory\UseCases\CreateInventory\CreateInventory;
 use Inventory\UseCases\CreateInventory\CreateInventoryRequest;
-use Inventory\UseCases\Gateway\ZoneStorageGateway;
+use Inventory\UseCases\Gateway\ZoneStorageGatewayInterface;
 use PHPUnit\Framework\TestCase;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\Clock\FrozenClock;
@@ -68,7 +68,7 @@ final class CreateInventoryTest extends TestCase
         // Arrange
         ClockFactory::initialize(new FrozenClock(new \DateTimeImmutable('2025-12-01')));
         $inventoryRepository = $this->createMock(InventoryRepository::class);
-        $zoneStorageGateway = $this->createMock(ZoneStorageGateway::class);
+        $zoneStorageGateway = $this->createMock(ZoneStorageGatewayInterface::class);
         $useCase = new CreateInventory($inventoryRepository, $zoneStorageGateway);
         $request = $this->createMock(CreateInventoryRequest::class);
 
@@ -89,7 +89,7 @@ final class CreateInventoryTest extends TestCase
         ;
         $zoneStorageGateway->expects(self::never())->method('provideAll');
         $inventoryRepository->expects(self::once())
-            ->method('save')
+            ->method('create')
             ->with(Inventory::create($inventoryId, [$zoneStorage], InventoryDate::fromDateTimeImmutable($date)))
         ;
 
@@ -118,7 +118,7 @@ final class CreateInventoryTest extends TestCase
     ): void {
         // Arrange
         $inventoryRepository = $this->createMock(InventoryRepository::class);
-        $zoneStorageGateway = $this->createMock(ZoneStorageGateway::class);
+        $zoneStorageGateway = $this->createMock(ZoneStorageGatewayInterface::class);
         $useCase = new CreateInventory($inventoryRepository, $zoneStorageGateway);
         $request = $this->createMock(CreateInventoryRequest::class);
 
@@ -132,7 +132,7 @@ final class CreateInventoryTest extends TestCase
 
         $inventoryRepository->expects(self::never())->method('hasActiveForZone');
         $zoneStorageGateway->expects(self::never())->method('provideAll');
-        $inventoryRepository->expects(self::never())->method('save');
+        $inventoryRepository->expects(self::never())->method('create');
 
         $this->expectException($expectedException);
         $this->expectExceptionMessage($expectedMessage);
@@ -146,7 +146,7 @@ final class CreateInventoryTest extends TestCase
         // Arrange
         ClockFactory::initialize(new FrozenClock(new \DateTimeImmutable('2025-12-01')));
         $inventoryRepository = $this->createMock(InventoryRepository::class);
-        $zoneStorageGateway = $this->createMock(ZoneStorageGateway::class);
+        $zoneStorageGateway = $this->createMock(ZoneStorageGatewayInterface::class);
         $useCase = new CreateInventory($inventoryRepository, $zoneStorageGateway);
         $request = $this->createMock(CreateInventoryRequest::class);
 
@@ -166,7 +166,7 @@ final class CreateInventoryTest extends TestCase
         ;
         $zoneStorageGateway->expects(self::never())->method('provideAll');
 
-        $inventoryRepository->expects(self::never())->method('save');
+        $inventoryRepository->expects(self::never())->method('create');
 
         // Assert
         $this->expectException(InventoryAlreadyActiveForZone::class);
@@ -182,7 +182,7 @@ final class CreateInventoryTest extends TestCase
         ClockFactory::initialize(new FrozenClock(new \DateTimeImmutable('2025-12-01')));
 
         $inventoryRepository = $this->createMock(InventoryRepository::class);
-        $zoneStorageGateway = $this->createMock(ZoneStorageGateway::class);
+        $zoneStorageGateway = $this->createMock(ZoneStorageGatewayInterface::class);
         $useCase = new CreateInventory($inventoryRepository, $zoneStorageGateway);
 
         $date = new \DateTimeImmutable('2025-12-20');
@@ -217,7 +217,7 @@ final class CreateInventoryTest extends TestCase
         $zoneStorageGateway->expects(self::never())->method('provideAll');
         $saveInvocations = 0;
         $inventoryRepository->expects(self::exactly(2))
-            ->method('save')
+            ->method('create')
             ->willReturnCallback(
                 static function ($inventory) use (&$saveInvocations, $inventory1Id, $inventory2Id, $zoneStorage1, $zoneStorage2, $date): void {
                     ++$saveInvocations;
@@ -269,7 +269,7 @@ final class CreateInventoryTest extends TestCase
         // Arrange
         ClockFactory::initialize(new FrozenClock(new \DateTimeImmutable('2025-12-01')));
         $inventoryRepository = $this->createMock(InventoryRepository::class);
-        $zoneStorageGateway = $this->createMock(ZoneStorageGateway::class);
+        $zoneStorageGateway = $this->createMock(ZoneStorageGatewayInterface::class);
         $useCase = new CreateInventory($inventoryRepository, $zoneStorageGateway);
         $request = $this->createMock(CreateInventoryRequest::class);
 
@@ -290,7 +290,7 @@ final class CreateInventoryTest extends TestCase
             ->method('provideAll')
             ->willReturn([$zoneStorage1, $zoneStorage2])
         ;
-        $inventoryRepository->expects(self::once())->method('save');
+        $inventoryRepository->expects(self::once())->method('create');
 
         // Act
         $response = $useCase->execute($request);

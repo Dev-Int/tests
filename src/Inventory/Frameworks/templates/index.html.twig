@@ -40,7 +40,14 @@
                                {{ zone.label }}<br />
                                {% endfor %}
                            </span>
-                           <span>
+                           <span class="actions-group">
+                               {% if inventory.status == 'draft' %}
+                                   <form action="{{ path('inventory_start', {inventoryUuid: inventory.uuid}) }}" method="post" style="display: inline;" data-turbo-frame="_top">
+                                       <button type="submit" class="btn btn-small btn-primary">
+                                           <i class="fa-solid fa-play"></i> {{ 'inventory.start.button'|trans }}
+                                       </button>
+                                   </form>
+                               {% endif %}
                                <twig:Button:UpdateEntity href="#" class="btn-small" label="Edit" />
                            </span>
                        </li>
