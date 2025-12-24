@@ -16,7 +16,7 @@ namespace Inventory\UseCases\Gateway;
 use Inventory\Entities\VO\ZoneStorage;
 use Shared\Entities\ResourceUuid;
 
-interface ZoneStorageGateway
+interface ZoneStorageGatewayInterface
 {
     /**
      * @return array<ZoneStorage>

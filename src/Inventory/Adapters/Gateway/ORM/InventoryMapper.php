@@ -22,14 +22,14 @@ use Inventory\Entities\InventoryItemCollection;
 use Inventory\Entities\VO\InventoryDate;
 use Inventory\Entities\VO\InventoryStatus as InventoryStatusDomain;
 use Inventory\Entities\VO\ZoneStorage;
-use Inventory\UseCases\Gateway\ZoneStorageGateway;
+use Inventory\UseCases\Gateway\ZoneStorageGatewayInterface;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\Amount;
 use Shared\Entities\VO\Quantity;
 
 final readonly class InventoryMapper
 {
-    public function __construct(private ZoneStorageGateway $zoneStorageGateway)
+    public function __construct(private ZoneStorageGatewayInterface $zoneStorageGateway)
     {
     }
 
@@ -47,8 +47,8 @@ final readonly class InventoryMapper
             amount: $inventoryDomain->amount()->toInt(),
             createdAt: $inventoryDomain->createdAt(),
             updatedAt: $inventoryDomain->updatedAt(),
-            settledAt: $inventoryDomain->statusUpdatedAt(),
-            items: []
+            items: [],
+            statusUpdatedAt: $inventoryDomain->statusUpdatedAt()
         );
         $this->getItemsFromDomain($inventoryDomain->items(), $inventory);
 
@@ -66,12 +66,12 @@ final readonly class InventoryMapper
         $inventoryDomain = InventoryDomain::reconstitute(
             uuid: ResourceUuid::fromString($inventory->uuid()),
             zoneStorages: $zoneStorages,
-            date: InventoryDate::fromDateTimeImmutable($inventory->date()),
+            date: InventoryDate::reconstitute($inventory->date()),
             status: InventoryStatusDomain::from($inventory->status()->value),
             amount: Amount::fromCents($inventory->amount()),
             createdAt: $inventory->createdAt(),
             updatedAt: $inventory->updatedAt(),
-            statusUpdatedAt: $inventory->settledAt(),
+            statusUpdatedAt: $inventory->statusUpdatedAt(),
         );
         foreach ($inventory->items() as $item) {
             $itemDomain = new InventoryItemDomain(

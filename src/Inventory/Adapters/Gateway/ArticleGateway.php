@@ -16,7 +16,7 @@ namespace Inventory\Adapters\Gateway;
 use Admin\Contracts\Services\Provider\Article\ArticleFilter;
 use Admin\Contracts\Services\Provider\Article\ArticleProvider;
 use Inventory\Entities\VO\Article;
-use Inventory\UseCases\Gateway\ArticleGateway as ArticleGatewayInterface;
+use Inventory\UseCases\Gateway\ArticleGatewayInterface;
 use Shared\Entities\ResourceUuid;
 
 final readonly class ArticleGateway implements ArticleGatewayInterface

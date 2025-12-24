@@ -26,6 +26,10 @@ return [
             'titleShort' => 'New inventory',
             'success' => 'Inventory created successfully',
         ],
+        'start' => [
+            'success' => 'Inventory started successfully',
+            'button' => 'Start',
+        ],
         'errors' => [
             'date_past' => 'The date must be today or in the future',
             'zone_active' => 'An active inventory exists for this zone',

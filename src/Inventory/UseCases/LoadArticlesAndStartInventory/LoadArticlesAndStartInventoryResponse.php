@@ -15,7 +15,7 @@ namespace Inventory\UseCases\LoadArticlesAndStartInventory;
 
 use Inventory\Entities\Inventory;
 
-final readonly class StartInventoryResponse
+final readonly class LoadArticlesAndStartInventoryResponse
 {
     public function __construct(
         public Inventory $inventory,

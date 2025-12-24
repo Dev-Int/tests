@@ -26,7 +26,7 @@ final class Version20251215194650 extends AbstractMigration
             'amount INT NOT NULL, ' .
             'created_at TIMESTAMP(0) WITH TIME ZONE NOT NULL, ' .
             'updated_at TIMESTAMP(0) WITH TIME ZONE NOT NULL, ' .
-            'settled_at TIMESTAMP(0) WITH TIME ZONE DEFAULT NULL, ' .
+            'status_updated_at TIMESTAMP(0) WITH TIME ZONE DEFAULT NULL, ' .
             'PRIMARY KEY(uuid))'
         );
         $this->addSql(

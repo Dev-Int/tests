@@ -18,13 +18,13 @@ use Inventory\Entities\Inventory;
 use Inventory\Entities\Repository\InventoryRepository;
 use Inventory\Entities\VO\InventoryDate;
 use Inventory\Entities\VO\ZoneStorage;
-use Inventory\UseCases\Gateway\ZoneStorageGateway;
+use Inventory\UseCases\Gateway\ZoneStorageGatewayInterface;
 
 final readonly class CreateInventory
 {
     public function __construct(
         private InventoryRepository $inventoryRepository,
-        private ZoneStorageGateway $zoneStorageGateway,
+        private ZoneStorageGatewayInterface $zoneStorageGateway,
     ) {
     }
 

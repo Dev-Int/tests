@@ -21,9 +21,9 @@ use Inventory\Entities\Repository\InventoryRepository;
 use Inventory\Entities\VO\Article;
 use Inventory\Entities\VO\InventoryStatus;
 use Inventory\Entities\VO\ZoneStorage;
-use Inventory\UseCases\Gateway\ArticleGateway;
+use Inventory\UseCases\Gateway\ArticleGatewayInterface;
 use Inventory\UseCases\LoadArticlesAndStartInventory\LoadArticlesAndStartInventory;
-use Inventory\UseCases\LoadArticlesAndStartInventory\StartInventoryRequest;
+use Inventory\UseCases\LoadArticlesAndStartInventory\LoadArticlesAndStartInventoryRequest;
 use PHPUnit\Framework\TestCase;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\Clock\FrozenClock;
@@ -67,9 +67,9 @@ final class StartInventoryTest extends TestCase
         );
 
         $repository = $this->createMock(InventoryRepository::class);
-        $articleGateway = $this->createMock(ArticleGateway::class);
+        $articleGateway = $this->createMock(ArticleGatewayInterface::class);
         $useCase = new LoadArticlesAndStartInventory($repository, $articleGateway);
-        $request = $this->createMock(StartInventoryRequest::class);
+        $request = $this->createMock(LoadArticlesAndStartInventoryRequest::class);
 
         // Assert
         $request->expects(self::once())->method('inventoryUuid')->willReturn($inventoryUuid);
@@ -84,7 +84,7 @@ final class StartInventoryTest extends TestCase
             ->with([$zoneStorage->uuid])
             ->willReturn([$article])
         ;
-        $repository->expects(self::once())->method('save');
+        $repository->expects(self::once())->method('startInventory');
 
         // Act
         $response = $useCase->execute($request);
@@ -102,9 +102,9 @@ final class StartInventoryTest extends TestCase
         $inventoryUuid = ResourceUuid::generate();
 
         $repository = $this->createMock(InventoryRepository::class);
-        $articleGateway = $this->createMock(ArticleGateway::class);
+        $articleGateway = $this->createMock(ArticleGatewayInterface::class);
         $useCase = new LoadArticlesAndStartInventory($repository, $articleGateway);
-        $request = $this->createMock(StartInventoryRequest::class);
+        $request = $this->createMock(LoadArticlesAndStartInventoryRequest::class);
 
         // Assert
         $request->expects(self::once())->method('inventoryUuid')->willReturn($inventoryUuid);
@@ -115,7 +115,7 @@ final class StartInventoryTest extends TestCase
             ->willThrowException(new InventoryNotFound($inventoryUuid))
         ;
         $articleGateway->expects(self::never())->method('provideForZones');
-        $repository->expects(self::never())->method('save');
+        $repository->expects(self::never())->method('startInventory');
 
         $this->expectException(InventoryNotFound::class);
 
@@ -129,9 +129,9 @@ final class StartInventoryTest extends TestCase
         $inventoryUuid = ResourceUuid::generate();
 
         $repository = $this->createMock(InventoryRepository::class);
-        $articleGateway = $this->createMock(ArticleGateway::class);
+        $articleGateway = $this->createMock(ArticleGatewayInterface::class);
         $useCase = new LoadArticlesAndStartInventory($repository, $articleGateway);
-        $request = $this->createMock(StartInventoryRequest::class);
+        $request = $this->createMock(LoadArticlesAndStartInventoryRequest::class);
 
         $zoneStorage = new ZoneStorage(
             uuid: ResourceUuid::generate(),
@@ -152,7 +152,7 @@ final class StartInventoryTest extends TestCase
             ->willReturn($inventory)
         ;
         $articleGateway->expects(self::never())->method('provideForZones');
-        $repository->expects(self::never())->method('save');
+        $repository->expects(self::never())->method('startInventory');
 
         $this->expectException(CannotLoadArticlesOnNonDraftInventory::class);
         $this->expectExceptionMessage(CannotLoadArticlesOnNonDraftInventory::MESSAGE);
@@ -176,9 +176,9 @@ final class StartInventoryTest extends TestCase
         ;
 
         $repository = $this->createMock(InventoryRepository::class);
-        $articleGateway = $this->createMock(ArticleGateway::class);
+        $articleGateway = $this->createMock(ArticleGatewayInterface::class);
         $useCase = new LoadArticlesAndStartInventory($repository, $articleGateway);
-        $request = $this->createMock(StartInventoryRequest::class);
+        $request = $this->createMock(LoadArticlesAndStartInventoryRequest::class);
 
         // Assert
         $request->expects(self::once())->method('inventoryUuid')->willReturn($inventoryUuid);
@@ -193,7 +193,7 @@ final class StartInventoryTest extends TestCase
             ->with([$zoneStorage->uuid])
             ->willReturn([])
         ;
-        $repository->expects(self::never())->method('save');
+        $repository->expects(self::never())->method('startInventory');
 
         $this->expectException(NoArticlesToLoad::class);
 

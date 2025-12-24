@@ -27,6 +27,11 @@ interface InventoryRepository
 
     public function save(Inventory $inventory): void;
 
+    /**
+     * Updates an existing inventory with items and status change (DRAFT → IN_PROGRESS).
+     */
+    public function startInventory(Inventory $inventory): void;
+
     public function getAllInventories(): InventoryCollection;
 
     /**

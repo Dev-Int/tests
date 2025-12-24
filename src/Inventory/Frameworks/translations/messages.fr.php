@@ -26,6 +26,10 @@ return [
             'titleShort' => 'Nouvel inventaire',
             'success' => 'Inventaire créé avec succès',
         ],
+        'start' => [
+            'success' => 'Inventaire démarré avec succès',
+            'button' => 'Démarrer',
+        ],
         'errors' => [
             'date_past' => 'La date doit être aujourd\'hui ou dans le futur',
             'zone_active' => 'Un inventaire actif existe pour cette zone',

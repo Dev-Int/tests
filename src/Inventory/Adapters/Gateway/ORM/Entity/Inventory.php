@@ -45,10 +45,10 @@ class Inventory
         private readonly \DateTimeImmutable $createdAt,
         #[ORM\Column(name: 'updated_at', type: 'datetimetz_immutable')]
         private readonly \DateTimeImmutable $updatedAt,
-        #[ORM\Column(name: 'settled_at', type: 'datetimetz_immutable', nullable: true)]
-        private readonly ?\DateTimeImmutable $settledAt,
-        #[ORM\OneToMany(mappedBy: 'inventory', targetEntity: InventoryItem::class, cascade: ['persist', 'remove'])]
+        #[ORM\OneToMany(targetEntity: InventoryItem::class, mappedBy: 'inventory', cascade: ['persist', 'remove'])]
         private array|Collection $items,
+        #[ORM\Column(name: 'status_updated_at', type: 'datetimetz_immutable', nullable: true)]
+        private ?\DateTimeImmutable $statusUpdatedAt = null,
     ) {
     }
 
@@ -90,9 +90,9 @@ class Inventory
         return $this->updatedAt;
     }
 
-    public function settledAt(): ?\DateTimeImmutable
+    public function statusUpdatedAt(): ?\DateTimeImmutable
     {
-        return $this->settledAt;
+        return $this->statusUpdatedAt;
     }
 
     /**
@@ -106,5 +106,13 @@ class Inventory
     public function addItem(InventoryItem $item): void
     {
         $this->items[] = $item;
+    }
+
+    public function updateStatus(
+        \Inventory\Entities\VO\InventoryStatus $status,
+        ?\DateTimeImmutable $settledAt
+    ): void {
+        $this->status = InventoryStatus::fromDomain($status);
+        $this->statusUpdatedAt = $settledAt;
     }
 }

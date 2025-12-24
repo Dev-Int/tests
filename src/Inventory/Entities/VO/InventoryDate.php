@@ -20,14 +20,25 @@ final readonly class InventoryDate
 {
     public static function fromDateTimeImmutable(\DateTimeImmutable $date): self
     {
-        return new self($date);
+        return new self($date, validate: true);
     }
 
-    private function __construct(private \DateTimeImmutable $value)
+    /**
+     * Reconstitute from persistence without validation.
+     * Data from DB was already validated at creation time.
+     */
+    public static function reconstitute(\DateTimeImmutable $date): self
     {
-        $now = ClockFactory::clock()->now();
-        if ($this->value < $now->setTime(hour: 0, minute: 0, second: 0)) {
-            throw new EqualOrFutureDateExpected($value);
+        return new self($date, validate: false);
+    }
+
+    private function __construct(private \DateTimeImmutable $value, bool $validate = true)
+    {
+        if ($validate) {
+            $now = ClockFactory::clock()->now();
+            if ($this->value < $now->setTime(hour: 0, minute: 0)) {
+                throw new EqualOrFutureDateExpected($value);
+            }
         }
     }
 

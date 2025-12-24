@@ -18,6 +18,7 @@ use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 use Inventory\Adapters\Gateway\ORM\Entity\Inventory;
+use Inventory\Adapters\Gateway\ORM\Entity\InventoryItem;
 use Inventory\Adapters\Gateway\ORM\InventoryMapper;
 use Inventory\Entities\Exception\InventoryNotFound;
 use Inventory\Entities\Inventory as InventoryDomain;
@@ -76,6 +77,33 @@ final class DoctrineInventoryRepository extends ServiceEntityRepository implemen
         $inventoryOrm = $this->mapper->fromDomain($inventory);
 
         $this->getEntityManager()->persist($inventoryOrm);
+        $this->getEntityManager()->flush();
+    }
+
+    public function startInventory(InventoryDomain $inventory): void
+    {
+        $inventoryOrm = $this->find($inventory->uuid()->toString());
+
+        if (!$inventoryOrm instanceof Inventory) {
+            throw new InventoryNotFound($inventory->uuid());
+        }
+
+        $inventoryOrm->updateStatus($inventory->status(), $inventory->statusUpdatedAt());
+
+        foreach ($inventory->items()->toArray() as $item) {
+            $inventoryOrm->addItem(
+                new InventoryItem(
+                    id: null,
+                    inventory: $inventoryOrm,
+                    articleId: $item->article()->toString(),
+                    price: $item->price()->toInt(),
+                    theoreticalStock: $item->theoreticalStock()->toMilliemes(),
+                    realStock: $item->realStock()->toMilliemes(),
+                    amount: $item->amount()->toInt(),
+                )
+            );
+        }
+
         $this->getEntityManager()->flush();
     }
 

@@ -106,14 +106,13 @@ final readonly class ActionEntity {
 
 **Structure**:
 ```php
-final readonly class ActionEntityRequest {
-    public function __construct(public string $field) {}
+interface ActionEntityRequest {
+    public function field(): string;
 }
 ```
 
 **Rules**:
-- `readonly` class, public fields only
-- No methods, no validation (pure DTO)
+- interface with getters only
 
 **Template**: `.claude/templates/request.php.tpl`
 

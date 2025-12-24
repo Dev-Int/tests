@@ -19,7 +19,7 @@ use Inventory\Adapters\Controller\Symfony\Controller\GetInventories\GetInventori
 use Inventory\Adapters\Form\Type\CreateInventoryType;
 use Inventory\Entities\VO\ZoneStorage;
 use Inventory\UseCases\CreateInventory\CreateInventory;
-use Inventory\UseCases\Gateway\ZoneStorageGateway;
+use Inventory\UseCases\Gateway\ZoneStorageGatewayInterface;
 use Shared\Entities\ResourceUuid;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,7 +37,7 @@ final class CreateInventoryController extends AbstractController
         private readonly CreateInventory $useCase,
         private readonly ConfigurationServiceProvider $configurationService,
         private readonly TranslatorInterface $translator,
-        private readonly ZoneStorageGateway $zoneStorageFinder,
+        private readonly ZoneStorageGatewayInterface $zoneStorageGateway,
     ) {
     }
 
@@ -67,7 +67,7 @@ final class CreateInventoryController extends AbstractController
 
             $zoneStorages = [];
             foreach ($inventory->zoneStorages as $zoneStorage) {
-                $zone = $this->zoneStorageFinder->provide(ResourceUuid::fromString($zoneStorage));
+                $zone = $this->zoneStorageGateway->provide(ResourceUuid::fromString($zoneStorage));
                 $zoneStorages[] = new ZoneStorage($zone->uuid, $zone->name);
             }
 

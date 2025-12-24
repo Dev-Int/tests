@@ -20,6 +20,8 @@ use Inventory\Entities\VO\InventoryStatus as InventoryStatusDomain;
 use Shared\Entities\Clock\ClockFactory;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
+use function PHPUnit\Framework\assertNull;
+
 /**
  * @extends PersistentProxyObjectFactory<Inventory>
  */
@@ -51,7 +53,7 @@ final class InventoryFactory extends PersistentProxyObjectFactory
             'amount' => self::faker()->numberBetween(100, 10000),
             'createdAt' => $this->now,
             'updatedAt' => $this->now,
-            'settledAt' => $this->now,
+            'statusUpdatedAt' => $this->now,
         ];
     }
 
@@ -67,7 +69,7 @@ final class InventoryFactory extends PersistentProxyObjectFactory
              *     amount: int,
              *     createdAt: ?\DateTimeImmutable,
              *     updatedAt: ?\DateTimeImmutable,
-             *     settledAt: ?\DateTimeImmutable,
+             *     statusUpdatedAt: ?\DateTimeImmutable,
              * } $attributes
              */
             static function (array $attributes): Inventory {
@@ -85,10 +87,11 @@ final class InventoryFactory extends PersistentProxyObjectFactory
                     $attributes['updatedAt'] = $now;
                 }
                 \assert($attributes['updatedAt'] instanceof \DateTimeImmutable);
-                if (null === $attributes['settledAt']) {
-                    $attributes['settledAt'] = $now;
+                if (null === $attributes['statusUpdatedAt']) {
+                    assertNull($attributes['statusUpdatedAt']);
+                } else {
+                    \assert($attributes['statusUpdatedAt'] instanceof \DateTimeImmutable);
                 }
-                \assert($attributes['settledAt'] instanceof \DateTimeImmutable);
 
                 return new Inventory(
                     uuid: $attributes['uuid'],
@@ -98,8 +101,8 @@ final class InventoryFactory extends PersistentProxyObjectFactory
                     amount: $attributes['amount'],
                     createdAt: $attributes['createdAt'],
                     updatedAt: $attributes['updatedAt'],
-                    settledAt: $attributes['settledAt'],
-                    items: []
+                    items: [],
+                    statusUpdatedAt: $attributes['statusUpdatedAt']
                 );
             }
         );

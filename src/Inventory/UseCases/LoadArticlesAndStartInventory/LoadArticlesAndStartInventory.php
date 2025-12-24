@@ -17,17 +17,17 @@ use Inventory\Entities\Exception\CannotLoadArticlesOnNonDraftInventory;
 use Inventory\Entities\Inventory;
 use Inventory\Entities\Repository\InventoryRepository;
 use Inventory\Entities\VO\ZoneStorage;
-use Inventory\UseCases\Gateway\ArticleGateway;
+use Inventory\UseCases\Gateway\ArticleGatewayInterface;
 
 final readonly class LoadArticlesAndStartInventory
 {
     public function __construct(
         private InventoryRepository $inventoryRepository,
-        private ArticleGateway $articleGateway,
+        private ArticleGatewayInterface $articleGateway,
     ) {
     }
 
-    public function execute(StartInventoryRequest $request): StartInventoryResponse
+    public function execute(LoadArticlesAndStartInventoryRequest $request): LoadArticlesAndStartInventoryResponse
     {
         $inventory = $this->inventoryRepository->getByUuid($request->inventoryUuid());
 
@@ -39,9 +39,9 @@ final readonly class LoadArticlesAndStartInventory
 
         $inventory->startProcessing();
 
-        $this->inventoryRepository->save($inventory);
+        $this->inventoryRepository->startInventory($inventory);
 
-        return new StartInventoryResponse($inventory);
+        return new LoadArticlesAndStartInventoryResponse($inventory);
     }
 
     private function loadArticles(Inventory $inventory): void

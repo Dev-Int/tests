@@ -88,4 +88,16 @@ final class InventoryDateTest extends TestCase
         // Act & Assert
         self::assertFalse($inventoryDate1->equals($inventoryDate2));
     }
+
+    public function testReconstituteAllowsPastDate(): void
+    {
+        // Arrange - a past date that would fail with fromDateTimeImmutable
+        $pastDate = ClockFactory::clock()->now()->modify('-1 year');
+
+        // Act - reconstitute bypasses validation
+        $inventoryDate = InventoryDate::reconstitute($pastDate);
+
+        // Assert
+        self::assertEquals($pastDate, $inventoryDate->toDateTimeImmutable());
+    }
 }

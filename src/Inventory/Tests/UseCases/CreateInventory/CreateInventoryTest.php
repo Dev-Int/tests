@@ -22,7 +22,7 @@ use Inventory\Entities\VO\InventoryStatus;
 use Inventory\Entities\VO\ZoneStorage;
 use Inventory\UseCases\CreateInventory\CreateInventory;
 use Inventory\UseCases\CreateInventory\CreateInventoryRequest;
-use Inventory\UseCases\Gateway\ZoneStorageGateway;
+use Inventory\UseCases\Gateway\ZoneStorageGatewayInterface;
 use PHPUnit\Framework\TestCase;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\Clock\FrozenClock;
@@ -68,7 +68,7 @@ final class CreateInventoryTest extends TestCase
         // Arrange
         ClockFactory::initialize(new FrozenClock(new \DateTimeImmutable('2025-12-01')));
         $inventoryRepository = $this->createMock(InventoryRepository::class);
-        $zoneStorageGateway = $this->createMock(ZoneStorageGateway::class);
+        $zoneStorageGateway = $this->createMock(ZoneStorageGatewayInterface::class);
         $useCase = new CreateInventory($inventoryRepository, $zoneStorageGateway);
         $request = $this->createMock(CreateInventoryRequest::class);
 
@@ -118,7 +118,7 @@ final class CreateInventoryTest extends TestCase
     ): void {
         // Arrange
         $inventoryRepository = $this->createMock(InventoryRepository::class);
-        $zoneStorageGateway = $this->createMock(ZoneStorageGateway::class);
+        $zoneStorageGateway = $this->createMock(ZoneStorageGatewayInterface::class);
         $useCase = new CreateInventory($inventoryRepository, $zoneStorageGateway);
         $request = $this->createMock(CreateInventoryRequest::class);
 
@@ -146,7 +146,7 @@ final class CreateInventoryTest extends TestCase
         // Arrange
         ClockFactory::initialize(new FrozenClock(new \DateTimeImmutable('2025-12-01')));
         $inventoryRepository = $this->createMock(InventoryRepository::class);
-        $zoneStorageGateway = $this->createMock(ZoneStorageGateway::class);
+        $zoneStorageGateway = $this->createMock(ZoneStorageGatewayInterface::class);
         $useCase = new CreateInventory($inventoryRepository, $zoneStorageGateway);
         $request = $this->createMock(CreateInventoryRequest::class);
 
@@ -182,7 +182,7 @@ final class CreateInventoryTest extends TestCase
         ClockFactory::initialize(new FrozenClock(new \DateTimeImmutable('2025-12-01')));
 
         $inventoryRepository = $this->createMock(InventoryRepository::class);
-        $zoneStorageGateway = $this->createMock(ZoneStorageGateway::class);
+        $zoneStorageGateway = $this->createMock(ZoneStorageGatewayInterface::class);
         $useCase = new CreateInventory($inventoryRepository, $zoneStorageGateway);
 
         $date = new \DateTimeImmutable('2025-12-20');
@@ -269,7 +269,7 @@ final class CreateInventoryTest extends TestCase
         // Arrange
         ClockFactory::initialize(new FrozenClock(new \DateTimeImmutable('2025-12-01')));
         $inventoryRepository = $this->createMock(InventoryRepository::class);
-        $zoneStorageGateway = $this->createMock(ZoneStorageGateway::class);
+        $zoneStorageGateway = $this->createMock(ZoneStorageGatewayInterface::class);
         $useCase = new CreateInventory($inventoryRepository, $zoneStorageGateway);
         $request = $this->createMock(CreateInventoryRequest::class);
 
