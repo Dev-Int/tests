@@ -108,11 +108,9 @@ class Inventory
         $this->items[] = $item;
     }
 
-    public function updateStatus(
-        \Inventory\Entities\VO\InventoryStatus $status,
-        ?\DateTimeImmutable $settledAt
-    ): void {
-        $this->status = InventoryStatus::fromDomain($status);
-        $this->statusUpdatedAt = $settledAt;
+    public function start(\DateTimeImmutable $statusUpdatedAt): void
+    {
+        $this->status = InventoryStatus::IN_PROGRESS;
+        $this->statusUpdatedAt = $statusUpdatedAt;
     }
 }

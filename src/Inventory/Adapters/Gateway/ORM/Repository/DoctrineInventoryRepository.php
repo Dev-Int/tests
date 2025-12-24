@@ -72,7 +72,7 @@ final class DoctrineInventoryRepository extends ServiceEntityRepository implemen
         return $inventories !== [];
     }
 
-    public function save(InventoryDomain $inventory): void
+    public function create(InventoryDomain $inventory): void
     {
         $inventoryOrm = $this->mapper->fromDomain($inventory);
 
@@ -80,7 +80,7 @@ final class DoctrineInventoryRepository extends ServiceEntityRepository implemen
         $this->getEntityManager()->flush();
     }
 
-    public function startInventory(InventoryDomain $inventory): void
+    public function start(InventoryDomain $inventory): void
     {
         $inventoryOrm = $this->find($inventory->uuid()->toString());
 
@@ -88,7 +88,10 @@ final class DoctrineInventoryRepository extends ServiceEntityRepository implemen
             throw new InventoryNotFound($inventory->uuid());
         }
 
-        $inventoryOrm->updateStatus($inventory->status(), $inventory->statusUpdatedAt());
+        $statusUpdatedAt = $inventory->statusUpdatedAt();
+        \assert($statusUpdatedAt instanceof \DateTimeImmutable, 'statusUpdatedAt must be set when starting inventory');
+
+        $inventoryOrm->start($statusUpdatedAt);
 
         foreach ($inventory->items()->toArray() as $item) {
             $inventoryOrm->addItem(

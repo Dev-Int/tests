@@ -53,7 +53,7 @@ final readonly class CreateInventory
             $inventoryDate
         );
 
-        $this->inventoryRepository->save($inventory);
+        $this->inventoryRepository->create($inventory);
 
         return new CreateInventoryResponse($inventory);
     }

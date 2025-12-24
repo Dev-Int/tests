@@ -78,6 +78,11 @@ final class Entity {
 
 **Template**: `.claude/templates/entity.php.tpl`
 
+**ORM Entity (Adapters layer)**:
+- MAY have mutation methods (`start()`, `rename()`, `updateStatus()`)
+- These are mapping methods, NOT business logic
+- Business logic stays in Domain Entity
+
 ---
 
 ### UseCase Pattern
@@ -124,8 +129,9 @@ interface ActionEntityRequest {
 ```php
 interface EntityRepository {
     public function getByUuid(ResourceUuid $uuid): Entity; // throws
-    public function save(Entity $entity): void;
-    public function update(Entity $entity): void;
+    public function create(Entity $entity): void;          // Création
+    public function rename(Entity $entity): void;          // Action métier spécifique
+    public function start(Entity $entity): void;           // Action métier spécifique
     public function delete(Entity $entity): void;
 }
 ```
@@ -133,6 +139,7 @@ interface EntityRepository {
 **Rules**:
 - Interface in `BC/Entities/Repository/`
 - Methods: `get*()` MUST throw if not found
+- Prefer business-named methods (`rename`, `start`, `revaluate`) over generic (`update`)
 - Used by: Use cases that MODIFY state
 
 **Template**: `.claude/templates/repository.php.tpl`

@@ -84,7 +84,7 @@ final class StartInventoryTest extends TestCase
             ->with([$zoneStorage->uuid])
             ->willReturn([$article])
         ;
-        $repository->expects(self::once())->method('startInventory');
+        $repository->expects(self::once())->method('start');
 
         // Act
         $response = $useCase->execute($request);
@@ -115,7 +115,7 @@ final class StartInventoryTest extends TestCase
             ->willThrowException(new InventoryNotFound($inventoryUuid))
         ;
         $articleGateway->expects(self::never())->method('provideForZones');
-        $repository->expects(self::never())->method('startInventory');
+        $repository->expects(self::never())->method('start');
 
         $this->expectException(InventoryNotFound::class);
 
@@ -152,7 +152,7 @@ final class StartInventoryTest extends TestCase
             ->willReturn($inventory)
         ;
         $articleGateway->expects(self::never())->method('provideForZones');
-        $repository->expects(self::never())->method('startInventory');
+        $repository->expects(self::never())->method('start');
 
         $this->expectException(CannotLoadArticlesOnNonDraftInventory::class);
         $this->expectExceptionMessage(CannotLoadArticlesOnNonDraftInventory::MESSAGE);
@@ -193,7 +193,7 @@ final class StartInventoryTest extends TestCase
             ->with([$zoneStorage->uuid])
             ->willReturn([])
         ;
-        $repository->expects(self::never())->method('startInventory');
+        $repository->expects(self::never())->method('start');
 
         $this->expectException(NoArticlesToLoad::class);
 

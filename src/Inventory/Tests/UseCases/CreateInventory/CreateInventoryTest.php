@@ -89,7 +89,7 @@ final class CreateInventoryTest extends TestCase
         ;
         $zoneStorageGateway->expects(self::never())->method('provideAll');
         $inventoryRepository->expects(self::once())
-            ->method('save')
+            ->method('create')
             ->with(Inventory::create($inventoryId, [$zoneStorage], InventoryDate::fromDateTimeImmutable($date)))
         ;
 
@@ -132,7 +132,7 @@ final class CreateInventoryTest extends TestCase
 
         $inventoryRepository->expects(self::never())->method('hasActiveForZone');
         $zoneStorageGateway->expects(self::never())->method('provideAll');
-        $inventoryRepository->expects(self::never())->method('save');
+        $inventoryRepository->expects(self::never())->method('create');
 
         $this->expectException($expectedException);
         $this->expectExceptionMessage($expectedMessage);
@@ -166,7 +166,7 @@ final class CreateInventoryTest extends TestCase
         ;
         $zoneStorageGateway->expects(self::never())->method('provideAll');
 
-        $inventoryRepository->expects(self::never())->method('save');
+        $inventoryRepository->expects(self::never())->method('create');
 
         // Assert
         $this->expectException(InventoryAlreadyActiveForZone::class);
@@ -217,7 +217,7 @@ final class CreateInventoryTest extends TestCase
         $zoneStorageGateway->expects(self::never())->method('provideAll');
         $saveInvocations = 0;
         $inventoryRepository->expects(self::exactly(2))
-            ->method('save')
+            ->method('create')
             ->willReturnCallback(
                 static function ($inventory) use (&$saveInvocations, $inventory1Id, $inventory2Id, $zoneStorage1, $zoneStorage2, $date): void {
                     ++$saveInvocations;
@@ -290,7 +290,7 @@ final class CreateInventoryTest extends TestCase
             ->method('provideAll')
             ->willReturn([$zoneStorage1, $zoneStorage2])
         ;
-        $inventoryRepository->expects(self::once())->method('save');
+        $inventoryRepository->expects(self::once())->method('create');
 
         // Act
         $response = $useCase->execute($request);

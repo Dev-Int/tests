@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Inventory\UseCases\LoadArticlesAndStartInventory;
 
 use Inventory\Entities\Exception\CannotLoadArticlesOnNonDraftInventory;
+use Inventory\Entities\Exception\InventoryNotFound;
 use Inventory\Entities\Inventory;
 use Inventory\Entities\Repository\InventoryRepository;
 use Inventory\Entities\VO\ZoneStorage;
@@ -27,6 +28,10 @@ final readonly class LoadArticlesAndStartInventory
     ) {
     }
 
+    /**
+     * @throws CannotLoadArticlesOnNonDraftInventory
+     * @throws InventoryNotFound
+     */
     public function execute(LoadArticlesAndStartInventoryRequest $request): LoadArticlesAndStartInventoryResponse
     {
         $inventory = $this->inventoryRepository->getByUuid($request->inventoryUuid());
@@ -39,7 +44,7 @@ final readonly class LoadArticlesAndStartInventory
 
         $inventory->startProcessing();
 
-        $this->inventoryRepository->startInventory($inventory);
+        $this->inventoryRepository->start($inventory);
 
         return new LoadArticlesAndStartInventoryResponse($inventory);
     }
