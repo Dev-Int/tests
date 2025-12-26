@@ -13,8 +13,11 @@ declare(strict_types=1);
 
 namespace Inventory\Entities;
 
+use Inventory\Entities\Exception\ArticleNotFoundInInventory;
+use Inventory\Entities\Exception\CannotRecordStockOnNonInProgressInventory;
 use Inventory\Entities\Exception\InvalidStatusTransition;
 use Inventory\Entities\Exception\NoArticlesToLoad;
+use Inventory\Entities\ReadModel\ArticleData;
 use Inventory\Entities\VO\Article;
 use Inventory\Entities\VO\InventoryDate;
 use Inventory\Entities\VO\InventoryStatus;
@@ -39,7 +42,7 @@ final class Inventory
             createdAt: ClockFactory::clock()->now(),
             updatedAt: ClockFactory::clock()->now(),
             statusUpdatedAt: null,
-            items: new InventoryItemCollection(totalItems: 0),
+            items: new InventoryItemCollection(),
         );
     }
 
@@ -65,7 +68,7 @@ final class Inventory
             createdAt: $createdAt,
             updatedAt: $updatedAt,
             statusUpdatedAt: $statusUpdatedAt,
-            items: new InventoryItemCollection(totalItems: 0)
+            items: new InventoryItemCollection()
         );
     }
 
@@ -145,7 +148,7 @@ final class Inventory
 
     public function clearItems(): void
     {
-        $this->items = new InventoryItemCollection(totalItems: 0);
+        $this->items = new InventoryItemCollection();
     }
 
     /**
@@ -215,5 +218,36 @@ final class Inventory
         $this->status = InventoryStatus::COMPLETED;
         $this->statusUpdatedAt = ClockFactory::clock()->now();
         $this->updatedAt = ClockFactory::clock()->now();
+    }
+
+    /**
+     * Enregistre le stock réel compté pour les articles d'une zone.
+     *
+     * @param array<ArticleData> $articlesData
+     *
+     * @return array<InventoryItem>
+     *
+     * @throws CannotRecordStockOnNonInProgressInventory
+     * @throws ArticleNotFoundInInventory
+     */
+    public function recordRealStocks(array $articlesData, ResourceUuid $zoneStorageUuid): array
+    {
+        if (InventoryStatus::IN_PROGRESS !== $this->status) {
+            throw new CannotRecordStockOnNonInProgressInventory($this->status);
+        }
+
+        $updatedItems = array_map(function (ArticleData $articleData) use ($zoneStorageUuid): InventoryItem {
+            $item = $this->items->findByArticleAndZone($articleData->articleUuid, $zoneStorageUuid);
+
+            if (!$item instanceof InventoryItem) {
+                throw new ArticleNotFoundInInventory($articleData->articleUuid);
+            }
+
+            return $item->withRealStock($articleData->realStock);
+        }, $articlesData);
+
+        $this->items->replace($updatedItems);
+
+        return $updatedItems;
     }
 }

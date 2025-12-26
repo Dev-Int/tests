@@ -144,4 +144,26 @@ final class DoctrineInventoryRepository extends ServiceEntityRepository implemen
 
         return $this->mapper->toDomain($inventory);
     }
+
+    public function save(InventoryDomain $inventory): void
+    {
+        $inventoryOrm = $this->find($inventory->uuid()->toString());
+
+        if (!$inventoryOrm instanceof Inventory) {
+            throw new InventoryNotFound($inventory->uuid());
+        }
+
+        foreach ($inventory->items()->toArray() as $domainItem) {
+            $ormItem = $inventoryOrm->findItemByArticleAndZone(
+                $domainItem->article()->toString(),
+                $domainItem->zoneStorage()->toString()
+            );
+
+            if ($ormItem instanceof InventoryItem) {
+                $ormItem->updateRealStock($domainItem->realStock()->toMilliemes());
+            }
+        }
+
+        $this->getEntityManager()->flush();
+    }
 }

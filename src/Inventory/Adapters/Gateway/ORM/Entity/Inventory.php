@@ -113,4 +113,15 @@ class Inventory
         $this->status = InventoryStatus::IN_PROGRESS;
         $this->statusUpdatedAt = $statusUpdatedAt;
     }
+
+    public function findItemByArticleAndZone(string $articleId, string $zoneStorageId): ?InventoryItem
+    {
+        foreach ($this->items as $item) {
+            if ($item->articleId() === $articleId && $item->zoneStorageId() === $zoneStorageId) {
+                return $item;
+            }
+        }
+
+        return null;
+    }
 }

@@ -17,7 +17,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'inventory_item')]
-final class InventoryItem
+#[ORM\Index(name: 'idx_inventory_item_inventory_id', columns: ['inventory_id'])]
+#[ORM\Index(name: 'idx_inventory_item_article_zone', columns: ['article_id', 'zone_storage_id'])]
+class InventoryItem
 {
     public function __construct(
         #[ORM\Id]
@@ -81,5 +83,10 @@ final class InventoryItem
     public function amount(): int
     {
         return $this->amount;
+    }
+
+    public function updateRealStock(int $realStock): void
+    {
+        $this->realStock = $realStock;
     }
 }
