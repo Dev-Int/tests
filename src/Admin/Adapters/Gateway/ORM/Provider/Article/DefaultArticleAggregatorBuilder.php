@@ -250,6 +250,7 @@ final class DefaultArticleAggregatorBuilder implements ArticleAggregatorBuilder
         $value = $this->filters[ArticleFilter::ZONE_STORAGE->value];
 
         $queryBuilder->innerJoin("{$alias}.zoneStorages", 'zs');
+        $queryBuilder->addSelect('zs.uuid AS zoneStorageUuid');
 
         if (\is_array($value)) {
             $uuids = array_map(
@@ -280,7 +281,7 @@ final class DefaultArticleAggregatorBuilder implements ArticleAggregatorBuilder
     }
 
     /**
-     * @param array{uuid: string, name:string, unitPrice: int, quantity: float|int, slug: string} $article
+     * @param array{uuid: string, name:string, unitPrice: int, quantity: float|int, slug: string, zoneStorageUuid?: string} $article
      */
     private function mapToResult(array $article): ArticleResult
     {
@@ -290,6 +291,9 @@ final class DefaultArticleAggregatorBuilder implements ArticleAggregatorBuilder
             unitPrice: Amount::fromCents($article['unitPrice']),
             quantity: Quantity::fromMilliemes((int) $article['quantity']),
             slug: $article['slug'],
+            zoneStorageUuid: isset($article['zoneStorageUuid'])
+                ? ResourceUuid::fromString($article['zoneStorageUuid'])
+                : null,
         );
     }
 }

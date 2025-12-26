@@ -114,6 +114,13 @@ class Inventory
         $this->statusUpdatedAt = $statusUpdatedAt;
     }
 
+    /**
+     * Find an ORM item by article and zone for mapping purposes.
+     *
+     * Note: This is NOT a duplicate of Domain's InventoryItemCollection::findByArticleAndZone().
+     * This method operates on ORM entities for persistence mapping (used by InventoryMapper),
+     * while the Domain method operates on Domain entities for business logic.
+     */
     public function findItemByArticleAndZone(string $articleId, string $zoneStorageId): ?InventoryItem
     {
         foreach ($this->items as $item) {

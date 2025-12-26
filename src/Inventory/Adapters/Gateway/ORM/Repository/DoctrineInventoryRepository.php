@@ -160,7 +160,7 @@ final class DoctrineInventoryRepository extends ServiceEntityRepository implemen
             );
 
             if ($ormItem instanceof InventoryItem) {
-                $ormItem->updateRealStock($domainItem->realStock()->toMilliemes());
+                $this->mapper->updateOrmItem($ormItem, $domainItem);
             }
         }
 

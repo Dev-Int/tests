@@ -26,6 +26,7 @@ final readonly class ArticleResult
         public Amount $unitPrice,
         public Quantity $quantity,
         public string $slug,
+        public ?ResourceUuid $zoneStorageUuid = null,
     ) {
     }
 }

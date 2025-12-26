@@ -88,6 +88,15 @@ final readonly class InventoryMapper
         return $inventoryDomain;
     }
 
+    /**
+     * Update an ORM item from a Domain item.
+     * This method handles the mapping of updated values from Domain to ORM layer.
+     */
+    public function updateOrmItem(InventoryItem $ormItem, InventoryItemDomain $domainItem): void
+    {
+        $ormItem->updateRealStock($domainItem->realStock()->toMilliemes());
+    }
+
     private function getItemsFromDomain(InventoryItemCollection $items, Inventory &$inventory): void
     {
         foreach ($items->toArray() as $item) {

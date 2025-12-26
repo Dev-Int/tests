@@ -17,6 +17,7 @@ use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
 use Admin\Contracts\Services\Provider\Article\ArticleFilter;
 use Admin\Contracts\Services\Provider\Article\ArticleOrderField;
 use Admin\Contracts\Services\Provider\Article\ArticleProvider;
+use Admin\Tests\Factory\ArticleFactory;
 use Admin\Tests\Factory\FamilyLogFactory;
 use Admin\Tests\Factory\SupplierFactory;
 use Admin\Tests\Factory\ZoneStorageFactory;
@@ -232,5 +233,52 @@ final class DefaultArticleAggregatorBuilderTest extends BaseFunctionalTestCase
         self::assertCount(1, $articles);
         $articlesArray = iterator_to_array($articles);
         self::assertSame('Yaourt', $articlesArray[0]->name->toString());
+    }
+
+    public function testArticleInMultipleZonesReturnsOneRowPerZone(): void
+    {
+        // Arrange
+        ArticleStory::load();
+
+        $zonePositive = ZoneStorageFactory::findBy(['label' => 'Réserve positive'])[0];
+        $zoneMaraichere = ZoneStorageFactory::findBy(['label' => 'Réserve maraîchère'])[0];
+
+        ArticleFactory::createOne([
+            'name' => 'Pommes Multi-Zone',
+            'zoneStorages' => [$zonePositive->_real(), $zoneMaraichere->_real()],
+        ]);
+
+        /** @var ArticleProvider $provider */
+        $provider = self::getContainer()->get(ArticleProvider::class);
+
+        $zoneUuids = [
+            ResourceUuid::fromString($zonePositive->_real()->uuid()),
+            ResourceUuid::fromString($zoneMaraichere->_real()->uuid()),
+        ];
+
+        // Act
+        $articles = $provider->forArticles(articleIds: [])
+            ->withFilter(filter: ArticleFilter::ZONE_STORAGE, value: $zoneUuids)
+            ->provideAll()
+        ;
+
+        // Assert
+        self::assertCount(6, $articles);
+
+        $articlesArray = iterator_to_array($articles);
+        $multiZoneRows = array_filter(
+            $articlesArray,
+            static fn ($article) => $article->name->toString() === 'Pommes Multi-Zone'
+        );
+
+        self::assertCount(2, $multiZoneRows);
+        $zoneUuidsFromResults = array_map(
+            static fn ($article) => $article->zoneStorageUuid?->toString(),
+            $multiZoneRows
+        );
+        $zoneUuidsFromResults = array_values($zoneUuidsFromResults);
+
+        self::assertContains($zonePositive->_real()->uuid(), $zoneUuidsFromResults);
+        self::assertContains($zoneMaraichere->_real()->uuid(), $zoneUuidsFromResults);
     }
 }

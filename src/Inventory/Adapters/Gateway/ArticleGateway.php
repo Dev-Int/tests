@@ -41,24 +41,27 @@ final readonly class ArticleGateway implements ArticleGatewayInterface
             return;
         }
 
-        // Itérer sur chaque zone pour retourner 1 ligne par article×zone
-        foreach ($zoneStorageUuids as $zoneUuid) {
-            $articles = $this->articleProvider
-                ->forArticles([])
-                ->withFilter(ArticleFilter::ZONE_STORAGE, [$zoneUuid])
-                ->provideAll()
-            ;
+        // Single query with all zones - returns one row per article×zone combination
+        $articles = $this->articleProvider
+            ->forArticles([])
+            ->withFilter(ArticleFilter::ZONE_STORAGE, $zoneStorageUuids)
+            ->provideAll()
+        ;
 
-            foreach ($articles as $articleResult) {
-                yield new Article(
-                    uuid: $articleResult->uuid,
-                    zoneStorageUuid: $zoneUuid,
-                    name: $articleResult->name,
-                    unitPrice: $articleResult->unitPrice,
-                    quantity: $articleResult->quantity,
-                    slug: $articleResult->slug,
-                );
-            }
+        foreach ($articles as $articleResult) {
+            \assert(
+                $articleResult->zoneStorageUuid instanceof ResourceUuid,
+                'zoneStorageUuid must be set when filtering by zones'
+            );
+
+            yield new Article(
+                uuid: $articleResult->uuid,
+                zoneStorageUuid: $articleResult->zoneStorageUuid,
+                name: $articleResult->name,
+                unitPrice: $articleResult->unitPrice,
+                quantity: $articleResult->quantity,
+                slug: $articleResult->slug,
+            );
         }
     }
 }
