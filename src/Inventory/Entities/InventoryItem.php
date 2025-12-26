@@ -35,6 +35,11 @@ final readonly class InventoryItem
         );
     }
 
+    /**
+     * @param Amount $amount Snapshot of theoretical value at creation (price × theoreticalStock).
+     *                       This is NOT recalculated when realStock changes.
+     *                       Real value after counting = price × realStock.
+     */
     public function __construct(
         private ResourceUuid $article,
         private NameField $articleName,

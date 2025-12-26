@@ -35,6 +35,7 @@ final readonly class RecordRealStockForZonePresenter
             $results[] = new InventoryItemResult(
                 articleUuid: $item->article()->toString(),
                 articleName: $item->articleName()->toString(),
+                articleSlug: $item->articleName()->slugify(),
                 theoreticalStock: $item->theoreticalStock()->toUnit(),
                 realStock: $item->realStock()->toUnit(),
             );

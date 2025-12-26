@@ -129,8 +129,8 @@ final class RecordRealStockForZoneController extends AbstractController
         $articlesData = [];
 
         foreach ($items as $item) {
-            $articleUuid = $item->article()->toString();
-            $realStockValue = $request->request->get("real_stock_{$articleUuid}");
+            $articleSlug = $item->articleName()->toString();
+            $realStockValue = $request->request->get("real_stock_{$articleSlug}");
 
             if ($realStockValue !== null && $realStockValue !== '') {
                 $articlesData[] = new ArticleData(

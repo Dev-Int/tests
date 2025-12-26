@@ -49,7 +49,6 @@ final class RecordRealStockForZoneControllerTest extends BaseFunctionalTestCase
         $zonePositive = ZoneStorageFactory::findBy(['label' => 'Réserve positive'])[0];
         $zoneStorageUuid = $zonePositive->_real()->uuid();
 
-        // Create a DRAFT inventory
         $inventory = InventoryFactory::createOne([
             'date' => $futureDate,
             'zoneStorages' => [$zoneStorageUuid],
@@ -61,23 +60,20 @@ final class RecordRealStockForZoneControllerTest extends BaseFunctionalTestCase
 
         $inventoryUuid = $inventory->_real()->uuid();
 
-        // Start the inventory to load articles as items
         $startUri = \sprintf(self::START_INVENTORY_URI, $inventoryUuid);
         $this->client->request(Request::METHOD_POST, $startUri);
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        $this->client->followRedirect(); // Consume start success flash
+        $this->client->followRedirect();
 
-        // Act - GET the record stock form
+        // Act
         $uri = \sprintf(self::RECORD_STOCK_URI, $inventoryUuid, $zoneStorageUuid);
         $crawler = $this->client->request(Request::METHOD_GET, $uri);
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
 
-        // Check page title contains zone name
         self::assertSelectorTextContains('h1', 'Réserve positive');
 
-        // Check that articles are displayed in the form
         $articleInputs = $crawler->filter('input[type="number"]');
         self::assertGreaterThan(0, $articleInputs->count(), 'Form should contain article stock inputs');
     }
@@ -95,7 +91,6 @@ final class RecordRealStockForZoneControllerTest extends BaseFunctionalTestCase
         $zonePositive = ZoneStorageFactory::findBy(['label' => 'Réserve positive'])[0];
         $zoneStorageUuid = $zonePositive->_real()->uuid();
 
-        // Create a DRAFT inventory
         $inventory = InventoryFactory::createOne([
             'date' => $futureDate,
             'zoneStorages' => [$zoneStorageUuid],
@@ -107,28 +102,31 @@ final class RecordRealStockForZoneControllerTest extends BaseFunctionalTestCase
 
         $inventoryUuid = $inventory->_real()->uuid();
 
-        // Start the inventory to load articles as items
         $startUri = \sprintf(self::START_INVENTORY_URI, $inventoryUuid);
         $this->client->request(Request::METHOD_POST, $startUri);
-        $this->client->followRedirect(); // Consume start success flash
+        $this->client->followRedirect();
 
-        // Get the "Lait" article UUID (created in InventoryStory for Réserve positive)
         $articles = ArticleFactory::all();
         $laitArticle = null;
-        foreach ($articles as $a) {
-            if ($a->_real()->name() === 'Lait') {
-                $laitArticle = $a;
-
-                break;
+        $camembertArticle = null;
+        foreach ($articles as $article) {
+            if ($article->_real()->name() === 'Lait') {
+                $laitArticle = $article;
+            }
+            if ($article->_real()->name() === 'Camembert') {
+                $camembertArticle = $article;
             }
         }
         self::assertNotNull($laitArticle, 'Article "Lait" should exist');
-        $articleUuid = $laitArticle->_real()->uuid();
+        self::assertNotNull($camembertArticle, 'Article "Camembert" should exist');
+        $laitSlug = $laitArticle->_real()->slug();
+        $camembertSlug = $camembertArticle->_real()->slug();
 
-        // Act - POST to record stock
+        // Act
         $uri = \sprintf(self::RECORD_STOCK_URI, $inventoryUuid, $zoneStorageUuid);
         $this->client->request(Request::METHOD_POST, $uri, [
-            "real_stock_{$articleUuid}" => '15.5',
+            "real_stock_{$laitSlug}" => '15.5',
+            "real_stock_{$camembertSlug}" => '0',
         ]);
 
         // Assert
@@ -149,7 +147,6 @@ final class RecordRealStockForZoneControllerTest extends BaseFunctionalTestCase
         $zonePositive = ZoneStorageFactory::findBy(['label' => 'Réserve positive'])[0];
         $zoneStorageUuid = $zonePositive->_real()->uuid();
 
-        // Create a DRAFT inventory (NOT in_progress)
         $inventory = InventoryFactory::createOne([
             'date' => $now->modify('+1 day'),
             'zoneStorages' => [$zoneStorageUuid],
@@ -161,14 +158,13 @@ final class RecordRealStockForZoneControllerTest extends BaseFunctionalTestCase
 
         $inventoryUuid = $inventory->_real()->uuid();
 
-        // Act - Try to GET record stock form on DRAFT inventory
+        // Act
         $uri = \sprintf(self::RECORD_STOCK_URI, $inventoryUuid, $zoneStorageUuid);
         $this->client->request(Request::METHOD_GET, $uri);
 
-        // Assert - Should display form but with no items (since inventory wasn't started)
+        // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
 
-        // The form should show "no articles" message
         $crawler = $this->client->getCrawler();
         $rows = $crawler->filter('tbody tr');
         self::assertCount(1, $rows); // Only the "no articles" row
@@ -188,7 +184,7 @@ final class RecordRealStockForZoneControllerTest extends BaseFunctionalTestCase
         $uri = \sprintf(self::RECORD_STOCK_URI, $nonExistentInventoryUuid, $zoneStorageUuid);
         $this->client->request(Request::METHOD_GET, $uri);
 
-        // Assert - Should redirect with error
+        // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/inventories');
 

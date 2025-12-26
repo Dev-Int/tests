@@ -18,6 +18,7 @@ final readonly class InventoryItemResult
     public function __construct(
         public string $articleUuid,
         public string $articleName,
+        public string $articleSlug,
         public float $theoreticalStock,
         public float $realStock,
     ) {
