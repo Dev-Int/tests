@@ -249,7 +249,7 @@ bin/console doctrine:schema:validate
 **GitHub Issue** : #164  
 **Estimation** : 1 jour
 
-#### 4.1 - 🔴 RED : Test RecordRealStock
+#### 4.1 - 🔴 RED : Test RecordRealStockForZone
 - Enregistrer realStock
 - Calculer différence automatiquement
 - Refuser si status ≠ IN_PROGRESS
@@ -257,7 +257,7 @@ bin/console doctrine:schema:validate
 
 ---
 
-#### 4.2 - 🟢 GREEN : Implémenter RecordRealStock
+#### 4.2 - 🟢 GREEN : Implémenter RecordRealStockForZone
 - VO RealStock avec validation
 - VO StockDifference calculé
 - Méthode `InventoryItem->recordRealStock()`
@@ -387,7 +387,7 @@ bin/console doctrine:schema:validate
 - [ ] Formulaire + Controller pour créer inventaire
 - [ ] Migration + Repository Doctrine
 - [x] UseCase StartInventory (charge articles + DRAFT → IN_PROGRESS)
-- [ ] UseCase RecordRealStock (saisie comptage)
+- [ ] UseCase RecordRealStockForZone (saisie comptage)
 - [ ] UseCase CompleteInventory (ajustement stocks Article)
 - [ ] UseCase CancelInventory
 - [ ] Page liste inventaires
