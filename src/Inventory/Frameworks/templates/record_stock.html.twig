@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ 'inventory.zone.record.titlePage'|trans }} | {{ parent() }}
+{% endblock %}
+
+{% block importmap %}
+    {{ importmap('app') }}
+{% endblock %}
+
+{% block body %}
+
+    <h1><twig:Icon:Entities:Inventory /> {{ 'inventory.zone.record.titlePage'|trans }} - {{ zoneName }}</h1>
+
+    <main>
+        <article>
+            <form method="post" action="{{ path('inventory_zone_record_stock', {inventoryUuid: inventoryUuid, zoneStorageUuid: zoneStorageUuid}) }}" data-turbo="false">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>{{ 'inventory.zone.record.article'|trans }}</th>
+                            <th>{{ 'inventory.zone.record.theoreticalStock'|trans }}</th>
+                            <th>{{ 'inventory.zone.record.realStock'|trans }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                            <tr>
+                                <td>{{ item.articleName }}</td>
+                                <td>{{ item.theoreticalStock }}</td>
+                                <td>
+                                    <input
+                                        type="number"
+                                        name="real_stock_{{ item.articleUuid }}"
+                                        value="{{ item.realStock > 0 ? item.realStock : '' }}"
+                                        step="0.001"
+                                        min="0"
+                                        class="form-control"
+                                        placeholder="{{ item.theoreticalStock }}"
+                                    />
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="3">{{ 'inventory.zone.record.no_articles'|trans }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <div class="form-actions">
+                    <twig:Form:Button:Cancel href="{{ path('inventory_index') }}" label="{{ 'inventory.zone.record.cancel'|trans }}" />
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-save"></i> {{ 'inventory.zone.record.submit'|trans }}
+                    </button>
+                </div>
+            </form>
+        </article>
+    </main>
+
+{% endblock %}

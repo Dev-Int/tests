@@ -30,6 +30,20 @@ return [
             'success' => 'Inventory started successfully',
             'button' => 'Start',
         ],
+        'zone' => [
+            'record' => [
+                'titlePage' => 'Record real stock',
+                'no_articles' => 'No articles in this zone',
+                'button' => 'Record stock',
+                'submit' => 'Save',
+                'cancel' => 'Cancel',
+                'success' => 'Real stock recorded successfully',
+                'article' => 'Article',
+                'theoreticalStock' => 'Theoretical stock',
+                'realStock' => 'Real stock',
+            ],
+        ],
+        'cancel' => 'Cancel',
         'errors' => [
             'date_past' => 'The date must be today or in the future',
             'zone_active' => 'An active inventory exists for this zone',

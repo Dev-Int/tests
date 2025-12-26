@@ -35,9 +35,19 @@
                        <li class="li-unstyled flex-between">
                            <span>{{ inventory.date }}</span>
                            <span>{{ inventory.status }}</span>
-                           <span>
+                           <span class="zones-list">
                                {% for zone in inventory.zoneStorageIds %}
-                               {{ zone.label }}<br />
+                                   <div class="zone-item">
+                                       <span>{{ zone.label }}</span>
+                                       {% if inventory.status == 'inProgress' %}
+                                           <twig:Button:UpdateEntity
+                                               href="{{ path('inventory_zone_record_stock', {inventoryUuid: inventory.uuid, zoneStorageUuid: zone.uuid}) }}"
+                                               class="btn-small"
+                                               label="{{ 'inventory.zone.record.button'|trans }}"
+                                               data-turbo-frame="_top"
+                                           />
+                                       {% endif %}
+                                   </div>
                                {% endfor %}
                            </span>
                            <span class="actions-group">
@@ -48,7 +58,7 @@
                                        </button>
                                    </form>
                                {% endif %}
-                               <twig:Button:UpdateEntity href="#" class="btn-small" label="Edit" />
+                               <twig:Button:UpdateEntity href="#" class="btn-small" label="{{ 'inventory.cancel'|trans }}" />
                            </span>
                        </li>
                    </turbo-frame>
