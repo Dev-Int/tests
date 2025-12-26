@@ -24,6 +24,7 @@ final readonly class InventoryItem
     {
         return new self(
             article: $article->uuid,
+            zoneStorage: $article->zoneStorageUuid,
             price: $article->unitPrice,
             theoreticalStock: $article->quantity,
             realStock: Quantity::fromMilliemes(0),
@@ -33,6 +34,7 @@ final readonly class InventoryItem
 
     public function __construct(
         private ResourceUuid $article,
+        private ResourceUuid $zoneStorage,
         private Amount $price,
         private Quantity $theoreticalStock,
         private Quantity $realStock,
@@ -43,6 +45,11 @@ final readonly class InventoryItem
     public function article(): ResourceUuid
     {
         return $this->article;
+    }
+
+    public function zoneStorage(): ResourceUuid
+    {
+        return $this->zoneStorage;
     }
 
     public function price(): Amount

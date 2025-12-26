@@ -30,6 +30,8 @@ final class InventoryItem
         private Inventory $inventory,
         #[ORM\Column(name: 'article_id', type: 'guid', nullable: false)]
         private string $articleId,
+        #[ORM\Column(name: 'zone_storage_id', type: 'guid', nullable: false)]
+        private string $zoneStorageId,
         #[ORM\Column(name: 'price', type: 'integer')]
         private int $price,
         #[ORM\Column(name: 'theoretical_stock', type: 'integer')]
@@ -54,6 +56,11 @@ final class InventoryItem
     public function articleId(): string
     {
         return $this->articleId;
+    }
+
+    public function zoneStorageId(): string
+    {
+        return $this->zoneStorageId;
     }
 
     public function price(): int

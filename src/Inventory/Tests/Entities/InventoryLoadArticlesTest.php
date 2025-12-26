@@ -84,6 +84,7 @@ final class InventoryLoadArticlesTest extends TestCase
         for ($i = 0; $i < $count; ++$i) {
             $articles[] = new Article(
                 uuid: ResourceUuid::generate(),
+                zoneStorageUuid: ResourceUuid::generate(),
                 name: NameField::fromString("Article {$i}"),
                 unitPrice: Amount::fromCents(1000 + $i * 100),
                 quantity: Quantity::fromMilliemes(1000),

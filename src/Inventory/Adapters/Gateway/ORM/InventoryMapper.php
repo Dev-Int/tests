@@ -76,6 +76,7 @@ final readonly class InventoryMapper
         foreach ($inventory->items() as $item) {
             $itemDomain = new InventoryItemDomain(
                 article: ResourceUuid::fromString($item->articleId()),
+                zoneStorage: ResourceUuid::fromString($item->zoneStorageId()),
                 price: Amount::fromCents($item->price()),
                 theoreticalStock: Quantity::fromMilliemes($item->theoreticalStock()),
                 realStock: Quantity::fromMilliemes($item->realStock()),
@@ -95,6 +96,7 @@ final readonly class InventoryMapper
                     id: null,
                     inventory: $inventory,
                     articleId: $item->article()->toString(),
+                    zoneStorageId: $item->zoneStorage()->toString(),
                     price: $item->price()->toInt(),
                     theoreticalStock: $item->theoreticalStock()->toMilliemes(),
                     realStock: $item->realStock()->toMilliemes(),

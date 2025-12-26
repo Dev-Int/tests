@@ -26,6 +26,11 @@ final readonly class ArticleGateway implements ArticleGatewayInterface
     }
 
     /**
+     * Retourne une ligne par article×zone.
+     *
+     * Si un article appartient à plusieurs zones, il sera retourné plusieurs fois,
+     * une fois par zone, avec un zoneStorageUuid différent à chaque fois.
+     *
      * @param array<ResourceUuid> $zoneStorageUuids
      *
      * @return iterable<Article>
@@ -36,20 +41,24 @@ final readonly class ArticleGateway implements ArticleGatewayInterface
             return;
         }
 
-        $articles = $this->articleProvider
-            ->forArticles([])
-            ->withFilter(ArticleFilter::ZONE_STORAGE, $zoneStorageUuids)
-            ->provideAll()
-        ;
+        // Itérer sur chaque zone pour retourner 1 ligne par article×zone
+        foreach ($zoneStorageUuids as $zoneUuid) {
+            $articles = $this->articleProvider
+                ->forArticles([])
+                ->withFilter(ArticleFilter::ZONE_STORAGE, [$zoneUuid])
+                ->provideAll()
+            ;
 
-        foreach ($articles as $articleResult) {
-            yield new Article(
-                uuid: $articleResult->uuid,
-                name: $articleResult->name,
-                unitPrice: $articleResult->unitPrice,
-                quantity: $articleResult->quantity,
-                slug: $articleResult->slug,
-            );
+            foreach ($articles as $articleResult) {
+                yield new Article(
+                    uuid: $articleResult->uuid,
+                    zoneStorageUuid: $zoneUuid,
+                    name: $articleResult->name,
+                    unitPrice: $articleResult->unitPrice,
+                    quantity: $articleResult->quantity,
+                    slug: $articleResult->slug,
+                );
+            }
         }
     }
 }

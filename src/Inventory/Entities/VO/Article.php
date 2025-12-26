@@ -22,6 +22,7 @@ final readonly class Article
 {
     public function __construct(
         public ResourceUuid $uuid,
+        public ResourceUuid $zoneStorageUuid,
         public NameField $name,
         public Amount $unitPrice,
         public Quantity $quantity,

@@ -60,6 +60,7 @@ final class StartInventoryTest extends TestCase
 
         $article = new Article(
             uuid: ResourceUuid::generate(),
+            zoneStorageUuid: $zoneStorage->uuid,
             name: NameField::fromString('Yaourt'),
             unitPrice: Amount::fromCents(1000),
             quantity: Quantity::fromUnit(5.0),

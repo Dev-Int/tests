@@ -84,6 +84,7 @@ final class InventoryMapperTest extends TestCase
         $inventory = Inventory::create($uuid, [$zoneStorage], $date);
         $item = new InventoryItem(
             article: ResourceUuid::generate(),
+            zoneStorage: $zoneStorage->uuid,
             price: Amount::fromCents(1000),
             theoreticalStock: Quantity::fromUnit(12.345),
             realStock: Quantity::fromUnit(10.500),
@@ -146,6 +147,7 @@ final class InventoryMapperTest extends TestCase
             id: null,
             inventory: $inventoryOrm,
             articleId: ResourceUuid::generate()->toString(),
+            zoneStorageId: $zoneUuid->toString(),
             price: 1000,
             theoreticalStock: 12345, // 12345 millièmes → 12.345
             realStock: 10500, // 10500 millièmes → 10.5
@@ -223,6 +225,7 @@ final class InventoryMapperTest extends TestCase
         $originalInventory = Inventory::create($uuid, [$zoneStorage], $date);
         $item = new InventoryItem(
             article: ResourceUuid::generate(),
+            zoneStorage: $zoneStorage->uuid,
             price: Amount::fromCents(1000),
             theoreticalStock: Quantity::fromUnit(12.345),
             realStock: Quantity::fromUnit(10.5),
