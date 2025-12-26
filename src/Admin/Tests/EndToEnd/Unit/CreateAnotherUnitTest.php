@@ -15,7 +15,7 @@ namespace Admin\Tests\EndToEnd\Unit;
 
 use Admin\Adapters\Controller\Symfony\Controller\Unit\CreateUnit\CreateUnitController;
 use Admin\Adapters\Controller\Symfony\Controller\Unit\GetUnits\GetUnitsController;
-use App\Shared\Tests\BasePantherTestCase;
+use Shared\Tests\BasePantherTestCase;
 use Symfony\Component\Panther\PantherTestCase;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;

@@ -21,9 +21,9 @@ use Admin\Tests\Factory\FamilyLogFactory;
 use Admin\Tests\Factory\SupplierFactory;
 use Admin\Tests\Factory\ZoneStorageFactory;
 use Admin\Tests\Story\ArticleStory;
-use App\Shared\Tests\BaseFunctionalTestCase;
 use Shared\Entities\Enum\QueryOrder;
 use Shared\Entities\ResourceUuid;
+use Shared\Tests\BaseFunctionalTestCase;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 

@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\Tests\EndToEnd\Supplier;
 
 use Admin\Adapters\Controller\Symfony\Controller\Supplier\GetSuppliers\GetSuppliersController;
-use App\Shared\Tests\BasePantherTestCase;
+use Shared\Tests\BasePantherTestCase;
 use Symfony\Component\Panther\PantherTestCase;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;

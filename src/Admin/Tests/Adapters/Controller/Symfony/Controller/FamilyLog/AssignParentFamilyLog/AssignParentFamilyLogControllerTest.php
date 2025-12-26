@@ -17,9 +17,9 @@ use Admin\Adapters\Controller\Symfony\Controller\FamilyLog\GetFamilyLogs\GetFami
 use Admin\Entities\FamilyLog\FamilyLog;
 use Admin\Entities\Repository\FamilyLogRepository;
 use Admin\Tests\Factory\FamilyLogFactory;
-use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Shared\Entities\ResourceUuid;
+use Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;

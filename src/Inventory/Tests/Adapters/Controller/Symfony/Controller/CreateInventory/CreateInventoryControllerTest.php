@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Inventory\Tests\Adapters\Controller\Symfony\Controller\CreateInventory;
 
 use Admin\Tests\Factory\ZoneStorageFactory;
-use App\Shared\Tests\BaseFunctionalTestCase;
 use Inventory\Adapters\Controller\Symfony\Controller\CreateInventory\CreateInventoryController;
 use Inventory\Adapters\Gateway\ORM\Entity\InventoryStatus;
 use Inventory\Entities\Exception\EqualOrFutureDateExpected;
@@ -23,6 +22,7 @@ use Inventory\Tests\Factory\InventoryFactory;
 use Inventory\Tests\Story\InventoryStory;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\Clock\FrozenClock;
+use Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;

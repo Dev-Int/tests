@@ -14,13 +14,13 @@ declare(strict_types=1);
 namespace Inventory\Tests\EndToEnd;
 
 use Admin\Tests\Factory\ZoneStorageFactory;
-use App\Shared\Tests\BasePantherTestCase;
 use Inventory\Adapters\Controller\Symfony\Controller\GetInventories\GetInventoriesController;
 use Inventory\Adapters\Gateway\ORM\Entity\InventoryStatus;
 use Inventory\Tests\Factory\InventoryFactory;
 use Inventory\Tests\Story\InventoryStory;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\Clock\FrozenClock;
+use Shared\Tests\BasePantherTestCase;
 use Symfony\Component\Panther\PantherTestCase;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;

@@ -15,7 +15,7 @@ namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Tax\GetTaxes;
 
 use Admin\Entities\Exception\Tax\NoTaxRegistered;
 use Admin\Tests\Factory\TaxFactory;
-use App\Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;

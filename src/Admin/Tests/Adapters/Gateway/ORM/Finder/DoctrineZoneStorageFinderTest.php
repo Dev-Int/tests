@@ -16,9 +16,9 @@ namespace Admin\Tests\Adapters\Gateway\ORM\Finder;
 use Admin\Entities\ZoneStorage\ZoneStorage;
 use Admin\Tests\Factory\ZoneStorageFactory;
 use Admin\UseCases\Gateway\Finder\ZoneStorageFinder;
-use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Shared\Entities\ResourceUuid;
+use Shared\Tests\BaseFunctionalTestCase;
 use Zenstruck\Foundry\Test\Factories;
 
 /**

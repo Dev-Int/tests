@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\Tests\EndToEnd\Company;
 
 use Admin\Adapters\Controller\Symfony\Controller\Company\CreateCompany\CreateCompanyController;
-use App\Shared\Tests\BasePantherTestCase;
+use Shared\Tests\BasePantherTestCase;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 

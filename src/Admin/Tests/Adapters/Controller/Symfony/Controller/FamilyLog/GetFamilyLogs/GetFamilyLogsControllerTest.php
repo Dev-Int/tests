@@ -15,7 +15,7 @@ namespace Admin\Tests\Adapters\Controller\Symfony\Controller\FamilyLog\GetFamily
 
 use Admin\Entities\Exception\FamilyLog\NoFamilyLogRegistered;
 use Admin\Tests\Factory\FamilyLogFactory;
-use App\Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;

@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Inventory\Tests\Adapters\Controller\Symfony\Controller\StartInventory;
 
 use Admin\Tests\Factory\ZoneStorageFactory;
-use App\Shared\Tests\BaseFunctionalTestCase;
 use Inventory\Adapters\Controller\Symfony\Controller\StartInventory\LoadArticlesAndStartInventoryController;
 use Inventory\Adapters\Gateway\ORM\Entity\InventoryStatus;
 use Inventory\Entities\Exception\CannotLoadArticlesOnNonDraftInventory;
@@ -22,6 +21,7 @@ use Inventory\Entities\Exception\NoArticlesToLoad;
 use Inventory\Tests\Factory\InventoryFactory;
 use Inventory\Tests\Story\InventoryStory;
 use Shared\Entities\Clock\ClockFactory;
+use Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;

@@ -16,9 +16,9 @@ namespace Admin\Tests\Adapters\Gateway\ORM\Finder;
 use Admin\Entities\Article\Article;
 use Admin\Tests\Factory\ArticleFactory;
 use Admin\UseCases\Gateway\Finder\ArticleFinder;
-use App\Shared\Tests\BaseFunctionalTestCase;
 use Faker\Factory;
 use Shared\Entities\ResourceUuid;
+use Shared\Tests\BaseFunctionalTestCase;
 use Zenstruck\Foundry\Test\Factories;
 
 /**
