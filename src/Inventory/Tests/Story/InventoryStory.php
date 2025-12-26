@@ -107,7 +107,7 @@ final class InventoryStory extends Story
         ]);
 
         ArticleFactory::createOne([
-            'label' => 'Tomates',
+            'name' => 'Tomates',
             'supplier' => $supplier1->_real(),
             'tax' => $taxReduite->_real(),
             'packaging' => [[$unitKg->_real()->toDomain(), 1.0], null, null],
@@ -115,7 +115,7 @@ final class InventoryStory extends Story
             'quantity' => 10.0, // 10 kg
         ]);
         ArticleFactory::createOne([
-            'label' => 'Lait',
+            'name' => 'Lait',
             'supplier' => $supplier2->_real(),
             'tax' => $taxReduite->_real(),
             'packaging' => [[$unitLitre->_real()->toDomain(), 1.0], null, null],

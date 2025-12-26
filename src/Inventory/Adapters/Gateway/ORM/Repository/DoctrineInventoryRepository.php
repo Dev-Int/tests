@@ -99,6 +99,7 @@ final class DoctrineInventoryRepository extends ServiceEntityRepository implemen
                     id: null,
                     inventory: $inventoryOrm,
                     articleId: $item->article()->toString(),
+                    articleName: $item->articleName()->toString(),
                     zoneStorageId: $item->zoneStorage()->toString(),
                     price: $item->price()->toInt(),
                     theoreticalStock: $item->theoreticalStock()->toMilliemes(),

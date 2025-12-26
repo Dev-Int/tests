@@ -16,11 +16,13 @@ namespace Inventory\Tests\DataBuilder;
 use Inventory\Entities\InventoryItem;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\Amount;
+use Shared\Entities\VO\NameField;
 use Shared\Entities\VO\Quantity;
 
 final class InventoryItemDataBuilder
 {
     private ResourceUuid $article;
+    private NameField $articleName;
     private ResourceUuid $zoneStorage;
     private int $priceCents = 1500;
     private int $theoreticalStockMilliemes = 10000;
@@ -30,23 +32,11 @@ final class InventoryItemDataBuilder
     public function __construct(
         ?ResourceUuid $article = null,
         ?ResourceUuid $zoneStorage = null,
+        ?NameField $articleName = null,
     ) {
         $this->article = $article ?? ResourceUuid::generate();
         $this->zoneStorage = $zoneStorage ?? ResourceUuid::generate();
-    }
-
-    public function withArticle(ResourceUuid $article): self
-    {
-        $this->article = $article;
-
-        return $this;
-    }
-
-    public function withZoneStorage(ResourceUuid $zoneStorage): self
-    {
-        $this->zoneStorage = $zoneStorage;
-
-        return $this;
+        $this->articleName = $articleName ?? NameField::fromString('Test Article');
     }
 
     public function withPrice(int $cents): self
@@ -81,6 +71,7 @@ final class InventoryItemDataBuilder
     {
         return new InventoryItem(
             article: $this->article,
+            articleName: $this->articleName,
             zoneStorage: $this->zoneStorage,
             price: Amount::fromCents($this->priceCents),
             theoreticalStock: Quantity::fromMilliemes($this->theoreticalStockMilliemes),

@@ -17,6 +17,7 @@ use Inventory\Entities\VO\Article;
 use Inventory\Entities\VO\StockDifference;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\Amount;
+use Shared\Entities\VO\NameField;
 use Shared\Entities\VO\Quantity;
 
 final readonly class InventoryItem
@@ -25,6 +26,7 @@ final readonly class InventoryItem
     {
         return new self(
             article: $article->uuid,
+            articleName: $article->name,
             zoneStorage: $article->zoneStorageUuid,
             price: $article->unitPrice,
             theoreticalStock: $article->quantity,
@@ -35,6 +37,7 @@ final readonly class InventoryItem
 
     public function __construct(
         private ResourceUuid $article,
+        private NameField $articleName,
         private ResourceUuid $zoneStorage,
         private Amount $price,
         private Quantity $theoreticalStock,
@@ -46,6 +49,11 @@ final readonly class InventoryItem
     public function article(): ResourceUuid
     {
         return $this->article;
+    }
+
+    public function articleName(): NameField
+    {
+        return $this->articleName;
     }
 
     public function zoneStorage(): ResourceUuid
@@ -98,6 +106,7 @@ final readonly class InventoryItem
     {
         return new self(
             article: $this->article,
+            articleName: $this->articleName,
             zoneStorage: $this->zoneStorage,
             price: $this->price,
             theoreticalStock: $this->theoreticalStock,

@@ -147,6 +147,7 @@ final class InventoryMapperTest extends TestCase
             id: null,
             inventory: $inventoryOrm,
             articleId: ResourceUuid::generate()->toString(),
+            articleName: 'Test Article',
             zoneStorageId: $zoneUuid->toString(),
             price: 1000,
             theoreticalStock: 12345, // 12345 millièmes → 12.345

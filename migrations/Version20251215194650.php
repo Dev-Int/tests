@@ -35,6 +35,7 @@ final class Version20251215194650 extends AbstractMigration
             'inventory_id UUID NOT NULL, ' .
             'article_id UUID NOT NULL, ' .
             'zone_storage_id UUID NOT NULL, ' .
+            'article_name VARCHAR(255) NOT NULL, ' .
             'price INT NOT NULL, ' .
             'theoretical_stock INTEGER NOT NULL, ' .
             'real_stock INTEGER NOT NULL, ' .

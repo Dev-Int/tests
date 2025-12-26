@@ -25,6 +25,7 @@ use Inventory\Entities\VO\ZoneStorage;
 use Inventory\UseCases\Gateway\ZoneStorageGatewayInterface;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\Amount;
+use Shared\Entities\VO\NameField;
 use Shared\Entities\VO\Quantity;
 
 final readonly class InventoryMapper
@@ -76,6 +77,7 @@ final readonly class InventoryMapper
         foreach ($inventory->items() as $item) {
             $itemDomain = new InventoryItemDomain(
                 article: ResourceUuid::fromString($item->articleId()),
+                articleName: NameField::fromString($item->articleName()),
                 zoneStorage: ResourceUuid::fromString($item->zoneStorageId()),
                 price: Amount::fromCents($item->price()),
                 theoreticalStock: Quantity::fromMilliemes($item->theoreticalStock()),
@@ -105,6 +107,7 @@ final readonly class InventoryMapper
                     id: null,
                     inventory: $inventory,
                     articleId: $item->article()->toString(),
+                    articleName: $item->articleName()->toString(),
                     zoneStorageId: $item->zoneStorage()->toString(),
                     price: $item->price()->toInt(),
                     theoreticalStock: $item->theoreticalStock()->toMilliemes(),
