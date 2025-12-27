@@ -43,6 +43,25 @@ Adapters  → UseCases + Entities + Shared + OtherBC\Contracts
 
 Inner layers NEVER depend on outer layers
 
+### Controllers et UseCases
+
+**Les Controllers appellent DIRECTEMENT les UseCases** - c'est intentionnel et correct.
+
+```php
+// ✅ CORRECT - Controller dépend directement du UseCase
+public function __construct(
+    private readonly CreateInventory $useCase,
+)
+
+// ✅ CORRECT - UseCase dépend d'interfaces Gateway
+public function __construct(
+    private readonly InventoryRepository $repository,  // Interface
+)
+```
+
+**Ne PAS créer d'interfaces pour les UseCases** - ce serait du boilerplate inutile.
+Les UseCases sont la frontière applicative, pas des détails d'implémentation.
+
 ---
 
 ## Inter-BC
@@ -140,3 +159,36 @@ Admin\     → src/Admin/
 Inventory\ → src/Inventory/
 Shared\    → src/Shared/
 ```
+
+---
+
+## Outils à privilégier
+
+### MCP PhpStorm (OBLIGATOIRE)
+
+**Toujours utiliser les outils MCP JetBrains** pour les opérations IDE :
+
+| Action | Outil MCP |
+|--------|-----------|
+| Renommer symbole | `mcp__jetbrains-phpstorm__rename_refactoring` |
+| Rechercher dans le code | `mcp__jetbrains-phpstorm__search_in_files_by_text` |
+| Erreurs PHPStan/IDE | `mcp__jetbrains-phpstorm__get_file_problems` |
+| Trouver fichiers | `mcp__jetbrains-phpstorm__find_files_by_name_keyword` |
+| Reformater fichier | `mcp__jetbrains-phpstorm__reformat_file` |
+
+### Commandes PHP (via docker compose)
+
+Exécuter les commandes Make dans le container :
+
+```bash
+docker compose exec php make tu          # Tests unitaires
+docker compose exec php make tf          # Tests fonctionnels
+docker compose exec php make ta          # Tous les tests
+docker compose exec php make stan        # PHPStan level 9
+docker compose exec php make cs-fixer    # PHP CS Fixer
+docker compose exec php make qa          # Quality gates complet
+```
+
+**Note** : `make sh` et `make zsh` s'exécutent sur l'hôte (pour entrer dans le container)
+
+**Référence** : Toujours utiliser les targets du Makefile plutôt que les commandes brutes

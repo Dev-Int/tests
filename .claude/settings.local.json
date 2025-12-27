@@ -39,7 +39,14 @@
       "mcp__jetbrains-phpstorm__list_directory_tree",
       "mcp__plugin_playwright_playwright__browser_navigate",
       "mcp__plugin_greptile_greptile__get_merge_request",
-      "mcp__plugin_greptile_greptile__list_merge_request_comments"
+      "mcp__plugin_greptile_greptile__list_merge_request_comments",
+      "mcp__jetbrains-phpstorm__rename_refactoring",
+      "Bash(grep:*)",
+      "mcp__jetbrains-phpstorm__create_new_file",
+      "mcp__jetbrains-phpstorm__execute_terminal_command",
+      "mcp__jetbrains-phpstorm__get_file_problems",
+      "mcp__plugin_greptile_greptile__create_custom_context",
+      "mcp__jetbrains-phpstorm__get_file_text_by_path"
     ],
     "deny": [
       "../.env",
