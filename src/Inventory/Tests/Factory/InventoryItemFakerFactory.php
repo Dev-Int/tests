@@ -49,6 +49,7 @@ final class InventoryItemFakerFactory
             ->withTheoreticalStock($theoreticalStock)
             ->withRealStock($realStock)
             ->withAmount(5000)
+            ->asCounted()
         ;
     }
 }

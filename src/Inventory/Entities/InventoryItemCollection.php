@@ -145,4 +145,38 @@ final class InventoryItemCollection implements Collection, \Countable
 
         return array_values($articles);
     }
+
+    /**
+     * Get all items that have a discrepancy (realStock != theoreticalStock).
+     *
+     * @return array<InventoryItem>
+     */
+    public function getItemsWithDiscrepancies(): array
+    {
+        return array_values(array_filter(
+            $this->items,
+            static fn (InventoryItem $item): bool => !$item->calculateDifference()->isZero()
+        ));
+    }
+
+    public function countDiscrepancies(): int
+    {
+        return \count($this->getItemsWithDiscrepancies());
+    }
+
+    /**
+     * @return array<ResourceUuid>
+     */
+    public function getZonesWithUncountedItems(): array
+    {
+        $zones = [];
+
+        foreach ($this->items as $item) {
+            if (!$item->hasBeenCounted()) {
+                $zones[$item->zoneStorage()->toString()] = $item->zoneStorage();
+            }
+        }
+
+        return array_values($zones);
+    }
 }

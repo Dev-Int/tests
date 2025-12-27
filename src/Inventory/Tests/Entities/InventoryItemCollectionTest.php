@@ -16,6 +16,8 @@ namespace Inventory\Tests\Entities;
 use Inventory\Entities\InventoryItemCollection;
 use Inventory\Tests\Factory\InventoryItemFakerFactory;
 use PHPUnit\Framework\TestCase;
+use Shared\Entities\Clock\ClockFactory;
+use Shared\Entities\Clock\FrozenClock;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\Quantity;
 
@@ -279,5 +281,134 @@ final class InventoryItemCollectionTest extends TestCase
 
         // Assert
         self::assertCount(0, $articleUuids);
+    }
+
+    public function testGetItemsWithDiscrepanciesReturnsOnlyItemsWithDifference(): void
+    {
+        // Arrange
+        ClockFactory::initialize(new FrozenClock(new \DateTimeImmutable('2025-12-15')));
+
+        $collection = new InventoryItemCollection();
+        // Item with no discrepancy (theoretical = real)
+        $noDiscrepancy = $this->itemFactory->createWithPreciseStocks(theoreticalStock: 10.0, realStock: 10.0)->build();
+        // Item with shortage
+        $shortage = $this->itemFactory->createWithPreciseStocks(theoreticalStock: 10.0, realStock: 8.0)->build();
+        // Item with surplus
+        $surplus = $this->itemFactory->createWithPreciseStocks(theoreticalStock: 10.0, realStock: 12.0)->build();
+
+        $collection->add($noDiscrepancy);
+        $collection->add($shortage);
+        $collection->add($surplus);
+
+        // Act
+        $discrepancies = $collection->getItemsWithDiscrepancies();
+
+        // Assert
+        self::assertCount(2, $discrepancies);
+    }
+
+    public function testGetItemsWithDiscrepanciesReturnsEmptyWhenNoDiscrepancies(): void
+    {
+        // Arrange
+        $collection = new InventoryItemCollection();
+        $collection->add($this->itemFactory->createWithPreciseStocks(theoreticalStock: 10.0, realStock: 10.0)->build());
+        $collection->add($this->itemFactory->createWithPreciseStocks(theoreticalStock: 5.0, realStock: 5.0)->build());
+
+        // Act
+        $discrepancies = $collection->getItemsWithDiscrepancies();
+
+        // Assert
+        self::assertCount(0, $discrepancies);
+    }
+
+    public function testCountDiscrepanciesReturnsCorrectCount(): void
+    {
+        // Arrange
+        $collection = new InventoryItemCollection();
+        $collection->add($this->itemFactory->createWithPreciseStocks(theoreticalStock: 10.0, realStock: 10.0)->build()); // No discrepancy
+        $collection->add($this->itemFactory->createWithPreciseStocks(theoreticalStock: 10.0, realStock: 8.0)->build());  // Shortage
+        $collection->add($this->itemFactory->createWithPreciseStocks(theoreticalStock: 10.0, realStock: 12.0)->build()); // Surplus
+        $collection->add($this->itemFactory->createWithPreciseStocks(theoreticalStock: 5.0, realStock: 3.0)->build());   // Shortage
+
+        // Act
+        $count = $collection->countDiscrepancies();
+
+        // Assert
+        self::assertSame(3, $count);
+    }
+
+    public function testCountDiscrepanciesReturnsZeroWhenNoDiscrepancies(): void
+    {
+        // Arrange
+        $collection = new InventoryItemCollection();
+        $collection->add($this->itemFactory->createWithPreciseStocks(theoreticalStock: 10.0, realStock: 10.0)->build());
+
+        // Act
+        $count = $collection->countDiscrepancies();
+
+        // Assert
+        self::assertSame(0, $count);
+    }
+
+    public function testGetZonesWithUncountedItemsReturnsEmptyWhenAllCounted(): void
+    {
+        // Arrange
+        $zoneA = ResourceUuid::generate();
+        $zoneB = ResourceUuid::generate();
+
+        $collection = new InventoryItemCollection();
+        $collection->add($this->itemFactory->create(zoneStorage: $zoneA)->asCounted()->build());
+        $collection->add($this->itemFactory->create(zoneStorage: $zoneB)->asCounted()->build());
+
+        // Act
+        $zones = $collection->getZonesWithUncountedItems();
+
+        // Assert
+        self::assertCount(0, $zones);
+    }
+
+    public function testGetZonesWithUncountedItemsReturnsOnlyZonesWithUncountedItems(): void
+    {
+        // Arrange
+        $zoneA = ResourceUuid::generate();
+        $zoneB = ResourceUuid::generate();
+        $zoneC = ResourceUuid::generate();
+
+        $collection = new InventoryItemCollection();
+        // Zone A: all counted
+        $collection->add($this->itemFactory->create(zoneStorage: $zoneA)->asCounted()->build());
+        // Zone B: some not counted
+        $collection->add($this->itemFactory->create(zoneStorage: $zoneB)->asCounted()->build());
+        $collection->add($this->itemFactory->create(zoneStorage: $zoneB)->build()); // Not counted
+        // Zone C: none counted
+        $collection->add($this->itemFactory->create(zoneStorage: $zoneC)->build());
+
+        // Act
+        $zones = $collection->getZonesWithUncountedItems();
+
+        // Assert
+        self::assertCount(2, $zones);
+        $zoneStrings = array_map(static fn (ResourceUuid $zone) => $zone->toString(), $zones);
+        self::assertContains($zoneB->toString(), $zoneStrings);
+        self::assertContains($zoneC->toString(), $zoneStrings);
+        self::assertNotContains($zoneA->toString(), $zoneStrings);
+    }
+
+    public function testGetZonesWithUncountedItemsReturnsUniqueZones(): void
+    {
+        // Arrange
+        $zoneA = ResourceUuid::generate();
+
+        $collection = new InventoryItemCollection();
+        // Multiple uncounted items in same zone
+        $collection->add($this->itemFactory->create(zoneStorage: $zoneA)->build());
+        $collection->add($this->itemFactory->create(zoneStorage: $zoneA)->build());
+        $collection->add($this->itemFactory->create(zoneStorage: $zoneA)->build());
+
+        // Act
+        $zones = $collection->getZonesWithUncountedItems();
+
+        // Assert - should only return zone once
+        self::assertCount(1, $zones);
     }
 }

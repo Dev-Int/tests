@@ -47,6 +47,8 @@ class InventoryItem
         private int $realStock,
         #[ORM\Column(name: 'amount', type: 'integer')]
         private int $amount,
+        #[ORM\Column(name: 'counted_at', type: 'datetime_immutable', nullable: true)]
+        private ?\DateTimeImmutable $countedAt = null,
     ) {
     }
 
@@ -95,9 +97,15 @@ class InventoryItem
         return $this->amount;
     }
 
-    public function updateRealStock(int $realStock): void
+    public function updateRealStock(int $realStock, ?\DateTimeImmutable $countedAt): void
     {
         $this->realStock = $realStock;
+        $this->countedAt = $countedAt;
+    }
+
+    public function countedAt(): ?\DateTimeImmutable
+    {
+        return $this->countedAt;
     }
 
     public function packaging(): InventoryItemPackaging

@@ -16,6 +16,7 @@ namespace Inventory\Entities;
 use Inventory\Entities\VO\Article;
 use Inventory\Entities\VO\PackagingSnapshot;
 use Inventory\Entities\VO\StockDifference;
+use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\Amount;
 use Shared\Entities\VO\NameField;
@@ -38,10 +39,11 @@ final readonly class InventoryItem
     }
 
     /**
-     * @param Amount            $amount    Snapshot of theoretical value at creation (price × theoreticalStock).
-     *                                     This is NOT recalculated when realStock changes.
-     *                                     Real value after counting = price × realStock.
-     * @param PackagingSnapshot $packaging snapshot of article packaging at inventory creation
+     * @param Amount                  $amount    Snapshot of theoretical value at creation (price × theoreticalStock).
+     *                                           This is NOT recalculated when realStock changes.
+     *                                           Real value after counting = price × realStock.
+     * @param PackagingSnapshot       $packaging snapshot of article packaging at inventory creation
+     * @param \DateTimeImmutable|null $countedAt timestamp when the item was counted, null if not yet counted
      */
     public function __construct(
         private ResourceUuid $article,
@@ -52,6 +54,7 @@ final readonly class InventoryItem
         private Quantity $realStock,
         private Amount $amount,
         private PackagingSnapshot $packaging,
+        private ?\DateTimeImmutable $countedAt = null,
     ) {
     }
 
@@ -127,7 +130,18 @@ final readonly class InventoryItem
             realStock: $realStock,
             amount: $this->amount,
             packaging: $this->packaging,
+            countedAt: ClockFactory::clock()->now(),
         );
+    }
+
+    public function countedAt(): ?\DateTimeImmutable
+    {
+        return $this->countedAt;
+    }
+
+    public function hasBeenCounted(): bool
+    {
+        return $this->countedAt instanceof \DateTimeImmutable;
     }
 
     public function calculateDifference(): StockDifference
