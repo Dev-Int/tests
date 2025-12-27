@@ -13,9 +13,10 @@ declare(strict_types=1);
 
 namespace Inventory\Tests\Entities;
 
-use App\Inventory\Tests\Factory\InventoryFakerFactory;
 use Inventory\Entities\Exception\NoArticlesToLoad;
 use Inventory\Entities\VO\Article;
+use Inventory\Tests\DataBuilder\InventoryItemDataBuilder;
+use Inventory\Tests\Factory\InventoryFakerFactory;
 use PHPUnit\Framework\TestCase;
 use Shared\Entities\Exception\DomainException;
 use Shared\Entities\ResourceUuid;
@@ -84,10 +85,12 @@ final class InventoryLoadArticlesTest extends TestCase
         for ($i = 0; $i < $count; ++$i) {
             $articles[] = new Article(
                 uuid: ResourceUuid::generate(),
+                zoneStorageUuid: ResourceUuid::generate(),
                 name: NameField::fromString("Article {$i}"),
                 unitPrice: Amount::fromCents(1000 + $i * 100),
                 quantity: Quantity::fromMilliemes(1000),
                 slug: "article-{$i}",
+                packaging: InventoryItemDataBuilder::defaultPackaging(),
             );
         }
 

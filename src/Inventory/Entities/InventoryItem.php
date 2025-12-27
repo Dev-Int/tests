@@ -14,8 +14,11 @@ declare(strict_types=1);
 namespace Inventory\Entities;
 
 use Inventory\Entities\VO\Article;
+use Inventory\Entities\VO\PackagingSnapshot;
+use Inventory\Entities\VO\StockDifference;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\Amount;
+use Shared\Entities\VO\NameField;
 use Shared\Entities\VO\Quantity;
 
 final readonly class InventoryItem
@@ -24,25 +27,52 @@ final readonly class InventoryItem
     {
         return new self(
             article: $article->uuid,
+            articleName: $article->name,
+            zoneStorage: $article->zoneStorageUuid,
             price: $article->unitPrice,
             theoreticalStock: $article->quantity,
             realStock: Quantity::fromMilliemes(0),
             amount: $article->unitPrice->computeQuantity($article->quantity),
+            packaging: $article->packaging,
         );
     }
 
+    /**
+     * @param Amount            $amount    Snapshot of theoretical value at creation (price × theoreticalStock).
+     *                                     This is NOT recalculated when realStock changes.
+     *                                     Real value after counting = price × realStock.
+     * @param PackagingSnapshot $packaging snapshot of article packaging at inventory creation
+     */
     public function __construct(
         private ResourceUuid $article,
+        private NameField $articleName,
+        private ResourceUuid $zoneStorage,
         private Amount $price,
         private Quantity $theoreticalStock,
         private Quantity $realStock,
         private Amount $amount,
+        private PackagingSnapshot $packaging,
     ) {
     }
 
     public function article(): ResourceUuid
     {
         return $this->article;
+    }
+
+    public function articleName(): NameField
+    {
+        return $this->articleName;
+    }
+
+    public function zoneStorage(): ResourceUuid
+    {
+        return $this->zoneStorage;
+    }
+
+    public function identifier(): string
+    {
+        return "{$this->article->toString()}_{$this->zoneStorage->toString()}";
     }
 
     public function price(): Amount
@@ -63,5 +93,45 @@ final readonly class InventoryItem
     public function amount(): Amount
     {
         return $this->amount;
+    }
+
+    public function packaging(): PackagingSnapshot
+    {
+        return $this->packaging;
+    }
+
+    public function isFor(ResourceUuid $articleUuid, ResourceUuid $zoneStorageUuid): bool
+    {
+        return $this->article->toString() === $articleUuid->toString()
+            && $this->zoneStorage->toString() === $zoneStorageUuid->toString();
+    }
+
+    public function isForArticle(ResourceUuid $articleUuid): bool
+    {
+        return $this->article->toString() === $articleUuid->toString();
+    }
+
+    public function isForZone(ResourceUuid $zoneStorageUuid): bool
+    {
+        return $this->zoneStorage->toString() === $zoneStorageUuid->toString();
+    }
+
+    public function withRealStock(Quantity $realStock): self
+    {
+        return new self(
+            article: $this->article,
+            articleName: $this->articleName,
+            zoneStorage: $this->zoneStorage,
+            price: $this->price,
+            theoreticalStock: $this->theoreticalStock,
+            realStock: $realStock,
+            amount: $this->amount,
+            packaging: $this->packaging,
+        );
+    }
+
+    public function calculateDifference(): StockDifference
+    {
+        return StockDifference::calculate($this->realStock, $this->theoreticalStock);
     }
 }

@@ -76,9 +76,9 @@ final class ZoneStorageCollection implements Collection
     {
         $select = [];
         foreach ($this->zoneStorages as $zoneStorage) {
-            $select += [$zoneStorage->label->toString() => $zoneStorage->uuid->toString()];
+            $select[$zoneStorage->label->toString()] = $zoneStorage->uuid->toString();
         }
 
-        return array_merge($select);
+        return $select;
     }
 }

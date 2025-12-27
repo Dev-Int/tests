@@ -17,7 +17,7 @@ use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineFamilyLogRepository;
 use Admin\Entities\FamilyLog\FamilyLog as FamilyLogDomain;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
-use App\Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\BaseFunctionalTestCase;
 
 class FamilyLogTest extends BaseFunctionalTestCase
 {

@@ -16,7 +16,7 @@ namespace Admin\Tests\Adapters\Controller\Symfony\Controller\ZoneStorage\GetZone
 use Admin\Entities\Exception\ZoneStorage\NoZoneStorageRegistered;
 use Admin\Tests\Factory\FamilyLogFactory;
 use Admin\Tests\Factory\ZoneStorageFactory;
-use App\Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;

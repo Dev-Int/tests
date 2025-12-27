@@ -13,22 +13,22 @@ declare(strict_types=1);
 
 namespace Inventory\Tests\Adapters\Gateway\ORM;
 
-use App\Inventory\Tests\Factory\InventoryFakerFactory;
 use Inventory\Adapters\Gateway\ORM\Entity\Inventory as InventoryOrm;
+use Inventory\Adapters\Gateway\ORM\Entity\InventoryItem;
+use Inventory\Adapters\Gateway\ORM\Entity\InventoryItemPackaging;
 use Inventory\Adapters\Gateway\ORM\Entity\InventoryStatus as InventoryStatusOrm;
 use Inventory\Adapters\Gateway\ORM\InventoryMapper;
 use Inventory\Entities\Inventory;
-use Inventory\Entities\InventoryItem;
 use Inventory\Entities\VO\InventoryDate;
 use Inventory\Entities\VO\ZoneStorage;
+use Inventory\Tests\Factory\InventoryFakerFactory;
+use Inventory\Tests\Factory\InventoryItemFakerFactory;
 use Inventory\UseCases\Gateway\ZoneStorageGatewayInterface;
 use PHPUnit\Framework\TestCase;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\Clock\FrozenClock;
 use Shared\Entities\ResourceUuid;
-use Shared\Entities\VO\Amount;
 use Shared\Entities\VO\NameField;
-use Shared\Entities\VO\Quantity;
 
 /**
  * @group unitTest
@@ -37,9 +37,12 @@ use Shared\Entities\VO\Quantity;
  */
 final class InventoryMapperTest extends TestCase
 {
+    private InventoryItemFakerFactory $itemFactory;
+
     protected function setUp(): void
     {
         ClockFactory::initialize(new FrozenClock(new \DateTimeImmutable('2025-12-21 14:00:00')));
+        $this->itemFactory = new InventoryItemFakerFactory();
     }
 
     public function testMapsFromDomainToOrmWithNullableSettledAt(): void
@@ -82,14 +85,13 @@ final class InventoryMapperTest extends TestCase
         $date = InventoryDate::fromDateTimeImmutable(ClockFactory::clock()->now());
 
         $inventory = Inventory::create($uuid, [$zoneStorage], $date);
-        $item = new InventoryItem(
-            article: ResourceUuid::generate(),
-            price: Amount::fromCents(1000),
-            theoreticalStock: Quantity::fromUnit(12.345),
-            realStock: Quantity::fromUnit(10.500),
-            amount: Amount::fromCents(5000),
+        $inventory->addItem(
+            $this->itemFactory->createWithPreciseStocks(
+                theoreticalStock: 12.345,
+                realStock: 10.5,
+                zoneStorage: $zoneStorage->uuid,
+            )->build()
         );
-        $inventory->addItem($item);
 
         // Act
         $inventoryOrm = $mapper->fromDomain($inventory);
@@ -142,15 +144,26 @@ final class InventoryMapperTest extends TestCase
         );
 
         // Add an item with stocks in millièmes
-        $itemOrm = new \Inventory\Adapters\Gateway\ORM\Entity\InventoryItem(
+        $itemOrm = new InventoryItem(
             id: null,
             inventory: $inventoryOrm,
             articleId: ResourceUuid::generate()->toString(),
+            articleName: 'Test Article',
+            zoneStorageId: $zoneUuid->toString(),
             price: 1000,
             theoreticalStock: 12345, // 12345 millièmes → 12.345
             realStock: 10500, // 10500 millièmes → 10.5
             amount: 5000
         );
+
+        $packagingOrm = new InventoryItemPackaging(
+            id: null,
+            inventoryItem: $itemOrm,
+            parcelUnitLabel: 'colis',
+            parcelUnitAbbreviation: 'col',
+            parcelQuantity: 4.0,
+        );
+        $itemOrm->setPackaging($packagingOrm);
         $inventoryOrm->addItem($itemOrm);
 
         // Act
@@ -221,14 +234,13 @@ final class InventoryMapperTest extends TestCase
         $date = InventoryDate::fromDateTimeImmutable(ClockFactory::clock()->now());
 
         $originalInventory = Inventory::create($uuid, [$zoneStorage], $date);
-        $item = new InventoryItem(
-            article: ResourceUuid::generate(),
-            price: Amount::fromCents(1000),
-            theoreticalStock: Quantity::fromUnit(12.345),
-            realStock: Quantity::fromUnit(10.5),
-            amount: Amount::fromCents(5000),
+        $originalInventory->addItem(
+            $this->itemFactory->createWithPreciseStocks(
+                theoreticalStock: 12.345,
+                realStock: 10.5,
+                zoneStorage: $zoneStorage->uuid,
+            )->build()
         );
-        $originalInventory->addItem($item);
 
         $zoneStorageGateway->expects(self::once())
             ->method('provide')

@@ -34,17 +34,20 @@ final class Version20251215194650 extends AbstractMigration
             'id INT NOT NULL, ' .
             'inventory_id UUID NOT NULL, ' .
             'article_id UUID NOT NULL, ' .
+            'zone_storage_id UUID NOT NULL, ' .
+            'article_name VARCHAR(255) NOT NULL, ' .
             'price INT NOT NULL, ' .
             'theoretical_stock INTEGER NOT NULL, ' .
             'real_stock INTEGER NOT NULL, ' .
             'amount INT NOT NULL, ' .
             'PRIMARY KEY(id))'
         );
-        $this->addSql('CREATE INDEX IDX_55BDEA309EEA759 ON inventory_item (inventory_id)');
         $this->addSql(
             'ALTER TABLE inventory_item ADD CONSTRAINT FK_55BDEA309EEA759 FOREIGN KEY (inventory_id) ' .
             'REFERENCES inventory (uuid) NOT DEFERRABLE INITIALLY IMMEDIATE'
         );
+        $this->addSql('CREATE INDEX idx_inventory_item_inventory_id ON inventory_item (inventory_id)');
+        $this->addSql('CREATE INDEX idx_inventory_item_article_zone ON inventory_item (article_id, zone_storage_id)');
         $this->addSql('CREATE INDEX idx_inventory_status ON inventory (status)');
         $this->addSql('CREATE INDEX idx_inventory_date ON inventory (date)');
     }
@@ -52,10 +55,12 @@ final class Version20251215194650 extends AbstractMigration
     public function down(Schema $schema): void
     {
         $this->addSql('DROP SEQUENCE inventory_item_id_seq CASCADE');
-        $this->addSql('DROP INDEX idx_inventory_status');
         $this->addSql('DROP INDEX idx_inventory_date');
+        $this->addSql('DROP INDEX idx_inventory_status');
+        $this->addSql('DROP INDEX idx_inventory_item_article_zone');
+        $this->addSql('DROP INDEX idx_inventory_item_inventory_id');
         $this->addSql('ALTER TABLE inventory_item DROP CONSTRAINT FK_55BDEA309EEA759');
-        $this->addSql('DROP TABLE inventory');
         $this->addSql('DROP TABLE inventory_item');
+        $this->addSql('DROP TABLE inventory');
     }
 }

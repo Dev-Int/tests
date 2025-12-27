@@ -35,4 +35,6 @@ interface InventoryRepository
      * @throws InventoryNotFound
      */
     public function getByUuid(ResourceUuid $uuid): Inventory;
+
+    public function save(Inventory $inventory): void;
 }

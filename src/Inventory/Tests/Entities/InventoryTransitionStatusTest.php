@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Inventory\Tests\Entities;
 
-use App\Inventory\Tests\Factory\InventoryFakerFactory;
 use Inventory\Entities\Exception\InvalidStatusTransition;
 use Inventory\Entities\VO\InventoryStatus;
+use Inventory\Tests\Factory\InventoryFakerFactory;
 use PHPUnit\Framework\TestCase;
 use Shared\Entities\Exception\DomainException;
 

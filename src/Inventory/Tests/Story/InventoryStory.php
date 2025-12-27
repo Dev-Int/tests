@@ -64,6 +64,10 @@ final class InventoryStory extends Story
             'label' => 'Litre',
             'symbol' => 'L',
         ]);
+        $unitPiece = UnitFactory::createOne([
+            'label' => 'Pièce',
+            'symbol' => 'Pce',
+        ]);
 
         $surgele = FamilyLogFactory::createOne([
             'label' => 'Surgelé',
@@ -107,7 +111,7 @@ final class InventoryStory extends Story
         ]);
 
         ArticleFactory::createOne([
-            'label' => 'Tomates',
+            'name' => 'Tomates',
             'supplier' => $supplier1->_real(),
             'tax' => $taxReduite->_real(),
             'packaging' => [[$unitKg->_real()->toDomain(), 1.0], null, null],
@@ -115,12 +119,20 @@ final class InventoryStory extends Story
             'quantity' => 10.0, // 10 kg
         ]);
         ArticleFactory::createOne([
-            'label' => 'Lait',
+            'name' => 'Lait',
             'supplier' => $supplier2->_real(),
             'tax' => $taxReduite->_real(),
             'packaging' => [[$unitLitre->_real()->toDomain(), 1.0], null, null],
             'zoneStorages' => [$zonePositive->_real()],
             'quantity' => 15.0, // 15 L
+        ]);
+        ArticleFactory::createOne([
+            'name' => 'Camembert',
+            'supplier' => $supplier2->_real(),
+            'tax' => $taxReduite->_real(),
+            'packaging' => [[$unitPiece->_real()->toDomain(), 1.0], null, null],
+            'zoneStorages' => [$zonePositive->_real()],
+            'quantity' => 5.0, // 5 pieces
         ]);
     }
 }

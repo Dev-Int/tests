@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Inventory\Tests\UseCases\LoadArticlesAndStartInventory;
 
-use App\Inventory\Tests\Factory\InventoryFakerFactory;
 use Inventory\Entities\Exception\CannotLoadArticlesOnNonDraftInventory;
 use Inventory\Entities\Exception\InventoryNotFound;
 use Inventory\Entities\Exception\NoArticlesToLoad;
@@ -21,6 +20,8 @@ use Inventory\Entities\Repository\InventoryRepository;
 use Inventory\Entities\VO\Article;
 use Inventory\Entities\VO\InventoryStatus;
 use Inventory\Entities\VO\ZoneStorage;
+use Inventory\Tests\DataBuilder\InventoryItemDataBuilder;
+use Inventory\Tests\Factory\InventoryFakerFactory;
 use Inventory\UseCases\Gateway\ArticleGatewayInterface;
 use Inventory\UseCases\LoadArticlesAndStartInventory\LoadArticlesAndStartInventory;
 use Inventory\UseCases\LoadArticlesAndStartInventory\LoadArticlesAndStartInventoryRequest;
@@ -60,10 +61,12 @@ final class StartInventoryTest extends TestCase
 
         $article = new Article(
             uuid: ResourceUuid::generate(),
+            zoneStorageUuid: $zoneStorage->uuid,
             name: NameField::fromString('Yaourt'),
             unitPrice: Amount::fromCents(1000),
             quantity: Quantity::fromUnit(5.0),
-            slug: 'yaourt'
+            slug: 'yaourt',
+            packaging: InventoryItemDataBuilder::defaultPackaging(),
         );
 
         $repository = $this->createMock(InventoryRepository::class);

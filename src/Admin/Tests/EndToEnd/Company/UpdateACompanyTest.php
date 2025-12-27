@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\Tests\EndToEnd\Company;
 
 use Admin\Adapters\Gateway\ConfigurationService;
-use App\Shared\Tests\BasePantherTestCase;
+use Shared\Tests\BasePantherTestCase;
 use Symfony\Component\Panther\PantherTestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 

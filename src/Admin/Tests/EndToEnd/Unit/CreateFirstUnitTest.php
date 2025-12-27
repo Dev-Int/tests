@@ -18,8 +18,8 @@ use Admin\Adapters\Controller\Symfony\Controller\Unit\CreateUnit\CreateUnitContr
 use Admin\Adapters\Controller\Symfony\Controller\Unit\GetUnits\GetUnitsController;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineCompanyRepository;
 use Admin\Tests\DataBuilder\CompanyDataBuilder;
-use App\Shared\Tests\BasePantherTestCase;
 use Faker\Factory;
+use Shared\Tests\BasePantherTestCase;
 use Symfony\Component\Panther\PantherTestCase;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;

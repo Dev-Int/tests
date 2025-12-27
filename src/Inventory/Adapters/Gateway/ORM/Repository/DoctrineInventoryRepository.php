@@ -19,6 +19,7 @@ use Doctrine\DBAL\ParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 use Inventory\Adapters\Gateway\ORM\Entity\Inventory;
 use Inventory\Adapters\Gateway\ORM\Entity\InventoryItem;
+use Inventory\Adapters\Gateway\ORM\Entity\InventoryItemPackaging;
 use Inventory\Adapters\Gateway\ORM\InventoryMapper;
 use Inventory\Entities\Exception\InventoryNotFound;
 use Inventory\Entities\Inventory as InventoryDomain;
@@ -94,17 +95,22 @@ final class DoctrineInventoryRepository extends ServiceEntityRepository implemen
         $inventoryOrm->start($statusUpdatedAt);
 
         foreach ($inventory->items()->toArray() as $item) {
-            $inventoryOrm->addItem(
-                new InventoryItem(
-                    id: null,
-                    inventory: $inventoryOrm,
-                    articleId: $item->article()->toString(),
-                    price: $item->price()->toInt(),
-                    theoreticalStock: $item->theoreticalStock()->toMilliemes(),
-                    realStock: $item->realStock()->toMilliemes(),
-                    amount: $item->amount()->toInt(),
-                )
+            $ormItem = new InventoryItem(
+                id: null,
+                inventory: $inventoryOrm,
+                articleId: $item->article()->toString(),
+                articleName: $item->articleName()->toString(),
+                zoneStorageId: $item->zoneStorage()->toString(),
+                price: $item->price()->toInt(),
+                theoreticalStock: $item->theoreticalStock()->toMilliemes(),
+                realStock: $item->realStock()->toMilliemes(),
+                amount: $item->amount()->toInt(),
             );
+
+            $packagingOrm = InventoryItemPackaging::fromDomain($item->packaging(), $ormItem);
+            $ormItem->setPackaging($packagingOrm);
+
+            $inventoryOrm->addItem($ormItem);
         }
 
         $this->getEntityManager()->flush();
@@ -142,5 +148,27 @@ final class DoctrineInventoryRepository extends ServiceEntityRepository implemen
         }
 
         return $this->mapper->toDomain($inventory);
+    }
+
+    public function save(InventoryDomain $inventory): void
+    {
+        $inventoryOrm = $this->find($inventory->uuid()->toString());
+
+        if (!$inventoryOrm instanceof Inventory) {
+            throw new InventoryNotFound($inventory->uuid());
+        }
+
+        foreach ($inventory->items()->toArray() as $domainItem) {
+            $ormItem = $inventoryOrm->findItemByArticleAndZone(
+                $domainItem->article()->toString(),
+                $domainItem->zoneStorage()->toString()
+            );
+
+            if ($ormItem instanceof InventoryItem) {
+                $this->mapper->updateOrmItem($ormItem, $domainItem);
+            }
+        }
+
+        $this->getEntityManager()->flush();
     }
 }

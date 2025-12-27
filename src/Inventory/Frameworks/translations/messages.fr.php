@@ -30,6 +30,23 @@ return [
             'success' => 'Inventaire démarré avec succès',
             'button' => 'Démarrer',
         ],
+        'zone' => [
+            'record' => [
+                'titlePage' => 'Saisie du stock réel',
+                'no_articles' => 'Aucun article dans cette zone',
+                'button' => 'Saisir stock',
+                'submit' => 'Enregistrer',
+                'cancel' => 'Annuler',
+                'success' => 'Stock réel enregistré avec succès',
+                'article' => 'Article',
+                'theoreticalStock' => 'Stock théorique',
+                'realStock' => 'Stock réel',
+                'confirm_zero' => 'Attention : les articles suivants auront un stock à 0. Voulez-vous continuer ?',
+                'info' => 'Veuillez saisir le stock réel pour chaque article. Entrez 0 si l\'article n\'est plus en stock.',
+                'error_missing_fields' => 'Veuillez renseigner le stock réel pour les articles suivants : %articles%',
+            ],
+        ],
+        'cancel' => 'Annuler',
         'errors' => [
             'date_past' => 'La date doit être aujourd\'hui ou dans le futur',
             'zone_active' => 'Un inventaire actif existe pour cette zone',

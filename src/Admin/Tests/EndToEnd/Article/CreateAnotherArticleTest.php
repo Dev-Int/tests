@@ -15,7 +15,7 @@ namespace Admin\Tests\EndToEnd\Article;
 
 use Admin\Adapters\Controller\Symfony\Controller\Article\CreateArticle\CreateArticleController;
 use Admin\Adapters\Controller\Symfony\Controller\Article\GetArticles\GetArticlesController;
-use App\Shared\Tests\BasePantherTestCase;
+use Shared\Tests\BasePantherTestCase;
 use Symfony\Component\Panther\PantherTestCase;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;

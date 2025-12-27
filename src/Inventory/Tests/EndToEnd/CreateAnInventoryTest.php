@@ -13,12 +13,12 @@ declare(strict_types=1);
 
 namespace Inventory\Tests\EndToEnd;
 
-use App\Shared\Tests\BasePantherTestCase;
 use Inventory\Adapters\Controller\Symfony\Controller\GetInventories\GetInventoriesController;
 use Inventory\Tests\Factory\InventoryFactory;
 use Inventory\Tests\Story\InventoryStory;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\Clock\FrozenClock;
+use Shared\Tests\BasePantherTestCase;
 use Symfony\Component\Panther\PantherTestCase;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -34,7 +34,7 @@ final class CreateAnInventoryTest extends BasePantherTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        ClockFactory::initialize(new FrozenClock(new \DateTimeImmutable('2025-12-21')));
+        ClockFactory::initialize(new FrozenClock(new \DateTimeImmutable('today')));
     }
 
     public function testUserCanCreateInventoryViaForm(): void

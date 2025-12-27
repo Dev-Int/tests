@@ -11,7 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace App\Inventory\Tests\Factory;
+namespace Inventory\Tests\Factory;
 
 use Inventory\Entities\VO\InventoryDate;
 use Inventory\Entities\VO\InventoryStatus;

@@ -17,8 +17,13 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'inventory_item')]
-final class InventoryItem
+#[ORM\Index(name: 'idx_inventory_item_inventory_id', columns: ['inventory_id'])]
+#[ORM\Index(name: 'idx_inventory_item_article_zone', columns: ['article_id', 'zone_storage_id'])]
+class InventoryItem
 {
+    #[ORM\OneToOne(targetEntity: InventoryItemPackaging::class, mappedBy: 'inventoryItem', cascade: ['persist'])]
+    private InventoryItemPackaging $packaging;
+
     public function __construct(
         #[ORM\Id]
         #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
@@ -30,6 +35,10 @@ final class InventoryItem
         private Inventory $inventory,
         #[ORM\Column(name: 'article_id', type: 'guid', nullable: false)]
         private string $articleId,
+        #[ORM\Column(name: 'article_name', type: 'string', length: 255, nullable: false)]
+        private string $articleName,
+        #[ORM\Column(name: 'zone_storage_id', type: 'guid', nullable: false)]
+        private string $zoneStorageId,
         #[ORM\Column(name: 'price', type: 'integer')]
         private int $price,
         #[ORM\Column(name: 'theoretical_stock', type: 'integer')]
@@ -56,6 +65,16 @@ final class InventoryItem
         return $this->articleId;
     }
 
+    public function articleName(): string
+    {
+        return $this->articleName;
+    }
+
+    public function zoneStorageId(): string
+    {
+        return $this->zoneStorageId;
+    }
+
     public function price(): int
     {
         return $this->price;
@@ -74,5 +93,20 @@ final class InventoryItem
     public function amount(): int
     {
         return $this->amount;
+    }
+
+    public function updateRealStock(int $realStock): void
+    {
+        $this->realStock = $realStock;
+    }
+
+    public function packaging(): InventoryItemPackaging
+    {
+        return $this->packaging;
+    }
+
+    public function setPackaging(InventoryItemPackaging $packaging): void
+    {
+        $this->packaging = $packaging;
     }
 }
