@@ -17,11 +17,11 @@ use Inventory\Adapters\Controller\Symfony\Controller\GetInventories\GetInventori
 use Inventory\Entities\InventoryItem;
 use Inventory\Entities\ReadModel\ArticleData;
 use Inventory\Entities\Repository\InventoryRepository;
+use Inventory\Entities\VO\RealStockEntry;
 use Inventory\UseCases\Gateway\ZoneStorageGatewayInterface;
 use Inventory\UseCases\RecordRealStockForZone\RecordRealStockForZone;
 use Shared\Entities\Exception\DomainException;
 use Shared\Entities\ResourceUuid;
-use Shared\Entities\VO\Quantity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -72,7 +72,7 @@ final class RecordRealStockForZoneController extends AbstractController
 
         $items = $inventory->items()->filterByZone($zoneStorageUuidVo);
 
-        if ($request->isMethod('POST')) {
+        if ($request->isMethod(Request::METHOD_POST)) {
             return $this->handlePost(
                 $request,
                 $inventoryUuidVo,
@@ -98,6 +98,23 @@ final class RecordRealStockForZoneController extends AbstractController
         ResourceUuid $zoneStorageUuid,
         array $items,
     ): Response {
+        // Validate all parcel fields are filled
+        $missingArticles = $this->validateAllFieldsFilled($request, $items);
+        if ($missingArticles !== []) {
+            $this->addFlash('error', $this->translator->trans(
+                'inventory.zone.record.error_missing_fields',
+                ['%articles%' => implode(', ', $missingArticles)]
+            ));
+
+            return $this->redirectToRoute(
+                self::ROUTE_NAME,
+                [
+                    'inventoryUuid' => $inventoryUuid->toString(),
+                    'zoneStorageUuid' => $zoneStorageUuid->toString(),
+                ]
+            );
+        }
+
         $articlesData = $this->buildArticlesData($request, $items);
 
         try {
@@ -122,6 +139,27 @@ final class RecordRealStockForZoneController extends AbstractController
     /**
      * @param array<InventoryItem> $items
      *
+     * @return array<string> List of article names with missing parcel values
+     */
+    private function validateAllFieldsFilled(Request $request, array $items): array
+    {
+        $missingArticles = [];
+
+        foreach ($items as $item) {
+            $articleSlug = $item->articleName()->slugify();
+            $parcelValue = $this->getNumericValue($request, "real_stock_{$articleSlug}_parcel");
+
+            if ($parcelValue === null) {
+                $missingArticles[] = $item->articleName()->toString();
+            }
+        }
+
+        return $missingArticles;
+    }
+
+    /**
+     * @param array<InventoryItem> $items
+     *
      * @return array<ArticleData>
      */
     private function buildArticlesData(Request $request, array $items): array
@@ -129,18 +167,39 @@ final class RecordRealStockForZoneController extends AbstractController
         $articlesData = [];
 
         foreach ($items as $item) {
-            $articleSlug = $item->articleName()->toString();
-            $realStockValue = $request->request->get("real_stock_{$articleSlug}");
+            $articleSlug = $item->articleName()->slugify();
 
-            if ($realStockValue !== null && $realStockValue !== '') {
-                $articlesData[] = new ArticleData(
-                    articleUuid: $item->article(),
-                    realStock: Quantity::fromUnit((float) $realStockValue)
-                );
-            }
+            // All parcel values are validated before this method is called
+            $parcelValue = $this->getNumericValue($request, "real_stock_{$articleSlug}_parcel");
+            $subPackageValue = $this->getNumericValue($request, "real_stock_{$articleSlug}_sub_package");
+            $consumerUnitValue = $this->getNumericValue($request, "real_stock_{$articleSlug}_consumer_unit");
+
+            \assert($parcelValue !== null, 'Parcel value should be validated before buildArticlesData');
+
+            $entry = new RealStockEntry(
+                $parcelValue,
+                $subPackageValue ?? 0.0,
+                $consumerUnitValue ?? 0.0
+            );
+            $realStock = $item->packaging()->calculateTotalFromEntry($entry);
+
+            $articlesData[] = new ArticleData(
+                articleUuid: $item->article(),
+                realStock: $realStock
+            );
         }
 
         return $articlesData;
+    }
+
+    private function getNumericValue(Request $request, string $key): ?float
+    {
+        $value = $request->request->get($key);
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        return (float) $value;
     }
 
     /**

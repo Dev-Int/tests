@@ -13,15 +13,11 @@ declare(strict_types=1);
 
 namespace Inventory\Adapters\Controller\Symfony\Controller\RecordRealStockForZone;
 
-final readonly class InventoryItemResult
+final readonly class PackagingLevelForView
 {
     public function __construct(
-        public string $articleUuid,
-        public string $articleName,
-        public string $articleSlug,
-        public float $theoreticalStock,
-        public float $realStock,
-        public PackagingForView $packaging,
+        public string $label,
+        public string $abbreviation,
     ) {
     }
 }

@@ -17,8 +17,12 @@ use Admin\Adapters\Gateway\ORM\Provider\Article\DefaultArticleAggregatorBuilder;
 use Admin\Contracts\Services\Provider\Article\ArticleAggregatorBuilder;
 use Admin\Contracts\Services\Provider\Article\ArticleProvider as ArticleProviderContract;
 use Admin\Contracts\Services\Provider\Article\Result\ArticleResult;
+use Admin\Contracts\Services\Provider\Article\Result\PackagingLevelResult;
+use Admin\Contracts\Services\Provider\Article\Result\PackagingResult;
 use Admin\Contracts\Services\Provider\Exception\ArticleNotFound;
 use Admin\Entities\Article\Article;
+use Admin\Entities\Article\VO\Packaging;
+use Admin\Entities\Unit\Unit;
 use Admin\UseCases\Gateway\Finder\ArticleFinder;
 use Doctrine\ORM\EntityManagerInterface;
 use Shared\Entities\ResourceUuid;
@@ -44,7 +48,8 @@ final readonly class ArticleProvider implements ArticleProviderContract
             name: $article->name(),
             unitPrice: $article->unitPrice(),
             quantity: $article->quantity(),
-            slug: $article->slug()
+            slug: $article->slug(),
+            packaging: $this->mapPackaging($article->packaging()),
         );
     }
 
@@ -54,5 +59,45 @@ final readonly class ArticleProvider implements ArticleProviderContract
             $this->entityManager,
             array_values($articleIds)
         );
+    }
+
+    private function mapPackaging(Packaging $packaging): PackagingResult
+    {
+        $parcel = $packaging->parcel();
+
+        /** @var Unit $parcelUnit */
+        [$parcelUnit, $parcelQuantity] = $parcel;
+
+        $parcelResult = new PackagingLevelResult(
+            $parcelUnit->label()->toString(),
+            $parcelUnit->abbreviation(),
+            $parcelQuantity,
+        );
+
+        $subPackageResult = null;
+        $subPackage = $packaging->subPackage();
+        if ($subPackage !== null) {
+            /** @var Unit $subPackageUnit */
+            [$subPackageUnit, $subPackageQuantity] = $subPackage;
+            $subPackageResult = new PackagingLevelResult(
+                $subPackageUnit->label()->toString(),
+                $subPackageUnit->abbreviation(),
+                $subPackageQuantity,
+            );
+        }
+
+        $consumerUnitResult = null;
+        $consumerUnit = $packaging->consumerUnit();
+        if ($consumerUnit !== null) {
+            /** @var Unit $consumerUnitUnit */
+            [$consumerUnitUnit, $consumerUnitQuantity] = $consumerUnit;
+            $consumerUnitResult = new PackagingLevelResult(
+                $consumerUnitUnit->label()->toString(),
+                $consumerUnitUnit->abbreviation(),
+                $consumerUnitQuantity,
+            );
+        }
+
+        return new PackagingResult($parcelResult, $subPackageResult, $consumerUnitResult);
     }
 }

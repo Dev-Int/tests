@@ -34,7 +34,7 @@ final class RecordRealStockByZoneForAnInventoryTest extends BasePantherTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        ClockFactory::initialize(new FrozenClock(new \DateTimeImmutable('2025-12-21')));
+        ClockFactory::initialize(new FrozenClock(new \DateTimeImmutable('today')));
     }
 
     public function testUserCanNavigateToRecordStockFormAndSeeArticles(): void
@@ -165,15 +165,17 @@ final class RecordRealStockByZoneForAnInventoryTest extends BasePantherTestCase
 
         $client->waitForElementToContain('h1', $translator->trans('inventory.zone.record.titlePage'));
 
-        $articleInputs = $client->getCrawler()->filter('input[type="number"]');
+        $articleInputs = $client->getCrawler()->filter('input[type="number"][required]');
         self::assertGreaterThan(0, $articleInputs->count());
 
-        $firstInput = $articleInputs->first();
-        $inputName = $firstInput->attr('name');
+        // Build form data for all required inputs (all fields are now mandatory)
+        $formData = [];
+        $articleInputs->each(static function ($node, $i) use (&$formData): void {
+            $inputName = $node->attr('name');
+            $formData[$inputName] = (string) (10 + $i); // Different value for each input
+        });
 
-        $client->submitForm($translator->trans('inventory.zone.record.submit'), [
-            $inputName => '20.5',
-        ]);
+        $client->submitForm($translator->trans('inventory.zone.record.submit'), $formData);
 
         $client->waitForVisibility('.flash-success');
         $flash = $client->getCrawler()->filter('.flash-success')->text();

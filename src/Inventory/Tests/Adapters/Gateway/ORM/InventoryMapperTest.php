@@ -15,6 +15,7 @@ namespace Inventory\Tests\Adapters\Gateway\ORM;
 
 use Inventory\Adapters\Gateway\ORM\Entity\Inventory as InventoryOrm;
 use Inventory\Adapters\Gateway\ORM\Entity\InventoryItem;
+use Inventory\Adapters\Gateway\ORM\Entity\InventoryItemPackaging;
 use Inventory\Adapters\Gateway\ORM\Entity\InventoryStatus as InventoryStatusOrm;
 use Inventory\Adapters\Gateway\ORM\InventoryMapper;
 use Inventory\Entities\Inventory;
@@ -154,6 +155,15 @@ final class InventoryMapperTest extends TestCase
             realStock: 10500, // 10500 millièmes → 10.5
             amount: 5000
         );
+
+        $packagingOrm = new InventoryItemPackaging(
+            id: null,
+            inventoryItem: $itemOrm,
+            parcelUnitLabel: 'colis',
+            parcelUnitAbbreviation: 'col',
+            parcelQuantity: 4.0,
+        );
+        $itemOrm->setPackaging($packagingOrm);
         $inventoryOrm->addItem($itemOrm);
 
         // Act

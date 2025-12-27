@@ -14,13 +14,18 @@
 
     <main>
         <article>
-            <form method="post" action="{{ path('inventory_zone_record_stock', {inventoryUuid: inventoryUuid, zoneStorageUuid: zoneStorageUuid}) }}" data-turbo="false">
-                <table class="table">
+            <form method="post" action="{{ path('inventory_zone_record_stock', {inventoryUuid: inventoryUuid, zoneStorageUuid: zoneStorageUuid}) }}" data-turbo="false" id="record-stock-form">
+                <p class="alert alert-info">
+                    <i class="fa-solid fa-circle-info"></i>
+                    {{ 'inventory.zone.record.info'|trans }}
+                </p>
+
+                <table class="table table-stock-entry">
                     <thead>
                         <tr>
                             <th>{{ 'inventory.zone.record.article'|trans }}</th>
                             <th>{{ 'inventory.zone.record.theoreticalStock'|trans }}</th>
-                            <th>{{ 'inventory.zone.record.realStock'|trans }}</th>
+                            <th colspan="3">{{ 'inventory.zone.record.realStock'|trans }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -28,21 +33,63 @@
                             <tr>
                                 <td>{{ item.articleName }}</td>
                                 <td>{{ item.theoreticalStock }}</td>
-                                <td>
-                                    <input
-                                        type="number"
-                                        name="real_stock_{{ item.articleSlug }}"
-                                        value="{{ item.realStock > 0 ? item.realStock : '' }}"
-                                        step="0.001"
-                                        min="0"
-                                        class="form-control"
-                                        placeholder="{{ item.theoreticalStock }}"
-                                    />
+                                {# Parcel (always present) #}
+                                <td class="stock-input-cell">
+                                    <div class="input-group">
+                                        <input
+                                            type="number"
+                                            name="real_stock_{{ item.articleSlug }}_parcel"
+                                            step="0.001"
+                                            min="0"
+                                            class="form-control"
+                                            placeholder="0"
+                                            required
+                                        />
+                                        <span class="input-group-text" title="{{ item.packaging.parcel.label }}">
+                                            {{ item.packaging.parcel.abbreviation }}
+                                        </span>
+                                    </div>
+                                </td>
+                                {# SubPackage (optional) #}
+                                <td class="stock-input-cell">
+                                    {% if item.packaging.subPackage %}
+                                        <div class="input-group">
+                                            <input
+                                                type="number"
+                                                name="real_stock_{{ item.articleSlug }}_sub_package"
+                                                step="0.001"
+                                                min="0"
+                                                class="form-control"
+                                                placeholder="0"
+                                            />
+                                            <span class="input-group-text" title="{{ item.packaging.subPackage.label }}">
+                                                {{ item.packaging.subPackage.abbreviation }}
+                                            </span>
+                                        </div>
+                                    {% endif %}
+                                </td>
+                                {# ConsumerUnit (optional) #}
+                                <td class="stock-input-cell">
+                                    {% if item.packaging.consumerUnit %}
+                                        <div class="input-group">
+                                            <input
+                                                type="number"
+                                                name="real_stock_{{ item.articleSlug }}_consumer_unit"
+                                                step="0.001"
+                                                min="0"
+                                                class="form-control"
+                                                placeholder="0"
+                                            />
+                                            <span class="input-group-text" title="{{ item.packaging.consumerUnit.label }}">
+                                                {{ item.packaging.consumerUnit.abbreviation }}
+                                            </span>
+                                        </div>
+                                    {% endif %}
                                 </td>
                             </tr>
                         {% else %}
                             <tr>
-                                <td colspan="3">{{ 'inventory.zone.record.no_articles'|trans }}</td>
+                                <td colspan="5">{{ 'inventory.zone.record.no_articles'|trans }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -58,4 +105,36 @@
         </article>
     </main>
 
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('record-stock-form');
+            if (!form) return;
+
+            form.addEventListener('submit', function(event) {
+                const zeroInputs = [];
+                const parcelInputs = form.querySelectorAll('input[name*="_parcel"]');
+
+                parcelInputs.forEach(function(input) {
+                    if (input.value === '0' || input.value === '0.0' || input.value === '0.000') {
+                        const row = input.closest('tr');
+                        if (row) {
+                            const articleName = row.querySelector('td:first-child').textContent.trim();
+                            zeroInputs.push(articleName);
+                        }
+                    }
+                });
+
+                if (zeroInputs.length > 0) {
+                    const message = '{{ 'inventory.zone.record.confirm_zero'|trans }}\n\n' + zeroInputs.join('\n');
+                    if (!confirm(message)) {
+                        event.preventDefault();
+                    }
+                }
+            });
+        });
+    </script>
 {% endblock %}

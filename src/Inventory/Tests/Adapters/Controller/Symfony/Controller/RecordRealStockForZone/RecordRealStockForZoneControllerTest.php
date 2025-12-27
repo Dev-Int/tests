@@ -17,9 +17,11 @@ use Admin\Tests\Factory\ArticleFactory;
 use Admin\Tests\Factory\ZoneStorageFactory;
 use Inventory\Adapters\Controller\Symfony\Controller\RecordRealStockForZone\RecordRealStockForZoneController;
 use Inventory\Adapters\Gateway\ORM\Entity\InventoryStatus;
+use Inventory\Entities\Repository\InventoryRepository;
 use Inventory\Tests\Factory\InventoryFactory;
 use Inventory\Tests\Story\InventoryStory;
 use Shared\Entities\Clock\ClockFactory;
+use Shared\Entities\ResourceUuid;
 use Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -83,6 +85,9 @@ final class RecordRealStockForZoneControllerTest extends BaseFunctionalTestCase
         // Arrange
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
+
+        /** @var InventoryRepository $repository */
+        $repository = self::getContainer()->get(InventoryRepository::class);
         InventoryStory::load();
 
         $now = ClockFactory::clock()->now();
@@ -122,20 +127,164 @@ final class RecordRealStockForZoneControllerTest extends BaseFunctionalTestCase
         $laitSlug = $laitArticle->_real()->slug();
         $camembertSlug = $camembertArticle->_real()->slug();
 
-        // Act
+        // Act - Use multi-level input format (parcel level)
         $uri = \sprintf(self::RECORD_STOCK_URI, $inventoryUuid, $zoneStorageUuid);
         $this->client->request(Request::METHOD_POST, $uri, [
-            "real_stock_{$laitSlug}" => '15.5',
-            "real_stock_{$camembertSlug}" => '0',
+            "real_stock_{$laitSlug}_parcel" => '15.5',
+            "real_stock_{$camembertSlug}_parcel" => '8',
         ]);
 
-        // Assert
+        // Assert HTTP response
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
         self::assertResponseRedirects('/inventories');
 
         $crawler = $this->client->followRedirect();
         $flash = $crawler->filter('.flash-success')->text();
         self::assertSame($translator->trans('inventory.zone.record.success'), $flash);
+
+        // Assert
+        $updatedInventory = $repository->getByUuid(ResourceUuid::fromString($inventoryUuid));
+        $zoneStorageUuidVo = ResourceUuid::fromString($zoneStorageUuid);
+        $laitUuid = ResourceUuid::fromString($laitArticle->_real()->uuid());
+        $camembertUuid = ResourceUuid::fromString($camembertArticle->_real()->uuid());
+
+        $laitItem = $updatedInventory->items()->findByArticleAndZone($laitUuid, $zoneStorageUuidVo);
+        $camembertItem = $updatedInventory->items()->findByArticleAndZone($camembertUuid, $zoneStorageUuidVo);
+
+        self::assertNotNull($laitItem, 'Lait item should exist in inventory');
+        self::assertNotNull($camembertItem, 'Camembert item should exist in inventory');
+
+        // Lait: 15.5 L entered (packaging 1L = 1 unit) → realStock = 15500 milliemes
+        self::assertSame(15500, $laitItem->realStock()->toMilliemes(), 'Lait real stock should be 15.5L (15500 milliemes)');
+
+        // Camembert: 8 pieces entered (packaging 1 Pce = 1 unit) → realStock = 8000 milliemes
+        self::assertSame(8000, $camembertItem->realStock()->toMilliemes(), 'Camembert real stock should be 8 pieces (8000 milliemes)');
+    }
+
+    public function testPostRecordStockWithZeroValue(): void
+    {
+        // Arrange
+        /** @var InventoryRepository $repository */
+        $repository = self::getContainer()->get(InventoryRepository::class);
+        InventoryStory::load();
+
+        $now = ClockFactory::clock()->now();
+        $futureDate = $now->modify('+1 day');
+
+        $zonePositive = ZoneStorageFactory::findBy(['label' => 'Réserve positive'])[0];
+        $zoneStorageUuid = $zonePositive->_real()->uuid();
+
+        $inventory = InventoryFactory::createOne([
+            'date' => $futureDate,
+            'zoneStorages' => [$zoneStorageUuid],
+            'status' => InventoryStatus::DRAFT->value,
+            'createdAt' => $now,
+            'updatedAt' => $now,
+            'statusUpdatedAt' => null,
+        ]);
+
+        $inventoryUuid = $inventory->_real()->uuid();
+
+        $startUri = \sprintf(self::START_INVENTORY_URI, $inventoryUuid);
+        $this->client->request(Request::METHOD_POST, $startUri);
+        $this->client->followRedirect();
+
+        $articles = ArticleFactory::all();
+        $laitArticle = null;
+        $camembertArticle = null;
+        foreach ($articles as $article) {
+            if ($article->_real()->name() === 'Lait') {
+                $laitArticle = $article;
+            }
+            if ($article->_real()->name() === 'Camembert') {
+                $camembertArticle = $article;
+            }
+        }
+        self::assertNotNull($laitArticle, 'Article "Lait" should exist');
+        self::assertNotNull($camembertArticle, 'Article "Camembert" should exist');
+        $laitSlug = $laitArticle->_real()->slug();
+        $camembertSlug = $camembertArticle->_real()->slug();
+
+        // Act - Enter explicit zero for Camembert (should be recorded, not skipped)
+        $uri = \sprintf(self::RECORD_STOCK_URI, $inventoryUuid, $zoneStorageUuid);
+        $this->client->request(Request::METHOD_POST, $uri, [
+            "real_stock_{$laitSlug}_parcel" => '10',
+            "real_stock_{$camembertSlug}_parcel" => '0', // Explicit zero
+        ]);
+
+        // Assert HTTP response
+        self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
+
+        // Assert
+        $updatedInventory = $repository->getByUuid(ResourceUuid::fromString($inventoryUuid));
+        $zoneStorageUuidVo = ResourceUuid::fromString($zoneStorageUuid);
+        $laitUuid = ResourceUuid::fromString($laitArticle->_real()->uuid());
+        $camembertUuid = ResourceUuid::fromString($camembertArticle->_real()->uuid());
+
+        $laitItem = $updatedInventory->items()->findByArticleAndZone($laitUuid, $zoneStorageUuidVo);
+        $camembertItem = $updatedInventory->items()->findByArticleAndZone($camembertUuid, $zoneStorageUuidVo);
+
+        self::assertNotNull($laitItem, 'Lait item should exist in inventory');
+        self::assertNotNull($camembertItem, 'Camembert item should exist in inventory');
+
+        // Lait: 10 L entered → realStock = 10000 milliemes
+        self::assertSame(10000, $laitItem->realStock()->toMilliemes(), 'Lait real stock should be 10L');
+
+        // Camembert: explicit 0 entered → realStock = 0 milliemes (not skipped!)
+        self::assertSame(0, $camembertItem->realStock()->toMilliemes(), 'Camembert explicit zero should be recorded');
+    }
+
+    public function testPostRecordStockFailsOnEmptyFields(): void
+    {
+        // Arrange
+        InventoryStory::load();
+
+        $now = ClockFactory::clock()->now();
+        $futureDate = $now->modify('+1 day');
+
+        $zonePositive = ZoneStorageFactory::findBy(['label' => 'Réserve positive'])[0];
+        $zoneStorageUuid = $zonePositive->_real()->uuid();
+
+        $inventory = InventoryFactory::createOne([
+            'date' => $futureDate,
+            'zoneStorages' => [$zoneStorageUuid],
+            'status' => InventoryStatus::DRAFT->value,
+            'createdAt' => $now,
+            'updatedAt' => $now,
+            'statusUpdatedAt' => null,
+        ]);
+
+        $inventoryUuid = $inventory->_real()->uuid();
+
+        $startUri = \sprintf(self::START_INVENTORY_URI, $inventoryUuid);
+        $this->client->request(Request::METHOD_POST, $startUri);
+        $this->client->followRedirect();
+
+        $articles = ArticleFactory::all();
+        $laitArticle = null;
+        foreach ($articles as $article) {
+            if ($article->_real()->name() === 'Lait') {
+                $laitArticle = $article;
+            }
+        }
+        self::assertNotNull($laitArticle, 'Article "Lait" should exist');
+        $laitSlug = $laitArticle->_real()->slug();
+
+        // Act - Only fill Lait, leave Camembert empty (not submitted)
+        $uri = \sprintf(self::RECORD_STOCK_URI, $inventoryUuid, $zoneStorageUuid);
+        $this->client->request(Request::METHOD_POST, $uri, [
+            "real_stock_{$laitSlug}_parcel" => '5',
+            // Camembert parcel field not submitted → should trigger validation error
+        ]);
+
+        // Assert - Should redirect back to form with error
+        self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
+
+        $crawler = $this->client->followRedirect();
+        $flash = $crawler->filter('.flash-error')->text();
+
+        // Error message should mention missing article (Camembert)
+        self::assertStringContainsString('Camembert', $flash, 'Error should mention missing article');
     }
 
     public function testRecordStockFailsOnNonInProgressInventory(): void

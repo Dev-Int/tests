@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace Inventory\Tests\DataBuilder;
 
 use Inventory\Entities\InventoryItem;
+use Inventory\Entities\VO\PackagingLevel;
+use Inventory\Entities\VO\PackagingSnapshot;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\Amount;
 use Shared\Entities\VO\NameField;
@@ -28,6 +30,16 @@ final class InventoryItemDataBuilder
     private int $theoreticalStockMilliemes = 10000;
     private int $realStockMilliemes = 0;
     private int $amountCents = 15000;
+    private PackagingSnapshot $packaging;
+
+    public static function defaultPackaging(): PackagingSnapshot
+    {
+        return new PackagingSnapshot(
+            parcel: new PackagingLevel('Colis', 'cls', 1.0),
+            subPackage: new PackagingLevel('Poche', 'pch', 4.0),
+            consumerUnit: new PackagingLevel('Portion', 'prt', 8.0),
+        );
+    }
 
     public function __construct(
         ?ResourceUuid $article = null,
@@ -37,6 +49,7 @@ final class InventoryItemDataBuilder
         $this->article = $article ?? ResourceUuid::generate();
         $this->zoneStorage = $zoneStorage ?? ResourceUuid::generate();
         $this->articleName = $articleName ?? NameField::fromString('Test Article');
+        $this->packaging = self::defaultPackaging();
     }
 
     public function withPrice(int $cents): self
@@ -77,6 +90,7 @@ final class InventoryItemDataBuilder
             theoreticalStock: Quantity::fromMilliemes($this->theoreticalStockMilliemes),
             realStock: Quantity::fromMilliemes($this->realStockMilliemes),
             amount: Amount::fromCents($this->amountCents),
+            packaging: $this->packaging,
         );
     }
 }

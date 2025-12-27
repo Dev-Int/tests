@@ -13,15 +13,17 @@ declare(strict_types=1);
 
 namespace Inventory\Adapters\Controller\Symfony\Controller\RecordRealStockForZone;
 
-final readonly class InventoryItemResult
+final readonly class PackagingForView
 {
     public function __construct(
-        public string $articleUuid,
-        public string $articleName,
-        public string $articleSlug,
-        public float $theoreticalStock,
-        public float $realStock,
-        public PackagingForView $packaging,
+        public PackagingLevelForView $parcel,
+        public ?PackagingLevelForView $subPackage = null,
+        public ?PackagingLevelForView $consumerUnit = null,
     ) {
+    }
+
+    public function hasMultipleLevels(): bool
+    {
+        return $this->subPackage instanceof PackagingLevelForView || $this->consumerUnit instanceof PackagingLevelForView;
     }
 }

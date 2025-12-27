@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Inventory\Entities;
 
 use Inventory\Entities\VO\Article;
+use Inventory\Entities\VO\PackagingSnapshot;
 use Inventory\Entities\VO\StockDifference;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\Amount;
@@ -32,13 +33,15 @@ final readonly class InventoryItem
             theoreticalStock: $article->quantity,
             realStock: Quantity::fromMilliemes(0),
             amount: $article->unitPrice->computeQuantity($article->quantity),
+            packaging: $article->packaging,
         );
     }
 
     /**
-     * @param Amount $amount Snapshot of theoretical value at creation (price × theoreticalStock).
-     *                       This is NOT recalculated when realStock changes.
-     *                       Real value after counting = price × realStock.
+     * @param Amount            $amount    Snapshot of theoretical value at creation (price × theoreticalStock).
+     *                                     This is NOT recalculated when realStock changes.
+     *                                     Real value after counting = price × realStock.
+     * @param PackagingSnapshot $packaging snapshot of article packaging at inventory creation
      */
     public function __construct(
         private ResourceUuid $article,
@@ -48,6 +51,7 @@ final readonly class InventoryItem
         private Quantity $theoreticalStock,
         private Quantity $realStock,
         private Amount $amount,
+        private PackagingSnapshot $packaging,
     ) {
     }
 
@@ -91,6 +95,11 @@ final readonly class InventoryItem
         return $this->amount;
     }
 
+    public function packaging(): PackagingSnapshot
+    {
+        return $this->packaging;
+    }
+
     public function isFor(ResourceUuid $articleUuid, ResourceUuid $zoneStorageUuid): bool
     {
         return $this->article->toString() === $articleUuid->toString()
@@ -117,6 +126,7 @@ final readonly class InventoryItem
             theoreticalStock: $this->theoreticalStock,
             realStock: $realStock,
             amount: $this->amount,
+            packaging: $this->packaging,
         );
     }
 

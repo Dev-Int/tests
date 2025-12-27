@@ -34,7 +34,7 @@ final class CreateAnInventoryTest extends BasePantherTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        ClockFactory::initialize(new FrozenClock(new \DateTimeImmutable('2025-12-21')));
+        ClockFactory::initialize(new FrozenClock(new \DateTimeImmutable('today')));
     }
 
     public function testUserCanCreateInventoryViaForm(): void

@@ -21,6 +21,9 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(name: 'idx_inventory_item_article_zone', columns: ['article_id', 'zone_storage_id'])]
 class InventoryItem
 {
+    #[ORM\OneToOne(targetEntity: InventoryItemPackaging::class, mappedBy: 'inventoryItem', cascade: ['persist'])]
+    private InventoryItemPackaging $packaging;
+
     public function __construct(
         #[ORM\Id]
         #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
@@ -95,5 +98,15 @@ class InventoryItem
     public function updateRealStock(int $realStock): void
     {
         $this->realStock = $realStock;
+    }
+
+    public function packaging(): InventoryItemPackaging
+    {
+        return $this->packaging;
+    }
+
+    public function setPackaging(InventoryItemPackaging $packaging): void
+    {
+        $this->packaging = $packaging;
     }
 }

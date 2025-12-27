@@ -15,6 +15,7 @@ namespace Inventory\Adapters\Gateway\ORM;
 
 use Inventory\Adapters\Gateway\ORM\Entity\Inventory;
 use Inventory\Adapters\Gateway\ORM\Entity\InventoryItem;
+use Inventory\Adapters\Gateway\ORM\Entity\InventoryItemPackaging;
 use Inventory\Adapters\Gateway\ORM\Entity\InventoryStatus;
 use Inventory\Entities\Inventory as InventoryDomain;
 use Inventory\Entities\InventoryItem as InventoryItemDomain;
@@ -83,6 +84,7 @@ final readonly class InventoryMapper
                 theoreticalStock: Quantity::fromMilliemes($item->theoreticalStock()),
                 realStock: Quantity::fromMilliemes($item->realStock()),
                 amount: Amount::fromCents($item->amount()),
+                packaging: $item->packaging()->toDomain(),
             );
             $inventoryDomain->addItem($itemDomain);
         }
@@ -102,19 +104,22 @@ final readonly class InventoryMapper
     private function getItemsFromDomain(InventoryItemCollection $items, Inventory &$inventory): void
     {
         foreach ($items->toArray() as $item) {
-            $inventory->addItem(
-                new InventoryItem(
-                    id: null,
-                    inventory: $inventory,
-                    articleId: $item->article()->toString(),
-                    articleName: $item->articleName()->toString(),
-                    zoneStorageId: $item->zoneStorage()->toString(),
-                    price: $item->price()->toInt(),
-                    theoreticalStock: $item->theoreticalStock()->toMilliemes(),
-                    realStock: $item->realStock()->toMilliemes(),
-                    amount: $item->amount()->toInt(),
-                )
+            $ormItem = new InventoryItem(
+                id: null,
+                inventory: $inventory,
+                articleId: $item->article()->toString(),
+                articleName: $item->articleName()->toString(),
+                zoneStorageId: $item->zoneStorage()->toString(),
+                price: $item->price()->toInt(),
+                theoreticalStock: $item->theoreticalStock()->toMilliemes(),
+                realStock: $item->realStock()->toMilliemes(),
+                amount: $item->amount()->toInt(),
             );
+
+            $packagingOrm = InventoryItemPackaging::fromDomain($item->packaging(), $ormItem);
+            $ormItem->setPackaging($packagingOrm);
+
+            $inventory->addItem($ormItem);
         }
     }
 }

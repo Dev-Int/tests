@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace Inventory\Adapters\Controller\Symfony\Controller\RecordRealStockForZone;
 
 use Inventory\Entities\InventoryItem;
+use Inventory\Entities\VO\PackagingLevel;
+use Inventory\Entities\VO\PackagingSnapshot;
 
 final readonly class RecordRealStockForZonePresenter
 {
@@ -38,9 +40,36 @@ final readonly class RecordRealStockForZonePresenter
                 articleSlug: $item->articleName()->slugify(),
                 theoreticalStock: $item->theoreticalStock()->toUnit(),
                 realStock: $item->realStock()->toUnit(),
+                packaging: $this->mapPackaging($item->packaging()),
             );
         }
 
         return $results;
+    }
+
+    private function mapPackaging(PackagingSnapshot $packaging): PackagingForView
+    {
+        $parcel = new PackagingLevelForView(
+            $packaging->parcel->unitLabel,
+            $packaging->parcel->unitAbbreviation,
+        );
+
+        $subPackage = null;
+        if ($packaging->subPackage instanceof PackagingLevel) {
+            $subPackage = new PackagingLevelForView(
+                $packaging->subPackage->unitLabel,
+                $packaging->subPackage->unitAbbreviation,
+            );
+        }
+
+        $consumerUnit = null;
+        if ($packaging->consumerUnit instanceof PackagingLevel) {
+            $consumerUnit = new PackagingLevelForView(
+                $packaging->consumerUnit->unitLabel,
+                $packaging->consumerUnit->unitAbbreviation,
+            );
+        }
+
+        return new PackagingForView($parcel, $subPackage, $consumerUnit);
     }
 }

@@ -19,6 +19,8 @@ use Admin\Contracts\Services\Provider\Article\ArticleFilter;
 use Admin\Contracts\Services\Provider\Article\ArticleOrderField;
 use Admin\Contracts\Services\Provider\Article\Result\ArticleCollectionResult;
 use Admin\Contracts\Services\Provider\Article\Result\ArticleResult;
+use Admin\Contracts\Services\Provider\Article\Result\PackagingLevelResult;
+use Admin\Contracts\Services\Provider\Article\Result\PackagingResult;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Shared\Entities\Enum\QueryOrder;
@@ -47,7 +49,7 @@ use Shared\Entities\VO\Quantity;
  */
 final class DefaultArticleAggregatorBuilder implements ArticleAggregatorBuilder
 {
-    private const string ALIAS = 'a';
+    private const string ALIAS = 'article';
 
     /** @var array<string, mixed> */
     private array $filters = [];
@@ -119,10 +121,26 @@ final class DefaultArticleAggregatorBuilder implements ArticleAggregatorBuilder
             $queryBuilder->setMaxResults($this->limit);
         }
 
-        // Execute and map results
         $collection = new ArticleCollectionResult($totalCount);
 
-        /** @var array<array{uuid: string, name:string, unitPrice: int, quantity: float|int, slug: string}> $articles */
+        /** @var array<array{
+         *     uuid: string,
+         *     name: string,
+         *     unitPrice: int,
+         *     quantity: float|int,
+         *     slug: string,
+         *     zoneStorageUuid?: string,
+         *     parcelUnitLabel?: string,
+         *     parcelUnitAbbr?: string,
+         *     parcelQuantity?: float,
+         *     subPackageUnitLabel?: string,
+         *     subPackageUnitAbbr?: string,
+         *     subPackageQuantity?: float,
+         *     consumerUnitLabel?: string,
+         *     consumerUnitAbbr?: string,
+         *     consumerUnitQuantity?: float
+         * }> $articles
+         */
         $articles = $queryBuilder->getQuery()->getResult();
 
         foreach ($articles as $article) {
@@ -188,8 +206,29 @@ final class DefaultArticleAggregatorBuilder implements ArticleAggregatorBuilder
 
         return $this->entityManager
             ->createQueryBuilder()
-            ->select(["{$alias}.uuid", "{$alias}.name", "{$alias}.unitPrice", "{$alias}.quantity", "{$alias}.slug"])
+            ->select([
+                "{$alias}.uuid",
+                "{$alias}.name",
+                "{$alias}.unitPrice",
+                "{$alias}.quantity",
+                "{$alias}.slug",
+            ])
             ->from(Article::class, $alias)
+            ->leftJoin("{$alias}.packaging", 'pkg')
+            ->leftJoin('pkg.parcelUnit', 'parcelUnit')
+            ->leftJoin('pkg.subPackageUnit', 'subPkgUnit')
+            ->leftJoin('pkg.consumeUnitUnit', 'consumerUnit')
+            ->addSelect([
+                'parcelUnit.label AS parcelUnitLabel',
+                'parcelUnit.abbreviation AS parcelUnitAbbr',
+                'pkg.parcelQuantity AS parcelQuantity',
+                'subPkgUnit.label AS subPackageUnitLabel',
+                'subPkgUnit.abbreviation AS subPackageUnitAbbr',
+                'pkg.subPackageQuantity AS subPackageQuantity',
+                'consumerUnit.label AS consumerUnitLabel',
+                'consumerUnit.abbreviation AS consumerUnitAbbr',
+                'pkg.consumeUnitQuantity AS consumerUnitQuantity',
+            ])
         ;
     }
 
@@ -281,7 +320,23 @@ final class DefaultArticleAggregatorBuilder implements ArticleAggregatorBuilder
     }
 
     /**
-     * @param array{uuid: string, name:string, unitPrice: int, quantity: float|int, slug: string, zoneStorageUuid?: string} $article
+     * @param array{
+     *     uuid: string,
+     *     name: string,
+     *     unitPrice: int,
+     *     quantity: float|int,
+     *     slug: string,
+     *     zoneStorageUuid?: string,
+     *     parcelUnitLabel?: string,
+     *     parcelUnitAbbr?: string,
+     *     parcelQuantity?: float,
+     *     subPackageUnitLabel?: string,
+     *     subPackageUnitAbbr?: string,
+     *     subPackageQuantity?: float,
+     *     consumerUnitLabel?: string,
+     *     consumerUnitAbbr?: string,
+     *     consumerUnitQuantity?: float
+     * } $article
      */
     private function mapToResult(array $article): ArticleResult
     {
@@ -294,6 +349,53 @@ final class DefaultArticleAggregatorBuilder implements ArticleAggregatorBuilder
             zoneStorageUuid: isset($article['zoneStorageUuid'])
                 ? ResourceUuid::fromString($article['zoneStorageUuid'])
                 : null,
+            packaging: $this->mapPackaging($article),
         );
+    }
+
+    /**
+     * @param array{
+     *     parcelUnitLabel?: string,
+     *     parcelUnitAbbr?: string,
+     *     parcelQuantity?: float,
+     *     subPackageUnitLabel?: string,
+     *     subPackageUnitAbbr?: string,
+     *     subPackageQuantity?: float,
+     *     consumerUnitLabel?: string,
+     *     consumerUnitAbbr?: string,
+     *     consumerUnitQuantity?: float
+     * } $article
+     */
+    private function mapPackaging(array $article): ?PackagingResult
+    {
+        if (!isset($article['parcelUnitLabel'], $article['parcelUnitAbbr'], $article['parcelQuantity'])) {
+            return null;
+        }
+
+        $parcel = new PackagingLevelResult(
+            $article['parcelUnitLabel'],
+            $article['parcelUnitAbbr'],
+            $article['parcelQuantity'],
+        );
+
+        $subPackage = null;
+        if (isset($article['subPackageUnitLabel'], $article['subPackageUnitAbbr'], $article['subPackageQuantity'])) {
+            $subPackage = new PackagingLevelResult(
+                $article['subPackageUnitLabel'],
+                $article['subPackageUnitAbbr'],
+                $article['subPackageQuantity'],
+            );
+        }
+
+        $consumerUnit = null;
+        if (isset($article['consumerUnitLabel'], $article['consumerUnitAbbr'], $article['consumerUnitQuantity'])) {
+            $consumerUnit = new PackagingLevelResult(
+                $article['consumerUnitLabel'],
+                $article['consumerUnitAbbr'],
+                $article['consumerUnitQuantity'],
+            );
+        }
+
+        return new PackagingResult($parcel, $subPackage, $consumerUnit);
     }
 }

@@ -15,7 +15,11 @@ namespace Inventory\Adapters\Gateway;
 
 use Admin\Contracts\Services\Provider\Article\ArticleFilter;
 use Admin\Contracts\Services\Provider\Article\ArticleProvider;
+use Admin\Contracts\Services\Provider\Article\Result\PackagingLevelResult;
+use Admin\Contracts\Services\Provider\Article\Result\PackagingResult;
 use Inventory\Entities\VO\Article;
+use Inventory\Entities\VO\PackagingLevel;
+use Inventory\Entities\VO\PackagingSnapshot;
 use Inventory\UseCases\Gateway\ArticleGatewayInterface;
 use Shared\Entities\ResourceUuid;
 
@@ -53,6 +57,10 @@ final readonly class ArticleGateway implements ArticleGatewayInterface
                 $articleResult->zoneStorageUuid instanceof ResourceUuid,
                 'zoneStorageUuid must be set when filtering by zones'
             );
+            \assert(
+                $articleResult->packaging instanceof PackagingResult,
+                'packaging must be set for inventory creation'
+            );
 
             yield new Article(
                 uuid: $articleResult->uuid,
@@ -61,7 +69,30 @@ final readonly class ArticleGateway implements ArticleGatewayInterface
                 unitPrice: $articleResult->unitPrice,
                 quantity: $articleResult->quantity,
                 slug: $articleResult->slug,
+                packaging: $this->mapPackaging($articleResult->packaging),
             );
         }
+    }
+
+    private function mapPackaging(PackagingResult $packagingResult): PackagingSnapshot
+    {
+        return new PackagingSnapshot(
+            parcel: $this->mapPackagingLevel($packagingResult->parcel),
+            subPackage: $packagingResult->subPackage instanceof PackagingLevelResult
+                ? $this->mapPackagingLevel($packagingResult->subPackage)
+                : null,
+            consumerUnit: $packagingResult->consumerUnit instanceof PackagingLevelResult
+                ? $this->mapPackagingLevel($packagingResult->consumerUnit)
+                : null,
+        );
+    }
+
+    private function mapPackagingLevel(PackagingLevelResult $levelResult): PackagingLevel
+    {
+        return new PackagingLevel(
+            unitLabel: $levelResult->unitLabel,
+            unitAbbreviation: $levelResult->unitAbbreviation,
+            quantity: $levelResult->quantity,
+        );
     }
 }

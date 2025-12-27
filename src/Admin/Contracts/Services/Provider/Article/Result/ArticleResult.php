@@ -27,6 +27,7 @@ final readonly class ArticleResult
         public Quantity $quantity,
         public string $slug,
         public ?ResourceUuid $zoneStorageUuid = null,
+        public ?PackagingResult $packaging = null,
     ) {
     }
 }
