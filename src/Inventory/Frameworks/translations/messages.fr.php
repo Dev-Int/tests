@@ -46,6 +46,20 @@ return [
                 'error_missing_fields' => 'Veuillez renseigner le stock réel pour les articles suivants : %articles%',
             ],
         ],
+        'finish_counting' => [
+            'button' => 'Terminer le comptage',
+            'success' => 'Comptage terminé avec succès',
+        ],
+        'review' => [
+            'titlePage' => 'Revue de l\'inventaire',
+            'summary' => 'Résumé :',
+            'discrepancy_count' => '%count% article(s) avec écart(s)',
+            'no_discrepancy' => 'Aucun écart détecté',
+            'article' => 'Article',
+            'theoreticalStock' => 'Stock théorique',
+            'realStock' => 'Stock réel',
+            'difference' => 'Écart',
+        ],
         'cancel' => 'Annuler',
         'errors' => [
             'date_past' => 'La date doit être aujourd\'hui ou dans le futur',
