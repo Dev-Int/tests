@@ -25,24 +25,12 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install Claude Code CLI
-        id: install-claude
-        run: |
-          npm install -g @anthropic-ai/claude-code@2.0.76
-          echo "claude_path=$(which claude)" >> $GITHUB_OUTPUT
-
       - name: Run Claude Code Review
         id: claude-review
-        uses: anthropics/claude-code-action@v1.0.27
+        uses: anthropics/claude-code-action@v1
         timeout-minutes: 15
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          path_to_claude_code_executable: ${{ steps.install-claude.outputs.claude_path }}
           prompt: |
             REPO: ${{ github.repository }}
             PR NUMBER: ${{ github.event.pull_request.number }}
