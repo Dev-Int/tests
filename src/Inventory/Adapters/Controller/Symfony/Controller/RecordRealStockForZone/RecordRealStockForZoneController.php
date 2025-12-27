@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Inventory\Adapters\Controller\Symfony\Controller\RecordRealStockForZone;
 
 use Inventory\Adapters\Controller\Symfony\Controller\GetInventories\GetInventoriesController;
+use Inventory\Entities\Exception\NumericExpected;
 use Inventory\Entities\InventoryItem;
 use Inventory\Entities\ReadModel\ArticleData;
 use Inventory\Entities\Repository\InventoryRepository;
@@ -137,6 +138,12 @@ final class RecordRealStockForZoneController extends AbstractController
     }
 
     /**
+     * Validates that all parcel fields are filled.
+     *
+     * Note: Only the parcel is required. SubPackage and ConsumerUnit fields
+     * are optional and default to 0 if empty (see buildArticlesData).
+     * This is intentional: users may count only full parcels.
+     *
      * @param array<InventoryItem> $items
      *
      * @return array<string> List of article names with missing parcel values
@@ -197,6 +204,9 @@ final class RecordRealStockForZoneController extends AbstractController
         $value = $request->request->get($key);
         if ($value === null || $value === '') {
             return null;
+        }
+        if (!is_numeric($value)) {
+            throw new NumericExpected($key, $value);
         }
 
         return (float) $value;

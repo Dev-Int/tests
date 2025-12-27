@@ -42,7 +42,7 @@ final class Version20251227120000 extends AbstractMigration
     public function down(Schema $schema): void
     {
         $this->addSql('DROP SEQUENCE inventory_item_packaging_id_seq CASCADE');
-        $this->addSql('DROP INDEX UNIQ_9E220B3536BF4A2;');
+        $this->addSql('DROP INDEX UNIQ_9E220B3536BF4A2');
         $this->addSql('ALTER TABLE inventory_item_packaging DROP CONSTRAINT FK_9E220B3536BF4A2');
         $this->addSql('DROP TABLE inventory_item_packaging');
     }
