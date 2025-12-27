@@ -47,34 +47,46 @@ jobs:
             REPO: ${{ github.repository }}
             PR NUMBER: ${{ github.event.pull_request.number }}
 
-            Analyse cette pull request en te basant sur CLAUDE.md du projet pour les conventions.
+            Analyse cette PR en te basant sur CLAUDE.md et docs/CODE_REVIEW.md du projet.
 
-            IMPORTANT - Contraintes de format :
-            - Maximum 200 lignes de commentaire (c'est strict !)
-            - Focus sur les problèmes critiques et bloquants uniquement
-            - Pas de tableaux complexes, utilise des listes simples
-            - Sois concis et direct
+            ## RÈGLES ANTI FAUX-POSITIFS (OBLIGATOIRE)
 
-            Structure attendue :
-            ## 🔴 Problèmes Bloquants (si présents)
-            - Liste des bugs critiques avec fichier:ligne
+            AVANT de signaler un problème, vérifie ces points :
 
-            ## ⚠️ Points d'Attention (max 5)
-            - Problèmes importants mais non-bloquants
+            ### Architecture DDD
+            - Adapters/Gateway/ORM → Adapters : PAS une violation (même couche)
+            - Controller → UseCase direct : CORRECT (pas d'interface nécessaire)
+            - UseCase fusionne plusieurs étapes : décision intentionnelle
+            - Ne critique PAS le passage par référence `&$entity` (convention)
 
-            ## ✅ Points Positifs (optionnel, max 3 items)
-            - Ce qui est bien fait
+            ### Types et Calculs
+            - bcmath pour Quantity : CORRECT (précision décimale)
+            - Millièmes (INTEGER) pour stocks : CORRECT
+            - FLOAT pour ratios packaging : CORRECT (pas des stocks)
 
-            ## 💡 Suggestions (optionnel, max 3 items)
-            - Améliorations possibles
+            ### Deptrac
+            - Adapters peut dépendre de UseCases, Entities, Shared, OtherBC\Contracts
+            - Ne signale PAS de violation si la dépendance est dans ces règles
 
-            Focus sur :
-            - Architecture DDD (respect des couches Entities → UseCases → Adapters)
-            - Dépendances Deptrac (pas de violations)
-            - Tests (présence et qualité)
-            - Bugs évidents ou problèmes de sécurité
+            ### Migrations Doctrine
+            - Séquences PostgreSQL gérées par Doctrine 3.x : CORRECT
+            - UNIQUE INDEX sur FK : contrainte explicite valide
 
-            Utilise `gh pr comment` pour poster ta review. Sois constructif et pragmatique.
+            ### Tests
+            - VÉRIFIE que le test n'existe pas avant de dire "test manquant"
+            - Cherche dans *Test.php et les DataProviders
+
+            ## FORMAT (strict)
+            - Maximum 150 lignes
+            - Seulement problèmes RÉELS et VÉRIFIÉS
+            - Si pas SÛR à 100%, ne le mentionne pas
+
+            ## Structure
+            ## 🔴 Problèmes Bloquants (bugs réels uniquement)
+            ## ⚠️ Points d'Attention (max 3, vérifiés)
+            ## ✅ Points Positifs (max 3)
+
+            Utilise `gh pr comment` pour poster. Sois constructif.
 
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
           # or https://code.claude.com/docs/en/cli-reference for available options

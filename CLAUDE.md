@@ -113,6 +113,7 @@ Full index: `.claude/README.md`
 - Testing: `docs/testing.md`
 - Workflow: `docs/workflow.md`
 - Commands: `docs/reference.md`
+- Code Review: `docs/CODE_REVIEW.md`
 
 ---
 
