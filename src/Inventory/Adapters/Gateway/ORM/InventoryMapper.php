@@ -85,6 +85,7 @@ final readonly class InventoryMapper
                 realStock: Quantity::fromMilliemes($item->realStock()),
                 amount: Amount::fromCents($item->amount()),
                 packaging: $item->packaging()->toDomain(),
+                countedAt: $item->countedAt(),
             );
             $inventoryDomain->addItem($itemDomain);
         }
@@ -98,7 +99,7 @@ final readonly class InventoryMapper
      */
     public function updateOrmItem(InventoryItem $ormItem, InventoryItemDomain $domainItem): void
     {
-        $ormItem->updateRealStock($domainItem->realStock()->toMilliemes());
+        $ormItem->updateRealStock($domainItem->realStock()->toMilliemes(), $domainItem->countedAt());
     }
 
     private function getItemsFromDomain(InventoryItemCollection $items, Inventory &$inventory): void
@@ -114,6 +115,7 @@ final readonly class InventoryMapper
                 theoreticalStock: $item->theoreticalStock()->toMilliemes(),
                 realStock: $item->realStock()->toMilliemes(),
                 amount: $item->amount()->toInt(),
+                countedAt: $item->countedAt(),
             );
 
             $packagingOrm = InventoryItemPackaging::fromDomain($item->packaging(), $ormItem);

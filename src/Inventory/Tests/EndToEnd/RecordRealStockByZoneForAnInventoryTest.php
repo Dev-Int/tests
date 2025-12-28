@@ -222,7 +222,9 @@ final class RecordRealStockByZoneForAnInventoryTest extends BasePantherTestCase
             '"Saisir stock" button should be visible for IN_PROGRESS inventory'
         );
 
-        $startButtons = $client->getCrawler()->filter('button[type="submit"]');
+        $startButtons = $client->getCrawler()->filterXPath(
+            \sprintf('//button[contains(text(), "%s")]', $translator->trans('inventory.start.button'))
+        );
         self::assertCount(0, $startButtons, 'Start button should NOT be visible for IN_PROGRESS inventory');
     }
 }

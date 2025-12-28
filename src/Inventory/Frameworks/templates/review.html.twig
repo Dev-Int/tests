@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ 'inventory.review.titlePage'|trans }} | {{ parent() }}
+{% endblock %}
+
+{% block body %}
+
+    <h1><twig:Icon:Entities:Inventory /> {{ 'inventory.review.titlePage'|trans }}</h1>
+
+    <main>
+        <article>
+            <div class="alert {% if discrepancyCount > 0 %}alert-warning{% else %}alert-success{% endif %}">
+                <strong>{{ 'inventory.review.summary'|trans }}</strong>
+                {% if discrepancyCount > 0 %}
+                    {{ 'inventory.review.discrepancy_count'|trans({'%count%': discrepancyCount}) }}
+                {% else %}
+                    {{ 'inventory.review.no_discrepancy'|trans }}
+                {% endif %}
+            </div>
+
+            {% if discrepancyCount > 0 %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>{{ 'inventory.review.article'|trans }}</th>
+                            <th>{{ 'inventory.review.theoreticalStock'|trans }}</th>
+                            <th>{{ 'inventory.review.realStock'|trans }}</th>
+                            <th>{{ 'inventory.review.difference'|trans }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                            <tr class="{% if item.isNegative %}text-danger{% elseif item.isPositive %}text-success{% endif %}">
+                                <td>{{ item.articleName }}</td>
+                                <td>{{ item.theoreticalStock }}</td>
+                                <td>{{ item.realStock }}</td>
+                                <td>
+                                    {% if item.isPositive %}+{% endif %}
+                                    {{ item.difference }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+
+            <twig:Button:BackTo href="{{ path('inventory_index') }}" label="{{ 'inventory.titlePage'|trans }}" />
+        </article>
+    </main>
+
+{% endblock %}

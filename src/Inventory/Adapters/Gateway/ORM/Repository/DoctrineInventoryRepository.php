@@ -20,6 +20,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Inventory\Adapters\Gateway\ORM\Entity\Inventory;
 use Inventory\Adapters\Gateway\ORM\Entity\InventoryItem;
 use Inventory\Adapters\Gateway\ORM\Entity\InventoryItemPackaging;
+use Inventory\Adapters\Gateway\ORM\Entity\InventoryStatus as ORMInventoryStatus;
 use Inventory\Adapters\Gateway\ORM\InventoryMapper;
 use Inventory\Entities\Exception\InventoryNotFound;
 use Inventory\Entities\Inventory as InventoryDomain;
@@ -157,6 +158,11 @@ final class DoctrineInventoryRepository extends ServiceEntityRepository implemen
         if (!$inventoryOrm instanceof Inventory) {
             throw new InventoryNotFound($inventory->uuid());
         }
+
+        $inventoryOrm->updateStatus(
+            ORMInventoryStatus::fromDomain($inventory->status()),
+            $inventory->statusUpdatedAt()
+        );
 
         foreach ($inventory->items()->toArray() as $domainItem) {
             $ormItem = $inventoryOrm->findItemByArticleAndZone(

@@ -58,6 +58,13 @@
                                        </button>
                                    </form>
                                {% endif %}
+                               {% if inventory.status == 'inProgress' and inventory.allItemsCounted %}
+                                   <form action="{{ path('inventory_finish_counting', {inventoryUuid: inventory.uuid}) }}" method="post" style="display: inline;" data-turbo-frame="_top">
+                                       <button type="submit" class="btn btn-small btn-success">
+                                           <i class="fa-solid fa-check"></i> {{ 'inventory.finish_counting.button'|trans }}
+                                       </button>
+                                   </form>
+                               {% endif %}
                                <twig:Button:UpdateEntity href="#" class="btn-small" label="{{ 'inventory.cancel'|trans }}" />
                            </span>
                        </li>

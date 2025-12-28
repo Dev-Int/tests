@@ -33,6 +33,7 @@ final readonly class GetInventoryPresenter
                 date: $inventory->date()->toDateTimeImmutable()->format('Y-m-d'),
                 status: $inventory->status()->value,
                 zoneStorageIds: $this->getZoneStorageIds($inventory->zoneStorages()),
+                allItemsCounted: $inventory->areAllItemsCounted(),
             );
         }
     }

@@ -46,6 +46,21 @@ return [
                 'error_missing_fields' => 'Please enter the real stock for the following articles: %articles%',
             ],
         ],
+        'finish_counting' => [
+            'button' => 'Finish counting',
+            'success' => 'Counting finished successfully',
+            'incomplete_zones' => 'Uncounted items in zones: %zones%',
+        ],
+        'review' => [
+            'titlePage' => 'Inventory review',
+            'summary' => 'Summary:',
+            'discrepancy_count' => '%count% item(s) with discrepancy(ies)',
+            'no_discrepancy' => 'No discrepancy detected',
+            'article' => 'Article',
+            'theoreticalStock' => 'Theoretical stock',
+            'realStock' => 'Real stock',
+            'difference' => 'Difference',
+        ],
         'cancel' => 'Cancel',
         'errors' => [
             'date_past' => 'The date must be today or in the future',

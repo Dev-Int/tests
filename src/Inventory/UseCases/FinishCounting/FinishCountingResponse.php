@@ -11,19 +11,20 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Inventory\Adapters\Controller\Symfony\Controller\GetInventories;
+namespace Inventory\UseCases\FinishCounting;
 
-final class InventoryResult
+use Inventory\Entities\Inventory;
+use Inventory\Entities\InventoryItem;
+
+final readonly class FinishCountingResponse
 {
     /**
-     * @param array<array{uuid: string, label: string}> $zoneStorageIds
+     * @param array<InventoryItem> $itemsWithDiscrepancies
      */
     public function __construct(
-        public string $uuid,
-        public string $date,
-        public string $status,
-        public array $zoneStorageIds,
-        public bool $allItemsCounted,
+        public Inventory $inventory,
+        public int $discrepancyCount,
+        public array $itemsWithDiscrepancies,
     ) {
     }
 }

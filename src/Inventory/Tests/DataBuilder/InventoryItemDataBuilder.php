@@ -31,6 +31,7 @@ final class InventoryItemDataBuilder
     private int $realStockMilliemes = 0;
     private int $amountCents = 15000;
     private PackagingSnapshot $packaging;
+    private ?\DateTimeImmutable $countedAt = null;
 
     public static function defaultPackaging(): PackagingSnapshot
     {
@@ -80,6 +81,16 @@ final class InventoryItemDataBuilder
         return $this;
     }
 
+    /**
+     * Mark the item as counted (sets countedAt to current time).
+     */
+    public function asCounted(?\DateTimeImmutable $at = null): self
+    {
+        $this->countedAt = $at ?? new \DateTimeImmutable();
+
+        return $this;
+    }
+
     public function build(): InventoryItem
     {
         return new InventoryItem(
@@ -91,6 +102,7 @@ final class InventoryItemDataBuilder
             realStock: Quantity::fromMilliemes($this->realStockMilliemes),
             amount: Amount::fromCents($this->amountCents),
             packaging: $this->packaging,
+            countedAt: $this->countedAt,
         );
     }
 }

@@ -114,6 +114,12 @@ class Inventory
         $this->statusUpdatedAt = $statusUpdatedAt;
     }
 
+    public function updateStatus(InventoryStatus $status, ?\DateTimeImmutable $statusUpdatedAt): void
+    {
+        $this->status = $status;
+        $this->statusUpdatedAt = $statusUpdatedAt;
+    }
+
     /**
      * Find an ORM item by article and zone for mapping purposes.
      *

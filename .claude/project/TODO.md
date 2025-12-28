@@ -1,6 +1,6 @@
 # TODO List - Tâches actives
 
-**Dernière mise à jour** : 2025-12-22
+**Dernière mise à jour** : 2025-12-28
 
 ---
 
@@ -38,6 +38,46 @@ Les appels inter-BC doivent passer **UNIQUEMENT** par `BC\Contracts`, et **JAMAI
 ---
 
 ## 🟡 Priority Medium
+
+### Refactoring Packaging : utiliser consumerUnit au lieu de parcel
+
+**Status** : ⬜ À faire
+**GitHub Issue** : TBD
+**Prérequis pour** : Fiche Recette
+
+**Contexte** :
+Le code actuel de saisie des stocks (Inventory) utilise `parcel` comme niveau de packaging pour la saisie. Or, pour la **fiche recette**, les quantités seront exprimées en `consumerUnit` (unité de consommation).
+
+**Problème actuel** :
+- Les champs de formulaire sont nommés `real_stock_{slug}_parcel`
+- La conversion se fait au niveau `parcel` du packaging
+- Les recettes nécessitent le `consumerUnit` pour les ingrédients
+
+**Structure Packaging** (rappel) :
+```
+Packaging
+├── parcel (colis fournisseur) - ex: carton de 6 bouteilles
+├── subParcel (sous-colis) - ex: pack de 2 bouteilles
+└── consumerUnit (unité consommation) - ex: 1 bouteille ← CIBLE
+```
+
+**BC concernés** :
+- `Admin` : Entité Article, Packaging VO
+- `Inventory` : Saisie stock, calculs quantités
+
+**Tâches** :
+- [ ] Analyser l'impact sur les formulaires de saisie (Inventory)
+- [ ] Refactoriser les noms de champs `_parcel` → `_consumerUnit` ou rendre générique
+- [ ] Adapter les conversions de quantités (Quantity VO)
+- [ ] Mettre à jour les tests fonctionnels concernés
+- [ ] Documenter le choix d'unité par contexte (inventaire vs recette)
+
+**Vérifications** :
+- [ ] PHPStan : 0 erreur
+- [ ] Tous les tests passent (make ta)
+- [ ] Saisie stock fonctionne toujours correctement
+
+---
 
 ### Migrer les services.yaml vers services.php
 

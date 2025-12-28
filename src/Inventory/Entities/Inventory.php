@@ -15,6 +15,7 @@ namespace Inventory\Entities;
 
 use Inventory\Entities\Exception\ArticleNotFoundInInventory;
 use Inventory\Entities\Exception\CannotRecordStockOnNonInProgressInventory;
+use Inventory\Entities\Exception\IncompleteInventoryCounting;
 use Inventory\Entities\Exception\InvalidStatusTransition;
 use Inventory\Entities\Exception\NoArticlesToLoad;
 use Inventory\Entities\ReadModel\ArticleData;
@@ -136,6 +137,11 @@ final class Inventory
         return $this->items;
     }
 
+    public function areAllItemsCounted(): bool
+    {
+        return $this->items->getZonesWithUncountedItems() === [];
+    }
+
     public function addItem(InventoryItem $itemDomain): void
     {
         $this->items->add($itemDomain);
@@ -191,6 +197,28 @@ final class Inventory
         if (InventoryStatus::IN_PROGRESS !== $this->status) {
             throw new InvalidStatusTransition(fromStatus: $this->status, toStatus: InventoryStatus::REVIEW);
         }
+        $this->status = InventoryStatus::REVIEW;
+        $this->statusUpdatedAt = ClockFactory::clock()->now();
+    }
+
+    /**
+     * Termine le comptage et soumet pour révision (IN_PROGRESS → REVIEW).
+     * Valide que TOUS les items ont été comptés avant d'autoriser la transition.
+     *
+     * @throws InvalidStatusTransition     si l'inventaire n'est pas IN_PROGRESS
+     * @throws IncompleteInventoryCounting si certains items n'ont pas été comptés
+     */
+    public function finishCounting(): void
+    {
+        if (InventoryStatus::IN_PROGRESS !== $this->status) {
+            throw new InvalidStatusTransition(fromStatus: $this->status, toStatus: InventoryStatus::REVIEW);
+        }
+
+        $zonesWithUncountedItems = $this->items->getZonesWithUncountedItems();
+        if ($zonesWithUncountedItems !== []) {
+            throw new IncompleteInventoryCounting($zonesWithUncountedItems);
+        }
+
         $this->status = InventoryStatus::REVIEW;
         $this->statusUpdatedAt = ClockFactory::clock()->now();
     }

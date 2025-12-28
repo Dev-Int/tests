@@ -152,7 +152,9 @@ final class StartAnInventoryTest extends BasePantherTestCase
         $client->waitForElementToContain('h1', $translator->trans('inventory.titlePage'));
 
         // Assert - No start button should be visible (inventory is not DRAFT)
-        $startButtons = $client->getCrawler()->filter('button[type="submit"]');
+        $startButtons = $client->getCrawler()->filterXPath(
+            \sprintf('//button[contains(text(), "%s")]', $translator->trans('inventory.start.button'))
+        );
         self::assertCount(0, $startButtons, 'Start button should NOT be visible for IN_PROGRESS inventory');
     }
 }

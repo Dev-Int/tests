@@ -15,6 +15,8 @@ namespace Inventory\Tests\Entities;
 
 use Inventory\Tests\Factory\InventoryItemFakerFactory;
 use PHPUnit\Framework\TestCase;
+use Shared\Entities\Clock\ClockFactory;
+use Shared\Entities\Clock\FrozenClock;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\Quantity;
 
@@ -142,5 +144,48 @@ final class InventoryItemTest extends TestCase
 
         // Assert
         self::assertSame($zoneStorageUuid->toString(), $updatedItem->zoneStorage()->toString());
+    }
+
+    public function testNewItemHasNotBeenCounted(): void
+    {
+        // Arrange & Act
+        $item = $this->itemFactory->create()->build();
+
+        // Assert
+        self::assertFalse($item->hasBeenCounted());
+        self::assertNull($item->countedAt());
+    }
+
+    public function testWithRealStockSetsCountedAt(): void
+    {
+        // Arrange
+        $frozenTime = new \DateTimeImmutable('2025-12-15 10:30:00');
+        ClockFactory::initialize(new FrozenClock($frozenTime));
+
+        $item = $this->itemFactory->create()->build();
+
+        // Act
+        $countedItem = $item->withRealStock(Quantity::fromUnit(5.0));
+
+        // Assert
+        self::assertTrue($countedItem->hasBeenCounted());
+        self::assertNotNull($countedItem->countedAt());
+        self::assertEquals($frozenTime, $countedItem->countedAt());
+    }
+
+    public function testWithRealStockToZeroStillMarksAsCounted(): void
+    {
+        // Arrange
+        $frozenTime = new \DateTimeImmutable('2025-12-15 10:30:00');
+        ClockFactory::initialize(new FrozenClock($frozenTime));
+
+        $item = $this->itemFactory->create()->build();
+
+        // Act - Even setting to 0 should mark as counted
+        $countedItem = $item->withRealStock(Quantity::fromUnit(0.0));
+
+        // Assert
+        self::assertTrue($countedItem->hasBeenCounted());
+        self::assertEquals($frozenTime, $countedItem->countedAt());
     }
 }

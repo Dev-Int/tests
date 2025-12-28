@@ -34,9 +34,9 @@ final readonly class ZoneStorageGateway implements ZoneStorageGatewayInterface
         );
     }
 
-    public function provideAll(): array
+    public function provideAll(?iterable $ids = null): array
     {
-        $zoneStorages = $this->zoneStorageProvider->provideAll();
+        $zoneStorages = $this->zoneStorageProvider->provideAll($ids);
         $collection = [];
 
         foreach ($zoneStorages as $zoneStorage) {
