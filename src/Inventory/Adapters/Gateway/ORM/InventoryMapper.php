@@ -86,6 +86,7 @@ final readonly class InventoryMapper
                 amount: Amount::fromCents($item->amount()),
                 packaging: $item->packaging()->toDomain(),
                 countedAt: $item->countedAt(),
+                reviewed: $item->reviewed(),
             );
             $inventoryDomain->addItem($itemDomain);
         }
@@ -100,6 +101,7 @@ final readonly class InventoryMapper
     public function updateOrmItem(InventoryItem $ormItem, InventoryItemDomain $domainItem): void
     {
         $ormItem->updateRealStock($domainItem->realStock()->toMilliemes(), $domainItem->countedAt());
+        $ormItem->updateReviewed($domainItem->isReviewed() ? true : null);
     }
 
     private function getItemsFromDomain(InventoryItemCollection $items, Inventory &$inventory): void

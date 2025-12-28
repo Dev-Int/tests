@@ -60,6 +60,13 @@ return [
             'theoreticalStock' => 'Stock théorique',
             'realStock' => 'Stock réel',
             'difference' => 'Écart',
+            'status' => 'Statut',
+            'select_all' => 'Tout sélectionner',
+            'reviewed' => 'Révisé',
+            'pending' => 'En attente',
+            'mark_as_reviewed' => 'Marquer comme révisé',
+            'no_items_selected' => 'Veuillez sélectionner au moins un article à réviser',
+            'items_reviewed' => 'Articles marqués comme révisés avec succès',
         ],
         'cancel' => 'Annuler',
         'errors' => [

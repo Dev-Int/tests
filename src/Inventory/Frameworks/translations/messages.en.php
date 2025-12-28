@@ -60,6 +60,13 @@ return [
             'theoreticalStock' => 'Theoretical stock',
             'realStock' => 'Real stock',
             'difference' => 'Difference',
+            'status' => 'Status',
+            'select_all' => 'Select all',
+            'reviewed' => 'Reviewed',
+            'pending' => 'Pending',
+            'mark_as_reviewed' => 'Mark as reviewed',
+            'no_items_selected' => 'Please select at least one item to review',
+            'items_reviewed' => 'Items marked as reviewed successfully',
         ],
         'cancel' => 'Cancel',
         'errors' => [

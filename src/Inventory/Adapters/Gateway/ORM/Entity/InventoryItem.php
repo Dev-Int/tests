@@ -49,6 +49,12 @@ class InventoryItem
         private int $amount,
         #[ORM\Column(name: 'counted_at', type: 'datetime_immutable', nullable: true)]
         private ?\DateTimeImmutable $countedAt = null,
+        #[ORM\Column(name: 'reviewed', type: 'boolean', nullable: true)]
+        private ?bool $reviewed = null,
+        #[ORM\Column(name: 'review_notes', type: 'text', nullable: true)]
+        private ?string $reviewNotes = null,
+        #[ORM\Column(name: 'action_plan', type: 'text', nullable: true)]
+        private ?string $actionPlan = null,
     ) {
     }
 
@@ -116,5 +122,25 @@ class InventoryItem
     public function setPackaging(InventoryItemPackaging $packaging): void
     {
         $this->packaging = $packaging;
+    }
+
+    public function reviewed(): ?bool
+    {
+        return $this->reviewed;
+    }
+
+    public function reviewNotes(): ?string
+    {
+        return $this->reviewNotes;
+    }
+
+    public function actionPlan(): ?string
+    {
+        return $this->actionPlan;
+    }
+
+    public function updateReviewed(?bool $reviewed): void
+    {
+        $this->reviewed = $reviewed;
     }
 }
