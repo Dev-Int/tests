@@ -188,4 +188,87 @@ final class InventoryItemTest extends TestCase
         self::assertTrue($countedItem->hasBeenCounted());
         self::assertEquals($frozenTime, $countedItem->countedAt());
     }
+
+    public function testNewItemIsNotReviewedByDefault(): void
+    {
+        // Arrange & Act
+        $item = $this->itemFactory->create()->build();
+
+        // Assert
+        self::assertFalse($item->isReviewed());
+    }
+
+    public function testWithReviewedTrueReturnsNewInstanceMarkedAsReviewed(): void
+    {
+        // Arrange
+        $item = $this->itemFactory->create()->build();
+
+        // Act
+        $reviewedItem = $item->withReviewed(true);
+
+        // Assert
+        self::assertNotSame($item, $reviewedItem);
+        self::assertTrue($reviewedItem->isReviewed());
+        self::assertFalse($item->isReviewed());
+    }
+
+    public function testWithReviewedPreservesOtherProperties(): void
+    {
+        // Arrange
+        $item = $this->itemFactory->create()
+            ->withTheoreticalStock(10.0)
+            ->withRealStock(8.0)
+            ->asCounted()
+            ->build()
+        ;
+
+        // Act
+        $reviewedItem = $item->withReviewed(true);
+
+        // Assert
+        self::assertSame($item->article()->toString(), $reviewedItem->article()->toString());
+        self::assertSame($item->zoneStorage()->toString(), $reviewedItem->zoneStorage()->toString());
+        self::assertSame($item->theoreticalStock()->toMilliemes(), $reviewedItem->theoreticalStock()->toMilliemes());
+        self::assertSame($item->realStock()->toMilliemes(), $reviewedItem->realStock()->toMilliemes());
+        self::assertEquals($item->countedAt(), $reviewedItem->countedAt());
+    }
+
+    public function testHasDiscrepancyReturnsTrueWhenRealDiffersFromTheoretical(): void
+    {
+        // Arrange
+        $item = $this->itemFactory->create()
+            ->withTheoreticalStock(10.0)
+            ->withRealStock(8.0)
+            ->build()
+        ;
+
+        // Act & Assert
+        self::assertTrue($item->hasDiscrepancy());
+    }
+
+    public function testHasDiscrepancyReturnsFalseWhenStocksAreEqual(): void
+    {
+        // Arrange
+        $item = $this->itemFactory->create()
+            ->withTheoreticalStock(10.0)
+            ->withRealStock(10.0)
+            ->build()
+        ;
+
+        // Act & Assert
+        self::assertFalse($item->hasDiscrepancy());
+    }
+
+    public function testHasDiscrepancyReturnsTrueForPositiveDifference(): void
+    {
+        // Arrange
+        $item = $this->itemFactory->create()
+            ->withTheoreticalStock(10.0)
+            ->withRealStock(12.0)
+            ->build()
+        ;
+
+        // Act & Assert
+        self::assertTrue($item->hasDiscrepancy());
+    }
 }

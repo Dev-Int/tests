@@ -11,19 +11,14 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Inventory\Adapters\Controller\Symfony\Controller\ReviewInventory;
+namespace Inventory\Adapters\Controller\Symfony\Controller\ReviewInventory\Input;
 
-final readonly class DiscrepancyItemResult
+final readonly class ItemChoice
 {
     public function __construct(
         public string $identifier,
         public string $articleName,
-        public float $theoreticalStock,
-        public float $realStock,
-        public float $difference,
-        public bool $isPositive,
-        public bool $isNegative,
-        public bool $isReviewed,
+        public bool $isReviewed
     ) {
     }
 }

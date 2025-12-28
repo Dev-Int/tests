@@ -36,12 +36,14 @@ final readonly class ReviewInventoryPresenter
             $difference = $item->calculateDifference();
 
             $results[] = new DiscrepancyItemResult(
+                identifier: $item->identifier(),
                 articleName: $item->articleName()->toString(),
                 theoreticalStock: $item->theoreticalStock()->toUnit(),
                 realStock: $item->realStock()->toUnit(),
                 difference: $difference->toUnit(),
                 isPositive: $difference->isPositive(),
                 isNegative: $difference->isNegative(),
+                isReviewed: $item->isReviewed(),
             );
         }
 

@@ -4,6 +4,10 @@
     {{ 'inventory.review.titlePage'|trans }} | {{ parent() }}
 {% endblock %}
 
+{% block importmap %}
+    {{ importmap('app') }}
+{% endblock %}
+
 {% block body %}
 
     <h1><twig:Icon:Entities:Inventory /> {{ 'inventory.review.titlePage'|trans }}</h1>
@@ -20,32 +24,66 @@
             </div>
 
             {% if discrepancyCount > 0 %}
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>{{ 'inventory.review.article'|trans }}</th>
-                            <th>{{ 'inventory.review.theoreticalStock'|trans }}</th>
-                            <th>{{ 'inventory.review.realStock'|trans }}</th>
-                            <th>{{ 'inventory.review.difference'|trans }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in items %}
-                            <tr class="{% if item.isNegative %}text-danger{% elseif item.isPositive %}text-success{% endif %}">
-                                <td>{{ item.articleName }}</td>
-                                <td>{{ item.theoreticalStock }}</td>
-                                <td>{{ item.realStock }}</td>
-                                <td>
-                                    {% if item.isPositive %}+{% endif %}
-                                    {{ item.difference }}
-                                </td>
+                {{ form_start(form) }}
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <input type="checkbox" id="select-all" title="{{ 'inventory.review.select_all'|trans }}">
+                                </th>
+                                <th>{{ 'inventory.review.article'|trans }}</th>
+                                <th>{{ 'inventory.review.theoreticalStock'|trans }}</th>
+                                <th>{{ 'inventory.review.realStock'|trans }}</th>
+                                <th>{{ 'inventory.review.difference'|trans }}</th>
+                                <th>{{ 'inventory.review.status'|trans }}</th>
                             </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {% for item in items %}
+                                <tr class="{% if item.isNegative %}color-error{% elseif item.isPositive %}color-success{% endif %}">
+                                    <td>
+                                        {% if not item.isReviewed %}
+                                            {% for checkbox in form.reviewed_items %}
+                                                {% if checkbox.vars.value == item.identifier %}
+                                                    {{ form_widget(checkbox, {'attr': {'class': 'item-checkbox'}}) }}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ item.articleName }}</td>
+                                    <td>{{ item.theoreticalStock }}</td>
+                                    <td>{{ item.realStock }}</td>
+                                    <td>
+                                        {% if item.isPositive %}+{% endif %}
+                                        {{ item.difference }}
+                                    </td>
+                                    <td>
+                                        {% if item.isReviewed %}
+                                            <span class="badge badge-success">{{ 'inventory.review.reviewed'|trans }}</span>
+                                        {% else %}
+                                            <span class="badge badge-warning">{{ 'inventory.review.pending'|trans }}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    <div class="grid">
+                        <twig:Form:Button:Cancel href="{{ path('inventory_index') }}" label="{{ 'cancel'|trans }}" />
+                        <twig:Form:Button:Submit label="{{ 'inventory.review.mark_as_reviewed'|trans }}" icon="fa-save" />
+                    </div>
+                {{ form_end(form) }}
+
+                <script>
+                    document.getElementById('select-all').addEventListener('change', function() {
+                        document.querySelectorAll('.item-checkbox').forEach(function(checkbox) {
+                            checkbox.checked = this.checked;
+                        }, this);
+                    });
+                </script>
             {% endif %}
 
-            <twig:Button:BackTo href="{{ path('inventory_index') }}" label="{{ 'inventory.titlePage'|trans }}" />
         </article>
     </main>
 

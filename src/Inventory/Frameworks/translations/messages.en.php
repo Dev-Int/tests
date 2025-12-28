@@ -60,6 +60,17 @@ return [
             'theoreticalStock' => 'Theoretical stock',
             'realStock' => 'Real stock',
             'difference' => 'Difference',
+            'status' => 'Status',
+            'select_all' => 'Select all',
+            'reviewed' => 'Reviewed',
+            'pending' => 'Pending',
+            'mark_as_reviewed' => 'Mark as reviewed',
+            'no_items_selected' => 'Please select at least one item to review',
+            'items_reviewed' => 'Item(s) marked as reviewed successfully',
+            'errors' => [
+                'no_discrepancy' => 'Cannot review an item that has no stock discrepancy',
+                'article_not_found' => 'Article not found in this inventory',
+            ],
         ],
         'cancel' => 'Cancel',
         'errors' => [

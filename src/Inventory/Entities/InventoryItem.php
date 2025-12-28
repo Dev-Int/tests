@@ -39,11 +39,13 @@ final readonly class InventoryItem
     }
 
     /**
-     * @param Amount                  $amount    Snapshot of theoretical value at creation (price × theoreticalStock).
-     *                                           This is NOT recalculated when realStock changes.
-     *                                           Real value after counting = price × realStock.
-     * @param PackagingSnapshot       $packaging snapshot of article packaging at inventory creation
-     * @param \DateTimeImmutable|null $countedAt timestamp when the item was counted, null if not yet counted
+     * @param Amount                  $amount      Snapshot of theoretical value at creation (price × theoreticalStock).
+     *                                             This is NOT recalculated when realStock changes.
+     *                                             Real value after counting = price × realStock.
+     * @param PackagingSnapshot       $packaging   snapshot of article packaging at inventory creation
+     * @param \DateTimeImmutable|null $countedAt   timestamp when the item was counted, null if not yet counted
+     * @param string|null             $reviewNotes prepared for future iteration
+     * @param string|null             $actionPlan  prepared for future iteration
      */
     public function __construct(
         private ResourceUuid $article,
@@ -55,6 +57,9 @@ final readonly class InventoryItem
         private Amount $amount,
         private PackagingSnapshot $packaging,
         private ?\DateTimeImmutable $countedAt = null,
+        private bool $reviewed = false,
+        private ?string $reviewNotes = null,
+        private ?string $actionPlan = null,
     ) {
     }
 
@@ -131,6 +136,9 @@ final readonly class InventoryItem
             amount: $this->amount,
             packaging: $this->packaging,
             countedAt: ClockFactory::clock()->now(),
+            reviewed: $this->reviewed,
+            reviewNotes: $this->reviewNotes,
+            actionPlan: $this->actionPlan,
         );
     }
 
@@ -147,5 +155,33 @@ final readonly class InventoryItem
     public function calculateDifference(): StockDifference
     {
         return StockDifference::calculate($this->realStock, $this->theoreticalStock);
+    }
+
+    public function isReviewed(): bool
+    {
+        return $this->reviewed;
+    }
+
+    public function hasDiscrepancy(): bool
+    {
+        return !$this->calculateDifference()->isZero();
+    }
+
+    public function withReviewed(bool $reviewed): self
+    {
+        return new self(
+            article: $this->article,
+            articleName: $this->articleName,
+            zoneStorage: $this->zoneStorage,
+            price: $this->price,
+            theoreticalStock: $this->theoreticalStock,
+            realStock: $this->realStock,
+            amount: $this->amount,
+            packaging: $this->packaging,
+            countedAt: $this->countedAt,
+            reviewed: $reviewed,
+            reviewNotes: $this->reviewNotes,
+            actionPlan: $this->actionPlan,
+        );
     }
 }

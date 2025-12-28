@@ -56,9 +56,13 @@ fix-perms: ## Fix permissions of all files
 assets: purge ## Install the assets with symlinks in the public folder
 	$(SYMFONY) assets:install public/ --symlink --relative
 
+assets-compile: ## Compile assets (AssetMapper) - run after adding new CSS/JS files
+	rm -rf public/assets
+	$(SYMFONY) asset-map:compile
+
 purge: ## Purge cache and logs
 	rm -rf var/cache/* var/logs/*
-.PHONY: sf fix-perms assets purge
+.PHONY: sf fix-perms assets assets-compile purge
 
 ## —— Symfony binary 🎵 —————————————————————————————————————————————————————————
 bin-install: ## Download and install the binary in the project (file is ignored)

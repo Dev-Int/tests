@@ -79,7 +79,8 @@ final class CreateAnInventoryTest extends BasePantherTestCase
 
         $client->waitForVisibility('button[type="submit"]');
 
-        $client->waitForVisibility('input[name="createInventory[date]"]');
+        // Wait for form to be fully loaded
+        $client->wait(1);
         self::assertSelectorExists('input[name="createInventory[date]"][data-controller="datepicker"]');
         self::assertSelectorExists('select[name="createInventory[zoneStorages][]"]');
 
@@ -87,9 +88,11 @@ final class CreateAnInventoryTest extends BasePantherTestCase
         $selectOptions = $client->getCrawler()->filter('select[name="createInventory[zoneStorages][]"] option');
         self::assertCount(\count($allZones), $selectOptions);
 
-        $client->submitForm($translator->trans('add'), [
-            'createInventory[date]' => $expectedDate,
-        ]);
+        // Set date value via JS (flatpickr makes the input hidden)
+        $client->executeScript(
+            "document.querySelector('input[name=\"createInventory[date]\"]').value = '{$expectedDate}';"
+        );
+        $client->submitForm($translator->trans('add'));
 
         $client->wait(1);
         $getInventoriesUrl = $router->generate(GetInventoriesController::ROUTE_NAME);
@@ -144,9 +147,11 @@ final class CreateAnInventoryTest extends BasePantherTestCase
 
         $client->waitForVisibility('button[type="submit"]');
 
-        $client->submitForm($translator->trans('add'), [
-            'createInventory[date]' => $expectedDate,
-        ]);
+        // Set date value via JS (flatpickr makes the input hidden)
+        $client->executeScript(
+            "document.querySelector('input[name=\"createInventory[date]\"]').value = '{$expectedDate}';"
+        );
+        $client->submitForm($translator->trans('add'));
 
         $client->wait(2);
         $client->waitForElementToContain('h1', $translator->trans('inventory.titlePage'));
@@ -196,8 +201,11 @@ final class CreateAnInventoryTest extends BasePantherTestCase
         $firstOption = $options->eq(0);
         $secondOption = $options->eq(1);
 
+        // Set date value via JS (flatpickr makes the input hidden)
+        $client->executeScript(
+            "document.querySelector('input[name=\"createInventory[date]\"]').value = '{$expectedDate}';"
+        );
         $client->submitForm($translator->trans('add'), [
-            'createInventory[date]' => $expectedDate,
             'createInventory[zoneStorages]' => [
                 $firstOption->attr('value'),
                 $secondOption->attr('value'),

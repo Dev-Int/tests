@@ -32,6 +32,7 @@ final class InventoryItemDataBuilder
     private int $amountCents = 15000;
     private PackagingSnapshot $packaging;
     private ?\DateTimeImmutable $countedAt = null;
+    private bool $reviewed = false;
 
     public static function defaultPackaging(): PackagingSnapshot
     {
@@ -91,6 +92,16 @@ final class InventoryItemDataBuilder
         return $this;
     }
 
+    /**
+     * Mark the item as reviewed.
+     */
+    public function asReviewed(): self
+    {
+        $this->reviewed = true;
+
+        return $this;
+    }
+
     public function build(): InventoryItem
     {
         return new InventoryItem(
@@ -103,6 +114,7 @@ final class InventoryItemDataBuilder
             amount: Amount::fromCents($this->amountCents),
             packaging: $this->packaging,
             countedAt: $this->countedAt,
+            reviewed: $this->reviewed,
         );
     }
 }
