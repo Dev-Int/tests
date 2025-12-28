@@ -34,12 +34,16 @@ final readonly class RecordRealStockForZonePresenter
     {
         $results = [];
         foreach ($this->items as $item) {
+            $components = $item->realStockComponents();
             $results[] = new InventoryItemResult(
                 articleUuid: $item->article()->toString(),
                 articleName: $item->articleName()->toString(),
                 articleSlug: $item->articleName()->slugify(),
                 theoreticalStock: $item->theoreticalStock()->toUnit(),
                 realStock: $item->realStock()->toUnit(),
+                realStockParcel: $components->parcel->toUnit(),
+                realStockSubPackage: $components->subPackage->toUnit(),
+                realStockConsumerUnit: $components->consumerUnit->toUnit(),
                 packaging: $this->mapPackaging($item->packaging()),
             );
         }

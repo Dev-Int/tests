@@ -96,6 +96,7 @@ final class DoctrineInventoryRepository extends ServiceEntityRepository implemen
         $inventoryOrm->start($statusUpdatedAt);
 
         foreach ($inventory->items()->toArray() as $item) {
+            $components = $item->realStockComponents();
             $ormItem = new InventoryItem(
                 id: null,
                 inventory: $inventoryOrm,
@@ -105,6 +106,9 @@ final class DoctrineInventoryRepository extends ServiceEntityRepository implemen
                 price: $item->price()->toInt(),
                 theoreticalStock: $item->theoreticalStock()->toMilliemes(),
                 realStock: $item->realStock()->toMilliemes(),
+                realStockParcel: $components->parcel->toMilliemes(),
+                realStockSubPackage: $components->subPackage->toMilliemes(),
+                realStockConsumerUnit: $components->consumerUnit->toMilliemes(),
                 amount: $item->amount()->toInt(),
             );
 

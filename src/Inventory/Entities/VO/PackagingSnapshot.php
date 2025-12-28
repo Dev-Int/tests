@@ -55,10 +55,10 @@ final readonly class PackagingSnapshot
     }
 
     /**
-     * Calculates total quantity in base units from multi-level entry.
+     * Calculates total quantity in base units from multi-level components.
      *
      * For packaging: 1 colis = 4 poches = 32 portions (8 portions/poche)
-     * Entry: 2 colis + 3 poches + 5 portions
+     * Components: 2 colis + 3 poches + 5 portions
      *
      * Calculation:
      * - 2 colis × 4 poches/colis × 8 portions/poche = 64 portions
@@ -66,23 +66,23 @@ final readonly class PackagingSnapshot
      * - 5 portions = 5 portions
      * - Total = 64 + 24 + 5 = 93 portions
      */
-    public function calculateTotalFromEntry(RealStockEntry $entry): Quantity
+    public function calculateTotalFromComponents(RealStockComponents $components): Quantity
     {
         $total = 0.0;
 
         // Parcel contribution: parcelQty × subPackage.qty × consumerUnit.qty
         $parcelMultiplier = $this->getParcelToBaseMultiplier();
-        $total += $entry->parcelQuantity * $parcelMultiplier;
+        $total += $components->parcel->toUnit() * $parcelMultiplier;
 
         // SubPackage contribution: subPackageQty × consumerUnit.qty
         if ($this->subPackage instanceof PackagingLevel) {
             $subPackageMultiplier = $this->getSubPackageToBaseMultiplier();
-            $total += $entry->subPackageQuantity * $subPackageMultiplier;
+            $total += $components->subPackage->toUnit() * $subPackageMultiplier;
         }
 
         // ConsumerUnit contribution: direct base units
         if ($this->consumerUnit instanceof PackagingLevel) {
-            $total += $entry->consumerUnitQuantity;
+            $total += $components->consumerUnit->toUnit();
         }
 
         return Quantity::fromUnit($total);

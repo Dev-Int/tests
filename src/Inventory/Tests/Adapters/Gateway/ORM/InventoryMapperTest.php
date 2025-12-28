@@ -153,6 +153,9 @@ final class InventoryMapperTest extends TestCase
             price: 1000,
             theoreticalStock: 12345, // 12345 millièmes → 12.345
             realStock: 10500, // 10500 millièmes → 10.5
+            realStockParcel: null,
+            realStockSubPackage: null,
+            realStockConsumerUnit: null,
             amount: 5000
         );
 

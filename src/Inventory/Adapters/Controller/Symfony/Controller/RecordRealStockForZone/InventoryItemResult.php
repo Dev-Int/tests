@@ -21,6 +21,9 @@ final readonly class InventoryItemResult
         public string $articleSlug,
         public float $theoreticalStock,
         public float $realStock,
+        public float $realStockParcel,
+        public float $realStockSubPackage,
+        public float $realStockConsumerUnit,
         public PackagingForView $packaging,
     ) {
     }

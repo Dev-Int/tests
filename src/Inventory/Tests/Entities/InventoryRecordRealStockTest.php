@@ -17,6 +17,7 @@ use Inventory\Entities\Exception\ArticleNotFoundInInventory;
 use Inventory\Entities\Exception\CannotRecordStockOnNonInProgressInventory;
 use Inventory\Entities\ReadModel\ArticleData;
 use Inventory\Entities\VO\InventoryStatus;
+use Inventory\Entities\VO\RealStockComponents;
 use Inventory\Tests\Factory\InventoryFakerFactory;
 use Inventory\Tests\Factory\InventoryItemFakerFactory;
 use PHPUnit\Framework\TestCase;
@@ -45,7 +46,7 @@ final class InventoryRecordRealStockTest extends TestCase
         $zoneStorageUuid = ResourceUuid::generate();
         $inventory = (new InventoryFakerFactory())->createInProgress()->build();
         $inventory->addItem($this->itemFactory->create($articleUuid, $zoneStorageUuid)->build());
-        $articlesData = [new ArticleData($articleUuid, realStock: Quantity::fromUnit(12.5))];
+        $articlesData = [new ArticleData($articleUuid, realStock: Quantity::fromUnit(12.5), realStockComponents: RealStockComponents::zero())];
 
         // Act
         $inventory->recordRealStocks(
@@ -66,7 +67,7 @@ final class InventoryRecordRealStockTest extends TestCase
         $zoneStorageUuid = ResourceUuid::generate();
         $inventory = (new InventoryFakerFactory())->createDraft()->build();
         $inventory->addItem($this->itemFactory->create($articleUuid, $zoneStorageUuid)->build());
-        $articlesData = [new ArticleData($articleUuid, realStock: Quantity::fromUnit(10.0))];
+        $articlesData = [new ArticleData($articleUuid, realStock: Quantity::fromUnit(10.0), realStockComponents: RealStockComponents::zero())];
 
         // Act & Assert
         try {
@@ -88,7 +89,7 @@ final class InventoryRecordRealStockTest extends TestCase
         $zoneStorageUuid = ResourceUuid::generate();
         $inventory = (new InventoryFakerFactory())->createReviewed()->build();
         $inventory->addItem($this->itemFactory->create($articleUuid, $zoneStorageUuid)->build());
-        $articlesData = [new ArticleData($articleUuid, realStock: Quantity::fromUnit(10.0))];
+        $articlesData = [new ArticleData($articleUuid, realStock: Quantity::fromUnit(10.0), realStockComponents: RealStockComponents::zero())];
 
         // Act & Assert
         $this->expectException(CannotRecordStockOnNonInProgressInventory::class);
@@ -102,7 +103,7 @@ final class InventoryRecordRealStockTest extends TestCase
         $zoneStorageUuid = ResourceUuid::generate();
         $inventory = (new InventoryFakerFactory())->createCompleted()->build();
         $inventory->addItem($this->itemFactory->create($articleUuid, $zoneStorageUuid)->build());
-        $articlesData = [new ArticleData($articleUuid, realStock: Quantity::fromUnit(10.0))];
+        $articlesData = [new ArticleData($articleUuid, realStock: Quantity::fromUnit(10.0), realStockComponents: RealStockComponents::zero())];
 
         // Act & Assert
         $this->expectException(CannotRecordStockOnNonInProgressInventory::class);
@@ -118,7 +119,7 @@ final class InventoryRecordRealStockTest extends TestCase
         $unknownZoneStorageUuid = ResourceUuid::generate();
         $inventory = (new InventoryFakerFactory())->createInProgress()->build();
         $inventory->addItem($this->itemFactory->create($existingArticleUuid, $existingZoneStorageUuid)->build());
-        $articlesData = [new ArticleData($unknownArticleUuid, realStock: Quantity::fromUnit(10.0))];
+        $articlesData = [new ArticleData($unknownArticleUuid, realStock: Quantity::fromUnit(10.0), realStockComponents: RealStockComponents::zero())];
 
         // Act & Assert
         try {
@@ -140,7 +141,7 @@ final class InventoryRecordRealStockTest extends TestCase
         $zoneStorageUuid = ResourceUuid::generate();
         $inventory = (new InventoryFakerFactory())->createInProgress()->build();
         $inventory->addItem($this->itemFactory->create($articleUuid, $zoneStorageUuid)->build());
-        $articlesData = [new ArticleData($articleUuid, realStock: Quantity::fromUnit(8.0))];
+        $articlesData = [new ArticleData($articleUuid, realStock: Quantity::fromUnit(8.0), realStockComponents: RealStockComponents::zero())];
 
         // Act
         $inventory->recordRealStocks($articlesData, $zoneStorageUuid);

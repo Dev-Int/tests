@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Inventory\Tests\Entities;
 
 use Inventory\Entities\InventoryItemCollection;
+use Inventory\Entities\VO\RealStockComponents;
 use Inventory\Tests\Factory\InventoryItemFakerFactory;
 use PHPUnit\Framework\TestCase;
 use Shared\Entities\Clock\ClockFactory;
@@ -118,7 +119,7 @@ final class InventoryItemCollectionTest extends TestCase
         $articleUuid = ResourceUuid::generate();
         $zoneStorageUuid = ResourceUuid::generate();
         $originalItem = $this->itemFactory->create($articleUuid, $zoneStorageUuid)->withTheoreticalStock(5.0)->build();
-        $updatedItems = [$originalItem->withRealStock(Quantity::fromUnit(7.0))];
+        $updatedItems = [$originalItem->withRealStock(Quantity::fromUnit(7.0), RealStockComponents::zero())];
 
         $collection = new InventoryItemCollection();
         $collection->add($originalItem);
@@ -147,7 +148,7 @@ final class InventoryItemCollectionTest extends TestCase
         $collection->add($itemInZoneB);
 
         // Act
-        $updatedItems = [$itemInZoneA->withRealStock(Quantity::fromUnit(99.0))];
+        $updatedItems = [$itemInZoneA->withRealStock(Quantity::fromUnit(99.0), RealStockComponents::zero())];
         $collection->replace($updatedItems);
 
         // Assert

@@ -278,7 +278,7 @@ final class Inventory
                 throw new ArticleNotFoundInInventory($articleData->articleUuid);
             }
 
-            return $item->withRealStock($articleData->realStock);
+            return $item->withRealStock($articleData->realStock, $articleData->realStockComponents);
         }, $articlesData);
 
         $this->items->replace($updatedItems);

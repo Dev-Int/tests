@@ -18,6 +18,7 @@ use Inventory\Entities\Exception\CannotRecordStockOnNonInProgressInventory;
 use Inventory\Entities\Exception\InventoryNotFound;
 use Inventory\Entities\ReadModel\ArticleData;
 use Inventory\Entities\Repository\InventoryRepository;
+use Inventory\Entities\VO\RealStockComponents;
 use Inventory\Tests\Factory\InventoryFakerFactory;
 use Inventory\Tests\Factory\InventoryItemFakerFactory;
 use Inventory\UseCases\RecordRealStockForZone\RecordRealStockForZone;
@@ -62,7 +63,7 @@ final class RecordRealStockForZoneTest extends TestCase
         $request->expects(self::once())->method('inventoryUuid')->willReturn($inventoryUuid);
         $request->expects(self::once())
             ->method('articlesData')
-            ->willReturn([new ArticleData($articleUuid, realStock: Quantity::fromUnit(12.5))])
+            ->willReturn([new ArticleData($articleUuid, realStock: Quantity::fromUnit(12.5), realStockComponents: RealStockComponents::zero())])
         ;
         $request->expects(self::once())->method('zoneStorageUuid')->willReturn($zoneStorageUuid);
 
@@ -130,7 +131,7 @@ final class RecordRealStockForZoneTest extends TestCase
         $request->expects(self::once())->method('inventoryUuid')->willReturn($inventoryUuid);
         $request->expects(self::once())
             ->method('articlesData')
-            ->willReturn([new ArticleData($articleUuid, realStock: Quantity::fromUnit(10.0))])
+            ->willReturn([new ArticleData($articleUuid, realStock: Quantity::fromUnit(10.0), realStockComponents: RealStockComponents::zero())])
         ;
         $request->expects(self::once())->method('zoneStorageUuid')->willReturn($zoneStorageUuid);
 
@@ -169,7 +170,7 @@ final class RecordRealStockForZoneTest extends TestCase
         $request->expects(self::once())->method('inventoryUuid')->willReturn($inventoryUuid);
         $request->expects(self::once())
             ->method('articlesData')
-            ->willReturn([new ArticleData($unknownArticleUuid, realStock: Quantity::fromUnit(10.0))])
+            ->willReturn([new ArticleData($unknownArticleUuid, realStock: Quantity::fromUnit(10.0), realStockComponents: RealStockComponents::zero())])
         ;
         $request->expects(self::once())->method('zoneStorageUuid')->willReturn($unknownZoneStorageUuid);
 
@@ -205,7 +206,7 @@ final class RecordRealStockForZoneTest extends TestCase
         $request->expects(self::once())->method('inventoryUuid')->willReturn($inventoryUuid);
         $request->expects(self::once())
             ->method('articlesData')
-            ->willReturn([new ArticleData($articleUuid, realStock: Quantity::fromUnit(7.5))])
+            ->willReturn([new ArticleData($articleUuid, realStock: Quantity::fromUnit(7.5), realStockComponents: RealStockComponents::zero())])
         ;
         $request->expects(self::once())->method('zoneStorageUuid')->willReturn($zoneStorageUuid);
 

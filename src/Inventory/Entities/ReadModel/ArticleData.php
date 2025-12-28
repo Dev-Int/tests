@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Inventory\Entities\ReadModel;
 
+use Inventory\Entities\VO\RealStockComponents;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\Quantity;
 
@@ -20,7 +21,8 @@ final readonly class ArticleData
 {
     public function __construct(
         public ResourceUuid $articleUuid,
-        public Quantity $realStock
+        public Quantity $realStock,
+        public RealStockComponents $realStockComponents,
     ) {
     }
 }

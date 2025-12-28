@@ -18,7 +18,7 @@ use Inventory\Entities\Exception\NumericExpected;
 use Inventory\Entities\InventoryItem;
 use Inventory\Entities\ReadModel\ArticleData;
 use Inventory\Entities\Repository\InventoryRepository;
-use Inventory\Entities\VO\RealStockEntry;
+use Inventory\Entities\VO\RealStockComponents;
 use Inventory\UseCases\Gateway\ZoneStorageGatewayInterface;
 use Inventory\UseCases\RecordRealStockForZone\RecordRealStockForZone;
 use Shared\Entities\Exception\DomainException;
@@ -176,23 +176,23 @@ final class RecordRealStockForZoneController extends AbstractController
         foreach ($items as $item) {
             $articleSlug = $item->articleName()->slugify();
 
-            // All parcel values are validated before this method is called
             $parcelValue = $this->getNumericValue($request, "real_stock_{$articleSlug}_parcel");
             $subPackageValue = $this->getNumericValue($request, "real_stock_{$articleSlug}_sub_package");
             $consumerUnitValue = $this->getNumericValue($request, "real_stock_{$articleSlug}_consumer_unit");
 
             \assert($parcelValue !== null, 'Parcel value should be validated before buildArticlesData');
 
-            $entry = new RealStockEntry(
+            $components = RealStockComponents::fromUnits(
                 $parcelValue,
                 $subPackageValue ?? 0.0,
                 $consumerUnitValue ?? 0.0
             );
-            $realStock = $item->packaging()->calculateTotalFromEntry($entry);
+            $realStock = $item->packaging()->calculateTotalFromComponents($components);
 
             $articlesData[] = new ArticleData(
                 articleUuid: $item->article(),
-                realStock: $realStock
+                realStock: $realStock,
+                realStockComponents: $components,
             );
         }
 
