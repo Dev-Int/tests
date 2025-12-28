@@ -1,38 +1,90 @@
-/* Flatpickr integration with PicoCSS */
+/* Flatpickr integration with PicoCSS v1.x - Dark theme compatible */
+/* !important needed to override flatpickr.min.css */
 
-/* Ajuster les couleurs pour correspondre à PicoCSS */
+/* Calendrier principal */
 .flatpickr-calendar {
-    background: var(--pico-background-color, #fff);
-    border: 1px solid var(--pico-muted-border-color, #e0e0e0);
-    border-radius: var(--pico-border-radius, 0.25rem);
-    box-shadow: var(--pico-card-box-shadow, 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075));
+    background: var(--background-color) !important;
+    border: 1px solid var(--muted-border-color) !important;
+    border-radius: var(--border-radius) !important;
+    box-shadow: var(--card-box-shadow) !important;
+    color: var(--color) !important;
+}
+
+/* En-tête mois/année */
+.flatpickr-months .flatpickr-month,
+.flatpickr-current-month .flatpickr-monthDropdown-months,
+.flatpickr-weekdays,
+.flatpickr-weekday {
+    background: var(--background-color) !important;
+    color: var(--color) !important;
+}
+
+/* Flèches navigation */
+.flatpickr-months .flatpickr-prev-month,
+.flatpickr-months .flatpickr-next-month {
+    color: var(--color) !important;
+    fill: var(--color) !important;
+}
+
+.flatpickr-months .flatpickr-prev-month:hover,
+.flatpickr-months .flatpickr-next-month:hover {
+    color: var(--primary) !important;
+}
+
+.flatpickr-months .flatpickr-prev-month:hover svg,
+.flatpickr-months .flatpickr-next-month:hover svg {
+    fill: var(--primary) !important;
+}
+
+/* Input numérique année */
+.flatpickr-current-month input.cur-year {
+    color: var(--color) !important;
+}
+
+/* Jours du calendrier */
+.flatpickr-day {
+    color: var(--color) !important;
+}
+
+.flatpickr-day:hover {
+    background: var(--primary-hover) !important;
+    border-color: var(--primary-hover) !important;
+}
+
+.flatpickr-day.today {
+    border-color: var(--primary) !important;
 }
 
 .flatpickr-day.selected,
 .flatpickr-day.startRange,
 .flatpickr-day.endRange {
-    background: var(--pico-primary, #1095c1);
-    border-color: var(--pico-primary, #1095c1);
+    background: var(--primary) !important;
+    border-color: var(--primary) !important;
+    color: var(--primary-inverse) !important;
 }
 
-.flatpickr-day:hover {
-    background: var(--pico-secondary-hover, #e6f4f8);
+.flatpickr-day.selected:hover,
+.flatpickr-day.startRange:hover,
+.flatpickr-day.endRange:hover {
+    background: var(--primary-hover) !important;
+    border-color: var(--primary-hover) !important;
 }
 
-.flatpickr-day.today {
-    border-color: var(--pico-primary, #1095c1);
+/* Jours désactivés */
+.flatpickr-day.flatpickr-disabled,
+.flatpickr-day.flatpickr-disabled:hover {
+    color: var(--muted-color) !important;
 }
 
-.flatpickr-months .flatpickr-month {
-    background: var(--pico-background-color, #fff);
+/* Jours du mois précédent/suivant */
+.flatpickr-day.prevMonthDay,
+.flatpickr-day.nextMonthDay {
+    color: var(--muted-color) !important;
 }
 
-.flatpickr-current-month .flatpickr-monthDropdown-months {
-    background: var(--pico-background-color, #fff);
-}
-
-/* S'assurer que l'input alternatif (altInput) soit bien stylé */
+/* Input alternatif (altInput) */
 input.flatpickr-input[readonly] {
     cursor: pointer;
-    background-color: var(--pico-background-color, #fff);
+    background-color: var(--form-element-background-color) !important;
+    color: var(--color) !important;
 }

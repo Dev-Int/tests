@@ -4,6 +4,10 @@
     {{ 'inventory.review.titlePage'|trans }} | {{ parent() }}
 {% endblock %}
 
+{% block importmap %}
+    {{ importmap('app') }}
+{% endblock %}
+
 {% block body %}
 
     <h1><twig:Icon:Entities:Inventory /> {{ 'inventory.review.titlePage'|trans }}</h1>
@@ -36,7 +40,7 @@
                         </thead>
                         <tbody>
                             {% for item in items %}
-                                <tr class="{% if item.isNegative %}text-danger{% elseif item.isPositive %}text-success{% endif %}">
+                                <tr class="{% if item.isNegative %}color-error{% elseif item.isPositive %}color-success{% endif %}">
                                     <td>
                                         {% if not item.isReviewed %}
                                             {% for checkbox in form.reviewed_items %}
@@ -55,9 +59,9 @@
                                     </td>
                                     <td>
                                         {% if item.isReviewed %}
-                                            <span class="badge bg-success">{{ 'inventory.review.reviewed'|trans }}</span>
+                                            <span class="badge badge-success">{{ 'inventory.review.reviewed'|trans }}</span>
                                         {% else %}
-                                            <span class="badge bg-warning">{{ 'inventory.review.pending'|trans }}</span>
+                                            <span class="badge badge-warning">{{ 'inventory.review.pending'|trans }}</span>
                                         {% endif %}
                                     </td>
                                 </tr>

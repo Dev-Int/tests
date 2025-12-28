@@ -66,7 +66,7 @@ return [
             'pending' => 'Pending',
             'mark_as_reviewed' => 'Mark as reviewed',
             'no_items_selected' => 'Please select at least one item to review',
-            'items_reviewed' => 'Items marked as reviewed successfully',
+            'items_reviewed' => 'Item(s) marked as reviewed successfully',
         ],
         'cancel' => 'Cancel',
         'errors' => [

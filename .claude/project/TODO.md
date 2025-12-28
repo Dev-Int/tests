@@ -165,6 +165,49 @@ if (!$article instanceof Article) {
 
 ---
 
+### Traduire les messages d'erreur des exceptions domaine
+
+**Status** : ⬜ À faire
+**GitHub Issue** : TBD
+
+**Contexte** :
+Les exceptions domaine (`DomainException`) ont leurs messages en anglais (ex: `"No items selected for review."`), mais l'UX doit être en français. Actuellement, seule `NoItemsSelectedForReview` est traduite via un catch spécifique dans le contrôleur.
+
+**Objectif** :
+Systématiser la traduction des messages d'erreur domaine affichés à l'utilisateur.
+
+**Approches possibles** :
+
+1. **Catch spécifique par exception** (actuel pour `NoItemsSelectedForReview`)
+   - ✅ Simple, explicite
+   - ❌ Verbeux si beaucoup d'exceptions
+
+2. **ExceptionTranslator service**
+   - Créer un service qui mappe `Exception::class => 'translation.key'`
+   - Injecté dans les contrôleurs ou via un listener
+
+3. **Symfony ExceptionListener + flash messages**
+   - Listener global qui traduit les `DomainException`
+   - ❌ Perd le contexte de redirection
+
+**Fichiers concernés** :
+- `src/*/Entities/Exception/*.php` - Toutes les exceptions domaine
+- `src/*/Frameworks/translations/messages.fr.php` - Traductions
+- Contrôleurs qui catchent `DomainException`
+
+**Tâches** :
+- [ ] Lister toutes les exceptions domaine et leurs messages
+- [ ] Créer les clés de traduction correspondantes
+- [ ] Choisir l'approche (catch spécifique vs service centralisé)
+- [ ] Implémenter et tester
+
+**Vérifications** :
+- [ ] Tous les messages d'erreur affichés sont en français
+- [ ] Tests fonctionnels vérifient les traductions
+- [ ] PHPStan : 0 erreur
+
+---
+
 ## 🟢 Priority Low
 
 ### End-to-End Tests Coverage - Améliorations optionnelles

@@ -46,7 +46,8 @@
       "mcp__jetbrains-phpstorm__execute_terminal_command",
       "mcp__jetbrains-phpstorm__get_file_problems",
       "mcp__plugin_greptile_greptile__create_custom_context",
-      "mcp__jetbrains-phpstorm__get_file_text_by_path"
+      "mcp__jetbrains-phpstorm__get_file_text_by_path",
+      "WebFetch(domain:picocss.com)"
     ],
     "deny": [
       "../.env",

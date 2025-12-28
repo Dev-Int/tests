@@ -274,18 +274,17 @@ final class ReviewInventoryControllerTest extends BaseFunctionalTestCase
         ]);
         $this->client->submit($form);
 
-        // Assert - if there are remaining items, page is re-rendered with success flash
-        // If all items reviewed, it redirects to inventory list
-        if ($this->client->getResponse()->isRedirection()) {
-            $crawler = $this->client->followRedirect();
-        } else {
-            // Reload the page to see the updated state
-            $crawler = $this->client->request(Request::METHOD_GET, $reviewUri);
-        }
+        // PRG pattern: should always redirect after successful POST
+        self::assertResponseRedirects();
+        $crawler = $this->client->followRedirect();
 
-        // The item should now be marked as reviewed (badge bg-success)
-        $reviewedBadges = $crawler->filter('.badge.bg-success');
+        // The item should now be marked as reviewed (badge badge-success)
+        $reviewedBadges = $crawler->filter('.badge.badge-success');
         self::assertGreaterThan(0, $reviewedBadges->count(), 'At least one item should be marked as reviewed');
+
+        // Flash success should be displayed
+        $flashSuccess = $crawler->filter('.flash-success');
+        self::assertGreaterThan(0, $flashSuccess->count(), 'Should display success flash message');
     }
 
     public function testMarkAllItemsRedirectsToInventoryList(): void
@@ -421,7 +420,7 @@ final class ReviewInventoryControllerTest extends BaseFunctionalTestCase
         $form = $crawler->selectButton($translator->trans('inventory.review.mark_as_reviewed'))->form();
         $this->client->submit($form);
 
-        // Assert - should redirect with warning flash
+        // Assert - should redirect with warning flash (translated from UseCase exception)
         self::assertResponseRedirects();
         $crawler = $this->client->followRedirect();
 

@@ -13,6 +13,7 @@ export default class extends Controller {
             altInput: true,
             altFormat: 'j F Y',
             allowInput: true,
+            theme: 'pico',
         });
     }
 }

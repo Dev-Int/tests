@@ -1,0 +1,48 @@
+/** Status indicators and badges */
+
+/* Badges */
+.badge {
+    display: inline-block;
+    padding: calc(var(--spacing) * 0.15) calc(var(--spacing) * 0.4);
+    font-size: calc(var(--font-size) * 0.85);
+    font-weight: bold;
+    border-radius: var(--border-radius);
+    white-space: nowrap;
+}
+
+.badge-success {
+    color: var(--color-success);
+    background-color: var(--color-success-bg);
+}
+
+.badge-warning {
+    color: var(--color-warning);
+    background-color: var(--color-warning-bg);
+}
+
+.badge-error {
+    color: var(--color-error);
+    background-color: var(--color-error-bg);
+}
+
+.badge-info {
+    color: var(--color-info);
+    background-color: var(--color-info-bg);
+}
+
+/* Text colors */
+.color-success {
+    color: var(--color-success);
+}
+
+.color-warning {
+    color: var(--color-warning);
+}
+
+.color-error {
+    color: var(--color-error);
+}
+
+.color-info {
+    color: var(--color-info);
+}

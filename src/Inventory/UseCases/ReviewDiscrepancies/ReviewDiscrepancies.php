@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Inventory\UseCases\ReviewDiscrepancies;
 
+use Inventory\Entities\Exception\NoItemsSelectedForReview;
 use Inventory\Entities\Repository\InventoryRepository;
 
 final readonly class ReviewDiscrepancies
@@ -24,6 +25,10 @@ final readonly class ReviewDiscrepancies
 
     public function execute(ReviewDiscrepanciesRequest $request): ReviewDiscrepanciesResponse
     {
+        if ($request->itemIdentifiers() === []) {
+            throw new NoItemsSelectedForReview();
+        }
+
         $inventory = $this->inventoryRepository->getByUuid($request->inventoryUuid());
 
         $reviewedItems = $inventory->reviewDiscrepancies($request->itemIdentifiers());

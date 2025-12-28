@@ -15,6 +15,7 @@ namespace Inventory\Tests\UseCases\ReviewDiscrepancies;
 
 use Inventory\Entities\Exception\CannotReviewItemOnNonReviewInventory;
 use Inventory\Entities\Exception\InventoryNotFound;
+use Inventory\Entities\Exception\NoItemsSelectedForReview;
 use Inventory\Entities\Repository\InventoryRepository;
 use Inventory\Tests\Factory\InventoryFakerFactory;
 use Inventory\Tests\Factory\InventoryItemFakerFactory;
@@ -67,7 +68,7 @@ final class ReviewDiscrepanciesTest extends TestCase
 
         // Assert
         $request->expects(self::once())->method('inventoryUuid')->willReturn($inventoryUuid);
-        $request->expects(self::once())->method('itemIdentifiers')->willReturn([
+        $request->method('itemIdentifiers')->willReturn([
             ['articleUuid' => $articleUuid, 'zoneStorageUuid' => $zoneStorageUuid],
         ]);
 
@@ -87,6 +88,8 @@ final class ReviewDiscrepanciesTest extends TestCase
     {
         // Arrange
         $inventoryUuid = ResourceUuid::generate();
+        $articleUuid = ResourceUuid::generate();
+        $zoneStorageUuid = ResourceUuid::generate();
 
         $repository = $this->createMock(InventoryRepository::class);
         $useCase = new ReviewDiscrepancies(inventoryRepository: $repository);
@@ -94,6 +97,9 @@ final class ReviewDiscrepanciesTest extends TestCase
 
         // Assert
         $request->expects(self::once())->method('inventoryUuid')->willReturn($inventoryUuid);
+        $request->method('itemIdentifiers')->willReturn([
+            ['articleUuid' => $articleUuid, 'zoneStorageUuid' => $zoneStorageUuid],
+        ]);
 
         $repository->expects(self::once())
             ->method('getByUuid')
@@ -133,7 +139,7 @@ final class ReviewDiscrepanciesTest extends TestCase
 
         // Assert
         $request->expects(self::once())->method('inventoryUuid')->willReturn($inventoryUuid);
-        $request->expects(self::once())->method('itemIdentifiers')->willReturn([
+        $request->method('itemIdentifiers')->willReturn([
             ['articleUuid' => $articleUuid, 'zoneStorageUuid' => $zoneStorageUuid],
         ]);
 
@@ -141,6 +147,25 @@ final class ReviewDiscrepanciesTest extends TestCase
         $repository->expects(self::never())->method('save');
 
         $this->expectException(CannotReviewItemOnNonReviewInventory::class);
+
+        // Act
+        $useCase->execute($request);
+    }
+
+    public function testReviewDiscrepanciesThrowsExceptionWhenNoItemsSelected(): void
+    {
+        // Arrange
+        $repository = $this->createMock(InventoryRepository::class);
+        $useCase = new ReviewDiscrepancies(inventoryRepository: $repository);
+        $request = $this->createMock(ReviewDiscrepanciesRequest::class);
+
+        // Assert
+        $request->expects(self::once())->method('itemIdentifiers')->willReturn([]);
+
+        $repository->expects(self::never())->method('getByUuid');
+        $repository->expects(self::never())->method('save');
+
+        $this->expectException(NoItemsSelectedForReview::class);
 
         // Act
         $useCase->execute($request);
@@ -171,7 +196,7 @@ final class ReviewDiscrepanciesTest extends TestCase
         $request = $this->createMock(ReviewDiscrepanciesRequest::class);
 
         $request->expects(self::once())->method('inventoryUuid')->willReturn($inventoryUuid);
-        $request->expects(self::once())->method('itemIdentifiers')->willReturn([
+        $request->method('itemIdentifiers')->willReturn([
             ['articleUuid' => $articleUuid, 'zoneStorageUuid' => $zoneStorageUuid],
         ]);
 
