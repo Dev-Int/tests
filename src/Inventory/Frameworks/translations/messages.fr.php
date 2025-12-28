@@ -49,6 +49,7 @@ return [
         'finish_counting' => [
             'button' => 'Terminer le comptage',
             'success' => 'Comptage terminé avec succès',
+            'incomplete_zones' => 'Articles non comptés dans les zones : %zones%',
         ],
         'review' => [
             'titlePage' => 'Revue de l\'inventaire',

@@ -19,9 +19,11 @@ use Shared\Entities\ResourceUuid;
 interface ZoneStorageGatewayInterface
 {
     /**
+     * @param iterable<ResourceUuid>|null $ids
+     *
      * @return array<ZoneStorage>
      */
-    public function provideAll(): array;
+    public function provideAll(?iterable $ids = null): array;
 
     public function provide(ResourceUuid $fromString): ZoneStorage;
 }

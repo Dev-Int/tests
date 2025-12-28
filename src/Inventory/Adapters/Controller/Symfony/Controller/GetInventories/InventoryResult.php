@@ -22,7 +22,8 @@ final class InventoryResult
         public string $uuid,
         public string $date,
         public string $status,
-        public array $zoneStorageIds
+        public array $zoneStorageIds,
+        public bool $allItemsCounted,
     ) {
     }
 }

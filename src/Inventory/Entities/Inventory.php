@@ -137,6 +137,11 @@ final class Inventory
         return $this->items;
     }
 
+    public function areAllItemsCounted(): bool
+    {
+        return $this->items->getZonesWithUncountedItems() === [];
+    }
+
     public function addItem(InventoryItem $itemDomain): void
     {
         $this->items->add($itemDomain);

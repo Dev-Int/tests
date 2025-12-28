@@ -18,7 +18,6 @@ use Admin\Tests\Factory\ZoneStorageFactory;
 use Inventory\Adapters\Controller\Symfony\Controller\FinishCounting\FinishCountingController;
 use Inventory\Adapters\Controller\Symfony\Controller\ReviewInventory\ReviewInventoryController;
 use Inventory\Adapters\Gateway\ORM\Entity\InventoryStatus as ORMInventoryStatus;
-use Inventory\Entities\Exception\IncompleteInventoryCounting;
 use Inventory\Entities\Exception\InvalidStatusTransition;
 use Inventory\Entities\Repository\InventoryRepository;
 use Inventory\Entities\VO\InventoryStatus;
@@ -184,7 +183,7 @@ final class FinishCountingControllerTest extends BaseFunctionalTestCase
 
         $crawler = $this->client->followRedirect();
         $flash = $crawler->filter('.flash-error')->text();
-        self::assertSame(IncompleteInventoryCounting::MESSAGE, $flash);
+        self::assertStringContainsString('Réserve positive', $flash, 'Error message should contain zone name');
     }
 
     public function testFinishCountingFailsOnInventoryNotFound(): void

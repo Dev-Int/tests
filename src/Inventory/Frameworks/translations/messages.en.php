@@ -49,6 +49,7 @@ return [
         'finish_counting' => [
             'button' => 'Finish counting',
             'success' => 'Counting finished successfully',
+            'incomplete_zones' => 'Uncounted items in zones: %zones%',
         ],
         'review' => [
             'titlePage' => 'Inventory review',
