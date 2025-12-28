@@ -53,6 +53,7 @@ return [
         ],
         'review' => [
             'titlePage' => 'Inventory review',
+            'button' => 'Review',
             'summary' => 'Summary:',
             'discrepancy_count' => '%count% item(s) with discrepancy(ies)',
             'no_discrepancy' => 'No discrepancy detected',

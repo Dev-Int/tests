@@ -144,6 +144,11 @@ final class Inventory
         return $this->items->getZonesWithUncountedItems() === [];
     }
 
+    public function hasUnreviewedDiscrepancies(): bool
+    {
+        return $this->items->hasUnreviewedDiscrepancies();
+    }
+
     public function addItem(InventoryItem $itemDomain): void
     {
         $this->items->add($itemDomain);

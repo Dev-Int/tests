@@ -53,6 +53,7 @@ return [
         ],
         'review' => [
             'titlePage' => 'Revue de l\'inventaire',
+            'button' => 'Réviser',
             'summary' => 'Résumé :',
             'discrepancy_count' => '%count% article(s) avec écart(s)',
             'no_discrepancy' => 'Aucun écart détecté',

@@ -65,6 +65,14 @@
                                        </button>
                                    </form>
                                {% endif %}
+                               {% if inventory.status == 'review' and inventory.hasUnreviewedDiscrepancies %}
+                                   <a href="{{ path('inventory_review', {inventoryUuid: inventory.uuid}) }}"
+                                      class="btn btn-small btn-warning"
+                                      role="button"
+                                      data-turbo-frame="_top">
+                                       <i class="fa-solid fa-magnifying-glass"></i> {{ 'inventory.review.button'|trans }}
+                                   </a>
+                               {% endif %}
                                <twig:Button:UpdateEntity href="#" class="btn-small" label="{{ 'inventory.cancel'|trans }}" />
                            </span>
                        </li>
