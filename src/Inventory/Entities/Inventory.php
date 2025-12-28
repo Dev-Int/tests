@@ -15,6 +15,8 @@ namespace Inventory\Entities;
 
 use Inventory\Entities\Exception\ArticleNotFoundInInventory;
 use Inventory\Entities\Exception\CannotRecordStockOnNonInProgressInventory;
+use Inventory\Entities\Exception\CannotReviewItemOnNonReviewInventory;
+use Inventory\Entities\Exception\CannotReviewItemWithoutDiscrepancy;
 use Inventory\Entities\Exception\IncompleteInventoryCounting;
 use Inventory\Entities\Exception\InvalidStatusTransition;
 use Inventory\Entities\Exception\NoArticlesToLoad;
@@ -277,5 +279,44 @@ final class Inventory
         $this->items->replace($updatedItems);
 
         return $updatedItems;
+    }
+
+    /**
+     * Marque plusieurs items avec écart comme "révisés".
+     *
+     * @param array<array{articleUuid: ResourceUuid, zoneStorageUuid: ResourceUuid}> $itemIdentifiers
+     *
+     * @return array<InventoryItem> Items marqués comme révisés
+     *
+     * @throws CannotReviewItemOnNonReviewInventory
+     * @throws ArticleNotFoundInInventory
+     * @throws CannotReviewItemWithoutDiscrepancy
+     */
+    public function reviewDiscrepancies(array $itemIdentifiers): array
+    {
+        if (InventoryStatus::REVIEW !== $this->status) {
+            throw new CannotReviewItemOnNonReviewInventory($this->status);
+        }
+
+        $reviewedItems = array_map(function (array $identifier): InventoryItem {
+            $articleUuid = $identifier['articleUuid'];
+            $zoneStorageUuid = $identifier['zoneStorageUuid'];
+
+            $item = $this->items->findByArticleAndZone($articleUuid, $zoneStorageUuid);
+
+            if (!$item instanceof InventoryItem) {
+                throw new ArticleNotFoundInInventory($articleUuid);
+            }
+
+            if (!$item->hasDiscrepancy()) {
+                throw new CannotReviewItemWithoutDiscrepancy($articleUuid, $zoneStorageUuid);
+            }
+
+            return $item->withReviewed(true);
+        }, $itemIdentifiers);
+
+        $this->items->replace($reviewedItems);
+
+        return $reviewedItems;
     }
 }

@@ -16,12 +16,14 @@ namespace Inventory\Adapters\Controller\Symfony\Controller\ReviewInventory;
 final readonly class DiscrepancyItemResult
 {
     public function __construct(
+        public string $identifier,
         public string $articleName,
         public float $theoreticalStock,
         public float $realStock,
         public float $difference,
         public bool $isPositive,
         public bool $isNegative,
+        public bool $isReviewed,
     ) {
     }
 }
