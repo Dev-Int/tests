@@ -16,7 +16,7 @@ final class Version20251228101018 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE inventory_item ADD reviewed BOOLEAN DEFAULT NULL');
+        $this->addSql('ALTER TABLE inventory_item ADD reviewed BOOLEAN NOT NULL DEFAULT FALSE');
         $this->addSql('ALTER TABLE inventory_item ADD review_notes TEXT DEFAULT NULL');
         $this->addSql('ALTER TABLE inventory_item ADD action_plan TEXT DEFAULT NULL');
     }

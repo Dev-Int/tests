@@ -20,6 +20,9 @@ final readonly class ReviewInventoryFormRequest implements ReviewDiscrepanciesRe
 {
     /**
      * @param array<string> $selectedItems Format: "articleUuid_zoneStorageUuid"
+     *                                     Note: underscore is safe as separator because RFC 4122 UUIDs
+     *                                     only use hyphens (-), not underscores. Do not change this
+     *                                     separator without updating the parsing logic in itemIdentifiers().
      */
     public function __construct(
         private ResourceUuid $inventoryUuid,
@@ -38,7 +41,17 @@ final readonly class ReviewInventoryFormRequest implements ReviewDiscrepanciesRe
     public function itemIdentifiers(): array
     {
         return array_map(static function (string $identifier): array {
-            [$articleUuid, $zoneStorageUuid] = explode('_', $identifier);
+            $parts = explode('_', $identifier);
+            if (\count($parts) !== 2) {
+                throw new \InvalidArgumentException(
+                    \sprintf(
+                        'Invalid item identifier format: "%s". Expected "articleUuid_zoneStorageUuid".',
+                        $identifier
+                    )
+                );
+            }
+
+            [$articleUuid, $zoneStorageUuid] = $parts;
 
             return [
                 'articleUuid' => ResourceUuid::fromString($articleUuid),

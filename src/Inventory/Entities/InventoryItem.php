@@ -44,7 +44,6 @@ final readonly class InventoryItem
      *                                             Real value after counting = price × realStock.
      * @param PackagingSnapshot       $packaging   snapshot of article packaging at inventory creation
      * @param \DateTimeImmutable|null $countedAt   timestamp when the item was counted, null if not yet counted
-     * @param bool|null               $reviewed    null = not yet reviewed, true = reviewed (marked)
      * @param string|null             $reviewNotes prepared for future iteration
      * @param string|null             $actionPlan  prepared for future iteration
      */
@@ -58,7 +57,7 @@ final readonly class InventoryItem
         private Amount $amount,
         private PackagingSnapshot $packaging,
         private ?\DateTimeImmutable $countedAt = null,
-        private ?bool $reviewed = null,
+        private bool $reviewed = false,
         private ?string $reviewNotes = null,
         private ?string $actionPlan = null,
     ) {
@@ -160,7 +159,7 @@ final readonly class InventoryItem
 
     public function isReviewed(): bool
     {
-        return $this->reviewed === true;
+        return $this->reviewed;
     }
 
     public function hasDiscrepancy(): bool

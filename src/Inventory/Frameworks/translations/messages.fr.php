@@ -67,6 +67,10 @@ return [
             'mark_as_reviewed' => 'Marquer comme révisé',
             'no_items_selected' => 'Veuillez sélectionner au moins un article à réviser',
             'items_reviewed' => 'Article(s) marqué(s) comme révisé(s) avec succès',
+            'errors' => [
+                'no_discrepancy' => 'Impossible de réviser un article sans écart de stock',
+                'article_not_found' => 'Article non trouvé dans cet inventaire',
+            ],
         ],
         'cancel' => 'Annuler',
         'errors' => [

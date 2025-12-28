@@ -101,7 +101,7 @@ final readonly class InventoryMapper
     public function updateOrmItem(InventoryItem $ormItem, InventoryItemDomain $domainItem): void
     {
         $ormItem->updateRealStock($domainItem->realStock()->toMilliemes(), $domainItem->countedAt());
-        $ormItem->updateReviewed($domainItem->isReviewed() ? true : null);
+        $ormItem->updateReviewed($domainItem->isReviewed());
     }
 
     private function getItemsFromDomain(InventoryItemCollection $items, Inventory &$inventory): void

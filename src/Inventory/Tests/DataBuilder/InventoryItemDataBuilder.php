@@ -32,7 +32,7 @@ final class InventoryItemDataBuilder
     private int $amountCents = 15000;
     private PackagingSnapshot $packaging;
     private ?\DateTimeImmutable $countedAt = null;
-    private ?bool $reviewed = null;
+    private bool $reviewed = false;
 
     public static function defaultPackaging(): PackagingSnapshot
     {

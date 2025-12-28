@@ -16,6 +16,8 @@ namespace Inventory\Adapters\Controller\Symfony\Controller\ReviewInventory;
 use Inventory\Adapters\Controller\Symfony\Controller\GetInventories\GetInventoriesController;
 use Inventory\Adapters\Controller\Symfony\Controller\ReviewInventory\Input\ItemChoice;
 use Inventory\Adapters\Form\Type\ReviewInventoryType;
+use Inventory\Entities\Exception\ArticleNotFoundInInventory;
+use Inventory\Entities\Exception\CannotReviewItemWithoutDiscrepancy;
 use Inventory\Entities\Exception\NoItemsSelectedForReview;
 use Inventory\Entities\Inventory;
 use Inventory\Entities\Repository\InventoryRepository;
@@ -129,6 +131,14 @@ final class ReviewInventoryController extends AbstractController
             $this->addFlash('warning', $this->translator->trans('inventory.review.no_items_selected'));
 
             return $this->redirectToRoute(self::ROUTE_NAME, ['inventoryUuid' => $inventoryUuid]);
+        } catch (CannotReviewItemWithoutDiscrepancy) {
+            $this->addFlash('error', $this->translator->trans('inventory.review.errors.no_discrepancy'));
+
+            return $this->redirectToRoute(self::ROUTE_NAME, ['inventoryUuid' => $inventoryUuid]);
+        } catch (ArticleNotFoundInInventory) {
+            $this->addFlash('error', $this->translator->trans('inventory.review.errors.article_not_found'));
+
+            return $this->redirectToRoute(self::ROUTE_NAME, ['inventoryUuid' => $inventoryUuid]);
         } catch (DomainException $exception) {
             $this->addFlash('error', $exception->getMessage());
 
@@ -150,6 +160,17 @@ final class ReviewInventoryController extends AbstractController
         );
     }
 
+    /**
+     * Determines redirect after successful review submission.
+     *
+     * Design decision: When items remain unreviewed, we redirect back to the same page
+     * rather than filtering out already-reviewed items. This allows users to:
+     * - See the full context of discrepancies (reviewed + unreviewed)
+     * - Track progress visually with the "✅ Reviewed" indicator
+     * - Process items in batches without losing overview
+     *
+     * The reviewed items remain visible but non-editable, providing a clear audit trail.
+     */
     private function determineRedirectAfterSuccess(Inventory $inventory, string $inventoryUuid): Response
     {
         $unreviewedItems = array_filter(

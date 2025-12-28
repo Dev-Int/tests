@@ -487,4 +487,79 @@ final class ReviewInventoryControllerTest extends BaseFunctionalTestCase
         $csrfToken = $crawler->filter('input[name="review_discrepancies[_token]"]');
         self::assertCount(1, $csrfToken, 'Form should have CSRF token');
     }
+
+    public function testFormRejectsInvalidCsrfToken(): void
+    {
+        // Arrange
+        InventoryStory::load();
+
+        $now = ClockFactory::clock()->now();
+        $futureDate = $now->modify('+1 day');
+
+        $zonePositive = ZoneStorageFactory::findBy(['label' => 'Réserve positive'])[0];
+        $zoneStorageUuid = $zonePositive->_real()->uuid();
+
+        $inventory = InventoryFactory::createOne([
+            'date' => $futureDate,
+            'zoneStorages' => [$zoneStorageUuid],
+            'status' => ORMInventoryStatus::DRAFT->value,
+            'createdAt' => $now,
+            'updatedAt' => $now,
+            'statusUpdatedAt' => null,
+        ]);
+
+        $inventoryUuid = $inventory->_real()->uuid();
+
+        // Start inventory
+        $startUri = \sprintf(self::START_INVENTORY_URI, $inventoryUuid);
+        $this->client->request(Request::METHOD_POST, $startUri);
+        $this->client->followRedirect();
+
+        // Record stock with discrepancies
+        $articles = ArticleFactory::all();
+        $formData = [];
+        foreach ($articles as $article) {
+            $articleReal = $article->_real();
+            $articleZones = $articleReal->zoneStorages();
+            $zoneUuids = [];
+            foreach ($articleZones as $zone) {
+                $zoneUuids[] = $zone->uuid();
+            }
+            if (\in_array($zoneStorageUuid, $zoneUuids, true)) {
+                $formData["real_stock_{$articleReal->slug()}_parcel"] = '5';
+            }
+        }
+
+        $recordUri = \sprintf(self::RECORD_STOCK_URI, $inventoryUuid, $zoneStorageUuid);
+        $this->client->request(Request::METHOD_POST, $recordUri, $formData);
+        $this->client->followRedirect();
+
+        $finishUri = \sprintf(self::FINISH_COUNTING_URI, $inventoryUuid);
+        $this->client->request(Request::METHOD_POST, $finishUri);
+        $this->client->followRedirect();
+
+        // Get review page to find item values
+        $reviewUri = \sprintf(self::REVIEW_URI, $inventoryUuid);
+        $crawler = $this->client->request(Request::METHOD_GET, $reviewUri);
+
+        // Get all checkbox values (simulating "select all")
+        $checkboxes = $crawler->filter('input.item-checkbox');
+        $checkboxValues = $checkboxes->extract(['value']);
+        self::assertNotEmpty($checkboxValues, 'Should have at least one checkbox');
+
+        // Act - Submit form with all items selected but invalid CSRF token
+        $this->client->request(Request::METHOD_POST, $reviewUri, [
+            'review_discrepancies' => [
+                'reviewed_items' => $checkboxValues,
+                '_token' => 'invalid_csrf_token',
+            ],
+        ]);
+
+        // Assert
+        self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+
+        $crawler = $this->client->request(Request::METHOD_GET, $reviewUri);
+        $reviewedBadges = $crawler->filter('.badge.badge-success');
+        self::assertCount(0, $reviewedBadges, 'No items should be marked as reviewed with invalid CSRF');
+    }
 }
