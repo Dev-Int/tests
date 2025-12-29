@@ -24,6 +24,7 @@ use Shared\Entities\VO\Amount;
 final class InventoryDataBuilder
 {
     private int $amount = 0;
+    private int $discrepancyAmount = 0;
     private \DateTimeImmutable $createdAt;
     private \DateTimeImmutable $updatedAt;
     private ?\DateTimeImmutable $settledAt;
@@ -93,6 +94,13 @@ final class InventoryDataBuilder
         return $this;
     }
 
+    public function withDiscrepancyAmount(int $discrepancyAmount): self
+    {
+        $this->discrepancyAmount = $discrepancyAmount;
+
+        return $this;
+    }
+
     public function withCreatedAt(\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
@@ -122,6 +130,7 @@ final class InventoryDataBuilder
             date: $this->date,
             status: $this->status,
             amount: Amount::fromCents($this->amount),
+            discrepancyAmount: Amount::fromCents($this->discrepancyAmount),
             createdAt: $this->createdAt,
             updatedAt: $this->updatedAt,
             statusUpdatedAt: $this->settledAt

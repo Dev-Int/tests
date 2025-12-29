@@ -43,6 +43,7 @@ final class Inventory
             date: $date,
             status: InventoryStatus::DRAFT,
             amount: Amount::zero(),
+            discrepancyAmount: Amount::zero(),
             createdAt: ClockFactory::clock()->now(),
             updatedAt: ClockFactory::clock()->now(),
             statusUpdatedAt: null,
@@ -59,6 +60,7 @@ final class Inventory
         InventoryDate $date,
         InventoryStatus $status,
         Amount $amount,
+        Amount $discrepancyAmount,
         \DateTimeImmutable $createdAt,
         \DateTimeImmutable $updatedAt,
         ?\DateTimeImmutable $statusUpdatedAt,
@@ -69,6 +71,7 @@ final class Inventory
             date: $date,
             status: $status,
             amount: $amount,
+            discrepancyAmount: $discrepancyAmount,
             createdAt: $createdAt,
             updatedAt: $updatedAt,
             statusUpdatedAt: $statusUpdatedAt,
@@ -85,6 +88,7 @@ final class Inventory
         private readonly InventoryDate $date,
         private InventoryStatus $status,
         private readonly Amount $amount,
+        private Amount $discrepancyAmount,
         private readonly \DateTimeImmutable $createdAt,
         private \DateTimeImmutable $updatedAt,
         private ?\DateTimeImmutable $statusUpdatedAt,
@@ -118,6 +122,11 @@ final class Inventory
     public function amount(): Amount
     {
         return $this->amount;
+    }
+
+    public function discrepancyAmount(): Amount
+    {
+        return $this->discrepancyAmount;
     }
 
     public function createdAt(): \DateTimeImmutable
@@ -249,7 +258,7 @@ final class Inventory
      * @throws InvalidStatusTransition if inventory is not in REVIEW status
      * @throws UnreviewedDiscrepancies if some discrepancies have not been reviewed
      */
-    public function complete(): void
+    public function complete(Amount $discrepancyAmount): void
     {
         if (InventoryStatus::REVIEW !== $this->status) {
             throw new InvalidStatusTransition(fromStatus: $this->status, toStatus: InventoryStatus::COMPLETED);
@@ -260,6 +269,7 @@ final class Inventory
             throw new UnreviewedDiscrepancies($unreviewedDiscrepancies);
         }
 
+        $this->discrepancyAmount = $discrepancyAmount;
         $this->status = InventoryStatus::COMPLETED;
         $this->statusUpdatedAt = ClockFactory::clock()->now();
         $this->updatedAt = ClockFactory::clock()->now();

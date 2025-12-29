@@ -31,13 +31,13 @@ final readonly class CompleteInventory
     {
         $inventory = $this->inventoryRepository->getByUuid($request->inventoryUuid());
 
-        // Transition REVIEW → COMPLETED (with validations)
-        $inventory->complete();
+        $discrepancyAmount = $this->calculateDiscrepancyAmount($inventory);
+
+        // Transition REVIEW → COMPLETED (with validations) and store discrepancy amount
+        $inventory->complete($discrepancyAmount);
 
         $updates = $this->aggregateStocksByArticle($inventory);
         $this->articleStockUpdater->updateStocks($updates);
-
-        $discrepancyAmount = $this->calculateDiscrepancyAmount($inventory);
 
         $this->inventoryRepository->save($inventory);
 
