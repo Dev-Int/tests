@@ -13,9 +13,10 @@ declare(strict_types=1);
 
 namespace Inventory\Entities\VO;
 
+use Shared\Entities\VO\Quantifiable;
 use Shared\Entities\VO\Quantity;
 
-final readonly class StockDifference
+final readonly class StockDifference implements Quantifiable
 {
     public static function calculate(Quantity $realStock, Quantity $theoreticalStock): self
     {

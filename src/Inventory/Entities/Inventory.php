@@ -20,6 +20,7 @@ use Inventory\Entities\Exception\CannotReviewItemWithoutDiscrepancy;
 use Inventory\Entities\Exception\IncompleteInventoryCounting;
 use Inventory\Entities\Exception\InvalidStatusTransition;
 use Inventory\Entities\Exception\NoArticlesToLoad;
+use Inventory\Entities\Exception\UnreviewedDiscrepancies;
 use Inventory\Entities\ReadModel\ArticleData;
 use Inventory\Entities\VO\Article;
 use Inventory\Entities\VO\InventoryDate;
@@ -244,12 +245,21 @@ final class Inventory
 
     /**
      * Finalise l'inventaire (REVIEW → COMPLETED).
+     *
+     * @throws InvalidStatusTransition if inventory is not in REVIEW status
+     * @throws UnreviewedDiscrepancies if some discrepancies have not been reviewed
      */
     public function complete(): void
     {
         if (InventoryStatus::REVIEW !== $this->status) {
             throw new InvalidStatusTransition(fromStatus: $this->status, toStatus: InventoryStatus::COMPLETED);
         }
+
+        $unreviewedDiscrepancies = $this->items->getUnreviewedDiscrepancies();
+        if ($unreviewedDiscrepancies !== []) {
+            throw new UnreviewedDiscrepancies($unreviewedDiscrepancies);
+        }
+
         $this->status = InventoryStatus::COMPLETED;
         $this->statusUpdatedAt = ClockFactory::clock()->now();
         $this->updatedAt = ClockFactory::clock()->now();

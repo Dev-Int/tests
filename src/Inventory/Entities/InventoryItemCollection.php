@@ -176,6 +176,19 @@ final class InventoryItemCollection implements Collection, \Countable
     }
 
     /**
+     * Get items with discrepancy that have NOT been reviewed.
+     *
+     * @return array<InventoryItem>
+     */
+    public function getUnreviewedDiscrepancies(): array
+    {
+        return array_values(array_filter(
+            $this->items,
+            static fn (InventoryItem $item): bool => $item->hasDiscrepancy() && !$item->isReviewed()
+        ));
+    }
+
+    /**
      * @return array<ResourceUuid>
      */
     public function getZonesWithUncountedItems(): array
