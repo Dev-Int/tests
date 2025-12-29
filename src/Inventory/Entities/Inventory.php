@@ -144,6 +144,11 @@ final class Inventory
         return $this->items->getZonesWithUncountedItems() === [];
     }
 
+    public function hasUnreviewedDiscrepancies(): bool
+    {
+        return $this->items->hasUnreviewedDiscrepancies();
+    }
+
     public function addItem(InventoryItem $itemDomain): void
     {
         $this->items->add($itemDomain);
@@ -273,7 +278,7 @@ final class Inventory
                 throw new ArticleNotFoundInInventory($articleData->articleUuid);
             }
 
-            return $item->withRealStock($articleData->realStock);
+            return $item->withRealStock($articleData->realStock, $articleData->realStockComponents);
         }, $articlesData);
 
         $this->items->replace($updatedItems);

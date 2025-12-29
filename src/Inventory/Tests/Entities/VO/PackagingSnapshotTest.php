@@ -15,21 +15,21 @@ namespace Inventory\Tests\Entities\VO;
 
 use Inventory\Entities\VO\PackagingLevel;
 use Inventory\Entities\VO\PackagingSnapshot;
-use Inventory\Entities\VO\RealStockEntry;
+use Inventory\Entities\VO\RealStockComponents;
 use PHPUnit\Framework\TestCase;
 
 final class PackagingSnapshotTest extends TestCase
 {
     /**
-     * @return iterable<string, array{PackagingSnapshot, RealStockEntry, float, string}>
+     * @return iterable<string, array{PackagingSnapshot, RealStockComponents, float, string}>
      */
-    public static function provideCalculateTotalFromEntryCases(): iterable
+    public static function provideCalculateTotalFromComponentsCases(): iterable
     {
         yield '1 niveau - 5 colis' => [
             new PackagingSnapshot(
                 parcel: new PackagingLevel('colis', 'cls', 1.0),
             ),
-            new RealStockEntry(parcelQuantity: 5.0),
+            RealStockComponents::fromUnits(parcel: 5.0, subPackage: 0.0, consumerUnit: 0.0),
             5.0,
             '5 colis sans sous-niveaux = 5 unités',
         ];
@@ -39,7 +39,7 @@ final class PackagingSnapshotTest extends TestCase
                 parcel: new PackagingLevel('colis', 'cls', 1.0),
                 subPackage: new PackagingLevel('poche', 'pch', 4.0),
             ),
-            new RealStockEntry(parcelQuantity: 2.0, subPackageQuantity: 1.0),
+            RealStockComponents::fromUnits(parcel: 2.0, subPackage: 1.0, consumerUnit: 0.0),
             9.0,
             '2 colis (×4 poches) + 1 poche = 9 poches',
         ];
@@ -50,7 +50,7 @@ final class PackagingSnapshotTest extends TestCase
                 subPackage: new PackagingLevel('poche', 'pch', 4.0),
                 consumerUnit: new PackagingLevel('portion', 'prt', 8.0),
             ),
-            new RealStockEntry(parcelQuantity: 2.0, subPackageQuantity: 3.0, consumerUnitQuantity: 5.0),
+            RealStockComponents::fromUnits(parcel: 2.0, subPackage: 3.0, consumerUnit: 5.0),
             93.0,
             '2 colis (2x4x8) + 3 poches (3x8) + 5 portions = 93 portions',
         ];
@@ -60,7 +60,7 @@ final class PackagingSnapshotTest extends TestCase
                 parcel: new PackagingLevel('colis', 'cls', 1.0),
                 subPackage: new PackagingLevel('poche', 'pch', 4.0),
             ),
-            new RealStockEntry(parcelQuantity: 0.0, subPackageQuantity: 0.0),
+            RealStockComponents::fromUnits(parcel: 0.0, subPackage: 0.0, consumerUnit: 0.0),
             0.0,
             'Aucune saisie = 0',
         ];
@@ -69,7 +69,7 @@ final class PackagingSnapshotTest extends TestCase
             new PackagingSnapshot(
                 parcel: new PackagingLevel('colis', 'cls', 1.0),
             ),
-            new RealStockEntry(parcelQuantity: 2.5),
+            RealStockComponents::fromUnits(parcel: 2.5, subPackage: 0.0, consumerUnit: 0.0),
             2.5,
             'Support des décimales',
         ];
@@ -80,22 +80,22 @@ final class PackagingSnapshotTest extends TestCase
                 parcel: new PackagingLevel('colis', 'cls', 1.0),
                 // Pas de subPackage ni consumerUnit
             ),
-            new RealStockEntry(parcelQuantity: 3.0, subPackageQuantity: 99.0, consumerUnitQuantity: 99.0),
+            RealStockComponents::fromUnits(parcel: 3.0, subPackage: 99.0, consumerUnit: 99.0),
             3.0, // Seul parcel compte
             'Valeurs pour niveaux inexistants sont ignorées',
         ];
     }
 
     /**
-     * @dataProvider provideCalculateTotalFromEntryCases
+     * @dataProvider provideCalculateTotalFromComponentsCases
      */
-    public function testCalculateTotalFromEntry(
+    public function testCalculateTotalFromComponents(
         PackagingSnapshot $packaging,
-        RealStockEntry $entry,
+        RealStockComponents $components,
         float $expectedTotal,
         string $description,
     ): void {
-        $result = $packaging->calculateTotalFromEntry($entry);
+        $result = $packaging->calculateTotalFromComponents($components);
 
         self::assertSame($expectedTotal, $result->toUnit(), $description);
     }

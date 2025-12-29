@@ -16,6 +16,7 @@ namespace Inventory\Tests\DataBuilder;
 use Inventory\Entities\InventoryItem;
 use Inventory\Entities\VO\PackagingLevel;
 use Inventory\Entities\VO\PackagingSnapshot;
+use Inventory\Entities\VO\RealStockComponents;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\Amount;
 use Shared\Entities\VO\NameField;
@@ -111,6 +112,7 @@ final class InventoryItemDataBuilder
             price: Amount::fromCents($this->priceCents),
             theoreticalStock: Quantity::fromMilliemes($this->theoreticalStockMilliemes),
             realStock: Quantity::fromMilliemes($this->realStockMilliemes),
+            realStockComponents: RealStockComponents::zero(),
             amount: Amount::fromCents($this->amountCents),
             packaging: $this->packaging,
             countedAt: $this->countedAt,

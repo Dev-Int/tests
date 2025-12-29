@@ -44,6 +44,8 @@ return [
                 'confirm_zero' => 'Attention : les articles suivants auront un stock à 0. Voulez-vous continuer ?',
                 'info' => 'Veuillez saisir le stock réel pour chaque article. Entrez 0 si l\'article n\'est plus en stock.',
                 'error_missing_fields' => 'Veuillez renseigner le stock réel pour les articles suivants : %articles%',
+                'counted' => 'Déjà compté',
+                'counted_tooltip' => 'Compté le %date%',
             ],
         ],
         'finish_counting' => [
@@ -53,6 +55,7 @@ return [
         ],
         'review' => [
             'titlePage' => 'Revue de l\'inventaire',
+            'button' => 'Réviser',
             'summary' => 'Résumé :',
             'discrepancy_count' => '%count% article(s) avec écart(s)',
             'no_discrepancy' => 'Aucun écart détecté',

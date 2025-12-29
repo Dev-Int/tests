@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Inventory\Tests\Entities;
 
+use Inventory\Entities\VO\RealStockComponents;
 use Inventory\Tests\Factory\InventoryItemFakerFactory;
 use PHPUnit\Framework\TestCase;
 use Shared\Entities\Clock\ClockFactory;
@@ -45,7 +46,7 @@ final class InventoryItemTest extends TestCase
         $newRealStock = Quantity::fromUnit(12.5);
 
         // Act
-        $updatedItem = $item->withRealStock($newRealStock);
+        $updatedItem = $item->withRealStock($newRealStock, RealStockComponents::zero());
 
         // Assert
         self::assertNotSame($item, $updatedItem);
@@ -61,7 +62,7 @@ final class InventoryItemTest extends TestCase
         $item = $this->itemFactory->create()->withRealStock(0.0)->build();
 
         // Act
-        $item->withRealStock(Quantity::fromUnit(15.0));
+        $item->withRealStock(Quantity::fromUnit(15.0), RealStockComponents::zero());
 
         // Assert
         self::assertSame(0, $item->realStock()->toMilliemes());
@@ -140,7 +141,7 @@ final class InventoryItemTest extends TestCase
         $newRealStock = Quantity::fromUnit(15.0);
 
         // Act
-        $updatedItem = $item->withRealStock($newRealStock);
+        $updatedItem = $item->withRealStock($newRealStock, RealStockComponents::zero());
 
         // Assert
         self::assertSame($zoneStorageUuid->toString(), $updatedItem->zoneStorage()->toString());
@@ -165,7 +166,7 @@ final class InventoryItemTest extends TestCase
         $item = $this->itemFactory->create()->build();
 
         // Act
-        $countedItem = $item->withRealStock(Quantity::fromUnit(5.0));
+        $countedItem = $item->withRealStock(Quantity::fromUnit(5.0), RealStockComponents::zero());
 
         // Assert
         self::assertTrue($countedItem->hasBeenCounted());
@@ -182,7 +183,7 @@ final class InventoryItemTest extends TestCase
         $item = $this->itemFactory->create()->build();
 
         // Act - Even setting to 0 should mark as counted
-        $countedItem = $item->withRealStock(Quantity::fromUnit(0.0));
+        $countedItem = $item->withRealStock(Quantity::fromUnit(0.0), RealStockComponents::zero());
 
         // Assert
         self::assertTrue($countedItem->hasBeenCounted());

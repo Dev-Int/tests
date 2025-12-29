@@ -45,6 +45,12 @@ class InventoryItem
         private int $theoreticalStock,
         #[ORM\Column(name: 'real_stock', type: 'integer')]
         private int $realStock,
+        #[ORM\Column(name: 'real_stock_parcel', type: 'integer', nullable: true)]
+        private ?int $realStockParcel,
+        #[ORM\Column(name: 'real_stock_sub_package', type: 'integer', nullable: true)]
+        private ?int $realStockSubPackage,
+        #[ORM\Column(name: 'real_stock_consumer_unit', type: 'integer', nullable: true)]
+        private ?int $realStockConsumerUnit,
         #[ORM\Column(name: 'amount', type: 'integer')]
         private int $amount,
         #[ORM\Column(name: 'counted_at', type: 'datetime_immutable', nullable: true)]
@@ -98,14 +104,37 @@ class InventoryItem
         return $this->realStock;
     }
 
+    public function realStockParcel(): ?int
+    {
+        return $this->realStockParcel;
+    }
+
+    public function realStockSubPackage(): ?int
+    {
+        return $this->realStockSubPackage;
+    }
+
+    public function realStockConsumerUnit(): ?int
+    {
+        return $this->realStockConsumerUnit;
+    }
+
     public function amount(): int
     {
         return $this->amount;
     }
 
-    public function updateRealStock(int $realStock, ?\DateTimeImmutable $countedAt): void
-    {
+    public function updateRealStock(
+        int $realStock,
+        ?int $realStockParcel,
+        ?int $realStockSubPackage,
+        ?int $realStockConsumerUnit,
+        ?\DateTimeImmutable $countedAt,
+    ): void {
         $this->realStock = $realStock;
+        $this->realStockParcel = $realStockParcel;
+        $this->realStockSubPackage = $realStockSubPackage;
+        $this->realStockConsumerUnit = $realStockConsumerUnit;
         $this->countedAt = $countedAt;
     }
 

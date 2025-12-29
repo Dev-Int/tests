@@ -16,6 +16,7 @@ namespace Inventory\Tests\Entities;
 use Inventory\Entities\Exception\IncompleteInventoryCounting;
 use Inventory\Entities\Exception\InvalidStatusTransition;
 use Inventory\Entities\VO\InventoryStatus;
+use Inventory\Entities\VO\RealStockComponents;
 use Inventory\Tests\Factory\InventoryFakerFactory;
 use Inventory\Tests\Factory\InventoryItemFakerFactory;
 use PHPUnit\Framework\TestCase;
@@ -206,7 +207,7 @@ final class InventoryTransitionStatusTest extends TestCase
         $inventory = (new InventoryFakerFactory())->createInProgress()->build();
         $itemFactory = new InventoryItemFakerFactory();
         // Add a counted item (using withRealStock sets countedAt)
-        $countedItem = $itemFactory->create()->build()->withRealStock(realStock: Quantity::fromUnit(quantity: 5.0));
+        $countedItem = $itemFactory->create()->build()->withRealStock(realStock: Quantity::fromUnit(quantity: 5.0), components: RealStockComponents::zero());
         $inventory->addItem($countedItem);
 
         // Act
@@ -263,7 +264,7 @@ final class InventoryTransitionStatusTest extends TestCase
         $inventory = (new InventoryFakerFactory())->createInProgress()->build();
         $itemFactory = new InventoryItemFakerFactory();
 
-        $countedItem = $itemFactory->create()->build()->withRealStock(realStock: Quantity::fromUnit(quantity: 5.0));
+        $countedItem = $itemFactory->create()->build()->withRealStock(realStock: Quantity::fromUnit(quantity: 5.0), components: RealStockComponents::zero());
         $inventory->addItem($countedItem);
         $uncountedItem = $itemFactory->create()->build();
         $inventory->addItem($uncountedItem);
@@ -300,7 +301,7 @@ final class InventoryTransitionStatusTest extends TestCase
         $inventory = (new InventoryFakerFactory())->createInProgress()->build();
         $itemFactory = new InventoryItemFakerFactory();
         // Item counted to 0 (real stock is 0 but countedAt is set)
-        $countedToZero = $itemFactory->create()->build()->withRealStock(realStock: Quantity::fromUnit(quantity: 0.0));
+        $countedToZero = $itemFactory->create()->build()->withRealStock(realStock: Quantity::fromUnit(quantity: 0.0), components: RealStockComponents::zero());
         $inventory->addItem($countedToZero);
 
         // Act

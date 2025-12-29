@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Inventory\Tests\Entities;
 
 use Inventory\Entities\InventoryItemCollection;
+use Inventory\Entities\VO\RealStockComponents;
 use Inventory\Tests\Factory\InventoryItemFakerFactory;
 use PHPUnit\Framework\TestCase;
 use Shared\Entities\Clock\ClockFactory;
@@ -118,7 +119,7 @@ final class InventoryItemCollectionTest extends TestCase
         $articleUuid = ResourceUuid::generate();
         $zoneStorageUuid = ResourceUuid::generate();
         $originalItem = $this->itemFactory->create($articleUuid, $zoneStorageUuid)->withTheoreticalStock(5.0)->build();
-        $updatedItems = [$originalItem->withRealStock(Quantity::fromUnit(7.0))];
+        $updatedItems = [$originalItem->withRealStock(Quantity::fromUnit(7.0), RealStockComponents::zero())];
 
         $collection = new InventoryItemCollection();
         $collection->add($originalItem);
@@ -147,7 +148,7 @@ final class InventoryItemCollectionTest extends TestCase
         $collection->add($itemInZoneB);
 
         // Act
-        $updatedItems = [$itemInZoneA->withRealStock(Quantity::fromUnit(99.0))];
+        $updatedItems = [$itemInZoneA->withRealStock(Quantity::fromUnit(99.0), RealStockComponents::zero())];
         $collection->replace($updatedItems);
 
         // Assert
@@ -410,5 +411,56 @@ final class InventoryItemCollectionTest extends TestCase
 
         // Assert - should only return zone once
         self::assertCount(1, $zones);
+    }
+
+    public function testHasUnreviewedDiscrepanciesReturnsTrueWhenDiscrepancyNotReviewed(): void
+    {
+        // Arrange
+        ClockFactory::initialize(new FrozenClock(new \DateTimeImmutable('2025-12-15')));
+
+        $collection = new InventoryItemCollection();
+        // Item with discrepancy, not reviewed
+        $collection->add($this->itemFactory->createWithPreciseStocks(theoreticalStock: 10.0, realStock: 8.0)->build());
+
+        // Act & Assert
+        self::assertTrue($collection->hasUnreviewedDiscrepancies());
+    }
+
+    public function testHasUnreviewedDiscrepanciesReturnsFalseWhenAllDiscrepanciesReviewed(): void
+    {
+        // Arrange
+        ClockFactory::initialize(new FrozenClock(new \DateTimeImmutable('2025-12-15')));
+
+        $collection = new InventoryItemCollection();
+        // Item with discrepancy, reviewed
+        $collection->add($this->itemFactory->createWithPreciseStocks(theoreticalStock: 10.0, realStock: 8.0)->asReviewed()->build());
+
+        // Act & Assert
+        self::assertFalse($collection->hasUnreviewedDiscrepancies());
+    }
+
+    public function testHasUnreviewedDiscrepanciesReturnsFalseWhenNoDiscrepancies(): void
+    {
+        // Arrange
+        $collection = new InventoryItemCollection();
+        // Item with no discrepancy
+        $collection->add($this->itemFactory->createWithPreciseStocks(theoreticalStock: 10.0, realStock: 10.0)->build());
+
+        // Act & Assert
+        self::assertFalse($collection->hasUnreviewedDiscrepancies());
+    }
+
+    public function testHasUnreviewedDiscrepanciesReturnsTrueWhenMixedReviewStatus(): void
+    {
+        // Arrange
+        ClockFactory::initialize(new FrozenClock(new \DateTimeImmutable('2025-12-15')));
+
+        $collection = new InventoryItemCollection();
+        // One reviewed, one not
+        $collection->add($this->itemFactory->createWithPreciseStocks(theoreticalStock: 10.0, realStock: 8.0)->asReviewed()->build());
+        $collection->add($this->itemFactory->createWithPreciseStocks(theoreticalStock: 10.0, realStock: 12.0)->build());
+
+        // Act & Assert
+        self::assertTrue($collection->hasUnreviewedDiscrepancies());
     }
 }

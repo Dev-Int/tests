@@ -22,6 +22,7 @@ use Inventory\Entities\InventoryItem as InventoryItemDomain;
 use Inventory\Entities\InventoryItemCollection;
 use Inventory\Entities\VO\InventoryDate;
 use Inventory\Entities\VO\InventoryStatus as InventoryStatusDomain;
+use Inventory\Entities\VO\RealStockComponents;
 use Inventory\Entities\VO\ZoneStorage;
 use Inventory\UseCases\Gateway\ZoneStorageGatewayInterface;
 use Shared\Entities\ResourceUuid;
@@ -83,6 +84,11 @@ final readonly class InventoryMapper
                 price: Amount::fromCents($item->price()),
                 theoreticalStock: Quantity::fromMilliemes($item->theoreticalStock()),
                 realStock: Quantity::fromMilliemes($item->realStock()),
+                realStockComponents: RealStockComponents::fromMilliemes(
+                    $item->realStockParcel() ?? 0,
+                    $item->realStockSubPackage() ?? 0,
+                    $item->realStockConsumerUnit() ?? 0,
+                ),
                 amount: Amount::fromCents($item->amount()),
                 packaging: $item->packaging()->toDomain(),
                 countedAt: $item->countedAt(),
@@ -100,13 +106,21 @@ final readonly class InventoryMapper
      */
     public function updateOrmItem(InventoryItem $ormItem, InventoryItemDomain $domainItem): void
     {
-        $ormItem->updateRealStock($domainItem->realStock()->toMilliemes(), $domainItem->countedAt());
+        $components = $domainItem->realStockComponents();
+        $ormItem->updateRealStock(
+            $domainItem->realStock()->toMilliemes(),
+            $components->parcel->toMilliemes(),
+            $components->subPackage->toMilliemes(),
+            $components->consumerUnit->toMilliemes(),
+            $domainItem->countedAt(),
+        );
         $ormItem->updateReviewed($domainItem->isReviewed());
     }
 
     private function getItemsFromDomain(InventoryItemCollection $items, Inventory &$inventory): void
     {
         foreach ($items->toArray() as $item) {
+            $components = $item->realStockComponents();
             $ormItem = new InventoryItem(
                 id: null,
                 inventory: $inventory,
@@ -116,6 +130,9 @@ final readonly class InventoryMapper
                 price: $item->price()->toInt(),
                 theoreticalStock: $item->theoreticalStock()->toMilliemes(),
                 realStock: $item->realStock()->toMilliemes(),
+                realStockParcel: $components->parcel->toMilliemes(),
+                realStockSubPackage: $components->subPackage->toMilliemes(),
+                realStockConsumerUnit: $components->consumerUnit->toMilliemes(),
                 amount: $item->amount()->toInt(),
                 countedAt: $item->countedAt(),
             );

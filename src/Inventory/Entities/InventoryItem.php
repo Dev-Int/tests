@@ -15,6 +15,7 @@ namespace Inventory\Entities;
 
 use Inventory\Entities\VO\Article;
 use Inventory\Entities\VO\PackagingSnapshot;
+use Inventory\Entities\VO\RealStockComponents;
 use Inventory\Entities\VO\StockDifference;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\ResourceUuid;
@@ -33,19 +34,21 @@ final readonly class InventoryItem
             price: $article->unitPrice,
             theoreticalStock: $article->quantity,
             realStock: Quantity::fromMilliemes(0),
+            realStockComponents: RealStockComponents::zero(),
             amount: $article->unitPrice->computeQuantity($article->quantity),
             packaging: $article->packaging,
         );
     }
 
     /**
-     * @param Amount                  $amount      Snapshot of theoretical value at creation (price × theoreticalStock).
-     *                                             This is NOT recalculated when realStock changes.
-     *                                             Real value after counting = price × realStock.
-     * @param PackagingSnapshot       $packaging   snapshot of article packaging at inventory creation
-     * @param \DateTimeImmutable|null $countedAt   timestamp when the item was counted, null if not yet counted
-     * @param string|null             $reviewNotes prepared for future iteration
-     * @param string|null             $actionPlan  prepared for future iteration
+     * @param Amount                  $amount              Snapshot of theoretical value at creation (price × theoreticalStock).
+     *                                                     This is NOT recalculated when realStock changes.
+     *                                                     Real value after counting = price × realStock.
+     * @param PackagingSnapshot       $packaging           snapshot of article packaging at inventory creation
+     * @param RealStockComponents     $realStockComponents the decomposed quantities for each packaging level
+     * @param \DateTimeImmutable|null $countedAt           timestamp when the item was counted, null if not yet counted
+     * @param string|null             $reviewNotes         prepared for future iteration
+     * @param string|null             $actionPlan          prepared for future iteration
      */
     public function __construct(
         private ResourceUuid $article,
@@ -54,6 +57,7 @@ final readonly class InventoryItem
         private Amount $price,
         private Quantity $theoreticalStock,
         private Quantity $realStock,
+        private RealStockComponents $realStockComponents,
         private Amount $amount,
         private PackagingSnapshot $packaging,
         private ?\DateTimeImmutable $countedAt = null,
@@ -98,6 +102,11 @@ final readonly class InventoryItem
         return $this->realStock;
     }
 
+    public function realStockComponents(): RealStockComponents
+    {
+        return $this->realStockComponents;
+    }
+
     public function amount(): Amount
     {
         return $this->amount;
@@ -124,7 +133,7 @@ final readonly class InventoryItem
         return $this->zoneStorage->toString() === $zoneStorageUuid->toString();
     }
 
-    public function withRealStock(Quantity $realStock): self
+    public function withRealStock(Quantity $realStock, RealStockComponents $components): self
     {
         return new self(
             article: $this->article,
@@ -133,6 +142,7 @@ final readonly class InventoryItem
             price: $this->price,
             theoreticalStock: $this->theoreticalStock,
             realStock: $realStock,
+            realStockComponents: $components,
             amount: $this->amount,
             packaging: $this->packaging,
             countedAt: ClockFactory::clock()->now(),
@@ -176,6 +186,7 @@ final readonly class InventoryItem
             price: $this->price,
             theoreticalStock: $this->theoreticalStock,
             realStock: $this->realStock,
+            realStockComponents: $this->realStockComponents,
             amount: $this->amount,
             packaging: $this->packaging,
             countedAt: $this->countedAt,

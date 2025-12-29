@@ -24,6 +24,7 @@ final class InventoryResult
         public string $status,
         public array $zoneStorageIds,
         public bool $allItemsCounted,
+        public bool $hasUnreviewedDiscrepancies,
     ) {
     }
 }

@@ -164,6 +164,17 @@ final class InventoryItemCollection implements Collection, \Countable
         return \count($this->getItemsWithDiscrepancies());
     }
 
+    public function hasUnreviewedDiscrepancies(): bool
+    {
+        foreach ($this->getItemsWithDiscrepancies() as $item) {
+            if (!$item->isReviewed()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * @return array<ResourceUuid>
      */

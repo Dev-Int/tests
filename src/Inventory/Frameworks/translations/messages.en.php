@@ -44,6 +44,8 @@ return [
                 'confirm_zero' => 'Warning: the following articles will have zero stock. Do you want to continue?',
                 'info' => 'Please enter the real stock for each article. Enter 0 if the article is out of stock.',
                 'error_missing_fields' => 'Please enter the real stock for the following articles: %articles%',
+                'counted' => 'Already counted',
+                'counted_tooltip' => 'Counted on %date%',
             ],
         ],
         'finish_counting' => [
@@ -53,6 +55,7 @@ return [
         ],
         'review' => [
             'titlePage' => 'Inventory review',
+            'button' => 'Review',
             'summary' => 'Summary:',
             'discrepancy_count' => '%count% item(s) with discrepancy(ies)',
             'no_discrepancy' => 'No discrepancy detected',
