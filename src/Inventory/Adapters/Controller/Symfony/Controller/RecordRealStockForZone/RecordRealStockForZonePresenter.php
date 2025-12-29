@@ -45,6 +45,7 @@ final readonly class RecordRealStockForZonePresenter
                 realStockSubPackage: $components->subPackage->toUnit(),
                 realStockConsumerUnit: $components->consumerUnit->toUnit(),
                 packaging: $this->mapPackaging($item->packaging()),
+                countedAt: $item->countedAt(),
             );
         }
 

@@ -30,8 +30,15 @@
                     </thead>
                     <tbody>
                         {% for item in items %}
-                            <tr>
-                                <td>{{ item.articleName }}</td>
+                            <tr class="{{ item.countedAt ? 'already-counted' : '' }}">
+                                <td>
+                                    {{ item.articleName }}
+                                    {% if item.countedAt %}
+                                        <span class="badge badge-success" title="{{ 'inventory.zone.record.counted_tooltip'|trans({'%date%': item.countedAt|date('d/m/Y H:i')}) }}">
+                                            <i class="fa-solid fa-check"></i> {{ 'inventory.zone.record.counted'|trans }}
+                                        </span>
+                                    {% endif %}
+                                </td>
                                 <td>{{ item.theoreticalStock }}</td>
                                 {# Parcel (always present) #}
                                 <td class="stock-input-cell">
@@ -98,11 +105,9 @@
                     </tbody>
                 </table>
 
-                <div class="form-actions">
+                <div class="grid">
                     <twig:Form:Button:Cancel href="{{ path('inventory_index') }}" label="{{ 'inventory.zone.record.cancel'|trans }}" />
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fa-solid fa-save"></i> {{ 'inventory.zone.record.submit'|trans }}
-                    </button>
+                    <twig:Form:Button:Submit label="{{ 'inventory.zone.record.submit'|trans }}" icon="fa-save" />
                 </div>
             </form>
         </article>

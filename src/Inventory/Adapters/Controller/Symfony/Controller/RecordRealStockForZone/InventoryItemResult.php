@@ -25,6 +25,7 @@ final readonly class InventoryItemResult
         public float $realStockSubPackage,
         public float $realStockConsumerUnit,
         public PackagingForView $packaging,
+        public ?\DateTimeImmutable $countedAt,
     ) {
     }
 }
