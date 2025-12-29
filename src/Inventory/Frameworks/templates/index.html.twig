@@ -65,15 +65,24 @@
                                        </button>
                                    </form>
                                {% endif %}
-                               {% if inventory.status == 'review' and inventory.hasUnreviewedDiscrepancies %}
-                                   <a href="{{ path('inventory_review', {inventoryUuid: inventory.uuid}) }}"
-                                      class="btn btn-small btn-warning"
-                                      role="button"
-                                      data-turbo-frame="_top">
-                                       <i class="fa-solid fa-magnifying-glass"></i> {{ 'inventory.review.button'|trans }}
-                                   </a>
+                               {% if inventory.status == 'review' %}
+                                   {% if inventory.hasUnreviewedDiscrepancies %}
+                                       <a href="{{ path('inventory_review', {inventoryUuid: inventory.uuid}) }}"
+                                          class="btn btn-small btn-warning"
+                                          role="button"
+                                          data-turbo-frame="_top">
+                                           <i class="fa-solid fa-magnifying-glass"></i> {{ 'inventory.review.button'|trans }}
+                                       </a>
+                                   {% endif %}
+                                   {% if not inventory.hasUnreviewedDiscrepancies %}
+                                       <form action="{{ path('inventory_complete', {inventoryUuid: inventory.uuid}) }}" method="post" style="display: inline;" data-turbo-frame="_top">
+                                           <button type="submit" class="btn btn-small btn-success">
+                                               <i class="fa-solid fa-check-circle"></i> {{ 'inventory.complete.submit'|trans }}
+                                           </button>
+                                       </form>
+                                   {% endif %}
                                {% endif %}
-                               <twig:Button:UpdateEntity href="#" class="btn-small" label="{{ 'inventory.cancel'|trans }}" />
+                               <twig:Button:UpdateEntity href="#" class="btn-small btn-secondary" label="{{ 'inventory.cancel'|trans }}" />
                            </span>
                        </li>
                    </turbo-frame>

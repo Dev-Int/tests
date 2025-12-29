@@ -43,4 +43,11 @@ return static function (ContainerConfigurator $configurator): void {
     )
         ->public()
     ;
+
+    $services->alias(
+        id: 'Admin\Contracts\Services\Updater\Article\ArticleQuantityUpdater',
+        referencedId: 'Admin\Adapters\Gateway\Contracts\Updater\Article\ArticleQuantityUpdater'
+    )
+        ->public()
+    ;
 };

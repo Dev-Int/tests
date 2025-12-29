@@ -87,7 +87,7 @@ class Article
         #[ORM\JoinColumn(name: 'family_log_id', referencedColumnName: 'uuid')]
         private FamilyLog $familyLog,
         #[ORM\Column(name: 'quantity', type: 'float', scale: 3)]
-        private readonly float $quantity,
+        private float $quantity,
         #[ORM\Column(name: 'slug', type: 'string')]
         private string $slug,
         #[ORM\Column(name: 'active', type: 'boolean')]
@@ -230,6 +230,13 @@ class Article
     public function quantity(): float
     {
         return $this->quantity;
+    }
+
+    public function setQuantity(float $quantity): self
+    {
+        $this->quantity = $quantity;
+
+        return $this;
     }
 
     public function slug(): string
