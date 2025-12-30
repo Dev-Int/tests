@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Admin\Entities\Article;
 
 use Admin\Entities\Article\VO\Packaging;
+use Admin\Entities\Event\LowStockDetected;
 use Admin\Entities\FamilyLog\FamilyLog;
 use Admin\Entities\Supplier\Supplier;
 use Admin\Entities\Tax\Tax;
@@ -155,6 +156,26 @@ final class Article
     public function quantity(): Quantity
     {
         return $this->quantity;
+    }
+
+    /**
+     * Remet la quantité à la valeur issue d'un inventaire.
+     * Retourne un event si quantity < minStock.
+     */
+    public function resetQuantity(Quantity $quantity): ?LowStockDetected
+    {
+        $this->quantity = $quantity;
+
+        if ($quantity->toUnit() < $this->minStock) {
+            return new LowStockDetected(
+                articleUuid: $this->uuid,
+                articleName: $this->name,
+                currentQuantity: $quantity,
+                minStock: $this->minStock,
+            );
+        }
+
+        return null;
     }
 
     public function slug(): string

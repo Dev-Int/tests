@@ -51,7 +51,8 @@ final readonly class InventoryMapper
             createdAt: $inventoryDomain->createdAt(),
             updatedAt: $inventoryDomain->updatedAt(),
             items: [],
-            statusUpdatedAt: $inventoryDomain->statusUpdatedAt()
+            statusUpdatedAt: $inventoryDomain->statusUpdatedAt(),
+            discrepancyAmount: $inventoryDomain->discrepancyAmount()->toInt(),
         );
         $this->getItemsFromDomain($inventoryDomain->items(), $inventory);
 
@@ -72,6 +73,7 @@ final readonly class InventoryMapper
             date: InventoryDate::reconstitute($inventory->date()),
             status: InventoryStatusDomain::from($inventory->status()->value),
             amount: Amount::fromCents($inventory->amount()),
+            discrepancyAmount: Amount::fromCents($inventory->discrepancyAmount()),
             createdAt: $inventory->createdAt(),
             updatedAt: $inventory->updatedAt(),
             statusUpdatedAt: $inventory->statusUpdatedAt(),

@@ -75,6 +75,17 @@ return [
                 'article_not_found' => 'Article not found in this inventory',
             ],
         ],
+        'complete' => [
+            'ready' => 'Ready to finalize!',
+            'ready_message' => 'All discrepancies have been reviewed. You can now finalize the inventory.',
+            'submit' => 'Finalize inventory',
+            'success' => 'Inventory finalized successfully. %articles% article(s) updated.',
+            'errors' => [
+                'not_found' => 'Inventory not found',
+                'invalid_status' => 'Inventory must be in review status to be finalized',
+                'unreviewed_discrepancies' => '%count% unreviewed discrepancy(ies). Please review them before finalizing.',
+            ],
+        ],
         'cancel' => 'Cancel',
         'errors' => [
             'date_past' => 'The date must be today or in the future',

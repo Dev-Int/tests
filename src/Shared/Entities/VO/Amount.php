@@ -46,10 +46,26 @@ final readonly class Amount
         return (float) bcdiv($this->amount, '100', 2);
     }
 
-    public function computeQuantity(Quantity $quantity): self
+    /**
+     * Computes amount × quantity.
+     *
+     * Accepts any Quantifiable (Quantity, StockDifference, etc.).
+     * The result sign follows the quantity sign (negative for shortages).
+     */
+    public function computeQuantity(Quantifiable $quantity): self
     {
         $result = bcmul($this->amount, (string) $quantity->toUnit(), 0);
 
         return new self($result);
+    }
+
+    /**
+     * Adds another amount to this one.
+     *
+     * Supports negative amounts (e.g., losses from stock shortages).
+     */
+    public function add(self $other): self
+    {
+        return new self(bcadd($this->amount, $other->amount, 0));
     }
 }

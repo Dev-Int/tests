@@ -11,6 +11,7 @@ services:
             - '%kernel.project_dir%/src/Shared/Adapters/Symfony/Maker'
 
     Shared\Entities\Clock\Clock: '@Shared\Entities\Clock\SystemClock'
+    Shared\Entities\Persistence\TransactionalExecutorInterface: '@Shared\Adapters\Persistence\DoctrineTransactionalExecutor'
 
 when@dev:
     services:

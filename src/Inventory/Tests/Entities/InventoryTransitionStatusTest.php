@@ -23,6 +23,7 @@ use PHPUnit\Framework\TestCase;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\Clock\FrozenClock;
 use Shared\Entities\Exception\DomainException;
+use Shared\Entities\VO\Amount;
 use Shared\Entities\VO\Quantity;
 
 /**
@@ -88,7 +89,7 @@ final class InventoryTransitionStatusTest extends TestCase
         $inventory = (new InventoryFakerFactory())->createReviewed()->build();
 
         // Act
-        $inventory->complete();
+        $inventory->complete(Amount::zero());
 
         // Assert
         self::assertTrue($inventory->status()->equals(InventoryStatus::COMPLETED));
@@ -113,7 +114,7 @@ final class InventoryTransitionStatusTest extends TestCase
 
         // Act & Assert
         try {
-            $inventory->complete();
+            $inventory->complete(Amount::zero());
             self::fail('Expected InvalidStatusTransition exception was not thrown');
         } catch (InvalidStatusTransition $exception) {
             self::assertSame(InvalidStatusTransition::MESSAGE, $exception->getMessage());

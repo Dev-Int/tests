@@ -11,6 +11,8 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
+use Inventory\Adapters\Gateway\ArticleStockUpdater;
+use Inventory\UseCases\Gateway\ArticleStockUpdaterInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
 return static function (ContainerConfigurator $configurator): void {
@@ -30,4 +32,7 @@ return static function (ContainerConfigurator $configurator): void {
         namespace: 'Inventory\Entities\Repository\\',
         resource: __DIR__ . '/../../../Inventory/Entities/Repository'
     );
+
+    // Gateway aliases
+    $services->alias(ArticleStockUpdaterInterface::class, ArticleStockUpdater::class);
 };

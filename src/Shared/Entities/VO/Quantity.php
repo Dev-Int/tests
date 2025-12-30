@@ -18,7 +18,7 @@ use Shared\Entities\Exception\NegativeQuantity;
 /**
  * bcmath is used to avoid rounding errors.
  */
-final readonly class Quantity
+final readonly class Quantity implements Quantifiable
 {
     /**
      * The smallest part of units is milliemes. Only 3 digits after the dot.

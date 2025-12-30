@@ -155,7 +155,7 @@ final class InventoryItemCollection implements Collection, \Countable
     {
         return array_values(array_filter(
             $this->items,
-            static fn (InventoryItem $item): bool => !$item->calculateDifference()->isZero()
+            static fn (InventoryItem $item): bool => $item->hasDiscrepancy()
         ));
     }
 
@@ -173,6 +173,19 @@ final class InventoryItemCollection implements Collection, \Countable
         }
 
         return false;
+    }
+
+    /**
+     * Get items with discrepancy that have NOT been reviewed.
+     *
+     * @return array<InventoryItem>
+     */
+    public function getUnreviewedDiscrepancies(): array
+    {
+        return array_values(array_filter(
+            $this->items,
+            static fn (InventoryItem $item): bool => $item->hasDiscrepancy() && !$item->isReviewed()
+        ));
     }
 
     /**

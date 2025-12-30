@@ -23,6 +23,7 @@ use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
 use Admin\Entities\Article\Article as ArticleDomain;
 use Admin\Entities\Article\ArticleCollection;
 use Admin\Entities\Article\VO\Packaging as PackagingDomain;
+use Admin\Entities\Event\LowStockDetected;
 use Admin\Entities\Exception\Article\ArticleNotFound;
 use Admin\Entities\Exception\Article\NoArticleRegistered;
 use Admin\Entities\Exception\Article\PackagingNotFound;
@@ -41,6 +42,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\ORM\UnexpectedResultException;
 use Doctrine\Persistence\ManagerRegistry;
 use Shared\Entities\ResourceUuid;
+use Shared\Entities\VO\Quantity;
 
 /**
  * @template-extends ServiceEntityRepository<Article>
@@ -305,6 +307,58 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         }
 
         return $article->toDomain();
+    }
+
+    /**
+     * @param array<array{uuid: ResourceUuid, quantity: Quantity}> $updates
+     *
+     * @return array<LowStockDetected>
+     *
+     * @throws ArticleNotFound
+     */
+    public function resetQuantities(array $updates): array
+    {
+        if ($updates === []) {
+            return [];
+        }
+
+        $events = [];
+
+        $uuids = array_map(
+            static fn (array $update): string => $update['uuid']->toString(),
+            $updates
+        );
+        $articlesOrm = $this->findBy(['uuid' => $uuids]);
+
+        $articlesOrmByUuid = [];
+        foreach ($articlesOrm as $articleOrm) {
+            $articlesOrmByUuid[$articleOrm->uuid()] = $articleOrm;
+        }
+
+        foreach ($updates as $update) {
+            $uuid = $update['uuid']->toString();
+            $articleOrm = $articlesOrmByUuid[$uuid] ?? null;
+
+            if (!$articleOrm instanceof Article) {
+                throw new ArticleNotFound($uuid);
+            }
+
+            // Domain logic: generate a LowStockDetected event if needed.
+            // See ADR-002 for domain/ORM separation rationale.
+            $articleDomain = $articleOrm->toDomain();
+            $event = $articleDomain->resetQuantity($update['quantity']);
+
+            if ($event instanceof LowStockDetected) {
+                $events[] = $event;
+            }
+
+            // Persistence: direct ORM update (no domain→ORM reconversion needed).
+            $articleOrm->setQuantity($update['quantity']->toUnit());
+        }
+
+        $this->getEntityManager()->flush();
+
+        return $events;
     }
 
     /**

@@ -167,6 +167,7 @@ final class DoctrineInventoryRepository extends ServiceEntityRepository implemen
             ORMInventoryStatus::fromDomain($inventory->status()),
             $inventory->statusUpdatedAt()
         );
+        $inventoryOrm->updateDiscrepancyAmount($inventory->discrepancyAmount()->toInt());
 
         foreach ($inventory->items()->toArray() as $domainItem) {
             $ormItem = $inventoryOrm->findItemByArticleAndZone(

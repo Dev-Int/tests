@@ -49,6 +49,8 @@ class Inventory
         private array|Collection $items,
         #[ORM\Column(name: 'status_updated_at', type: 'datetimetz_immutable', nullable: true)]
         private ?\DateTimeImmutable $statusUpdatedAt = null,
+        #[ORM\Column(name: 'discrepancy_amount', type: 'integer', options: ['default' => 0])]
+        private int $discrepancyAmount = 0,
     ) {
     }
 
@@ -78,6 +80,11 @@ class Inventory
     public function amount(): int
     {
         return $this->amount;
+    }
+
+    public function discrepancyAmount(): int
+    {
+        return $this->discrepancyAmount;
     }
 
     public function createdAt(): \DateTimeImmutable
@@ -118,6 +125,11 @@ class Inventory
     {
         $this->status = $status;
         $this->statusUpdatedAt = $statusUpdatedAt;
+    }
+
+    public function updateDiscrepancyAmount(int $discrepancyAmount): void
+    {
+        $this->discrepancyAmount = $discrepancyAmount;
     }
 
     /**

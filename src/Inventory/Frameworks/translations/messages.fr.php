@@ -75,6 +75,17 @@ return [
                 'article_not_found' => 'Article non trouvé dans cet inventaire',
             ],
         ],
+        'complete' => [
+            'ready' => 'Prêt à finaliser !',
+            'ready_message' => 'Tous les écarts ont été révisés. Vous pouvez maintenant finaliser l\'inventaire.',
+            'submit' => 'Finaliser l\'inventaire',
+            'success' => 'Inventaire finalisé avec succès. %articles% article(s) mis à jour.',
+            'errors' => [
+                'not_found' => 'Inventaire non trouvé',
+                'invalid_status' => 'L\'inventaire doit être en révision pour être finalisé',
+                'unreviewed_discrepancies' => '%count% écart(s) non révisé(s). Veuillez les réviser avant de finaliser.',
+            ],
+        ],
         'cancel' => 'Annuler',
         'errors' => [
             'date_past' => 'La date doit être aujourd\'hui ou dans le futur',
