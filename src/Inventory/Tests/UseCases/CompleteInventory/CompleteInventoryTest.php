@@ -362,6 +362,55 @@ final class CompleteInventoryTest extends TestCase
     /**
      * Creates a mock that simply executes the callable directly (no real transaction).
      */
+    public function testCompleteInventoryDoesNotSaveWhenStockUpdateFails(): void
+    {
+        // Arrange
+        $inventoryUuid = ResourceUuid::generate();
+
+        $inventory = (new InventoryFakerFactory())->createReviewed()
+            ->withUuid($inventoryUuid)
+            ->build()
+        ;
+
+        $reviewedItem = $this->itemFactory
+            ->createWithPreciseStocks(theoreticalStock: 10.0, realStock: 8.0)
+            ->asReviewed()
+            ->build()
+        ;
+        $inventory->addItem($reviewedItem);
+
+        $repository = $this->createMock(InventoryRepository::class);
+        $stockUpdater = $this->createMock(ArticleStockUpdaterInterface::class);
+        $useCase = new CompleteInventory(
+            inventoryRepository: $repository,
+            articleStockUpdater: $stockUpdater,
+            transactionalExecutor: $this->transactionalExecutor,
+        );
+        $request = $this->createMock(CompleteInventoryRequest::class);
+
+        // Assert
+        $request->expects(self::once())->method('inventoryUuid')->willReturn($inventoryUuid);
+        $repository->expects(self::once())->method('getByUuid')->willReturn($inventory);
+
+        $stockUpdater->expects(self::once())
+            ->method('updateStocks')
+            ->with(self::callback(static function (array $updates): bool {
+                return \count($updates) === 1
+                    && $updates[0] instanceof StockUpdateCommand
+                    && $updates[0]->newQuantityMilliemes === 8000; // realStock: 8.0
+            }))
+            ->willThrowException(new \RuntimeException('Stock update failed'))
+        ;
+
+        $repository->expects(self::never())->method('save');
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Stock update failed');
+
+        // Act
+        $useCase->execute($request);
+    }
+
     private function createPassthroughTransactionalExecutor(): TransactionalExecutorInterface
     {
         $mock = $this->createMock(TransactionalExecutorInterface::class);
