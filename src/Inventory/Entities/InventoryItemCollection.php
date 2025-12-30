@@ -155,7 +155,7 @@ final class InventoryItemCollection implements Collection, \Countable
     {
         return array_values(array_filter(
             $this->items,
-            static fn (InventoryItem $item): bool => !$item->calculateDifference()->isZero()
+            static fn (InventoryItem $item): bool => $item->hasDiscrepancy()
         ));
     }
 
