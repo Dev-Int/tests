@@ -343,6 +343,8 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
                 throw new ArticleNotFound($uuid);
             }
 
+            // Domain logic: generate a LowStockDetected event if needed.
+            // See ADR-002 for domain/ORM separation rationale.
             $articleDomain = $articleOrm->toDomain();
             $event = $articleDomain->resetQuantity($update['quantity']);
 
@@ -350,6 +352,7 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
                 $events[] = $event;
             }
 
+            // Persistence: direct ORM update (no domain→ORM reconversion needed).
             $articleOrm->setQuantity($update['quantity']->toUnit());
         }
 

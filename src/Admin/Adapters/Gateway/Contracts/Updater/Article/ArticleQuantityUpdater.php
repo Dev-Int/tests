@@ -43,6 +43,10 @@ final readonly class ArticleQuantityUpdater implements ArticleQuantityUpdaterCon
 
         $lowStockEvents = $this->articleRepository->resetQuantities($domainUpdates);
 
+        // TODO: Replace logging with EventDispatcher for reactive architecture.
+        // Currently events are logged for monitoring. Future iteration will publish
+        // to Symfony EventDispatcher for notifications (email, Slack, etc.).
+        // See ADR-002 for event handling strategy.
         foreach ($lowStockEvents as $event) {
             $this->logger->warning('Article sous stock minimum', [
                 'articleUuid' => $event->articleUuid->toString(),
