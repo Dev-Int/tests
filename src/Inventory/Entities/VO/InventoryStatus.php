@@ -15,6 +15,12 @@ namespace Inventory\Entities\VO;
 
 enum InventoryStatus: string
 {
+    case DRAFT = 'draft';
+    case IN_PROGRESS = 'inProgress';
+    case REVIEW = 'review';
+    case COMPLETED = 'completed';
+    case CANCELLED = 'cancelled';
+
     public const array ACTIVE_STATUSES = [
         self::DRAFT->value,
         self::IN_PROGRESS->value,
@@ -35,10 +41,4 @@ enum InventoryStatus: string
     {
         return $this === self::CANCELLED;
     }
-
-    case DRAFT = 'draft';
-    case IN_PROGRESS = 'inProgress';
-    case REVIEW = 'review';
-    case COMPLETED = 'completed';
-    case CANCELLED = 'cancelled';
 }

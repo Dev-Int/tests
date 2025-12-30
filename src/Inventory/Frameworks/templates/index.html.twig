@@ -82,7 +82,7 @@
                                        </form>
                                    {% endif %}
                                {% endif %}
-                               {% if inventory.status in ['draft', 'inProgress', 'review'] %}
+                               {% if inventory.isCancellable %}
                                   <form action="{{ path('inventory_cancel', {inventoryUuid: inventory.uuid}) }}" method="post" style="display: inline;" data-turbo-frame="_top">
                                       <button type="submit" class="btn btn-small btn-secondary" onclick="return confirm('{{ 'inventory.cancel.confirm'|trans }}')">
                                           <i class="fa-solid fa-ban"></i> {{ 'inventory.cancel.button'|trans }}
