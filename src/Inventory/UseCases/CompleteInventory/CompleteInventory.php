@@ -17,6 +17,7 @@ use Inventory\Entities\Inventory;
 use Inventory\Entities\Repository\InventoryRepository;
 use Inventory\UseCases\Gateway\ArticleStockUpdaterInterface;
 use Inventory\UseCases\Gateway\StockUpdateCommand;
+use Shared\Entities\Persistence\TransactionalExecutorInterface;
 use Shared\Entities\VO\Amount;
 
 final readonly class CompleteInventory
@@ -24,28 +25,30 @@ final readonly class CompleteInventory
     public function __construct(
         private InventoryRepository $inventoryRepository,
         private ArticleStockUpdaterInterface $articleStockUpdater,
+        private TransactionalExecutorInterface $transactionalExecutor,
     ) {
     }
 
     public function execute(CompleteInventoryRequest $request): CompleteInventoryResponse
     {
-        $inventory = $this->inventoryRepository->getByUuid($request->inventoryUuid());
+        return $this->transactionalExecutor->execute(function () use ($request): CompleteInventoryResponse {
+            $inventory = $this->inventoryRepository->getByUuid($request->inventoryUuid());
 
-        $discrepancyAmount = $this->calculateDiscrepancyAmount($inventory);
+            $discrepancyAmount = $this->calculateDiscrepancyAmount($inventory);
 
-        // Transition REVIEW → COMPLETED (with validations) and store discrepancy amount
-        $inventory->complete($discrepancyAmount);
+            $inventory->complete($discrepancyAmount);
 
-        $updates = $this->aggregateStocksByArticle($inventory);
-        $this->articleStockUpdater->updateStocks($updates);
+            $updates = $this->aggregateStocksByArticle($inventory);
+            $this->articleStockUpdater->updateStocks($updates);
 
-        $this->inventoryRepository->save($inventory);
+            $this->inventoryRepository->save($inventory);
 
-        return new CompleteInventoryResponse(
-            inventory: $inventory,
-            articlesUpdated: \count($updates),
-            discrepancyAmount: $discrepancyAmount,
-        );
+            return new CompleteInventoryResponse(
+                inventory: $inventory,
+                articlesUpdated: \count($updates),
+                discrepancyAmount: $discrepancyAmount,
+            );
+        });
     }
 
     /**

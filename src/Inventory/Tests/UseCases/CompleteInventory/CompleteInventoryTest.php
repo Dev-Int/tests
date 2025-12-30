@@ -27,6 +27,7 @@ use Inventory\UseCases\Gateway\StockUpdateCommand;
 use PHPUnit\Framework\TestCase;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\Clock\FrozenClock;
+use Shared\Entities\Persistence\TransactionalExecutorInterface;
 use Shared\Entities\ResourceUuid;
 
 /**
@@ -37,11 +38,13 @@ use Shared\Entities\ResourceUuid;
 final class CompleteInventoryTest extends TestCase
 {
     private InventoryItemFakerFactory $itemFactory;
+    private TransactionalExecutorInterface $transactionalExecutor;
 
     protected function setUp(): void
     {
         ClockFactory::initialize(clock: new FrozenClock(now: new \DateTimeImmutable('2025-12-01')));
         $this->itemFactory = new InventoryItemFakerFactory();
+        $this->transactionalExecutor = $this->createPassthroughTransactionalExecutor();
     }
 
     public function testCompleteInventorySuccessfully(): void
@@ -67,6 +70,7 @@ final class CompleteInventoryTest extends TestCase
         $useCase = new CompleteInventory(
             inventoryRepository: $repository,
             articleStockUpdater: $stockUpdater,
+            transactionalExecutor: $this->transactionalExecutor,
         );
         $request = $this->createMock(CompleteInventoryRequest::class);
 
@@ -102,6 +106,7 @@ final class CompleteInventoryTest extends TestCase
         $useCase = new CompleteInventory(
             inventoryRepository: $repository,
             articleStockUpdater: $stockUpdater,
+            transactionalExecutor: $this->transactionalExecutor,
         );
         $request = $this->createMock(CompleteInventoryRequest::class);
 
@@ -133,6 +138,7 @@ final class CompleteInventoryTest extends TestCase
         $useCase = new CompleteInventory(
             inventoryRepository: $repository,
             articleStockUpdater: $stockUpdater,
+            transactionalExecutor: $this->transactionalExecutor,
         );
         $request = $this->createMock(CompleteInventoryRequest::class);
 
@@ -168,6 +174,7 @@ final class CompleteInventoryTest extends TestCase
         $useCase = new CompleteInventory(
             inventoryRepository: $repository,
             articleStockUpdater: $stockUpdater,
+            transactionalExecutor: $this->transactionalExecutor,
         );
         $request = $this->createMock(CompleteInventoryRequest::class);
 
@@ -222,6 +229,7 @@ final class CompleteInventoryTest extends TestCase
         $useCase = new CompleteInventory(
             inventoryRepository: $repository,
             articleStockUpdater: $stockUpdater,
+            transactionalExecutor: $this->transactionalExecutor,
         );
         $request = $this->createMock(CompleteInventoryRequest::class);
 
@@ -292,6 +300,7 @@ final class CompleteInventoryTest extends TestCase
         $useCase = new CompleteInventory(
             inventoryRepository: $repository,
             articleStockUpdater: $stockUpdater,
+            transactionalExecutor: $this->transactionalExecutor,
         );
         $request = $this->createMock(CompleteInventoryRequest::class);
 
@@ -333,6 +342,7 @@ final class CompleteInventoryTest extends TestCase
         $useCase = new CompleteInventory(
             inventoryRepository: $repository,
             articleStockUpdater: $stockUpdater,
+            transactionalExecutor: $this->transactionalExecutor,
         );
         $request = $this->createMock(CompleteInventoryRequest::class);
 
@@ -347,5 +357,18 @@ final class CompleteInventoryTest extends TestCase
         // Assert
         self::assertTrue($response->inventory->status()->equals(InventoryStatus::COMPLETED));
         self::assertSame(0, $response->discrepancyAmount->toInt());
+    }
+
+    /**
+     * Creates a mock that simply executes the callable directly (no real transaction).
+     */
+    private function createPassthroughTransactionalExecutor(): TransactionalExecutorInterface
+    {
+        $mock = $this->createMock(TransactionalExecutorInterface::class);
+        $mock->method('execute')
+            ->willReturnCallback(static fn (callable $operation): mixed => $operation())
+        ;
+
+        return $mock;
     }
 }

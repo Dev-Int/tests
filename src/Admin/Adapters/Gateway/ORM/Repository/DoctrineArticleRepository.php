@@ -313,23 +313,44 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
      * @param array<array{uuid: ResourceUuid, quantity: Quantity}> $updates
      *
      * @return array<LowStockDetected>
+     *
+     * @throws ArticleNotFound
      */
     public function resetQuantities(array $updates): array
     {
+        if ($updates === []) {
+            return [];
+        }
+
         $events = [];
 
+        $uuids = array_map(
+            static fn (array $update): string => $update['uuid']->toString(),
+            $updates
+        );
+        $articlesOrm = $this->findBy(['uuid' => $uuids]);
+
+        $articlesOrmByUuid = [];
+        foreach ($articlesOrm as $articleOrm) {
+            $articlesOrmByUuid[$articleOrm->uuid()] = $articleOrm;
+        }
+
         foreach ($updates as $update) {
-            $articleDomain = $this->getByUuid($update['uuid']);
+            $uuid = $update['uuid']->toString();
+            $articleOrm = $articlesOrmByUuid[$uuid] ?? null;
+
+            if (!$articleOrm instanceof Article) {
+                throw new ArticleNotFound($uuid);
+            }
+
+            $articleDomain = $articleOrm->toDomain();
             $event = $articleDomain->resetQuantity($update['quantity']);
 
             if ($event instanceof LowStockDetected) {
                 $events[] = $event;
             }
 
-            $articleOrm = $this->find($update['uuid']->toString());
-            if ($articleOrm instanceof Article) {
-                $articleOrm->setQuantity($update['quantity']->toUnit());
-            }
+            $articleOrm->setQuantity($update['quantity']->toUnit());
         }
 
         $this->getEntityManager()->flush();
