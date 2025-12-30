@@ -32,7 +32,7 @@ Un inventaire contient :
 - UUID unique
 - Liste de zones de stockage à inventorier
 - Date d'inventaire
-- Status : `DRAFT` → `IN_PROGRESS` → `REVIEW` → `COMPLETED`
+- Status : `DRAFT` → `IN_PROGRESS` ⇄ `REVIEW` → `COMPLETED` (+ `CANCELLED`)
 - Collection d'`InventoryItem`
 
 ### InventoryItem

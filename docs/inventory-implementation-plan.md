@@ -452,6 +452,7 @@ Après implémentation complète d'Inventory, la roadmap prévoit :
 **Status transitions** :
 - DRAFT → IN_PROGRESS (start)
 - IN_PROGRESS → REVIEW (finishCounting)
+- REVIEW → IN_PROGRESS (resumeCounting) ← retour pour correction
 - REVIEW → COMPLETED (complete)
 - DRAFT/IN_PROGRESS/REVIEW → CANCELLED (cancel)
 - COMPLETED : final, pas d'annulation possible
