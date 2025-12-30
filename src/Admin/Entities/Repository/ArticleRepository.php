@@ -15,6 +15,7 @@ namespace Admin\Entities\Repository;
 
 use Admin\Entities\Article\Article;
 use Admin\Entities\Article\ArticleCollection;
+use Admin\Entities\Event\LowStockDetected;
 use Admin\Entities\Exception\Article\ArticleNotFound;
 use Admin\Entities\Exception\Article\NoArticleRegistered;
 use Admin\Entities\Exception\FamilyLog\FamilyLogNotFound;
@@ -22,6 +23,7 @@ use Admin\Entities\Exception\Supplier\SupplierNotFound;
 use Admin\Entities\Exception\Tax\TaxNotFound;
 use Admin\Entities\Exception\ZoneStorage\ZoneStorageNotFound;
 use Shared\Entities\ResourceUuid;
+use Shared\Entities\VO\Quantity;
 
 interface ArticleRepository
 {
@@ -68,4 +70,15 @@ interface ArticleRepository
      * @throws ArticleNotFound
      */
     public function getBySlug(string $slug): Article;
+
+    /**
+     * Remet les quantités pour plusieurs articles (bulk).
+     *
+     * @param array<array{uuid: ResourceUuid, quantity: Quantity}> $updates
+     *
+     * @return array<LowStockDetected> Events pour articles sous stock min
+     *
+     * @throws ArticleNotFound
+     */
+    public function resetQuantities(array $updates): array;
 }

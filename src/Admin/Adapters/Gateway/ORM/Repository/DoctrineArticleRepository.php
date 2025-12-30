@@ -23,6 +23,7 @@ use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
 use Admin\Entities\Article\Article as ArticleDomain;
 use Admin\Entities\Article\ArticleCollection;
 use Admin\Entities\Article\VO\Packaging as PackagingDomain;
+use Admin\Entities\Event\LowStockDetected;
 use Admin\Entities\Exception\Article\ArticleNotFound;
 use Admin\Entities\Exception\Article\NoArticleRegistered;
 use Admin\Entities\Exception\Article\PackagingNotFound;
@@ -41,6 +42,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\ORM\UnexpectedResultException;
 use Doctrine\Persistence\ManagerRegistry;
 use Shared\Entities\ResourceUuid;
+use Shared\Entities\VO\Quantity;
 
 /**
  * @template-extends ServiceEntityRepository<Article>
@@ -305,6 +307,34 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
         }
 
         return $article->toDomain();
+    }
+
+    /**
+     * @param array<array{uuid: ResourceUuid, quantity: Quantity}> $updates
+     *
+     * @return array<LowStockDetected>
+     */
+    public function resetQuantities(array $updates): array
+    {
+        $events = [];
+
+        foreach ($updates as $update) {
+            $articleDomain = $this->getByUuid($update['uuid']);
+            $event = $articleDomain->resetQuantity($update['quantity']);
+
+            if ($event instanceof LowStockDetected) {
+                $events[] = $event;
+            }
+
+            $articleOrm = $this->find($update['uuid']->toString());
+            if ($articleOrm instanceof Article) {
+                $articleOrm->setQuantity($update['quantity']->toUnit());
+            }
+        }
+
+        $this->getEntityManager()->flush();
+
+        return $events;
     }
 
     /**

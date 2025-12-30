@@ -13,15 +13,18 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Gateway\Contracts\Updater\Article;
 
-use Admin\Adapters\Gateway\ORM\Entity\Article\Article;
 use Admin\Contracts\Services\Updater\Article\ArticleQuantityUpdater as ArticleQuantityUpdaterContract;
 use Admin\Contracts\Services\Updater\Article\ArticleStockUpdate;
-use Doctrine\ORM\EntityManagerInterface;
+use Admin\Entities\Repository\ArticleRepository;
+use Psr\Log\LoggerInterface;
+use Shared\Entities\ResourceUuid;
+use Shared\Entities\VO\Quantity;
 
 final readonly class ArticleQuantityUpdater implements ArticleQuantityUpdaterContract
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
+        private ArticleRepository $articleRepository,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -30,16 +33,23 @@ final readonly class ArticleQuantityUpdater implements ArticleQuantityUpdaterCon
      */
     public function updateQuantities(array $updates): void
     {
-        foreach ($updates as $update) {
-            $article = $this->entityManager->find(Article::class, $update->articleUuid);
+        $domainUpdates = array_map(
+            static fn (ArticleStockUpdate $update): array => [
+                'uuid' => ResourceUuid::fromString($update->articleUuid),
+                'quantity' => Quantity::fromMilliemes($update->newQuantityMilliemes),
+            ],
+            $updates
+        );
 
-            if ($article instanceof Article) {
-                // Convert milliemes to float
-                $quantity = $update->newQuantityMilliemes / 1000;
-                $article->setQuantity($quantity);
-            }
+        $lowStockEvents = $this->articleRepository->resetQuantities($domainUpdates);
+
+        foreach ($lowStockEvents as $event) {
+            $this->logger->warning('Article sous stock minimum', [
+                'articleUuid' => $event->articleUuid->toString(),
+                'articleName' => $event->articleName->toString(),
+                'currentQuantity' => $event->currentQuantity->toUnit(),
+                'minStock' => $event->minStock,
+            ]);
         }
-
-        $this->entityManager->flush();
     }
 }
