@@ -95,6 +95,14 @@ return [
                 'cannot_cancel_completed' => 'Impossible d\'annuler un inventaire finalisé',
             ],
         ],
+        'resume_counting' => [
+            'button' => 'Reprendre le comptage',
+            'confirm' => 'Les révisions de cette zone seront réinitialisées. Continuer ?',
+            'success' => 'Comptage repris avec succès',
+            'errors' => [
+                'cannot_resume' => 'L\'inventaire doit être en révision pour reprendre le comptage',
+            ],
+        ],
         'errors' => [
             'not_found' => 'Inventaire non trouvé',
             'date_past' => 'La date doit être aujourd\'hui ou dans le futur',

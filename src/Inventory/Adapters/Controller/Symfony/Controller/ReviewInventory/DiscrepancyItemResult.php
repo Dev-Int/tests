@@ -18,6 +18,7 @@ final readonly class DiscrepancyItemResult
     public function __construct(
         public string $identifier,
         public string $articleName,
+        public string $zoneStorageUuid,
         public float $theoreticalStock,
         public float $realStock,
         public float $difference,

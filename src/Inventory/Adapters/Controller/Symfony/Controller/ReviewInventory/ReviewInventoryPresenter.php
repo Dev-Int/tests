@@ -38,6 +38,7 @@ final readonly class ReviewInventoryPresenter
             $results[] = new DiscrepancyItemResult(
                 identifier: $item->identifier(),
                 articleName: $item->articleName()->toString(),
+                zoneStorageUuid: $item->zoneStorage()->toString(),
                 theoreticalStock: $item->theoreticalStock()->toUnit(),
                 realStock: $item->realStock()->toUnit(),
                 difference: $difference->toUnit(),

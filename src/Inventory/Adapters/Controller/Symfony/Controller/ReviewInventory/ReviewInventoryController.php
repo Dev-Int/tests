@@ -198,6 +198,27 @@ final class ReviewInventoryController extends AbstractController
             'discrepancyCount' => \count($presentedItems),
             'items' => $presentedItems,
             'form' => $form,
+            'zonesWithUnreviewedItems' => $this->getZonesWithUnreviewedItems($presentedItems),
         ]);
+    }
+
+    /**
+     * Get unique zones that have at least one unreviewed item.
+     *
+     * @param array<DiscrepancyItemResult> $items
+     *
+     * @return array<string> Zone UUIDs
+     */
+    private function getZonesWithUnreviewedItems(array $items): array
+    {
+        $zones = [];
+
+        foreach ($items as $item) {
+            if (!$item->isReviewed && !isset($zones[$item->zoneStorageUuid])) {
+                $zones[$item->zoneStorageUuid] = $item->zoneStorageUuid;
+            }
+        }
+
+        return array_values($zones);
     }
 }

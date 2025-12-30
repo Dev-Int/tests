@@ -95,6 +95,14 @@ return [
                 'cannot_cancel_completed' => 'Cannot cancel a finalized inventory',
             ],
         ],
+        'resume_counting' => [
+            'button' => 'Resume counting',
+            'confirm' => 'Reviews for this zone will be reset. Continue?',
+            'success' => 'Counting resumed successfully',
+            'errors' => [
+                'cannot_resume' => 'Inventory must be in review to resume counting',
+            ],
+        ],
         'errors' => [
             'not_found' => 'Inventory not found',
             'date_past' => 'The date must be today or in the future',

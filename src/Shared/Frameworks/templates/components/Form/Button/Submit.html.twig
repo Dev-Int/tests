@@ -1,4 +1,4 @@
-<button type="submit" formnovalidate>
+<button type="submit" formnovalidate class="{{ variant|default('') }}">
     {% if icon is defined %}
         <i class="fa-solid {{ icon }}"></i>
     {% endif %}
