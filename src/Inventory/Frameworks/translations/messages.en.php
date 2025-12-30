@@ -20,6 +20,7 @@ return [
             'inProgress' => 'In progress',
             'review' => 'In review',
             'completed' => 'Completed',
+            'cancelled' => 'Cancelled',
         ],
         'create' => [
             'titlePage' => 'Create an inventory',
@@ -86,8 +87,16 @@ return [
                 'unreviewed_discrepancies' => '%count% unreviewed discrepancy(ies). Please review them before finalizing.',
             ],
         ],
-        'cancel' => 'Cancel',
+        'cancel' => [
+            'button' => 'Cancel',
+            'confirm' => 'Are you sure you want to cancel this inventory?',
+            'success' => 'Inventory cancelled successfully',
+            'errors' => [
+                'cannot_cancel_completed' => 'Cannot cancel a finalized inventory',
+            ],
+        ],
         'errors' => [
+            'not_found' => 'Inventory not found',
             'date_past' => 'The date must be today or in the future',
             'zone_active' => 'An active inventory exists for this zone',
         ],
