@@ -69,4 +69,16 @@ final class InventoryFakerFactory
             ->withAmount(self::AMOUNT_VALID)
         ;
     }
+
+    public function createCancelled(): InventoryDataBuilder
+    {
+        return (new InventoryDataBuilder(
+            uuid: ResourceUuid::fromString(self::UUID_VALID),
+            date: InventoryDate::fromDateTimeImmutable(ClockFactory::clock()->now()),
+            zoneStorages: [],
+            status: InventoryStatus::CANCELLED
+        ))
+            ->withAmount(self::AMOUNT_VALID)
+        ;
+    }
 }

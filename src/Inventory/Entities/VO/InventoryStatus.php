@@ -25,6 +25,17 @@ enum InventoryStatus: string
     {
         return $this->value === $otherStatus->value;
     }
+
+    public function isCancellable(): bool
+    {
+        return \in_array($this->value, self::ACTIVE_STATUSES, true);
+    }
+
+    public function isCancelled(): bool
+    {
+        return $this === self::CANCELLED;
+    }
+
     case DRAFT = 'draft';
     case IN_PROGRESS = 'inProgress';
     case REVIEW = 'review';
