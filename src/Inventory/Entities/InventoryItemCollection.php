@@ -203,4 +203,27 @@ final class InventoryItemCollection implements Collection, \Countable
 
         return array_values($zones);
     }
+
+    /**
+     * Reset reviewed flag to false for items in a specific zone.
+     * Used when resuming counting from the review phase.
+     *
+     * @param ResourceUuid $zoneStorageUuid The zone to reset reviewed flags for
+     *
+     * @return array<InventoryItem> The updated items with reviewed=false
+     */
+    public function resetReviewedFlagsForZone(ResourceUuid $zoneStorageUuid): array
+    {
+        $updatedItems = [];
+
+        foreach ($this->items as $key => $item) {
+            if ($item->isForZone($zoneStorageUuid) && $item->isReviewed()) {
+                $updatedItem = $item->withReviewed(false);
+                $this->items[$key] = $updatedItem;
+                $updatedItems[] = $updatedItem;
+            }
+        }
+
+        return $updatedItems;
+    }
 }

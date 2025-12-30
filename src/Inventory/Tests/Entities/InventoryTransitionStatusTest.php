@@ -24,6 +24,7 @@ use PHPUnit\Framework\TestCase;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\Clock\FrozenClock;
 use Shared\Entities\Exception\DomainException;
+use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\Amount;
 use Shared\Entities\VO\Quantity;
 
@@ -96,16 +97,73 @@ final class InventoryTransitionStatusTest extends TestCase
         self::assertTrue($inventory->status()->equals(InventoryStatus::COMPLETED));
     }
 
-    public function testTransitionsFromReviewBackToInProgress(): void
+    public function testResumeCountingTransitionsFromReviewToInProgress(): void
     {
         // Arrange
+        $zoneStorageUuid = ResourceUuid::generate();
         $inventory = (new InventoryFakerFactory())->createReviewed()->build();
 
         // Act
-        $inventory->sendBackToProcessing();
+        $inventory->resumeCounting($zoneStorageUuid);
 
         // Assert
         self::assertTrue($inventory->status()->equals(InventoryStatus::IN_PROGRESS));
+    }
+
+    public function testResumeCountingResetsReviewedFlagsForSpecificZone(): void
+    {
+        // Arrange
+        $zoneStorageUuid = ResourceUuid::generate();
+        $otherZoneUuid = ResourceUuid::generate();
+        $inventory = (new InventoryFakerFactory())->createReviewed()->build();
+
+        $itemFactory = new InventoryItemFakerFactory();
+        $reviewedItem = $itemFactory
+            ->createWithPreciseStocks(theoreticalStock: 10.0, realStock: 8.0, zoneStorage: $zoneStorageUuid)
+            ->build()
+            ->withReviewed(true)
+        ;
+        $inventory->addItem($reviewedItem);
+
+        $otherZoneItem = $itemFactory
+            ->createWithPreciseStocks(theoreticalStock: 5.0, realStock: 3.0, zoneStorage: $otherZoneUuid)
+            ->build()
+            ->withReviewed(true)
+        ;
+        $inventory->addItem($otherZoneItem);
+
+        // Act
+        $inventory->resumeCounting($zoneStorageUuid);
+
+        // Assert
+        $items = iterator_to_array($inventory->items());
+
+        $targetZoneItem = array_filter($items, static fn ($i) => $i->isForZone($zoneStorageUuid));
+        self::assertFalse(array_values($targetZoneItem)[0]->isReviewed());
+
+        $otherItem = array_filter($items, static fn ($i) => $i->isForZone($otherZoneUuid));
+        self::assertTrue(array_values($otherItem)[0]->isReviewed());
+    }
+
+    public function testResumeCountingPreservesRealStockValues(): void
+    {
+        // Arrange
+        $zoneStorageUuid = ResourceUuid::generate();
+        $inventory = (new InventoryFakerFactory())->createReviewed()->build();
+
+        $itemFactory = new InventoryItemFakerFactory();
+        $item = $itemFactory
+            ->createWithPreciseStocks(theoreticalStock: 10.0, realStock: 8.0, zoneStorage: $zoneStorageUuid)
+            ->build()
+        ;
+        $inventory->addItem($item);
+
+        // Act
+        $inventory->resumeCounting($zoneStorageUuid);
+
+        // Assert - realStock should be preserved
+        $items = iterator_to_array($inventory->items());
+        self::assertEquals(8.0, $items[0]->realStock()->toUnit());
     }
 
     public function testThrowsExceptionWhenTransitioningFromDraftToCompleted(): void
@@ -146,14 +204,15 @@ final class InventoryTransitionStatusTest extends TestCase
         }
     }
 
-    public function testThrowsExceptionWhenTransitioningFromCompletedBackToProcessing(): void
+    public function testThrowsExceptionWhenResumeCountingFromCompleted(): void
     {
         // Arrange
+        $zoneStorageUuid = ResourceUuid::generate();
         $inventory = (new InventoryFakerFactory())->createCompleted()->build();
 
         // Act & Assert
         try {
-            $inventory->sendBackToProcessing();
+            $inventory->resumeCounting($zoneStorageUuid);
             self::fail('Expected InvalidStatusTransition exception was not thrown');
         } catch (InvalidStatusTransition $exception) {
             self::assertSame(InvalidStatusTransition::MESSAGE, $exception->getMessage());
