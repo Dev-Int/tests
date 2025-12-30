@@ -82,7 +82,13 @@
                                        </form>
                                    {% endif %}
                                {% endif %}
-                               <twig:Button:UpdateEntity href="#" class="btn-small btn-secondary" label="{{ 'inventory.cancel'|trans }}" />
+                               {% if inventory.isCancellable %}
+                                  <form action="{{ path('inventory_cancel', {inventoryUuid: inventory.uuid}) }}" method="post" style="display: inline;" data-turbo-frame="_top">
+                                      <button type="submit" class="btn btn-small btn-secondary" onclick="return confirm('{{ 'inventory.cancel.confirm'|trans }}')">
+                                          <i class="fa-solid fa-ban"></i> {{ 'inventory.cancel.button'|trans }}
+                                      </button>
+                                  </form>
+                              {% endif %}
                            </span>
                        </li>
                    </turbo-frame>

@@ -17,6 +17,12 @@ use Inventory\Entities\VO\InventoryStatus as InventoryStatusDomain;
 
 enum InventoryStatus: string
 {
+    case DRAFT = 'draft';
+    case IN_PROGRESS = 'inProgress';
+    case REVIEW = 'review';
+    case COMPLETED = 'completed';
+    case CANCELLED = 'cancelled';
+
     public static function fromDomain(InventoryStatusDomain $statusDomain): self
     {
         return match ($statusDomain) {
@@ -27,9 +33,4 @@ enum InventoryStatus: string
             InventoryStatusDomain::CANCELLED => self::CANCELLED,
         };
     }
-    case DRAFT = 'draft';
-    case IN_PROGRESS = 'inProgress';
-    case REVIEW = 'review';
-    case COMPLETED = 'completed';
-    case CANCELLED = 'cancelled';
 }

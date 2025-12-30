@@ -20,6 +20,7 @@ return [
             'inProgress' => 'En cours',
             'review' => 'En révision',
             'completed' => 'Terminé',
+            'cancelled' => 'Annulé',
         ],
         'create' => [
             'titlePage' => 'Créer un inventaire',
@@ -86,8 +87,16 @@ return [
                 'unreviewed_discrepancies' => '%count% écart(s) non révisé(s). Veuillez les réviser avant de finaliser.',
             ],
         ],
-        'cancel' => 'Annuler',
+        'cancel' => [
+            'button' => 'Annuler',
+            'confirm' => 'Êtes-vous sûr de vouloir annuler cet inventaire ?',
+            'success' => 'Inventaire annulé avec succès',
+            'errors' => [
+                'cannot_cancel_completed' => 'Impossible d\'annuler un inventaire finalisé',
+            ],
+        ],
         'errors' => [
+            'not_found' => 'Inventaire non trouvé',
             'date_past' => 'La date doit être aujourd\'hui ou dans le futur',
             'zone_active' => 'Un inventaire actif existe pour cette zone',
         ],

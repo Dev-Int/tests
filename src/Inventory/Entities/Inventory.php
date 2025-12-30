@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Inventory\Entities;
 
 use Inventory\Entities\Exception\ArticleNotFoundInInventory;
+use Inventory\Entities\Exception\CannotCancelCompletedInventory;
 use Inventory\Entities\Exception\CannotRecordStockOnNonInProgressInventory;
 use Inventory\Entities\Exception\CannotReviewItemOnNonReviewInventory;
 use Inventory\Entities\Exception\CannotReviewItemWithoutDiscrepancy;
@@ -271,8 +272,26 @@ final class Inventory
 
         $this->discrepancyAmount = $discrepancyAmount;
         $this->status = InventoryStatus::COMPLETED;
-        $this->statusUpdatedAt = ClockFactory::clock()->now();
-        $this->updatedAt = ClockFactory::clock()->now();
+        $now = ClockFactory::clock()->now();
+        $this->statusUpdatedAt = $now;
+        $this->updatedAt = $now;
+    }
+
+    /**
+     * Annule l'inventaire (DRAFT | IN_PROGRESS | REVIEW → CANCELLED).
+     *
+     * @throws CannotCancelCompletedInventory si l'inventaire est déjà finalisé ou annulé
+     */
+    public function cancel(): void
+    {
+        if (!$this->status->isCancellable()) {
+            throw new CannotCancelCompletedInventory($this->status);
+        }
+
+        $this->status = InventoryStatus::CANCELLED;
+        $now = ClockFactory::clock()->now();
+        $this->statusUpdatedAt = $now;
+        $this->updatedAt = $now;
     }
 
     /**

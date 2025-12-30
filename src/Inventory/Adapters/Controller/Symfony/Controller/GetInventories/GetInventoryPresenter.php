@@ -35,6 +35,7 @@ final readonly class GetInventoryPresenter
                 zoneStorageIds: $this->getZoneStorageIds($inventory->zoneStorages()),
                 allItemsCounted: $inventory->areAllItemsCounted(),
                 hasUnreviewedDiscrepancies: $inventory->hasUnreviewedDiscrepancies(),
+                isCancellable: $inventory->status()->isCancellable(),
             );
         }
     }

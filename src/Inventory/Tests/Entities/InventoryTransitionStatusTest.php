@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Inventory\Tests\Entities;
 
+use Inventory\Entities\Exception\CannotCancelCompletedInventory;
 use Inventory\Entities\Exception\IncompleteInventoryCounting;
 use Inventory\Entities\Exception\InvalidStatusTransition;
 use Inventory\Entities\VO\InventoryStatus;
@@ -208,7 +209,9 @@ final class InventoryTransitionStatusTest extends TestCase
         $inventory = (new InventoryFakerFactory())->createInProgress()->build();
         $itemFactory = new InventoryItemFakerFactory();
         // Add a counted item (using withRealStock sets countedAt)
-        $countedItem = $itemFactory->create()->build()->withRealStock(realStock: Quantity::fromUnit(quantity: 5.0), components: RealStockComponents::zero());
+        $countedItem = $itemFactory->create()->build()
+            ->withRealStock(realStock: Quantity::fromUnit(quantity: 5.0), components: RealStockComponents::zero())
+        ;
         $inventory->addItem($countedItem);
 
         // Act
@@ -265,7 +268,9 @@ final class InventoryTransitionStatusTest extends TestCase
         $inventory = (new InventoryFakerFactory())->createInProgress()->build();
         $itemFactory = new InventoryItemFakerFactory();
 
-        $countedItem = $itemFactory->create()->build()->withRealStock(realStock: Quantity::fromUnit(quantity: 5.0), components: RealStockComponents::zero());
+        $countedItem = $itemFactory->create()->build()
+            ->withRealStock(realStock: Quantity::fromUnit(quantity: 5.0), components: RealStockComponents::zero())
+        ;
         $inventory->addItem($countedItem);
         $uncountedItem = $itemFactory->create()->build();
         $inventory->addItem($uncountedItem);
@@ -302,7 +307,9 @@ final class InventoryTransitionStatusTest extends TestCase
         $inventory = (new InventoryFakerFactory())->createInProgress()->build();
         $itemFactory = new InventoryItemFakerFactory();
         // Item counted to 0 (real stock is 0 but countedAt is set)
-        $countedToZero = $itemFactory->create()->build()->withRealStock(realStock: Quantity::fromUnit(quantity: 0.0), components: RealStockComponents::zero());
+        $countedToZero = $itemFactory->create()->build()
+            ->withRealStock(realStock: Quantity::fromUnit(quantity: 0.0), components: RealStockComponents::zero())
+        ;
         $inventory->addItem($countedToZero);
 
         // Act
@@ -310,5 +317,82 @@ final class InventoryTransitionStatusTest extends TestCase
 
         // Assert
         self::assertTrue($inventory->status()->equals(InventoryStatus::REVIEW));
+    }
+
+    public function testTransitionsFromDraftToCancelled(): void
+    {
+        // Arrange
+        $inventory = (new InventoryFakerFactory())->createDraft()->build();
+
+        // Act
+        $inventory->cancel();
+
+        // Assert
+        self::assertTrue($inventory->status()->equals(InventoryStatus::CANCELLED));
+        self::assertTrue($inventory->status()->isCancelled());
+    }
+
+    public function testTransitionsFromInProgressToCancelled(): void
+    {
+        // Arrange
+        $inventory = (new InventoryFakerFactory())->createInProgress()->build();
+
+        // Act
+        $inventory->cancel();
+
+        // Assert
+        self::assertTrue($inventory->status()->equals(InventoryStatus::CANCELLED));
+    }
+
+    public function testTransitionsFromReviewToCancelled(): void
+    {
+        // Arrange
+        $inventory = (new InventoryFakerFactory())->createReviewed()->build();
+
+        // Act
+        $inventory->cancel();
+
+        // Assert
+        self::assertTrue($inventory->status()->equals(InventoryStatus::CANCELLED));
+    }
+
+    public function testThrowsExceptionWhenCancellingCompletedInventory(): void
+    {
+        // Arrange
+        $inventory = (new InventoryFakerFactory())->createCompleted()->build();
+
+        // Act & Assert
+        $this->expectException(CannotCancelCompletedInventory::class);
+        $this->expectExceptionMessage(CannotCancelCompletedInventory::MESSAGE);
+        $inventory->cancel();
+    }
+
+    public function testThrowsExceptionWhenCancellingAlreadyCancelledInventory(): void
+    {
+        // Arrange
+        $inventory = (new InventoryFakerFactory())->createCancelled()->build();
+
+        // Act & Assert
+        $this->expectException(CannotCancelCompletedInventory::class);
+        $inventory->cancel();
+    }
+
+    public function testCancelDoesNotModifyItems(): void
+    {
+        // Arrange
+        $inventory = (new InventoryFakerFactory())->createInProgress()->build();
+        $itemFactory = new InventoryItemFakerFactory();
+        $item = $itemFactory->create()->build()->withRealStock(
+            realStock: Quantity::fromUnit(quantity: 5.0),
+            components: RealStockComponents::zero()
+        );
+        $inventory->addItem($item);
+        $itemCountBefore = \count($inventory->items());
+
+        // Act
+        $inventory->cancel();
+
+        // Assert - items remain untouched
+        self::assertCount($itemCountBefore, $inventory->items());
     }
 }
