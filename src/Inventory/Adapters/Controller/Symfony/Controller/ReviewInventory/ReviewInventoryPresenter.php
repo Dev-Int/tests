@@ -50,4 +50,23 @@ final readonly class ReviewInventoryPresenter
 
         return $results;
     }
+
+    /**
+     * Get unique zones that have at least one unreviewed item.
+     *
+     * @return array<string> Zone UUIDs
+     */
+    public function getZonesWithUnreviewedItems(): array
+    {
+        $zones = [];
+
+        foreach ($this->items as $item) {
+            $zoneUuid = $item->zoneStorage()->toString();
+            if (!$item->isReviewed() && !isset($zones[$zoneUuid])) {
+                $zones[$zoneUuid] = $zoneUuid;
+            }
+        }
+
+        return array_values($zones);
+    }
 }

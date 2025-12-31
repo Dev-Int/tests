@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Inventory\Adapters\Controller\Symfony\Controller\ReviewInventory;
 
+use Admin\Contracts\Services\Provider\ZoneStorage\ZoneStorageProvider;
 use Inventory\Adapters\Controller\Symfony\Controller\GetInventories\GetInventoriesController;
 use Inventory\Adapters\Controller\Symfony\Controller\ReviewInventory\Input\ItemChoice;
 use Inventory\Adapters\Form\Type\ReviewInventoryType;
@@ -43,6 +44,7 @@ final class ReviewInventoryController extends AbstractController
         private readonly ReviewDiscrepancies $useCase,
         private readonly InventoryRepository $inventoryRepository,
         private readonly TranslatorInterface $translator,
+        private readonly ZoneStorageProvider $zoneStorageProvider,
     ) {
     }
 
@@ -60,7 +62,8 @@ final class ReviewInventoryController extends AbstractController
         }
 
         $itemsWithDiscrepancies = $inventory->items()->getItemsWithDiscrepancies();
-        $presentedItems = (new ReviewInventoryPresenter($itemsWithDiscrepancies))->present();
+        $presenter = new ReviewInventoryPresenter($itemsWithDiscrepancies);
+        $presentedItems = $presenter->present();
         $formItems = $this->buildFormItems($presentedItems);
 
         $form = $this->createReviewForm($inventoryUuid, $formItems);
@@ -70,7 +73,11 @@ final class ReviewInventoryController extends AbstractController
             return $this->handleFormSubmission($form, $inventoryUuid);
         }
 
-        return $this->renderReviewForm($inventory, $presentedItems, $form);
+        $zonesWithUnreviewedItems = $this->buildZonesWithLabels(
+            $presenter->getZonesWithUnreviewedItems()
+        );
+
+        return $this->renderReviewForm($inventory, $presentedItems, $form, $zonesWithUnreviewedItems);
     }
 
     private function getInventoryOrNull(string $inventoryUuid): ?Inventory
@@ -186,39 +193,52 @@ final class ReviewInventoryController extends AbstractController
     }
 
     /**
-     * @param array<DiscrepancyItemResult> $presentedItems
+     * Build zones with their labels from ZoneStorageProvider.
+     *
+     * @param array<string> $zoneUuids
+     *
+     * @return array<ZoneWithUnreviewedItemsResult>
+     */
+    private function buildZonesWithLabels(array $zoneUuids): array
+    {
+        if ($zoneUuids === []) {
+            return [];
+        }
+
+        $resourceUuids = array_map(
+            static fn (string $uuid): ResourceUuid => ResourceUuid::fromString($uuid),
+            $zoneUuids
+        );
+
+        $zoneStorages = $this->zoneStorageProvider->provideAll($resourceUuids);
+
+        $results = [];
+        foreach ($zoneStorages as $zoneStorage) {
+            $results[] = new ZoneWithUnreviewedItemsResult(
+                uuid: $zoneStorage->uuid->toString(),
+                label: $zoneStorage->label->toString(),
+            );
+        }
+
+        return $results;
+    }
+
+    /**
+     * @param array<DiscrepancyItemResult>         $presentedItems
+     * @param array<ZoneWithUnreviewedItemsResult> $zonesWithUnreviewedItems
      */
     private function renderReviewForm(
         Inventory $inventory,
         array $presentedItems,
         FormInterface $form,
+        array $zonesWithUnreviewedItems,
     ): Response {
         return $this->render('@inventory/review.html.twig', [
             'inventory' => $inventory,
             'discrepancyCount' => \count($presentedItems),
             'items' => $presentedItems,
             'form' => $form,
-            'zonesWithUnreviewedItems' => $this->getZonesWithUnreviewedItems($presentedItems),
+            'zonesWithUnreviewedItems' => $zonesWithUnreviewedItems,
         ]);
-    }
-
-    /**
-     * Get unique zones that have at least one unreviewed item.
-     *
-     * @param array<DiscrepancyItemResult> $items
-     *
-     * @return array<string> Zone UUIDs
-     */
-    private function getZonesWithUnreviewedItems(array $items): array
-    {
-        $zones = [];
-
-        foreach ($items as $item) {
-            if (!$item->isReviewed && !isset($zones[$item->zoneStorageUuid])) {
-                $zones[$item->zoneStorageUuid] = $item->zoneStorageUuid;
-            }
-        }
-
-        return array_values($zones);
     }
 }

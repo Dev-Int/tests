@@ -250,7 +250,7 @@ final class Inventory
      */
     public function resumeCounting(ResourceUuid $zoneStorageUuid): void
     {
-        if (InventoryStatus::REVIEW !== $this->status) {
+        if (!$this->status->isResumable()) {
             throw new InvalidStatusTransition(fromStatus: $this->status, toStatus: InventoryStatus::IN_PROGRESS);
         }
         $this->status = InventoryStatus::IN_PROGRESS;

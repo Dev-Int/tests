@@ -81,12 +81,12 @@
                         <summary>{{ 'inventory.resume_counting.button'|trans }}</summary>
                         <p class="text-muted">{{ 'inventory.resume_counting.confirm'|trans }}</p>
                         <div class="grid">
-                            {% for zoneUuid in zonesWithUnreviewedItems %}
+                            {% for zone in zonesWithUnreviewedItems %}
                                 <form method="post" action="{{ path('inventory_resume_counting', {
                                     'inventoryUuid': inventory.uuid.toString,
-                                    'zoneStorageUuid': zoneUuid
+                                    'zoneStorageUuid': zone.uuid
                                 }) }}">
-                                    <twig:Form:Button:Submit label="Zone {{ loop.index }}" icon="fa-redo" variant="secondary outline" />
+                                    <twig:Form:Button:Submit label="{{ zone.label }}" icon="fa-redo" variant="secondary outline" />
                                 </form>
                             {% endfor %}
                         </div>
