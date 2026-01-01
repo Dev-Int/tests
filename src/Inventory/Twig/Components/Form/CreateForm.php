@@ -11,9 +11,9 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace App\Twig\Components\Form\Inventory;
+namespace Inventory\Twig\Components\Form;
 
-use Inventory\Adapters\Controller\Symfony\Controller\CreateInventory\CreateInventoryApiRequest;
+use Inventory\Adapters\Controller\Symfony\Controller\CreateInventory\CreateInventoryInput;
 use Inventory\Adapters\Form\Type\CreateInventoryType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -29,7 +29,7 @@ final class CreateForm extends AbstractController
     use DefaultActionTrait;
 
     #[LiveProp]
-    public CreateInventoryApiRequest $initialFormData;
+    public CreateInventoryInput $initialFormData;
 
     protected function instantiateForm(): FormInterface
     {

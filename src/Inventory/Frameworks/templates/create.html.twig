@@ -13,7 +13,7 @@
     <h1><twig:Icon:Entities:Inventory /> {{ 'inventory.create.titlePage'|trans }}</h1>
 
     <turbo-frame id="inventory_create">
-        <twig:Form:Inventory:CreateForm form="{{ form }}" />
+        <twig:Form:CreateForm form="{{ form }}" initialFormData="{{ form.vars.value }}" />
     </turbo-frame>
 
 {% endblock %}
