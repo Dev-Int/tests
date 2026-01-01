@@ -45,7 +45,7 @@ final class UpdateCompanyTest extends TestCase
         $request->expects(self::once())->method('name')->willReturn('Dev-Int Création');
         $companyRepository->expects(self::once())->method('getByName')->with('Dev-Int Création')->willReturn($company);
 
-        $request->expects(self::once())->method('address')->willReturn('12, rue des Singes');
+        $request->expects(self::once())->method('streetAddress')->willReturn('12, rue des Singes');
         $request->expects(self::once())->method('postalCode')->willReturn('56000');
         $request->expects(self::once())->method('city')->willReturn('Vannes');
         $request->expects(self::once())->method('country')->willReturn('France');
@@ -91,7 +91,7 @@ final class UpdateCompanyTest extends TestCase
             ->willThrowException(new CompanyNotFound($companyName))
         ;
 
-        $request->expects(self::never())->method('address')->willReturn('12, rue des Singes');
+        $request->expects(self::never())->method('streetAddress')->willReturn('12, rue des Singes');
         $request->expects(self::never())->method('postalCode')->willReturn('56000');
         $request->expects(self::never())->method('city')->willReturn('Vannes');
         $request->expects(self::never())->method('country')->willReturn('France');

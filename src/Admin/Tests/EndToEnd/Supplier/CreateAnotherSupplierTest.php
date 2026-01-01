@@ -71,7 +71,7 @@ final class CreateAnotherSupplierTest extends BasePantherTestCase
 
         $client->submitForm($translator->trans('add'), [
             'createSupplier[name]' => $supplierName,
-            'createSupplier[address]' => '10 avenue des Champs',
+            'createSupplier[streetAddress]' => '10 avenue des Champs',
             'createSupplier[postalCode]' => '69000',
             'createSupplier[city]' => 'Lyon',
             'createSupplier[country]' => 'France',

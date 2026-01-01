@@ -26,7 +26,7 @@ final class ChangeDomiciliationSupplierType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('address', TextType::class, [
+            ->add('streetAddress', TextType::class, [
                 'label' => 'Adresse de l\'entreprise',
                 'required' => true,
                 'empty_data' => '',

@@ -1,57 +1,41 @@
 # TODO List - Tâches actives
 
-**Dernière mise à jour** : 2025-12-28
+**Dernière mise à jour** : 2026-01-01
 
 ---
 
 ## 🔴 Priority High
 
-### Communication inter-BC : Contrats et TwigComponents
+### TwigComponents spécifiques par Bounded Context
 
 **Status** : ⬜ À faire
-**GitHub Issue** : [#163](https://github.com/Dev-Int/tests/issues/163)
+**GitHub Issue** : [#195](https://github.com/Dev-Int/tests/issues/195)
 
 **Objectif** :
-Implémenter la communication entre bounded contexts via le pattern Contracts pour les select inter-BC (ex: Admin\ZoneStorage dans Inventory).
+Créer des TwigComponents spécifiques aux BC (avec dépendances métier) dans `BC\Twig\Components\`.
+
+**État actuel** :
+- ✅ Contracts existent : `src/Admin/Contracts/` (ZoneStorageProvider, ArticleProvider, etc.)
+- ✅ Components génériques : `src/Shared/Twig/Components/` (Icons, Pagination, etc.)
 
 **Tâches** :
-- [ ] Créer les contrats nécessaires pour la communication inter bounded context
-- [ ] Utiliser ces contrats pour créer les TwigComponents dans leur BC respectif (`BC\Twig\Components`)
+- [ ] Créer `Admin\Twig\Components\` (sélecteurs d'entités, etc.)
+- [ ] Créer `Inventory\Twig\Components\` (components Inventory)
 - [ ] Documenter le pattern provider dans `.claude/BOUNDED_CONTEXTS_QUICK.md`
 
 **Principe clé** :
 Les appels inter-BC doivent passer **UNIQUEMENT** par `BC\Contracts`, et **JAMAIS** par `BC\Adapters`.
 
-**Architecture TwigComponents** :
-- `BC\Twig\Components` : Components spécifiques au BC (avec dépendances métier)
-- `src/Twig/Components` : Components génériques sans connexion aux BC (Icon, etc.)
-
-**Fichiers concernés** :
-- `src/Admin/Contracts/` (interfaces)
-- `src/Admin/Adapters/Contracts/` (implémentations provider)
-- `src/Admin/Twig/Components/` (TwigComponents Admin)
-- `src/Inventory/Twig/Components/` (TwigComponents Inventory)
-
-**Action IA** :
-→ Utiliser skill `add-bc-contract` (à créer)
-
 ---
-
-## 🟡 Priority Medium
 
 ### Refactoring Packaging : utiliser consumerUnit au lieu de parcel
 
 **Status** : ⬜ À faire
-**GitHub Issue** : TBD
-**Prérequis pour** : Fiche Recette
+**GitHub Issue** : [#196](https://github.com/Dev-Int/tests/issues/196)
+**Prérequis pour** : Fiche Recette, Tests E2E Inventory
 
 **Contexte** :
 Le code actuel de saisie des stocks (Inventory) utilise `parcel` comme niveau de packaging pour la saisie. Or, pour la **fiche recette**, les quantités seront exprimées en `consumerUnit` (unité de consommation).
-
-**Problème actuel** :
-- Les champs de formulaire sont nommés `real_stock_{slug}_parcel`
-- La conversion se fait au niveau `parcel` du packaging
-- Les recettes nécessitent le `consumerUnit` pour les ingrédients
 
 **Structure Packaging** (rappel) :
 ```
@@ -61,21 +45,77 @@ Packaging
 └── consumerUnit (unité consommation) - ex: 1 bouteille ← CIBLE
 ```
 
-**BC concernés** :
-- `Admin` : Entité Article, Packaging VO
-- `Inventory` : Saisie stock, calculs quantités
-
 **Tâches** :
-- [ ] Analyser l'impact sur les formulaires de saisie (Inventory)
 - [ ] Refactoriser les noms de champs `_parcel` → `_consumerUnit` ou rendre générique
 - [ ] Adapter les conversions de quantités (Quantity VO)
 - [ ] Mettre à jour les tests fonctionnels concernés
-- [ ] Documenter le choix d'unité par contexte (inventaire vs recette)
-
-**Vérifications** :
-- [ ] PHPStan : 0 erreur
-- [ ] Tous les tests passent (make ta)
 - [ ] Saisie stock fonctionne toujours correctement
+
+**Note** : À faire AVANT les tests E2E (#197) pour éviter de refaire les tests.
+
+---
+
+### Tests E2E workflow complet Inventory
+
+**Status** : ⬜ À faire
+**GitHub Issue** : [#197](https://github.com/Dev-Int/tests/issues/197)
+**Dépend de** : #196 (consumerUnit)
+
+**Objectif** :
+Créer un test E2E qui valide le workflow complet d'un inventaire.
+
+**Scénarios à tester** :
+- [ ] Scénario "happy path" complet (créer → compter → réviser → finaliser)
+- [ ] Scénario avec annulation
+- [ ] Scénario avec retour en correction (ResumeCountingFromReview)
+
+---
+
+### Mettre à jour documentation BC Inventory
+
+**Status** : ⬜ À faire
+**GitHub Issue** : [#198](https://github.com/Dev-Int/tests/issues/198)
+
+**Contexte** :
+La documentation du BC Inventory est obsolète :
+- `docs/inventory-implementation-plan.md` : montre des itérations "À faire" alors que tout est implémenté
+- `src/Inventory/README.md` : liste incomplète des UseCases
+
+**Tâches** :
+- [ ] Marquer toutes les itérations comme ✅ Terminé
+- [ ] Mettre à jour avec tous les UseCases actuels (9 use cases)
+- [ ] Supprimer les sections obsolètes "À faire"
+
+---
+
+## 🟡 Priority Medium
+
+### ADR - Décisions architecturales BC Inventory
+
+**Status** : ⬜ À faire
+**GitHub Issue** : [#199](https://github.com/Dev-Int/tests/issues/199)
+
+**Décisions à documenter** :
+- Immutabilité des entités (withXXX pattern)
+- Batch par zone pour performance
+- Workflow de statuts et transitions
+- Intégration avec Admin BC via Gateways
+- Valorisation des écarts (discrepancyAmount)
+
+---
+
+### Pagination sur liste des inventaires
+
+**Status** : ⬜ À faire
+**GitHub Issue** : [#200](https://github.com/Dev-Int/tests/issues/200)
+
+**Objectif** :
+Ajouter la pagination à la liste des inventaires pour supporter de grands volumes.
+
+**Tâches** :
+- [ ] Pagination côté serveur (offset/limit)
+- [ ] 20 éléments par page par défaut
+- [ ] Utiliser le component `Shared\Twig\Components\Pagination` existant
 
 ---
 
@@ -85,25 +125,13 @@ Packaging
 **GitHub Issue** : TBD
 
 **Objectif** :
-Migrer tous les fichiers `services.yaml` vers `services.php` pour suivre les futures bonnes pratiques de Symfony et bénéficier de l'autocomplétion IDE, du typage strict et de la vérification statique par PHPStan.
-
-**Avantages** :
-- ✅ Autocomplétion et navigation dans l'IDE
-- ✅ Typage strict et détection d'erreurs par PHPStan
-- ✅ Refactoring automatique (renommage de classes, etc.)
-- ✅ Performance légèrement meilleure (pas de parsing YAML)
+Migrer tous les fichiers `services.yaml` vers `services.php` pour suivre les futures bonnes pratiques de Symfony.
 
 **Fichiers à migrer** :
 - `src/Admin/Frameworks/config/services.yaml` → `services.php`
 - `src/Inventory/Frameworks/config/services.yaml` → `services.php`
 - `src/Shared/Frameworks/config/services.yaml` → `services.php`
 - `config/services.yaml` → `services.php`
-
-**Vérifications** :
-- [ ] Tous les services.yaml migrés vers services.php
-- [ ] PHPStan : 0 erreur
-- [ ] Tous les tests passent (make ta + make e2e)
-- [ ] Cache clear et vérification en dev/prod
 
 ---
 
@@ -117,18 +145,11 @@ Passer Rector sur tout le codebase pour utiliser les nouvelles fonctionnalités 
 - Typed constants (`private const string ROUTE_NAME = '...'`)
 - Readonly properties
 - New in initializers
-- Et autres améliorations syntaxiques
 
 **Commande** :
 ```bash
 make rector
 ```
-
-**Vérifications** :
-- [ ] Rector exécuté sur tout le codebase
-- [ ] PHPStan : 0 erreur
-- [ ] CS-Fixer : code formatté
-- [ ] Tous les tests passent (make ta + make e2e)
 
 ---
 
@@ -137,31 +158,10 @@ make rector
 **Status** : ⬜ À faire
 **GitHub Issue** : TBD
 
-**Objectif** :
-Ajouter un système de logging pour faciliter le debug et le monitoring en production.
-
 **Cas d'usage identifiés** :
 - `ArticleProvider::forArticle()` : Logger l'UUID quand un article n'est pas trouvé
 - Erreurs métier (validation, contraintes)
 - Appels inter-BC (Contracts/Providers)
-
-**Architecture proposée** :
-- Utiliser `Psr\Log\LoggerInterface` (injecté via Symfony DI)
-- Niveaux : `warning` pour entités non trouvées, `error` pour erreurs métier
-- Format structuré pour exploitation (ELK, Datadog, etc.)
-
-**Exemple** :
-```php
-if (!$article instanceof Article) {
-    $this->logger->warning('Article not found', ['uuid' => $articleId->toString()]);
-    return null;
-}
-```
-
-**Vérifications** :
-- [ ] Logger injecté dans les services critiques
-- [ ] Tests unitaires vérifient les appels de log
-- [ ] Configuration Monolog adaptée (dev vs prod)
 
 ---
 
@@ -171,66 +171,46 @@ if (!$article instanceof Article) {
 **GitHub Issue** : TBD
 
 **Contexte** :
-Les exceptions domaine (`DomainException`) ont leurs messages en anglais (ex: `"No items selected for review."`), mais l'UX doit être en français. Actuellement, seule `NoItemsSelectedForReview` est traduite via un catch spécifique dans le contrôleur.
-
-**Objectif** :
-Systématiser la traduction des messages d'erreur domaine affichés à l'utilisateur.
-
-**Approches possibles** :
-
-1. **Catch spécifique par exception** (actuel pour `NoItemsSelectedForReview`)
-   - ✅ Simple, explicite
-   - ❌ Verbeux si beaucoup d'exceptions
-
-2. **ExceptionTranslator service**
-   - Créer un service qui mappe `Exception::class => 'translation.key'`
-   - Injecté dans les contrôleurs ou via un listener
-
-3. **Symfony ExceptionListener + flash messages**
-   - Listener global qui traduit les `DomainException`
-   - ❌ Perd le contexte de redirection
-
-**Fichiers concernés** :
-- `src/*/Entities/Exception/*.php` - Toutes les exceptions domaine
-- `src/*/Frameworks/translations/messages.fr.php` - Traductions
-- Contrôleurs qui catchent `DomainException`
+Les exceptions domaine (`DomainException`) ont leurs messages en anglais, mais l'UX doit être en français.
 
 **Tâches** :
 - [ ] Lister toutes les exceptions domaine et leurs messages
 - [ ] Créer les clés de traduction correspondantes
 - [ ] Choisir l'approche (catch spécifique vs service centralisé)
-- [ ] Implémenter et tester
-
-**Vérifications** :
-- [ ] Tous les messages d'erreur affichés sont en français
-- [ ] Tests fonctionnels vérifient les traductions
-- [ ] PHPStan : 0 erreur
 
 ---
 
 ## 🟢 Priority Low
 
+### Filtres avancés sur liste des inventaires
+
+**Status** : ⬜ À faire
+**GitHub Issue** : [#201](https://github.com/Dev-Int/tests/issues/201)
+
+**Filtres à implémenter** :
+- Status (DRAFT, IN_PROGRESS, REVIEW, COMPLETED, CANCELLED)
+- Plage de dates
+- Zone de stockage
+
+---
+
 ### End-to-End Tests Coverage - Améliorations optionnelles
 
 **Status** : 🟢 **BONNE COUVERTURE** (améliorations optionnelles possibles)
 
-**État actuel** : La couverture E2E est très bonne. Les workflows critiques (création, pagination, annulation, configuration) sont tous testés.
-
 **Tests manquants (optionnels)** :
 
-**Article - Tests nominaux Update** (seuls les tests Cancel existent) :
-- ❌ `ChangeArticleFinancialInformationTest` - Test nominal de modification prix/taxe réussie
-- ❌ `ChangeArticleStorageInformationTest` - Test nominal de modification stockage réussie
-- ❌ `ReAssignArticleSupplierTest` - Test nominal de réassignation fournisseur réussie
-- ❌ `RenameArticleTest` - Test nominal de renommage réussi
+**Article - Tests nominaux Update** :
+- ❌ `ChangeArticleFinancialInformationTest`
+- ❌ `ChangeArticleStorageInformationTest`
+- ❌ `ReAssignArticleSupplierTest`
+- ❌ `RenameArticleTest`
 
-**Supplier - Tests nominaux Update** (seuls les tests Cancel existent) :
-- ❌ `RenameSupplierTest` - Test nominal de renommage réussi
-- ❌ `ChangeDomiciliationSupplierTest` - Test nominal de modification domiciliation réussie
-- ❌ `ChangeContactSupplierTest` - Test nominal de modification contact réussie
-- ❌ `ChangeDeliverySpecificationsSupplierTest` - Test nominal de modification specs livraison réussie
-
-**Recommandation** : Ces tests sont peu prioritaires car les workflows sont déjà couverts par les tests fonctionnels.
+**Supplier - Tests nominaux Update** :
+- ❌ `RenameSupplierTest`
+- ❌ `ChangeDomiciliationSupplierTest`
+- ❌ `ChangeContactSupplierTest`
+- ❌ `ChangeDeliverySpecificationsSupplierTest`
 
 ---
 
@@ -239,22 +219,27 @@ Systématiser la traduction des messages d'erreur domaine affichés à l'utilisa
 **Status** : ⬜ À faire si besoin de performance
 **Fichier** : `src/Admin/Adapters/Gateway/ORM/Provider/Article/DefaultArticleAggregatorBuilder.php`
 
-**Contexte** :
-Le Builder actuel utilise Doctrine ORM avec 2 requêtes SQL (data + count).
-Si volumes importants, envisager passage en DBAL avec `COUNT(*) OVER()`.
-
-**Architecture cible** :
-1. Créer `ArticleSearchCriteria` DTO dans `Admin/UseCases/`
-2. Enrichir `ArticleFinder` avec `findByCriteria(ArticleSearchCriteria)`
-3. Builder devient simple constructeur de DTO (sans Doctrine)
-4. Implémentation DBAL dans `DoctrineArticleFinder`
-
-**Bénéfices** :
-- 1 requête SQL au lieu de 2
-- Meilleure séparation des responsabilités
-- Builder utilisable sans dépendance ORM
-
 **Déclencheur** : Implémenter si latence détectée sur listings articles.
+
+---
+
+## 🚀 Roadmap Future
+
+### [Epic] StockManagement BC - Gestion quotidienne des stocks
+
+**Status** : 📋 Roadmap
+**GitHub Issue** : [#202](https://github.com/Dev-Int/tests/issues/202)
+
+**Vision** :
+Nouveau Bounded Context pour la gestion quotidienne des stocks :
+- Mouvements de stock en temps réel (entrées, sorties, transferts)
+- Calcul automatique du stock théorique
+- Traçabilité complète des opérations
+- Alertes sur seuils
+
+**Dépendances** :
+- ✅ BC Inventory complet
+- ✅ BC Admin avec entités Article
 
 ---
 

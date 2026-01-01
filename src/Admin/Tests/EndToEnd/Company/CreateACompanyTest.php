@@ -51,7 +51,7 @@ final class CreateACompanyTest extends BasePantherTestCase
 
         $client->submitForm($translator->trans('add'), [
             'createCompany[name]' => 'Dev-Int Création',
-            'createCompany[address]' => '5, rue des Plantes',
+            'createCompany[streetAddress]' => '5, rue des Plantes',
             'createCompany[postalCode]' => '75000',
             'createCompany[city]' => 'Paris',
             'createCompany[country]' => 'France',

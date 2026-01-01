@@ -324,4 +324,105 @@ final class AssignParentFamilyLogTest extends TestCase
 
         $useCase->execute($request);
     }
+
+    public function testAssignNullParentSucceed(): void
+    {
+        // Arrange : FamilyLog avec parent → assigner null
+        $repository = $this->createMock(FamilyLogRepository::class);
+        $useCase = new AssignParentFamilyLog($repository);
+        $familyLogBuilder = new FamilyLogDataBuilder();
+        $parent = $familyLogBuilder->create('Surgelé')->build();
+        $familyLog = $familyLogBuilder->create('Viande')->withParent($parent)->build();
+
+        $request = $this->createMock(AssignParentFamilyLogRequest::class);
+        $request->expects(self::exactly(2))->method('uuid')->willReturn(FamilyLogDataBuilder::VALID_UUID);
+        $request->expects(self::exactly(2))->method('parent')->willReturn(null);
+
+        $repository->expects(self::once())
+            ->method('getByUuid')
+            ->with(ResourceUuid::fromString(FamilyLogDataBuilder::VALID_UUID))
+            ->willReturn($familyLog)
+        ;
+
+        $repository->expects(once())
+            ->method('exists')
+            ->with('Viande', null)
+            ->willReturn(false)
+        ;
+
+        $repository->expects(self::once())
+            ->method('assignParent')
+            ->with($familyLog)
+        ;
+
+        // Act
+        $response = $useCase->execute($request);
+
+        // Assert
+        self::assertNull($response->familyLog->parent());
+        self::assertSame('Viande', $response->familyLog->label()->toString());
+        self::assertSame('viande', $response->familyLog->slug());
+        self::assertSame('viande', $response->familyLog->path());
+        self::assertSame(0, $response->familyLog->level());
+        self::assertEmpty($parent->children());
+    }
+
+    public function testAssignNullParentWithChildrenSucceed(): void
+    {
+        // Arrange : FamilyLog avec parent ET enfants → assigner null
+        $faker = Factory::create('fr_FR');
+        $repository = $this->createMock(FamilyLogRepository::class);
+        $useCase = new AssignParentFamilyLog($repository);
+        $familyLogBuilder = new FamilyLogDataBuilder();
+        $parent = $familyLogBuilder->create('Surgelé')->build();
+        $familyLog = $familyLogBuilder->create('Viande')->withParent($parent)->build();
+        $familyLogBuilder->create('Poulet')
+            ->withUuid($faker->uuid())
+            ->withParent($familyLog)
+            ->build()
+        ;
+
+        $request = $this->createMock(AssignParentFamilyLogRequest::class);
+        $request->expects(self::exactly(2))->method('uuid')->willReturn(FamilyLogDataBuilder::VALID_UUID);
+        $request->expects(self::exactly(2))->method('parent')->willReturn(null);
+
+        $repository->expects(self::once())
+            ->method('getByUuid')
+            ->with(ResourceUuid::fromString(FamilyLogDataBuilder::VALID_UUID))
+            ->willReturn($familyLog)
+        ;
+
+        $repository->expects(once())
+            ->method('exists')
+            ->with('Viande', null)
+            ->willReturn(false)
+        ;
+
+        $repository->expects(self::once())
+            ->method('assignParent')
+            ->with($familyLog, FamilyLogDataBuilder::VALID_UUID)
+        ;
+
+        // Act
+        $response = $useCase->execute($request);
+
+        // Assert : FamilyLog revient au niveau 0
+        self::assertNull($response->familyLog->parent());
+        self::assertSame('viande', $response->familyLog->slug());
+        self::assertSame('viande', $response->familyLog->path());
+        self::assertSame(0, $response->familyLog->level());
+
+        // Vérifier la cascade : enfants remontent de niveau
+        $children = $response->familyLog->children();
+        self::assertNotEmpty($children);
+        $child = $children[0];
+
+        self::assertSame($familyLog, $child->parent());
+        self::assertSame('viande_poulet', $child->slug());
+        self::assertSame('viande_poulet', $child->path());
+        self::assertSame(1, $child->level());
+
+        // Ancien parent n'a plus cet enfant
+        self::assertEmpty($parent->children());
+    }
 }

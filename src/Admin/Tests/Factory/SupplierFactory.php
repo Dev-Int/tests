@@ -37,7 +37,7 @@ final class SupplierFactory extends PersistentProxyObjectFactory
             'name' => self::faker()->company(),
             'uuid' => self::faker()->uuid(),
             'familyLog' => FamilyLogFactory::new(),
-            'address' => self::faker()->streetAddress(),
+            'streetAddress' => self::faker()->streetAddress(),
             'postalCode' => self::faker()->regexify('[0-9]{5}'),
             'town' => self::faker()->city(),
             'phone' => '+33297000000',
@@ -53,13 +53,13 @@ final class SupplierFactory extends PersistentProxyObjectFactory
     {
         return $this->instantiateWith(
             /**
-             * @param array{name: string, uuid: string, familyLog: FamilyLog, address: string, postalCode: string, town: string, phone: string, cellphone: string, email: string, contact: string, delayDelivery: int, orderDays: array<int>} $attributes
+             * @param array{name: string, uuid: string, familyLog: FamilyLog, streetAddress: string, postalCode: string, town: string, phone: string, cellphone: string, email: string, contact: string, delayDelivery: int, orderDays: array<int>} $attributes
              */
             static function (array $attributes): Supplier {
                 \assert(\is_string($attributes['name']));
                 \assert(\is_string($attributes['uuid']));
                 \assert($attributes['familyLog'] instanceof FamilyLog);
-                \assert(\is_string($attributes['address']));
+                \assert(\is_string($attributes['streetAddress']));
                 \assert(\is_string($attributes['postalCode']));
                 \assert(\is_string($attributes['town']));
                 \assert(\is_string($attributes['phone']));
@@ -74,7 +74,7 @@ final class SupplierFactory extends PersistentProxyObjectFactory
                 $supplierDomain = (new SupplierDataBuilder())
                     ->create($attributes['name'], $familyLogDomain)
                     ->withUuid($attributes['uuid'])
-                    ->withAddress($attributes['address'])
+                    ->withAddress($attributes['streetAddress'])
                     ->withPostalCode($attributes['postalCode'])
                     ->withTown($attributes['town'])
                     ->withPhone($attributes['phone'])

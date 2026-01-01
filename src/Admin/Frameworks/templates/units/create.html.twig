@@ -9,7 +9,7 @@
     <h1><twig:Icon:Entities:Unit /> {{ 'admin.unit.create.titlePage'|trans }}</h1>
 
     <turbo-frame id="unit_create">
-        <twig:Form:Unit:CreateForm form="{{ form }}" />
+        <twig:Form:Unit:CreateForm form="{{ form }}" initialFormData="{{ form.vars.value }}" />
     </turbo-frame>
 
 {% endblock %}

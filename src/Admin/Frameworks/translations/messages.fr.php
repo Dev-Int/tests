@@ -12,7 +12,7 @@ return [
                     'label' => 'Nom de la société',
                     'placeholder' => 'Le nom de votre société',
                 ],
-                'address' => [
+                'streetAddress' => [
                     'label' => 'Adresse de la société',
                     'placeholder' => 'L\'adresse de votre société',
                 ],
@@ -114,6 +114,7 @@ return [
                 ],
                 'parent' => [
                     'label' => 'Famille logistique parente',
+                    'none' => 'Aucun parent',
                 ],
             ],
             'create' => [
@@ -169,7 +170,7 @@ return [
                 'name' => [
                     'label' => 'Nom de l\'entreprise',
                 ],
-                'address' => [
+                'streetAddress' => [
                     'label' => 'Adresse de l\'entreprise',
                 ],
                 'postalCode' => [

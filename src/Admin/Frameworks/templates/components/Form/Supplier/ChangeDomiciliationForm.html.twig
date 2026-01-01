@@ -1,0 +1,26 @@
+<div class="flex-1">
+
+    <h3>{{ 'admin.supplier.changeDomiciliation.titlePage'|trans({ '%supplierName%': supplier.name }) }}</h3>
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    {{ form_row(form.streetAddress) }}
+    <div class="grid">
+        {{ form_row(form.postalCode) }}
+        {{ form_row(form.town) }}
+        {{ form_row(form.country) }}
+    </div>
+    <div class="grid">
+        {{ form_row(form.phone) }}
+        {{ form_row(form.email) }}
+    </div>
+
+    <div class="grid">
+        <twig:Form:Button:Cancel href="{{ path('admin_suppliers_index') }}" label="{{ 'cancel'|trans }}" turboFrame="_top" />
+        <twig:Form:Button:Submit label="{{ 'admin.supplier.changeDomiciliation.button'|trans }}" icon="fa-pen-to-square" />
+    </div>
+
+    {{ form_end(form) }}
+
+</div>

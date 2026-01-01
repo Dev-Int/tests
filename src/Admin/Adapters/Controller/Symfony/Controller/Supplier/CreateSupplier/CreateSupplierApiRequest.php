@@ -23,7 +23,7 @@ final class CreateSupplierApiRequest implements CreateSupplierRequest
      */
     public function __construct(
         public string $name,
-        public string $address,
+        public string $streetAddress,
         public string $postalCode,
         public string $city,
         public string $country,
@@ -42,9 +42,9 @@ final class CreateSupplierApiRequest implements CreateSupplierRequest
         return $this->name;
     }
 
-    public function address(): string
+    public function streetAddress(): string
     {
-        return $this->address;
+        return $this->streetAddress;
     }
 
     public function postalCode(): string

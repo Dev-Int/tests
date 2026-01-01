@@ -13,6 +13,14 @@
         {% else %}
             {% set uuid = familyLog.vars.value %}
         {% endif %}
+        <li class="li-unstyled">
+            <input type="radio" name="{{ field_name(familyLog) }}" id="{{ familyLog.vars.id }}_none"
+                   value=""
+                   class="accordion_input"
+                {% if uuid is null or uuid is same as('') %} checked{% endif %}
+            />
+            <label for="{{ familyLog.vars.id }}_none">{{ 'admin.familyLog.form.parent.none'|trans }}</label>
+        </li>
         {% for levelLabel, value in field_choices(familyLog) %}
             {% set levelLabel = levelLabel | split('_') %}
             {% set level, children, label = levelLabel[0], levelLabel[1], levelLabel[2] %}

@@ -36,7 +36,7 @@ final class SupplierFixtures extends Fixture implements DependentFixtureInterfac
             $supplier = SupplierFactory::createOne([
                 'name' => $faker->company(),
                 'familyLog' => $familyLog,
-                'address' => $faker->streetAddress(),
+                'streetAddress' => $faker->streetAddress(),
                 'postalCode' => $faker->postcode(),
                 'town' => $faker->city(),
                 'phone' => $this->getValidPhoneNumber($faker),

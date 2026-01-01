@@ -13,7 +13,7 @@
     <h1><twig:Icon:Entities:Article /> {{ 'admin.article.create.titlePage'|trans }}</h1>
 
     <turbo-frame id="article_create">
-        <twig:Form:Article:CreateForm form="{{ form }}" />
+        <twig:Form:Article:CreateForm form="{{ form }}" zoneStorages="{{ form.vars.value.zoneStorages }}" initialFormData="{{ form.vars.value }}" />
     </turbo-frame>
 
 {% endblock %}

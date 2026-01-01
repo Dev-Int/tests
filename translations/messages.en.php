@@ -6,7 +6,7 @@ return [
     'cancel' => 'Cancel',
     'add' => 'Add',
     'name' => 'Name',
-    'address' => 'Address',
+    'streetAddress' => 'Address',
     'postalCode' => 'Postal code',
     'phone' => 'Phone',
     'email' => 'Email',

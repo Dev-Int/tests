@@ -47,7 +47,10 @@
       "mcp__jetbrains-phpstorm__get_file_problems",
       "mcp__plugin_greptile_greptile__create_custom_context",
       "mcp__jetbrains-phpstorm__get_file_text_by_path",
-      "WebFetch(domain:picocss.com)"
+      "WebFetch(domain:picocss.com)",
+      "mcp__jetbrains-phpstorm__replace_text_in_file",
+      "Bash(do grep -l '^final class' $file)",
+      "Bash(if ! grep -q \"AsLiveComponent\" \"$f\")"
     ],
     "deny": [
       "../.env",

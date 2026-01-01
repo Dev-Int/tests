@@ -12,9 +12,9 @@ return [
                     'label' => 'Company name',
                     'placeholder' => 'The name of your company',
                 ],
-                'address' => [
-                    'label' => 'Company address',
-                    'placeholder' => 'The address of your company',
+                'streetAddress' => [
+                    'label' => 'Company streetAddress',
+                    'placeholder' => 'The streetAddress of your company',
                 ],
                 'postalCode' => [
                     'label' => 'postal code',
@@ -112,6 +112,7 @@ return [
                 ],
                 'parent' => [
                     'label' => 'Related logistics family',
+                    'none' => 'No parent',
                 ],
             ],
             'create' => [
@@ -167,7 +168,7 @@ return [
                 'name' => [
                     'label' => 'Name of the supplier',
                 ],
-                'address' => [
+                'streetAddress' => [
                     'label' => 'Address of the supplier',
                 ],
                 'postalCode' => [

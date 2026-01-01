@@ -9,7 +9,7 @@
     <h1><twig:Icon:Entities:Unit /> {{ 'admin.unit.changeLabel.titlePage'|trans({ '%unitName%':unit.label }) }}</h1>
 
     <turbo-frame id="unit_{{ unit.uuid }}">
-        <twig:Form:Unit:ChangeLabelForm form="{{ form }}" unit="{{ unit }}" />
+        <twig:Form:Unit:ChangeLabelForm form="{{ form }}" unit="{{ unit }}" initialFormData="{{ form.vars.value }}" />
     </turbo-frame>
 
 {% endblock %}

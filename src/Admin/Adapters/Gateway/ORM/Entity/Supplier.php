@@ -32,8 +32,8 @@ class Supplier
     private string $uuid;
     #[ORM\Column(name: 'name', type: 'string', length: 255)]
     private string $name;
-    #[ORM\Column(name: 'address', type: 'text')]
-    private string $address;
+    #[ORM\Column(name: 'street_address', type: 'text')]
+    private string $streetAddress;
     #[ORM\Column(name: 'postal_code', type: 'string', length: 5)]
     private string $postalCode;
     #[ORM\Column(name: 'city', type: 'string', length: 255)]
@@ -66,7 +66,7 @@ class Supplier
     {
         $this->uuid = $supplier->uuid()->toString();
         $this->name = $supplier->name()->toString();
-        $this->address = $supplier->address()->address();
+        $this->streetAddress = $supplier->address()->address();
         $this->postalCode = $supplier->address()->postalCode();
         $this->city = $supplier->address()->city();
         $this->country = $supplier->address()->country();
@@ -88,7 +88,7 @@ class Supplier
         return SupplierDomain::create(
             ResourceUuid::fromString($this->uuid),
             NameField::fromString($this->name),
-            $this->address,
+            $this->streetAddress,
             $this->postalCode,
             $this->city,
             $this->country,
@@ -125,19 +125,19 @@ class Supplier
 
     public function fullAddress(): string
     {
-        return \sprintf("%s\n%s %s, %s", $this->address, $this->postalCode, $this->city, $this->country);
+        return \sprintf("%s\n%s %s, %s", $this->streetAddress, $this->postalCode, $this->city, $this->country);
     }
 
     public function setAddress(string $address): self
     {
-        $this->address = $address;
+        $this->streetAddress = $address;
 
         return $this;
     }
 
     public function address(): string
     {
-        return $this->address;
+        return $this->streetAddress;
     }
 
     public function setPostalCode(string $postalCode): self

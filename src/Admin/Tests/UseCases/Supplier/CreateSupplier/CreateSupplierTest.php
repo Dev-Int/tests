@@ -34,7 +34,7 @@ final class CreateSupplierTest extends TestCase
         $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
 
         $request->expects(self::exactly(2))->method('name')->willReturn('Dev-Int Création');
-        $request->expects(self::once())->method('address')->willReturn('5, rue des Plantes');
+        $request->expects(self::once())->method('streetAddress')->willReturn('5, rue des Plantes');
         $request->expects(self::once())->method('postalCode')->willReturn('75000');
         $request->expects(self::once())->method('city')->willReturn('Paris');
         $request->expects(self::once())->method('country')->willReturn('France');
@@ -80,7 +80,7 @@ final class CreateSupplierTest extends TestCase
         $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
 
         $request->expects(self::exactly(2))->method('name')->willReturn('Dev-Int Création');
-        $request->expects(self::never())->method('address')->willReturn('5, rue des Plantes');
+        $request->expects(self::never())->method('streetAddress')->willReturn('5, rue des Plantes');
         $request->expects(self::never())->method('postalCode')->willReturn('75000');
         $request->expects(self::never())->method('city')->willReturn('Paris');
         $request->expects(self::never())->method('country')->willReturn('France');

@@ -9,7 +9,7 @@
     <h1><twig:Icon:Entities:Supplier /> {{ 'admin.supplier.changeDomiciliation.titlePage'|trans({ '%supplierName%': supplier.name }) }}</h1>
 
     <turbo-frame id="supplier_{{ supplier.uuid }}">
-        <twig:Form:Supplier:ChangeDomiciliationForm form="{{ form }}" supplier="{{ supplier }}" />
+        <twig:Form:Supplier:ChangeDomiciliationForm form="{{ form }}" supplier="{{ supplier }}" initialFormData="{{ form.vars.value }}" />
     </turbo-frame>
 
 {% endblock %}

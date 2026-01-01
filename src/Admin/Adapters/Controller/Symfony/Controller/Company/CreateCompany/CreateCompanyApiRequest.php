@@ -22,7 +22,7 @@ final class CreateCompanyApiRequest implements CreateCompanyRequest
         #[Assert\NotBlank]
         public string $name = '',
         #[Assert\NotBlank]
-        public string $address = '',
+        public string $streetAddress = '',
         #[Assert\NotBlank]
         #[Assert\Regex('/\d{5}/')]
         #[Assert\Type(type: 'numeric')]
@@ -47,9 +47,9 @@ final class CreateCompanyApiRequest implements CreateCompanyRequest
         return $this->name;
     }
 
-    public function address(): string
+    public function streetAddress(): string
     {
-        return $this->address;
+        return $this->streetAddress;
     }
 
     public function postalCode(): string

@@ -74,7 +74,7 @@ final class CreateSupplierControllerTest extends BaseFunctionalTestCase
 
         $form = $crawler->selectButton($translator->trans('add'))->form([
             'createSupplier[name]' => 'Dev-Int Création',
-            'createSupplier[address]' => '5, rue des Plantes',
+            'createSupplier[streetAddress]' => '5, rue des Plantes',
             'createSupplier[postalCode]' => '75000',
             'createSupplier[city]' => 'Paris',
             'createSupplier[country]' => 'France',
@@ -153,7 +153,7 @@ final class CreateSupplierControllerTest extends BaseFunctionalTestCase
 
         $form = $crawler->selectButton($translator->trans('add'))->form([
             'createSupplier[name]' => 'Dev-Int Création',
-            'createSupplier[address]' => '5, rue des Plantes',
+            'createSupplier[streetAddress]' => '5, rue des Plantes',
             'createSupplier[postalCode]' => '75000',
             'createSupplier[city]' => 'Paris',
             'createSupplier[country]' => 'France',

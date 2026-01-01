@@ -1,0 +1,27 @@
+<div class="flex-1">
+
+    <h3>{{ 'admin.company.update.titleShort'|trans({'%companyName%': companyName}) }}</h3>
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    {{ form_row(form.streetAddress) }}
+    <div class="grid">
+        {{ form_row(form.postalCode) }}
+        {{ form_row(form.city) }}
+    </div>
+    {{ form_row(form.country) }}
+    <div class="grid">
+        {{ form_row(form.phone) }}
+        {{ form_row(form.email) }}
+    </div>
+    {{ form_row(form.contact) }}
+
+    <div class="grid">
+        <twig:Form:Button:Cancel href="{{ path('admin_company_index') }}" label="{{ 'cancel'|trans }}" />
+        <twig:Form:Button:Submit label="{{ 'admin.company.update.button'|trans }}" icon="fa-pen-to-square" />
+    </div>
+
+    {{ form_end(form) }}
+
+</div>

@@ -13,7 +13,7 @@
     <h1><twig:Icon:Entities:FamilyLog /> {{ 'admin.familyLog.create.titlePage'|trans }}</h1>
 
     <turbo-frame id="familyLog_create">
-        <twig:Form:FamilyLog:CreateForm form="{{ form }}" />
+        <twig:Form:FamilyLog:CreateForm form="{{ form }}" initialFormData="{{ form.vars.value }}" />
     </turbo-frame>
 
 {% endblock %}

@@ -114,18 +114,24 @@ final class FamilyLog
         return $this->level;
     }
 
-    public function assignParent(self $parent): void
+    public function assignParent(?self $parent = null): void
     {
-        $slug = $parent->slug() . self::SLUG_SEPARATOR . $this->label->slugify(self::SLUG_SEPARATOR);
+        if (!$parent instanceof self) {
+            $slug = $this->label->slugify(self::SLUG_SEPARATOR);
+        } else {
+            $slug = $parent->slug() . self::SLUG_SEPARATOR . $this->label->slugify(self::SLUG_SEPARATOR);
+        }
         $this->path = $slug;
         $this->slug = $slug;
-        $this->level = $parent->level + 1;
+        $this->level = $parent instanceof self ? $parent->level + 1 : 0;
 
-        if ($this->parent instanceof self && $this->parent->uuid() !== $parent->uuid()) {
+        if ($this->parent instanceof self && $this->parent->uuid() !== $parent?->uuid()) {
             $this->parent->removeChild($this);
         }
 
-        if ($this->isChildOf($parent) === false) {
+        $this->parent = $parent;
+
+        if ($parent instanceof self && $this->isChildOf($parent) === false) {
             $parent->addChild($this);
         }
 

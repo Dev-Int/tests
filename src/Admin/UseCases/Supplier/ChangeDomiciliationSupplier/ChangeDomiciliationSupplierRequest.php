@@ -15,7 +15,7 @@ namespace Admin\UseCases\Supplier\ChangeDomiciliationSupplier;
 
 interface ChangeDomiciliationSupplierRequest
 {
-    public function address(): string;
+    public function streetAddress(): string;
 
     public function postalCode(): string;
 

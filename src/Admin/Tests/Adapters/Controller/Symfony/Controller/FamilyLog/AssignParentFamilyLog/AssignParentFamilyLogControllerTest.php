@@ -262,4 +262,130 @@ final class AssignParentFamilyLogControllerTest extends BaseFunctionalTestCase
         $familyLogs = $familyLogRepository->getFamilyLogsOrderingBySlug();
         self::assertCount(2, $familyLogs->toArray());
     }
+
+    public function testAssignNullParentWillSucceed(): void
+    {
+        // Arrange : FamilyLog avec parent existant → assigner null → niveau 0
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
+        $parent = FamilyLogFactory::createOne(['label' => 'Surgelé']);
+        $familyLog = FamilyLogFactory::createOne([
+            'label' => 'Viande',
+            'parent' => $parent->_real(),
+        ]);
+
+        // Vérifier état initial
+        $familyLogBefore = $familyLogRepository->getByUuid(
+            ResourceUuid::fromString($familyLog->_real()->uuid())
+        );
+        self::assertNotNull($familyLogBefore->parent());
+        self::assertSame('surgele_viande', $familyLogBefore->slug());
+
+        // Act
+        $crawler = $this->client->request(
+            Request::METHOD_GET,
+            \sprintf(self::ASSIGN_PARENT_FAMILY_LOG_URI, $familyLog->_real()->uuid())
+        );
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains(
+            'h1',
+            $translator->trans('admin.familyLog.assignParent.titlePage', ['%familyLabel%' => 'Viande'])
+        );
+
+        $form = $crawler->selectButton($translator->trans('admin.familyLog.assignParent.button'))->form([
+            'assignParentFamilyLog[parent]' => '',
+            'assignParentFamilyLog[uuid]' => $familyLog->_real()->uuid(),
+        ]);
+        $this->client->submit($form);
+
+        // Assert
+        self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
+        self::assertResponseRedirects('/admin/family_logs');
+
+        $admin = $this->client->followRedirect();
+        $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
+
+        self::assertSame($translator->trans('admin.familyLog.assignParent.success'), $flash);
+        $familyLogAssigned = $familyLogRepository->getByUuid(
+            ResourceUuid::fromString($familyLog->_real()->uuid())
+        );
+        self::assertSame('Viande', $familyLogAssigned->label()->toString());
+        self::assertNull($familyLogAssigned->parent());
+        self::assertSame('viande', $familyLogAssigned->slug());
+        self::assertSame(0, $familyLogAssigned->level());
+    }
+
+    public function testAssignNullParentWithChildrenWillSucceed(): void
+    {
+        // Arrange : FamilyLog avec parent ET enfants → assigner null → cascade
+        /** @var FamilyLogRepository $familyLogRepository */
+        $familyLogRepository = self::getContainer()->get(FamilyLogRepository::class);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
+        $parent = FamilyLogFactory::createOne(['label' => 'Surgelé']);
+        $familyLog = FamilyLogFactory::createOne([
+            'label' => 'Viande',
+            'parent' => $parent->_real(),
+        ]);
+        FamilyLogFactory::createOne([
+            'label' => 'Poulet',
+            'parent' => $familyLog->_real(),
+        ]);
+
+        // Vérifier état initial
+        $familyLogBefore = $familyLogRepository->getByUuidWithChildren(
+            uuid: ResourceUuid::fromString($familyLog->_real()->uuid())
+        );
+        self::assertNotNull($familyLogBefore->parent());
+        self::assertSame('surgele_viande', $familyLogBefore->slug());
+        self::assertSame(2, $familyLogBefore->level());
+
+        // Act
+        $crawler = $this->client->request(
+            Request::METHOD_GET,
+            \sprintf(self::ASSIGN_PARENT_FAMILY_LOG_URI, $familyLog->_real()->uuid())
+        );
+
+        self::assertResponseIsSuccessful();
+
+        $form = $crawler->selectButton($translator->trans('admin.familyLog.assignParent.button'))->form([
+            'assignParentFamilyLog[parent]' => '',
+            'assignParentFamilyLog[uuid]' => $familyLog->_real()->uuid(),
+        ]);
+        $this->client->submit($form);
+
+        // Assert
+        self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
+        self::assertResponseRedirects('/admin/family_logs');
+
+        $admin = $this->client->followRedirect();
+        $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-success')->text();
+
+        self::assertSame($translator->trans('admin.familyLog.assignParent.success'), $flash);
+
+        // Vérifier FamilyLog → niveau 0
+        $familyLogAssigned = $familyLogRepository->getByUuidWithChildren(
+            uuid: ResourceUuid::fromString($familyLog->_real()->uuid())
+        );
+        self::assertSame('Viande', $familyLogAssigned->label()->toString());
+        self::assertNull($familyLogAssigned->parent());
+        self::assertSame('viande', $familyLogAssigned->slug());
+        self::assertSame(0, $familyLogAssigned->level());
+
+        // Vérifier cascade : enfant → niveau 1
+        $children = $familyLogAssigned->children();
+        self::assertNotNull($children);
+        self::assertCount(1, $children);
+        $childAfter = $children[0];
+        self::assertSame('Poulet', $childAfter->label()->toString());
+        self::assertSame('viande_poulet', $childAfter->slug());
+        self::assertSame(1, $childAfter->level());
+    }
 }
