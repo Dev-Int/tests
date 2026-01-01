@@ -41,8 +41,8 @@ final class SupplierType extends AbstractType
                     'autofocus' => true,
                 ],
             ])
-            ->add('address', TextType::class, [
-                'label' => $this->translator->trans('admin.supplier.form.address.label'),
+            ->add('streetAddress', TextType::class, [
+                'label' => $this->translator->trans('admin.supplier.form.streetAddress.label'),
                 'required' => true,
                 'empty_data' => '',
             ])

@@ -34,7 +34,7 @@ final class CompanyFactory extends PersistentProxyObjectFactory
     {
         return [
             'name' => self::faker()->company(),
-            'address' => self::faker()->streetAddress(),
+            'streetAddress' => self::faker()->streetAddress(),
             'postalCode' => self::faker()->postcode(),
             'city' => self::faker()->city(),
             'country' => self::faker()->country(),
@@ -50,7 +50,7 @@ final class CompanyFactory extends PersistentProxyObjectFactory
             /**
              * @param array{
              *     name: string,
-             *     address: string,
+             *     streetAddress: string,
              *     postalCode: string,
              *     city: string,
              *     country: string,
@@ -61,7 +61,7 @@ final class CompanyFactory extends PersistentProxyObjectFactory
              */
             static function (array $attributes): Company {
                 \assert(\is_string($attributes['name']));
-                \assert(\is_string($attributes['address']));
+                \assert(\is_string($attributes['streetAddress']));
                 \assert(\is_string($attributes['postalCode']));
                 \assert(\is_string($attributes['city']));
                 \assert(\is_string($attributes['country']));
@@ -71,7 +71,7 @@ final class CompanyFactory extends PersistentProxyObjectFactory
 
                 $companyDomain = (new CompanyDataBuilder())
                     ->create($attributes['name'])
-                    ->withAddress($attributes['address'])
+                    ->withAddress($attributes['streetAddress'])
                     ->withPostalCode($attributes['postalCode'])
                     ->withTown($attributes['city'])
                     ->build()

@@ -19,5 +19,5 @@ interface AssignParentFamilyLogRequest
 {
     public function uuid(): string;
 
-    public function parent(): FamilyLog;
+    public function parent(): ?FamilyLog;
 }

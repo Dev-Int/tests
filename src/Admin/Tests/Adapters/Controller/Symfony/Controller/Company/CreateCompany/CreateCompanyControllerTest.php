@@ -48,7 +48,7 @@ final class CreateCompanyControllerTest extends BaseFunctionalTestCase
 
         $form = $crawler->selectButton($translator->trans('add'))->form([
             'createCompany[name]' => 'Dev-Int Création',
-            'createCompany[address]' => '5, rue des Plantes',
+            'createCompany[streetAddress]' => '5, rue des Plantes',
             'createCompany[postalCode]' => '75000',
             'createCompany[city]' => 'Paris',
             'createCompany[country]' => 'France',
@@ -89,7 +89,7 @@ final class CreateCompanyControllerTest extends BaseFunctionalTestCase
 
         $form = $crawler->selectButton($translator->trans('add'))->form([
             'createCompany[name]' => 'Dev-Int Création',
-            'createCompany[address]' => '5, rue des Plantes',
+            'createCompany[streetAddress]' => '5, rue des Plantes',
             'createCompany[postalCode]' => '75000',
             'createCompany[city]' => 'Paris',
             'createCompany[country]' => 'France',
@@ -128,7 +128,7 @@ final class CreateCompanyControllerTest extends BaseFunctionalTestCase
 
         $form = $crawler->selectButton($translator->trans('add'))->form([
             'createCompany[name]' => 'Dev-Int Création',
-            'createCompany[address]' => '5, rue des Plantes',
+            'createCompany[streetAddress]' => '5, rue des Plantes',
             'createCompany[postalCode]' => '75000',
             'createCompany[city]' => 'Paris',
             'createCompany[country]' => 'France',

@@ -9,7 +9,7 @@
     <h1><twig:Icon:Entities:Tax /> {{ 'admin.tax.revaluate.titlePage'|trans({ '%taxName%':tax.name }) }}</h1>
 
     <turbo-frame id="tax_{{ tax.uuid }}">
-        <twig:Form:Taxes:RevaluateForm form="{{ form }}" tax="{{ tax }}" />
+        <twig:Form:Taxes:RevaluateForm form="{{ form }}" tax="{{ tax }}" initialFormData="{{ form.vars.value }}" />
     </turbo-frame>
 
 {% endblock %}

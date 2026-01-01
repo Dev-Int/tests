@@ -17,14 +17,13 @@ use Admin\Adapters\Controller\Symfony\Controller\Article\Validator\CompatibleRea
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Admin\Adapters\Gateway\ORM\Entity\Supplier;
 use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
-use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[CompatibleReassignFamilyLogs]
 final class ReAssignArticleSupplierDto
 {
     /**
-     * @param Collection<array-key, ZoneStorage> $zoneStorages
+     * @param array<ZoneStorage> $zoneStorages
      */
     public function __construct(
         #[Assert\NotBlank]
@@ -35,7 +34,7 @@ final class ReAssignArticleSupplierDto
         public FamilyLog $familyLog,
         #[Assert\NotBlank]
         #[Assert\Valid]
-        public Collection $zoneStorages,
+        public array $zoneStorages,
         #[Assert\NotBlank]
         #[Assert\Regex('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/')]
         public string $uuid

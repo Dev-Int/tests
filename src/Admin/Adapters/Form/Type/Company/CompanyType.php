@@ -39,11 +39,11 @@ class CompanyType extends AbstractType
                     'autofocus' => true,
                 ],
             ])
-            ->add('address', TextType::class, [
+            ->add('streetAddress', TextType::class, [
                 'required' => true,
-                'label' => $this->translator->trans('admin.company.form.address.label'),
+                'label' => $this->translator->trans('admin.company.form.streetAddress.label'),
                 'attr' => [
-                    'placeholder' => $this->translator->trans('admin.company.form.address.placeholder'),
+                    'placeholder' => $this->translator->trans('admin.company.form.streetAddress.placeholder'),
                 ],
             ])
             ->add('postalCode', TextType::class, [

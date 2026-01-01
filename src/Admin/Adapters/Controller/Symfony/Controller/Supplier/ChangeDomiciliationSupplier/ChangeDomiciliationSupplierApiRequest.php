@@ -19,8 +19,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 final class ChangeDomiciliationSupplierApiRequest implements ChangeDomiciliationSupplierRequest
 {
     public function __construct(
+        /**
+         * NOTE: Property named 'streetAddress' instead of 'address' to avoid
+         * Symfony PropertyAccessor bug. PropertyAccessor interprets 'address'
+         * as 'add' + 'ress' (mutator prefix pattern) and fails to find getter.
+         */
         #[Assert\NotBlank]
-        public string $address,
+        public string $streetAddress,
         #[Assert\NotBlank]
         #[Assert\Regex('/\d{5}/')]
         #[Assert\Type(type: 'numeric')]
@@ -40,9 +45,9 @@ final class ChangeDomiciliationSupplierApiRequest implements ChangeDomiciliation
     ) {
     }
 
-    public function address(): string
+    public function streetAddress(): string
     {
-        return $this->address;
+        return $this->streetAddress;
     }
 
     public function postalCode(): string

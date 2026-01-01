@@ -45,7 +45,7 @@ final class AssignParentFamilyLogController extends AbstractController
     {
         $form = $this->createForm(
             AssignParentFamilyLogType::class,
-            ['parent' => $familyLog->parent(), 'uuid' => $familyLog->uuid()],
+            new AssignParentFamilyLogInput($familyLog->uuid(), $familyLog->parent()),
             [
                 'action' => $this->generateUrl(self::ROUTE_NAME, ['familyLog' => $familyLog->uuid()]),
                 'attr' => ['data-turbo-frame' => '_top'],
@@ -53,14 +53,14 @@ final class AssignParentFamilyLogController extends AbstractController
         );
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var array{uuid: string, parent: FamilyLog} $familyLogToUpdate */
+            /** @var AssignParentFamilyLogInput $familyLogToUpdate */
             $familyLogToUpdate = $form->getData();
 
             try {
                 $this->useCase->execute(
                     new AssignParentFamilyLogApiRequest(
-                        $familyLogToUpdate['uuid'],
-                        $familyLogToUpdate['parent']->toDomain()
+                        $familyLogToUpdate->uuid,
+                        $familyLogToUpdate->parent?->toDomain()
                     )
                 );
             } catch (\DomainException $exception) {

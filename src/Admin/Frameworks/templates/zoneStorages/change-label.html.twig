@@ -9,7 +9,7 @@
     <h1><twig:Icon:Entities:ZoneStorage /> {{ 'admin.zoneStorage.changeLabel.titlePage'|trans({ '%zoneLabel%': zoneStorage.label }) }}</h1>
 
     <turbo-frame id="zone_{{ zoneStorage.uuid }}">
-        <twig:Form:ZoneStorage:ChangeLabelForm form="{{ form }}" zoneStorage="{{ zoneStorage }}" />
+        <twig:Form:ZoneStorage:ChangeLabelForm form="{{ form }}" zoneStorage="{{ zoneStorage }}" initialFormData="{{ form.vars.value }}" />
     </turbo-frame>
 
 {% endblock %}

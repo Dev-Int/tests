@@ -68,7 +68,7 @@ final class CreateSupplierController extends AbstractController
                 $this->useCase->execute(
                     new CreateSupplierApiRequest(
                         $supplier->name,
-                        $supplier->address,
+                        $supplier->streetAddress,
                         $supplier->postalCode,
                         $supplier->city,
                         $supplier->country,

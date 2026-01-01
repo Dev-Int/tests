@@ -13,10 +13,12 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Form\Type\FamilyLog;
 
+use Admin\Adapters\Controller\Symfony\Controller\FamilyLog\AssignParentFamilyLog\AssignParentFamilyLogInput;
 use Admin\Adapters\Form\Type\Components\FamilyLogEntitySelectType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class AssignParentFamilyLogType extends AbstractType
@@ -37,6 +39,13 @@ final class AssignParentFamilyLogType extends AbstractType
             ])
             ->add('uuid', HiddenType::class)
         ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => AssignParentFamilyLogInput::class,
+        ]);
     }
 
     public function getBlockPrefix(): string

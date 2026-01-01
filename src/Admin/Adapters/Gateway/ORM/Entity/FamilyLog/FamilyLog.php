@@ -139,6 +139,13 @@ class FamilyLog
         return $this;
     }
 
+    public function setLevel(int $level): self
+    {
+        $this->level = $level;
+
+        return $this;
+    }
+
     public function getLevelChildrenLabel(): string
     {
         return \sprintf('%d_%d_%s', $this->level, (int) $this->hasChildren(), $this->label);

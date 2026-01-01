@@ -66,7 +66,7 @@ final class ChangeDomiciliationSupplierControllerTest extends BaseFunctionalTest
         );
 
         $form = $crawler->selectButton($translator->trans('admin.supplier.changeDomiciliation.button'))->form([
-            'changeDomiciliationSupplier[address]' => '5, rue des Fleurs',
+            'changeDomiciliationSupplier[streetAddress]' => '5, rue des Fleurs',
             'changeDomiciliationSupplier[postalCode]' => '45000',
             'changeDomiciliationSupplier[town]' => 'Orléans',
             'changeDomiciliationSupplier[country]' => 'France',

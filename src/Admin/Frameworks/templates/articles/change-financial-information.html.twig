@@ -9,7 +9,8 @@
     <h1><twig:Icon:Entities:Article /> {{ 'admin.article.changeFinancialInformation.titlePage'|trans({ '%articleName%': article.name }) }}</h1>
 
     <turbo-frame id="article_{{ article.uuid }}">
-        <twig:Form:Article:ChangeFinancialInformationForm form="{{ form }}" article="{{ article }}" />
+        {% dump(form) %}
+        <twig:Form:Article:ChangeFinancialInformationForm form="{{ form }}" article="{{ article }}" initialFormData="{{ form.vars.value }}" />
     </turbo-frame>
 
 {% endblock %}

@@ -37,7 +37,7 @@ final readonly class CreateSupplier
         $supplier = Supplier::create(
             ResourceUuid::generate(),
             NameField::fromString($request->name()),
-            $request->address(),
+            $request->streetAddress(),
             $request->postalCode(),
             $request->city(),
             $request->country(),

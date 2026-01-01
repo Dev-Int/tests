@@ -41,7 +41,7 @@ final class UpdateCompanyControllerTest extends BaseFunctionalTestCase
 
         $company = CompanyFactory::createOne([
             'name' => 'Dev-Int Création',
-            'address' => '5, rue des Plantes',
+            'streetAddress' => '5, rue des Plantes',
             'postalCode' => '75000',
             'city' => 'Paris',
         ]);
@@ -64,7 +64,7 @@ final class UpdateCompanyControllerTest extends BaseFunctionalTestCase
         );
 
         $form = $crawler->selectButton($translator->trans('admin.company.update.button'))->form([
-            'updateCompany[address]' => '12, rue des Singes',
+            'updateCompany[streetAddress]' => '12, rue des Singes',
             'updateCompany[postalCode]' => '56000',
             'updateCompany[city]' => 'Vannes',
             'updateCompany[country]' => 'France',

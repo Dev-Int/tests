@@ -13,7 +13,7 @@
     <h1><twig:Icon:Entities:Article /> {{ 'admin.article.reassignSupplier.titlePage'|trans({ '%articleName%': article.name }) }}</h1>
 
     <turbo-frame id="article_{{ article.uuid }}">
-        <twig:Form:Article:ReassignSupplierForm form="{{ form }}" article="{{ article }}" />
+        <twig:Form:Article:ReassignSupplierForm form="{{ form }}" article="{{ article }}" zoneStorages="{{ form.vars.value.zoneStorages }}" initialFormData="{{ form.vars.value }}" />
     </turbo-frame>
 
 {% endblock %}

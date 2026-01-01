@@ -37,7 +37,7 @@ final readonly class CreateCompany
         $company = Company::create(
             NameField::fromString($request->name()),
             ContactAddress::fromString(
-                $request->address(),
+                $request->streetAddress(),
                 $request->postalCode(),
                 $request->city(),
                 $request->country()

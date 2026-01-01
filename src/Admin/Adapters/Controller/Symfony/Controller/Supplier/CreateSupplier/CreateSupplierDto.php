@@ -25,7 +25,7 @@ final class CreateSupplierDto
         #[Assert\NotBlank]
         public string $name = '',
         #[Assert\NotBlank]
-        public string $address = '',
+        public string $streetAddress = '',
         #[Assert\NotBlank]
         #[Assert\Regex('/\d{5}/')]
         #[Assert\Type(type: 'numeric')]

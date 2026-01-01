@@ -156,6 +156,14 @@ final class DoctrineFamilyLogRepository extends ServiceEntityRepository implemen
             $familyLogToUpdate->setParent($parent)
                 ->setSlug($familyLog->slug())
                 ->setPath($familyLog->path())
+                ->setLevel($familyLog->level())
+            ;
+        } else {
+            // Cas parent = null : retour au niveau 0
+            $familyLogToUpdate->setParent(null)
+                ->setSlug($familyLog->slug())
+                ->setPath($familyLog->path())
+                ->setLevel($familyLog->level())
             ;
         }
 

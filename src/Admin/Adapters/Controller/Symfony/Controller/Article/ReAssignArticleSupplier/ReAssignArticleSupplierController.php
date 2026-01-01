@@ -16,7 +16,6 @@ namespace Admin\Adapters\Controller\Symfony\Controller\Article\ReAssignArticleSu
 use Admin\Adapters\Form\Type\Article\ReAssignSupplierType;
 use Admin\Adapters\Gateway\ORM\Entity\Article\Article;
 use Admin\UseCases\Article\ReAssignSupplier\ReAssignArticleSupplier;
-use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -43,9 +42,9 @@ final class ReAssignArticleSupplierController extends AbstractController
     )]
     public function __invoke(Request $request, Article $article): Response
     {
-        $zoneStorages = new ArrayCollection();
+        $zoneStorages = [];
         foreach ($article->zoneStorages() as $zoneStorage) {
-            $zoneStorages->add($zoneStorage);
+            $zoneStorages[] = $zoneStorage;
         }
         $form = $this->createForm(
             ReAssignSupplierType::class,

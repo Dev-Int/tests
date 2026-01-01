@@ -13,7 +13,7 @@
     <h1><twig:Icon:Entities:Supplier /> {{ 'admin.supplier.create.titlePage'|trans }}</h1>
 
     <turbo-frame id="supplier_create">
-        <twig:Form:Supplier:CreateForm form="{{ form }}" />
+        <twig:Form:Supplier:CreateForm form="{{ form }}" initialFormData="{{ form.vars.value }}" />
     </turbo-frame>
 
 {% endblock %}

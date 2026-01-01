@@ -19,15 +19,13 @@ use Admin\Adapters\Gateway\ORM\Entity\ReadModel\Packaging;
 use Admin\Adapters\Gateway\ORM\Entity\Supplier;
 use Admin\Adapters\Gateway\ORM\Entity\Tax;
 use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[CompatibleFamilyLogs]
 final class CreateArticleInput
 {
     /**
-     * @param Collection<array-key, ZoneStorage> $zoneStorages
+     * @param array<ZoneStorage> $zoneStorages
      */
     public function __construct(
         #[Assert\NotBlank]
@@ -48,7 +46,7 @@ final class CreateArticleInput
         public float $minStock = 0.0,
         #[Assert\NotBlank]
         #[Assert\Valid]
-        public Collection $zoneStorages = new ArrayCollection(),
+        public array $zoneStorages = [],
         #[Assert\NotBlank]
         #[Assert\Valid]
         public ?FamilyLog $familyLog = null,

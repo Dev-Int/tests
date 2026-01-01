@@ -35,7 +35,7 @@ final class ChangeDomiciliationSupplierTest extends TestCase
         $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
         $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLog)->build();
 
-        $request->expects(self::once())->method('address')->willReturn('25, rue des Fleurs');
+        $request->expects(self::once())->method('streetAddress')->willReturn('25, rue des Fleurs');
         $request->expects(self::once())->method('postalCode')->willReturn('75000');
         $request->expects(self::once())->method('town')->willReturn('Paris');
         $request->expects(self::once())->method('country')->willReturn('France');
@@ -72,7 +72,7 @@ final class ChangeDomiciliationSupplierTest extends TestCase
         $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')->build();
         $supplier = (new SupplierDataBuilder())->create('Supplier 1', $familyLog)->build();
 
-        $request->expects(self::never())->method('address')->willReturn('25, rue des Fleurs');
+        $request->expects(self::never())->method('streetAddress')->willReturn('25, rue des Fleurs');
         $request->expects(self::never())->method('postalCode')->willReturn('75000');
         $request->expects(self::never())->method('town')->willReturn('Paris');
         $request->expects(self::never())->method('country')->willReturn('France');

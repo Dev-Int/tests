@@ -30,7 +30,7 @@ final readonly class ChangeDomiciliationSupplier
 
         $supplier->changeDomiciliation(
             ContactAddress::fromString(
-                $request->address(),
+                $request->streetAddress(),
                 $request->postalCode(),
                 $request->town(),
                 $request->country()

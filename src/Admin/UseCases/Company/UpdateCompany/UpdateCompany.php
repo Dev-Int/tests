@@ -32,7 +32,7 @@ final readonly class UpdateCompany
         $company = Company::create(
             $companyToUpdate->name(),
             ContactAddress::fromString(
-                $request->address(),
+                $request->streetAddress(),
                 $request->postalCode(),
                 $request->city(),
                 $request->country()

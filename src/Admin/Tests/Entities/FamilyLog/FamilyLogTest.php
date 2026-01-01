@@ -98,4 +98,52 @@ final class FamilyLogTest extends TestCase
         self::assertSame([$familyLog], $parent->children());
         self::assertTrue($grandParent->isCompatible($familyLog));
     }
+
+    public function testAssignNullParentReturnsToLevelZero(): void
+    {
+        // Arrange : FamilyLog niveau 2 avec enfant niveau 3
+        $grandParent = FamilyLog::create(
+            ResourceUuid::generate(),
+            NameField::fromString('Alimentaire')
+        );
+        $parent = FamilyLog::create(
+            ResourceUuid::generate(),
+            NameField::fromString('Surgelé'),
+            $grandParent
+        );
+        $familyLog = FamilyLog::create(
+            ResourceUuid::generate(),
+            NameField::fromString('Viande'),
+            $parent
+        );
+        $child = FamilyLog::create(
+            ResourceUuid::generate(),
+            NameField::fromString('Poulet'),
+            $familyLog
+        );
+
+        // Vérification état initial
+        self::assertSame(3, $familyLog->level());
+        self::assertSame(4, $child->level());
+        self::assertSame('alimentaire_surgele_viande', $familyLog->slug());
+        self::assertSame('alimentaire_surgele_viande_poulet', $child->slug());
+
+        // Act : Assigner parent null
+        $familyLog->assignParent();
+
+        // Assert : FamilyLog revient au niveau 0, enfant au niveau 1
+        self::assertSame(0, $familyLog->level());
+        self::assertNull($familyLog->parent());
+        self::assertSame('viande', $familyLog->slug());
+        self::assertSame('viande', $familyLog->path());
+
+        // Vérifier que l'enfant a remonté de niveau également
+        self::assertSame(1, $child->level());
+        self::assertSame('viande_poulet', $child->slug());
+        self::assertSame('viande_poulet', $child->path());
+        self::assertSame($familyLog, $child->parent());
+
+        // Vérifier que l'ancien parent n'a plus cet enfant
+        self::assertEmpty($parent->children());
+    }
 }

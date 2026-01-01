@@ -25,7 +25,7 @@ final class AssignParentFamilyLogApiRequest implements AssignParentFamilyLogRequ
         public string $uuid,
         #[Assert\NotBlank]
         #[Assert\Valid]
-        public FamilyLog $parent
+        public ?FamilyLog $parent
     ) {
     }
 
@@ -34,7 +34,7 @@ final class AssignParentFamilyLogApiRequest implements AssignParentFamilyLogRequ
         return $this->uuid;
     }
 
-    public function parent(): FamilyLog
+    public function parent(): ?FamilyLog
     {
         return $this->parent;
     }

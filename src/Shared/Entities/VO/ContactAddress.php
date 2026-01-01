@@ -15,9 +15,9 @@ namespace Shared\Entities\VO;
 
 final readonly class ContactAddress
 {
-    public static function fromString(string $address, string $postalCode, string $city, string $country): self
+    public static function fromString(string $streetAddress, string $postalCode, string $city, string $country): self
     {
-        return new self($address, $postalCode, $city, $country);
+        return new self($streetAddress, $postalCode, $city, $country);
     }
 
     private function __construct(

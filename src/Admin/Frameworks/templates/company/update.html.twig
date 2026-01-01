@@ -9,7 +9,7 @@
     <h1><twig:Icon:Entities:Company /> {{ 'admin.company.update.titlePage'|trans({'%companyName%': companyName}) }}</h1>
 
     <turbo-frame id="company_update">
-        <twig:Form:Company:UpdateForm form="{{ form }}" companyName="{{ companyName }}"/>
+        <twig:Form:Company:UpdateForm form="{{ form }}" companyName="{{ companyName }}" initialFormData="{{ form.vars.value }}" />
     </turbo-frame>
 
 {% endblock %}

@@ -30,7 +30,7 @@ class Company
     #[ORM\Column]
     private string $name;
     #[ORM\Column]
-    private string $address;
+    private string $streetAddress;
     #[ORM\Column]
     private string $postalCode;
     #[ORM\Column]
@@ -72,7 +72,7 @@ class Company
     ) {
         $this->slug = $slug;
         $this->name = $name;
-        $this->address = $address;
+        $this->streetAddress = $address;
         $this->postalCode = $postalCode;
         $this->city = $city;
         $this->country = $country;
@@ -93,7 +93,7 @@ class Company
 
     public function address(): string
     {
-        return $this->address;
+        return $this->streetAddress;
     }
 
     public function postalCode(): string
@@ -113,7 +113,7 @@ class Company
 
     public function fullAddress(): string
     {
-        return $this->address . '<br />' . $this->postalCode . ' ' . $this->city . ', ' . $this->country;
+        return $this->streetAddress . '<br />' . $this->postalCode . ' ' . $this->city . ', ' . $this->country;
     }
 
     public function phone(): string
@@ -133,7 +133,7 @@ class Company
 
     public function update(CompanyDomain $company): void
     {
-        $this->address = $company->address()->address();
+        $this->streetAddress = $company->address()->address();
         $this->postalCode = $company->address()->postalCode();
         $this->city = $company->address()->city();
         $this->country = $company->address()->country();
@@ -147,7 +147,7 @@ class Company
         return CompanyDomain::create(
             NameField::fromString($this->name),
             ContactAddress::fromString(
-                $this->address,
+                $this->streetAddress,
                 $this->postalCode,
                 $this->city,
                 $this->country

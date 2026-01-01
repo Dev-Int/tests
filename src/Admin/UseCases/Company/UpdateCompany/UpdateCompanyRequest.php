@@ -17,7 +17,7 @@ interface UpdateCompanyRequest
 {
     public function name(): string;
 
-    public function address(): string;
+    public function streetAddress(): string;
 
     public function postalCode(): string;
 
