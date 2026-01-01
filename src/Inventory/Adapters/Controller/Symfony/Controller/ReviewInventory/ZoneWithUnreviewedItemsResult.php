@@ -13,18 +13,14 @@ declare(strict_types=1);
 
 namespace Inventory\Adapters\Controller\Symfony\Controller\ReviewInventory;
 
-final readonly class DiscrepancyItemResult
+/**
+ * DTO for zones with unreviewed items, used in template.
+ */
+final readonly class ZoneWithUnreviewedItemsResult
 {
     public function __construct(
-        public string $identifier,
-        public string $articleName,
-        public string $zoneStorageUuid,
-        public float $theoreticalStock,
-        public float $realStock,
-        public float $difference,
-        public bool $isPositive,
-        public bool $isNegative,
-        public bool $isReviewed,
+        public string $uuid,
+        public string $label,
     ) {
     }
 }

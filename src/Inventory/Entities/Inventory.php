@@ -242,15 +242,20 @@ final class Inventory
     }
 
     /**
-     * Renvoie l'inventaire en traitement pour corrections (REVIEW → IN_PROGRESS).
+     * Reprend le comptage depuis la révision (REVIEW → IN_PROGRESS).
+     * Les items sont conservés avec leurs valeurs realStock.
+     * Les flags reviewed sont réinitialisés pour la zone spécifiée.
+     *
+     * @param ResourceUuid $zoneStorageUuid Zone dont les reviewed flags seront réinitialisés
      */
-    public function sendBackToProcessing(): void
+    public function resumeCounting(ResourceUuid $zoneStorageUuid): void
     {
-        if (InventoryStatus::REVIEW !== $this->status) {
+        if (!$this->status->isResumable()) {
             throw new InvalidStatusTransition(fromStatus: $this->status, toStatus: InventoryStatus::IN_PROGRESS);
         }
         $this->status = InventoryStatus::IN_PROGRESS;
         $this->statusUpdatedAt = ClockFactory::clock()->now();
+        $this->items->resetReviewedFlagsForZone($zoneStorageUuid);
     }
 
     /**

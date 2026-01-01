@@ -75,6 +75,24 @@
                     </div>
                 {{ form_end(form) }}
 
+                {% if zonesWithUnreviewedItems|length > 0 %}
+                    <hr>
+                    <details>
+                        <summary>{{ 'inventory.resume_counting.button'|trans }}</summary>
+                        <p class="text-muted">{{ 'inventory.resume_counting.confirm'|trans }}</p>
+                        <div class="grid">
+                            {% for zone in zonesWithUnreviewedItems %}
+                                <form method="post" action="{{ path('inventory_resume_counting', {
+                                    'inventoryUuid': inventory.uuid.toString,
+                                    'zoneStorageUuid': zone.uuid
+                                }) }}">
+                                    <twig:Form:Button:Submit label="{{ zone.label }}" icon="fa-redo" variant="secondary outline" />
+                                </form>
+                            {% endfor %}
+                        </div>
+                    </details>
+                {% endif %}
+
                 <script>
                     document.getElementById('select-all').addEventListener('change', function() {
                         document.querySelectorAll('.item-checkbox').forEach(function(checkbox) {

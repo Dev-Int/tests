@@ -38,6 +38,7 @@ final readonly class ReviewInventoryPresenter
             $results[] = new DiscrepancyItemResult(
                 identifier: $item->identifier(),
                 articleName: $item->articleName()->toString(),
+                zoneStorageUuid: $item->zoneStorage()->toString(),
                 theoreticalStock: $item->theoreticalStock()->toUnit(),
                 realStock: $item->realStock()->toUnit(),
                 difference: $difference->toUnit(),
@@ -48,5 +49,24 @@ final readonly class ReviewInventoryPresenter
         }
 
         return $results;
+    }
+
+    /**
+     * Get unique zones that have at least one unreviewed item.
+     *
+     * @return array<string> Zone UUIDs
+     */
+    public function getZonesWithUnreviewedItems(): array
+    {
+        $zones = [];
+
+        foreach ($this->items as $item) {
+            $zoneUuid = $item->zoneStorage()->toString();
+            if (!$item->isReviewed() && !isset($zones[$zoneUuid])) {
+                $zones[$zoneUuid] = $zoneUuid;
+            }
+        }
+
+        return array_values($zones);
     }
 }

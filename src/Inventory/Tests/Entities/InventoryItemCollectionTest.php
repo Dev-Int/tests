@@ -463,4 +463,87 @@ final class InventoryItemCollectionTest extends TestCase
         // Act & Assert
         self::assertTrue($collection->hasUnreviewedDiscrepancies());
     }
+
+    public function testResetReviewedFlagsForZoneResetsOnlyTargetZone(): void
+    {
+        // Arrange
+        ClockFactory::initialize(new FrozenClock(new \DateTimeImmutable('2025-12-15')));
+
+        $targetZone = ResourceUuid::generate();
+        $otherZone = ResourceUuid::generate();
+
+        $collection = new InventoryItemCollection();
+        $collection->add($this->itemFactory->createWithPreciseStocks(10.0, 8.0, zoneStorage: $targetZone)->asReviewed()->build());
+        $collection->add($this->itemFactory->createWithPreciseStocks(10.0, 12.0, zoneStorage: $otherZone)->asReviewed()->build());
+
+        // Act
+        $collection->resetReviewedFlagsForZone($targetZone);
+
+        // Assert
+        $targetZoneItems = $collection->filterByZone($targetZone);
+        foreach ($targetZoneItems as $item) {
+            self::assertFalse($item->isReviewed(), 'Target zone item should have reviewed=false');
+        }
+
+        $otherZoneItems = $collection->filterByZone($otherZone);
+        foreach ($otherZoneItems as $item) {
+            self::assertTrue($item->isReviewed(), 'Other zone item should still have reviewed=true');
+        }
+    }
+
+    public function testResetReviewedFlagsForZoneReturnsModifiedItems(): void
+    {
+        // Arrange
+        ClockFactory::initialize(new FrozenClock(new \DateTimeImmutable('2025-12-15')));
+
+        $zoneUuid = ResourceUuid::generate();
+
+        $collection = new InventoryItemCollection();
+        $collection->add($this->itemFactory->createWithPreciseStocks(10.0, 8.0, zoneStorage: $zoneUuid)->asReviewed()->build());
+        $collection->add($this->itemFactory->createWithPreciseStocks(5.0, 3.0, zoneStorage: $zoneUuid)->asReviewed()->build());
+
+        // Act
+        $modifiedItems = $collection->resetReviewedFlagsForZone($zoneUuid);
+
+        // Assert
+        self::assertCount(2, $modifiedItems);
+        foreach ($modifiedItems as $item) {
+            self::assertFalse($item->isReviewed());
+            self::assertTrue($item->isForZone($zoneUuid));
+        }
+    }
+
+    public function testResetReviewedFlagsForZoneReturnsEmptyArrayWhenNoReviewedItems(): void
+    {
+        // Arrange
+        $zoneUuid = ResourceUuid::generate();
+
+        $collection = new InventoryItemCollection();
+        $collection->add($this->itemFactory->create(zoneStorage: $zoneUuid)->build());
+        $collection->add($this->itemFactory->create(zoneStorage: $zoneUuid)->build());
+
+        // Act
+        $modifiedItems = $collection->resetReviewedFlagsForZone($zoneUuid);
+
+        // Assert
+        self::assertCount(0, $modifiedItems);
+    }
+
+    public function testResetReviewedFlagsForZoneIgnoresNonReviewedItemsInTargetZone(): void
+    {
+        // Arrange
+        ClockFactory::initialize(new FrozenClock(new \DateTimeImmutable('2025-12-15')));
+
+        $zoneUuid = ResourceUuid::generate();
+
+        $collection = new InventoryItemCollection();
+        $collection->add($this->itemFactory->createWithPreciseStocks(10.0, 8.0, zoneStorage: $zoneUuid)->asReviewed()->build());
+        $collection->add($this->itemFactory->create(zoneStorage: $zoneUuid)->build());
+
+        // Act
+        $modifiedItems = $collection->resetReviewedFlagsForZone($zoneUuid);
+
+        // Assert
+        self::assertCount(1, $modifiedItems);
+    }
 }

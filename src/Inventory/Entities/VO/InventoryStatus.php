@@ -41,4 +41,9 @@ enum InventoryStatus: string
     {
         return $this === self::CANCELLED;
     }
+
+    public function isResumable(): bool
+    {
+        return $this === self::REVIEW;
+    }
 }
