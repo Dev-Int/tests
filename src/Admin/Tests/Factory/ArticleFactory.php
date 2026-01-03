@@ -49,7 +49,7 @@ final class ArticleFactory extends PersistentProxyObjectFactory
             'tax' => TaxFactory::new(),
             'zoneStorages' => [ZoneStorageFactory::new()],
             'familyLog' => FamilyLogFactory::new(),
-            'packaging' => $this->generateDefaultPackaging(),
+            'packaging' => PackagingPresets::random(),
             'unitPrice' => self::faker()->numberBetween(100, 10000),
             'minStock' => self::faker()->randomFloat(3, 1, 10),
             'quantity' => self::faker()->randomFloat(3, 0, 20),
@@ -159,20 +159,5 @@ final class ArticleFactory extends PersistentProxyObjectFactory
                 return $articleOrm;
             }
         );
-    }
-
-    /**
-     * @return array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null}
-     */
-    private function generateDefaultPackaging(): array
-    {
-        $unit = UnitFactory::createOne();
-
-        // Format: [consumerUnit, subPackage, parcel]
-        return [
-            [$unit->_real()->toDomain(), self::faker()->randomFloat(3, 1, 10)],
-            null,
-            null,
-        ];
     }
 }

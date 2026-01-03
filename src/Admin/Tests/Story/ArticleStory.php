@@ -16,6 +16,7 @@ namespace Admin\Tests\Story;
 use Admin\Tests\Factory\ArticleFactory;
 use Admin\Tests\Factory\CompanyFactory;
 use Admin\Tests\Factory\FamilyLogFactory;
+use Admin\Tests\Factory\PackagingPresets;
 use Admin\Tests\Factory\SupplierFactory;
 use Admin\Tests\Factory\TaxFactory;
 use Admin\Tests\Factory\UnitFactory;
@@ -39,13 +40,33 @@ final class ArticleStory extends Story
             'rate' => 5.50,
         ]);
 
-        $unitKg = UnitFactory::createOne([
-            'label' => 'Kilogramme',
-            'symbol' => 'kg',
+        UnitFactory::createOne([
+            'label' => 'kilogramme',
+            'abbreviation' => 'kg',
         ]);
-        $unitLitre = UnitFactory::createOne([
-            'label' => 'Litre',
-            'symbol' => 'L',
+        UnitFactory::createOne([
+            'label' => 'litre',
+            'abbreviation' => 'l',
+        ]);
+        UnitFactory::createOne([
+            'label' => 'pièce',
+            'abbreviation' => 'pce',
+        ]);
+        UnitFactory::createOne([
+            'label' => 'bouteille',
+            'abbreviation' => 'btl',
+        ]);
+        UnitFactory::createOne([
+            'label' => 'boîte',
+            'abbreviation' => 'bte',
+        ]);
+        UnitFactory::createOne([
+            'label' => 'carton',
+            'abbreviation' => 'ctn',
+        ]);
+        UnitFactory::createOne([
+            'label' => 'colis',
+            'abbreviation' => 'cls',
         ]);
 
         $surgele = FamilyLogFactory::createOne([
@@ -89,11 +110,12 @@ final class ArticleStory extends Story
             'name' => 'Fournisseur 2',
         ]);
 
+        // Articles avec packagings cohérents
         ArticleFactory::createOne([
             'name' => 'Tomates',
             'supplier' => $supplier1->_real(),
             'tax' => $taxReduite->_real(),
-            'packaging' => [[$unitKg->_real()->toDomain(), 1.0], null, null],
+            'packaging' => PackagingPresets::bulk(), // kg → colis (5 kg)
             'zoneStorages' => [$zoneMaraichere->_real()],
             'familyLog' => $fraisFruitsLegumes->_real(),
             'quantity' => 10.0, // 10 kg
@@ -102,7 +124,7 @@ final class ArticleStory extends Story
             'name' => 'Carottes',
             'supplier' => $supplier1->_real(),
             'tax' => $taxReduite->_real(),
-            'packaging' => [[$unitKg->_real()->toDomain(), 1.0], null, null],
+            'packaging' => PackagingPresets::bulk(), // kg → colis (5 kg)
             'zoneStorages' => [$zoneMaraichere->_real()],
             'familyLog' => $fraisFruitsLegumes->_real(),
             'quantity' => 5.0, // 5 kg
@@ -111,7 +133,7 @@ final class ArticleStory extends Story
             'name' => 'Lait',
             'supplier' => $supplier2->_real(),
             'tax' => $taxReduite->_real(),
-            'packaging' => [[$unitLitre->_real()->toDomain(), 1.0], null, null],
+            'packaging' => PackagingPresets::liquid(), // litre → bouteille → carton (6 btl)
             'zoneStorages' => [$zonePositive->_real()],
             'familyLog' => $frais->_real(),
             'quantity' => 15.0, // 15 L
@@ -120,7 +142,7 @@ final class ArticleStory extends Story
             'name' => 'Yaourt',
             'supplier' => $supplier1->_real(),
             'tax' => $taxReduite->_real(),
-            'packaging' => [[$unitLitre->_real()->toDomain(), 0.5], null, null],
+            'packaging' => PackagingPresets::piece(), // pièce → boîte (6) → carton (4)
             'zoneStorages' => [$zonePositive->_real()],
             'familyLog' => $frais->_real(),
             'quantity' => 20.0, // 20 pots

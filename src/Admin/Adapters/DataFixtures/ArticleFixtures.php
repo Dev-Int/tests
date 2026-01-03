@@ -16,10 +16,9 @@ namespace Admin\Adapters\DataFixtures;
 use Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog;
 use Admin\Adapters\Gateway\ORM\Entity\Supplier;
 use Admin\Adapters\Gateway\ORM\Entity\Tax;
-use Admin\Adapters\Gateway\ORM\Entity\Unit;
 use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
-use Admin\Entities\Unit\Unit as UnitDomain;
 use Admin\Tests\Factory\ArticleFactory;
+use Admin\Tests\Factory\PackagingPresets;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -42,9 +41,11 @@ final class ArticleFixtures extends Fixture implements DependentFixtureInterface
 
             $names = $this->getArticleNames($faker, $datum['familyLogReference']);
 
-            foreach ($names as $name) {
-                $packaging = $this->getPackaging($faker);
+            // Extrait le slug du familyLog pour choisir le bon preset
+            $familyLogSlug = str_replace(FamilyLogFixtures::REFERENCE_PREFIX, '', $datum['familyLogReference']);
+            $packaging = PackagingPresets::forCategory($familyLogSlug);
 
+            foreach ($names as $name) {
                 ArticleFactory::createOne([
                     'name' => $name,
                     'uuid' => $faker->uuid(),
@@ -138,32 +139,5 @@ final class ArticleFixtures extends Fixture implements DependentFixtureInterface
         }
 
         return $articleNames;
-    }
-
-    /**
-     * @return array{array{UnitDomain, float}, array{UnitDomain, float}|null, array{UnitDomain, float}|null}
-     */
-    private function getPackaging(Generator $faker): array
-    {
-        $units = ['colis', 'kilogramme', 'litre', 'piece', 'boite', 'null'];
-        $packaging = [];
-
-        for ($i = 0; $i < 3; $i++) {
-            $unitReference = $units[array_rand($units)];
-            if ($unitReference === 'null' && $i > 0) {
-                $packaging[] = null;
-
-                continue;
-            }
-            if ($unitReference === 'null' && $i === 0) {
-                $unitReference = 'colis';
-            }
-
-            $unit = $this->getReference(UnitFixtures::REFERENCE_PREFIX . $unitReference, Unit::class);
-            $quantity = $faker->randomFloat(3, 1, 10);
-            $packaging[] = [$unit->toDomain(), $quantity];
-        }
-
-        return $packaging;
     }
 }
