@@ -16,14 +16,14 @@ namespace Inventory\Adapters\Controller\Symfony\Controller\RecordRealStockForZon
 final readonly class PackagingForView
 {
     public function __construct(
-        public PackagingLevelForView $parcel,
+        public PackagingLevelForView $consumerUnit,
         public ?PackagingLevelForView $subPackage = null,
-        public ?PackagingLevelForView $consumerUnit = null,
+        public ?PackagingLevelForView $parcel = null,
     ) {
     }
 
     public function hasMultipleLevels(): bool
     {
-        return $this->subPackage instanceof PackagingLevelForView || $this->consumerUnit instanceof PackagingLevelForView;
+        return $this->subPackage instanceof PackagingLevelForView || $this->parcel instanceof PackagingLevelForView;
     }
 }

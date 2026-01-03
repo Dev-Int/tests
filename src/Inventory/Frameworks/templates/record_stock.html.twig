@@ -40,21 +40,21 @@
                                     {% endif %}
                                 </td>
                                 <td>{{ item.theoreticalStock }}</td>
-                                {# Parcel (always present) #}
+                                {# ConsumerUnit (always present - base unit) #}
                                 <td class="stock-input-cell">
                                     <div class="input-group">
                                         <input
                                             type="number"
-                                            name="real_stock_{{ item.articleSlug }}_parcel"
+                                            name="real_stock_{{ item.articleSlug }}_consumer_unit"
                                             step="0.001"
                                             min="0"
                                             class="form-control"
                                             placeholder="0"
                                             required
-                                            value="{{ item.realStockParcel > 0 ? item.realStockParcel : '' }}"
+                                            value="{{ item.realStockConsumerUnit > 0 ? item.realStockConsumerUnit : '' }}"
                                         />
-                                        <span class="input-group-text" title="{{ item.packaging.parcel.label }}">
-                                            {{ item.packaging.parcel.abbreviation }}
+                                        <span class="input-group-text" title="{{ item.packaging.consumerUnit.label }}">
+                                            {{ item.packaging.consumerUnit.abbreviation }}
                                         </span>
                                     </div>
                                 </td>
@@ -77,21 +77,21 @@
                                         </div>
                                     {% endif %}
                                 </td>
-                                {# ConsumerUnit (optional) #}
+                                {# Parcel (optional) #}
                                 <td class="stock-input-cell">
-                                    {% if item.packaging.consumerUnit %}
+                                    {% if item.packaging.parcel %}
                                         <div class="input-group">
                                             <input
                                                 type="number"
-                                                name="real_stock_{{ item.articleSlug }}_consumer_unit"
+                                                name="real_stock_{{ item.articleSlug }}_parcel"
                                                 step="0.001"
                                                 min="0"
                                                 class="form-control"
                                                 placeholder="0"
-                                                value="{{ item.realStockConsumerUnit > 0 ? item.realStockConsumerUnit : '' }}"
+                                                value="{{ item.realStockParcel > 0 ? item.realStockParcel : '' }}"
                                             />
-                                            <span class="input-group-text" title="{{ item.packaging.consumerUnit.label }}">
-                                                {{ item.packaging.consumerUnit.abbreviation }}
+                                            <span class="input-group-text" title="{{ item.packaging.parcel.label }}">
+                                                {{ item.packaging.parcel.abbreviation }}
                                             </span>
                                         </div>
                                     {% endif %}
@@ -124,9 +124,9 @@
 
             form.addEventListener('submit', function(event) {
                 const zeroInputs = [];
-                const parcelInputs = form.querySelectorAll('input[name*="_parcel"]');
+                const consumerUnitInputs = form.querySelectorAll('input[name*="_consumer_unit"]');
 
-                parcelInputs.forEach(function(input) {
+                consumerUnitInputs.forEach(function(input) {
                     if (input.value === '0' || input.value === '0.0' || input.value === '0.000') {
                         const row = input.closest('tr');
                         if (row) {

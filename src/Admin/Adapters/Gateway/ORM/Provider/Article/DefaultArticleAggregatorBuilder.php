@@ -368,14 +368,15 @@ final class DefaultArticleAggregatorBuilder implements ArticleAggregatorBuilder
      */
     private function mapPackaging(array $article): ?PackagingResult
     {
-        if (!isset($article['parcelUnitLabel'], $article['parcelUnitAbbr'], $article['parcelQuantity'])) {
+        // ConsumerUnit is required, parcel and subPackage are optional
+        if (!isset($article['consumerUnitLabel'], $article['consumerUnitAbbr'], $article['consumerUnitQuantity'])) {
             return null;
         }
 
-        $parcel = new PackagingLevelResult(
-            $article['parcelUnitLabel'],
-            $article['parcelUnitAbbr'],
-            $article['parcelQuantity'],
+        $consumerUnit = new PackagingLevelResult(
+            $article['consumerUnitLabel'],
+            $article['consumerUnitAbbr'],
+            $article['consumerUnitQuantity'],
         );
 
         $subPackage = null;
@@ -387,15 +388,15 @@ final class DefaultArticleAggregatorBuilder implements ArticleAggregatorBuilder
             );
         }
 
-        $consumerUnit = null;
-        if (isset($article['consumerUnitLabel'], $article['consumerUnitAbbr'], $article['consumerUnitQuantity'])) {
-            $consumerUnit = new PackagingLevelResult(
-                $article['consumerUnitLabel'],
-                $article['consumerUnitAbbr'],
-                $article['consumerUnitQuantity'],
+        $parcel = null;
+        if (isset($article['parcelUnitLabel'], $article['parcelUnitAbbr'], $article['parcelQuantity'])) {
+            $parcel = new PackagingLevelResult(
+                $article['parcelUnitLabel'],
+                $article['parcelUnitAbbr'],
+                $article['parcelQuantity'],
             );
         }
 
-        return new PackagingResult($parcel, $subPackage, $consumerUnit);
+        return new PackagingResult($consumerUnit, $subPackage, $parcel);
     }
 }

@@ -56,6 +56,7 @@ class ChangeArticleStorageInformationControllerTest extends BaseFunctionalTestCa
         $supplier = SupplierFactory::createOne(['familyLog' => $familyLog]);
         $zoneStorage = ZoneStorageFactory::createOne(['familyLog' => $familyLog]);
 
+        // Format: [consumerUnit, subPackage, parcel]
         $articleProxy = ArticleFactory::createOne([
             'name' => 'Jambon Trad 6kg',
             'supplier' => $supplier,
@@ -102,9 +103,12 @@ class ChangeArticleStorageInformationControllerTest extends BaseFunctionalTestCa
         static::assertEquals($translator->trans('admin.article.changeStorageInformation.success'), $flash);
 
         $articleUpdated = $articleRepository->getByUuid($article->uuid());
-        static::assertEquals([$colis->_real()->toDomain(), 1.0], $articleUpdated->packaging()->parcel());
-        static::assertEquals([$piece->_real()->toDomain(), 2.0], $articleUpdated->packaging()->subPackage());
+        // ConsumerUnit is now mandatory
         static::assertEquals([$kilogramme->_real()->toDomain(), 6.800], $articleUpdated->packaging()->consumerUnit());
+        static::assertEquals([$piece->_real()->toDomain(), 2.0], $articleUpdated->packaging()->subPackage());
+        // Parcel is now optional
+        static::assertNotNull($articleUpdated->packaging()->parcel());
+        static::assertEquals([$colis->_real()->toDomain(), 1.0], $articleUpdated->packaging()->parcel());
         static::assertEquals(6.8, $articleUpdated->minStock());
     }
 

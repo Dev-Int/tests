@@ -81,7 +81,7 @@ final class CreateArticleTest extends TestCase
         // Assert
         self::assertSame('Jambon Trad 6kg', $article->name()->toString());
         self::assertSame('Supplier 1', $article->supplier()->name()->toString());
-        self::assertSame([$unit, 1.0], $article->packaging()->parcel());
+        self::assertSame([$unit, 1.0], $article->packaging()->consumerUnit());
         self::assertSame(25.50, $article->unitPrice()->toFloat());
         self::assertSame(2550, $article->unitPrice()->toInt());
         self::assertSame(0.055, $article->tax()->rate());

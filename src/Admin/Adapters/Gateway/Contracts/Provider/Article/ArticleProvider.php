@@ -63,15 +63,15 @@ final readonly class ArticleProvider implements ArticleProviderContract
 
     private function mapPackaging(Packaging $packaging): PackagingResult
     {
-        $parcel = $packaging->parcel();
+        $consumerUnit = $packaging->consumerUnit();
 
-        /** @var Unit $parcelUnit */
-        [$parcelUnit, $parcelQuantity] = $parcel;
+        /** @var Unit $consumerUnitUnit */
+        [$consumerUnitUnit, $consumerUnitQuantity] = $consumerUnit;
 
-        $parcelResult = new PackagingLevelResult(
-            $parcelUnit->label()->toString(),
-            $parcelUnit->abbreviation(),
-            $parcelQuantity,
+        $consumerUnitResult = new PackagingLevelResult(
+            $consumerUnitUnit->label()->toString(),
+            $consumerUnitUnit->abbreviation(),
+            $consumerUnitQuantity,
         );
 
         $subPackageResult = null;
@@ -86,18 +86,18 @@ final readonly class ArticleProvider implements ArticleProviderContract
             );
         }
 
-        $consumerUnitResult = null;
-        $consumerUnit = $packaging->consumerUnit();
-        if ($consumerUnit !== null) {
-            /** @var Unit $consumerUnitUnit */
-            [$consumerUnitUnit, $consumerUnitQuantity] = $consumerUnit;
-            $consumerUnitResult = new PackagingLevelResult(
-                $consumerUnitUnit->label()->toString(),
-                $consumerUnitUnit->abbreviation(),
-                $consumerUnitQuantity,
+        $parcelResult = null;
+        $parcel = $packaging->parcel();
+        if ($parcel !== null) {
+            /** @var Unit $parcelUnit */
+            [$parcelUnit, $parcelQuantity] = $parcel;
+            $parcelResult = new PackagingLevelResult(
+                $parcelUnit->label()->toString(),
+                $parcelUnit->abbreviation(),
+                $parcelQuantity,
             );
         }
 
-        return new PackagingResult($parcelResult, $subPackageResult, $consumerUnitResult);
+        return new PackagingResult($consumerUnitResult, $subPackageResult, $parcelResult);
     }
 }

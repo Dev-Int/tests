@@ -81,7 +81,7 @@ final class ReviewInventoryControllerTest extends BaseFunctionalTestCase
             }
             if (\in_array($zoneStorageUuid, $zoneUuids, true)) {
                 // Use different values to create discrepancy
-                $formData["real_stock_{$articleReal->slug()}_parcel"] = '5'; // Different from theoretical
+                $formData["real_stock_{$articleReal->slug()}_consumer_unit"] = '5'; // Different from theoretical
             }
         }
 
@@ -147,7 +147,7 @@ final class ReviewInventoryControllerTest extends BaseFunctionalTestCase
                 $zoneUuids[] = $zone->uuid();
             }
             if (\in_array($zoneStorageUuid, $zoneUuids, true)) {
-                $formData["real_stock_{$articleReal->slug()}_parcel"] = '10';
+                $formData["real_stock_{$articleReal->slug()}_consumer_unit"] = '10';
             }
         }
 
@@ -240,7 +240,7 @@ final class ReviewInventoryControllerTest extends BaseFunctionalTestCase
                 $zoneUuids[] = $zone->uuid();
             }
             if (\in_array($zoneStorageUuid, $zoneUuids, true)) {
-                $formData["real_stock_{$articleReal->slug()}_parcel"] = '5';
+                $formData["real_stock_{$articleReal->slug()}_consumer_unit"] = '5';
             }
         }
 
@@ -327,7 +327,7 @@ final class ReviewInventoryControllerTest extends BaseFunctionalTestCase
                 $zoneUuids[] = $zone->uuid();
             }
             if (\in_array($zoneStorageUuid, $zoneUuids, true)) {
-                $formData["real_stock_{$articleReal->slug()}_parcel"] = '5';
+                $formData["real_stock_{$articleReal->slug()}_consumer_unit"] = '5';
             }
         }
 
@@ -399,7 +399,7 @@ final class ReviewInventoryControllerTest extends BaseFunctionalTestCase
                 $zoneUuids[] = $zone->uuid();
             }
             if (\in_array($zoneStorageUuid, $zoneUuids, true)) {
-                $formData["real_stock_{$articleReal->slug()}_parcel"] = '5';
+                $formData["real_stock_{$articleReal->slug()}_consumer_unit"] = '5';
             }
         }
 
@@ -466,7 +466,7 @@ final class ReviewInventoryControllerTest extends BaseFunctionalTestCase
                 $zoneUuids[] = $zone->uuid();
             }
             if (\in_array($zoneStorageUuid, $zoneUuids, true)) {
-                $formData["real_stock_{$articleReal->slug()}_parcel"] = '5';
+                $formData["real_stock_{$articleReal->slug()}_consumer_unit"] = '5';
             }
         }
 
@@ -526,7 +526,7 @@ final class ReviewInventoryControllerTest extends BaseFunctionalTestCase
                 $zoneUuids[] = $zone->uuid();
             }
             if (\in_array($zoneStorageUuid, $zoneUuids, true)) {
-                $formData["real_stock_{$articleReal->slug()}_parcel"] = '5';
+                $formData["real_stock_{$articleReal->slug()}_consumer_unit"] = '5';
             }
         }
 

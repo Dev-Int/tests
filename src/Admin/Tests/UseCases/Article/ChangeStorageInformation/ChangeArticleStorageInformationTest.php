@@ -51,6 +51,7 @@ final class ChangeArticleStorageInformationTest extends TestCase
             ->withUuid($faker->uuid())
             ->build()
         ;
+        // Format: [consumerUnit, subPackage, parcel]
         $article = (new ArticleDataBuilder())
             ->create(
                 'Jambon Trad 6kg',
@@ -63,7 +64,8 @@ final class ChangeArticleStorageInformationTest extends TestCase
             ->build()
         ;
 
-        $request->expects(self::once())->method('packaging')->willReturn([[$colis, 1], null, [$kilogramme, 6.000]]);
+        // Request with new format: [consumerUnit, subPackage, parcel]
+        $request->expects(self::once())->method('packaging')->willReturn([[$kilogramme, 6.000], null, [$colis, 1.0]]);
         $request->expects(self::once())->method('minStock')->willReturn(12.000);
         $request->expects(self::once())->method('uuid')->willReturn($article->uuid());
 
@@ -81,13 +83,14 @@ final class ChangeArticleStorageInformationTest extends TestCase
         // Act
         $response = $useCase->execute($request);
         $articleUpdated = $response->article;
+        $package = $articleUpdated->packaging();
 
         // Assert
-        self::assertSame($colis, $articleUpdated->packaging()->parcel()[0]);
-        self::assertSame(1.0, $articleUpdated->packaging()->parcel()[1]);
-        self::assertNotNull($articleUpdated->packaging()->consumerUnit());
-        self::assertSame($kilogramme, $articleUpdated->packaging()->consumerUnit()[0]);
-        self::assertSame(6.000, $articleUpdated->packaging()->consumerUnit()[1]);
+        self::assertSame($kilogramme, $package->consumerUnit()[0]);
+        self::assertSame(6.000, $package->consumerUnit()[1]);
+        self::assertNotNull($package->parcel());
+        self::assertSame($colis, $package->parcel()[0]);
+        self::assertSame(1.0, $package->parcel()[1]);
         self::assertSame(12.000, $articleUpdated->minStock());
         self::assertSame(12.5, $articleUpdated->quantity()->toUnit());
     }

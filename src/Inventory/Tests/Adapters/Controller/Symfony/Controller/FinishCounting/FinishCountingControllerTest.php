@@ -89,7 +89,7 @@ final class FinishCountingControllerTest extends BaseFunctionalTestCase
             }
             // Only count articles in the positive zone
             if (\in_array($zoneStorageUuid, $zoneUuids, true)) {
-                $formData["real_stock_{$articleReal->slug()}_parcel"] = '10';
+                $formData["real_stock_{$articleReal->slug()}_consumer_unit"] = '10';
             }
         }
 

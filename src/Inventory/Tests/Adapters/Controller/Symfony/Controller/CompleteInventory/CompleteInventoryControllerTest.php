@@ -88,7 +88,8 @@ final class CompleteInventoryControllerTest extends BaseFunctionalTestCase
             }
             if (\in_array($zoneStorageUuid, $zoneUuids, true)) {
                 // Record a different stock to create discrepancy
-                $formData["real_stock_{$articleReal->slug()}_parcel"] = '5';
+                // consumer_unit is the required field (base unit)
+                $formData["real_stock_{$articleReal->slug()}_consumer_unit"] = '5';
             }
         }
 
@@ -203,7 +204,8 @@ final class CompleteInventoryControllerTest extends BaseFunctionalTestCase
                 $zoneUuids[] = $zone->uuid();
             }
             if (\in_array($zoneStorageUuid, $zoneUuids, true)) {
-                $formData["real_stock_{$articleReal->slug()}_parcel"] = '5';
+                // consumer_unit is the required field (base unit)
+                $formData["real_stock_{$articleReal->slug()}_consumer_unit"] = '5';
             }
         }
 

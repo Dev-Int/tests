@@ -127,11 +127,11 @@ final class RecordRealStockForZoneControllerTest extends BaseFunctionalTestCase
         $laitSlug = $laitArticle->_real()->slug();
         $camembertSlug = $camembertArticle->_real()->slug();
 
-        // Act - Use multi-level input format (parcel level)
+        // Act - Use multi-level input format (consumer_unit level - base unit)
         $uri = \sprintf(self::RECORD_STOCK_URI, $inventoryUuid, $zoneStorageUuid);
         $this->client->request(Request::METHOD_POST, $uri, [
-            "real_stock_{$laitSlug}_parcel" => '15.5',
-            "real_stock_{$camembertSlug}_parcel" => '8',
+            "real_stock_{$laitSlug}_consumer_unit" => '15.5',
+            "real_stock_{$camembertSlug}_consumer_unit" => '8',
         ]);
 
         // Assert HTTP response
@@ -208,8 +208,8 @@ final class RecordRealStockForZoneControllerTest extends BaseFunctionalTestCase
         // Act - Enter explicit zero for Camembert (should be recorded, not skipped)
         $uri = \sprintf(self::RECORD_STOCK_URI, $inventoryUuid, $zoneStorageUuid);
         $this->client->request(Request::METHOD_POST, $uri, [
-            "real_stock_{$laitSlug}_parcel" => '10',
-            "real_stock_{$camembertSlug}_parcel" => '0', // Explicit zero
+            "real_stock_{$laitSlug}_consumer_unit" => '10',
+            "real_stock_{$camembertSlug}_consumer_unit" => '0', // Explicit zero
         ]);
 
         // Assert HTTP response
@@ -273,8 +273,8 @@ final class RecordRealStockForZoneControllerTest extends BaseFunctionalTestCase
         // Act - Only fill Lait, leave Camembert empty (not submitted)
         $uri = \sprintf(self::RECORD_STOCK_URI, $inventoryUuid, $zoneStorageUuid);
         $this->client->request(Request::METHOD_POST, $uri, [
-            "real_stock_{$laitSlug}_parcel" => '5',
-            // Camembert parcel field not submitted → should trigger validation error
+            "real_stock_{$laitSlug}_consumer_unit" => '5',
+            // Camembert consumer_unit field not submitted → should trigger validation error
         ]);
 
         // Assert - Should redirect back to form with error

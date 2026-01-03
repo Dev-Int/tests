@@ -138,15 +138,15 @@ final class RecordRealStockForZoneController extends AbstractController
     }
 
     /**
-     * Validates that all parcel fields are filled.
+     * Validates that all consumer_unit fields are filled.
      *
-     * Note: Only the parcel is required. SubPackage and ConsumerUnit fields
+     * Note: Only the consumer_unit is required. SubPackage and Parcel fields
      * are optional and default to 0 if empty (see buildArticlesData).
-     * This is intentional: users may count only full parcels.
+     * This is intentional: users count in base units (consumer_unit).
      *
      * @param array<InventoryItem> $items
      *
-     * @return array<string> List of article names with missing parcel values
+     * @return array<string> List of article names with missing consumer_unit values
      */
     private function validateAllFieldsFilled(Request $request, array $items): array
     {
@@ -154,9 +154,9 @@ final class RecordRealStockForZoneController extends AbstractController
 
         foreach ($items as $item) {
             $articleSlug = $item->articleName()->slugify();
-            $parcelValue = $this->getNumericValue($request, "real_stock_{$articleSlug}_parcel");
+            $consumerUnitValue = $this->getNumericValue($request, "real_stock_{$articleSlug}_consumer_unit");
 
-            if ($parcelValue === null) {
+            if ($consumerUnitValue === null) {
                 $missingArticles[] = $item->articleName()->toString();
             }
         }
@@ -176,16 +176,16 @@ final class RecordRealStockForZoneController extends AbstractController
         foreach ($items as $item) {
             $articleSlug = $item->articleName()->slugify();
 
-            $parcelValue = $this->getNumericValue($request, "real_stock_{$articleSlug}_parcel");
-            $subPackageValue = $this->getNumericValue($request, "real_stock_{$articleSlug}_sub_package");
             $consumerUnitValue = $this->getNumericValue($request, "real_stock_{$articleSlug}_consumer_unit");
+            $subPackageValue = $this->getNumericValue($request, "real_stock_{$articleSlug}_sub_package");
+            $parcelValue = $this->getNumericValue($request, "real_stock_{$articleSlug}_parcel");
 
-            \assert($parcelValue !== null, 'Parcel value should be validated before buildArticlesData');
+            \assert($consumerUnitValue !== null, 'ConsumerUnit value should be validated before buildArticlesData');
 
             $components = RealStockComponents::fromUnits(
-                $parcelValue,
+                $consumerUnitValue,
                 $subPackageValue ?? 0.0,
-                $consumerUnitValue ?? 0.0
+                $parcelValue ?? 0.0
             );
             $realStock = $item->packaging()->calculateTotalFromComponents($components);
 

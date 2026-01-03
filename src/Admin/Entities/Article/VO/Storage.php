@@ -18,16 +18,26 @@ use Admin\Entities\Unit\Unit;
 
 final class Storage
 {
-    public const UNITS = [
-        'bouteille',
-        'boîte',
-        'carton',
-        'colis',
-        'kilogramme',
-        'litre',
-        'pièce',
-        'poche',
-        'portion',
+    public const string UNIT_BOUTEILLE = 'bouteille';
+    public const string UNIT_BOITE = 'boîte';
+    public const string UNIT_CARTON = 'carton';
+    public const string UNIT_COLIS = 'colis';
+    public const string UNIT_KILOGRAMME = 'kilogramme';
+    public const string UNIT_LITRE = 'litre';
+    public const string UNIT_PIECE = 'pièce';
+    public const string UNIT_POCHE = 'poche';
+    public const string UNIT_PORTION = 'portion';
+
+    public const array UNITS = [
+        self::UNIT_BOUTEILLE,
+        self::UNIT_BOITE,
+        self::UNIT_CARTON,
+        self::UNIT_COLIS,
+        self::UNIT_KILOGRAMME,
+        self::UNIT_LITRE,
+        self::UNIT_PIECE,
+        self::UNIT_POCHE,
+        self::UNIT_PORTION,
     ];
 
     /**

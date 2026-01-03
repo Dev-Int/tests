@@ -26,8 +26,11 @@ final readonly class ChangeArticleStorageInformation
     {
         $article = $this->articleRepository->getByUuid($request->uuid());
 
+        $packages = $request->packaging();
+        $packaging = new Packaging($packages[0], $packages[1], $packages[2]);
+
         $article->changeStorageInformation(
-            Packaging::fromArray($request->packaging()),
+            $packaging,
             $request->minStock()
         );
 

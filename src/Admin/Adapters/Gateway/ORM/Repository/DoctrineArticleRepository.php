@@ -391,24 +391,24 @@ final class DoctrineArticleRepository extends ServiceEntityRepository implements
 
     private function getPackagingFromDomain(PackagingDomain $packagingDomain, Article $article): Packaging
     {
-        [$parcelUnit, $parcelQuantity] = $this->getUnitWithSlug($packagingDomain->parcel());
-        if ($parcelUnit === null || $parcelQuantity === null) {
+        [$consumeUnitUnit, $consumeUnitQuantity] = $this->getUnitWithSlug($packagingDomain->consumerUnit());
+        if ($consumeUnitUnit === null || $consumeUnitQuantity === null) {
             // @codeCoverageIgnoreStart
-            throw new \InvalidArgumentException('Packaging domain must have a parcel');
+            throw new \InvalidArgumentException('Packaging domain must have a consumerUnit');
             // @codeCoverageIgnoreEnd
         }
 
         [$subPackageUnit, $subPackageQuantity] = $this->getUnitWithSlug($packagingDomain->subPackage());
-        [$consumeUnitUnit, $consumeUnitQuantity] = $this->getUnitWithSlug($packagingDomain->consumerUnit());
+        [$parcelUnit, $parcelQuantity] = $this->getUnitWithSlug($packagingDomain->parcel());
 
         return new Packaging(
             $article,
-            $parcelUnit,
-            $parcelQuantity,
+            $consumeUnitUnit,
+            $consumeUnitQuantity,
             $subPackageUnit,
             $subPackageQuantity,
-            $consumeUnitUnit,
-            $consumeUnitQuantity
+            $parcelUnit,
+            $parcelQuantity
         );
     }
 

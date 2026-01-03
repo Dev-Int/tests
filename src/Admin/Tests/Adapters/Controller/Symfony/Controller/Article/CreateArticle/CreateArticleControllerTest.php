@@ -104,9 +104,12 @@ final class CreateArticleControllerTest extends BaseFunctionalTestCase
         self::assertSame('Jambon Trad 6kg', $articleCreated->name()->toString());
         self::assertSame('Supplier 1', $articleCreated->supplier()->name()->toString());
         self::assertSame('Alimentaire', $articleCreated->supplier()->familyLog()->label()->toString());
-        self::assertEquals([$colis->_real()->toDomain(), 1.0], $articleCreated->packaging()->parcel());
-        self::assertEquals([$piece->_real()->toDomain(), 2.0], $articleCreated->packaging()->subPackage());
+        // ConsumerUnit is now mandatory
         self::assertEquals([$kilogramme->_real()->toDomain(), 6.800], $articleCreated->packaging()->consumerUnit());
+        self::assertEquals([$piece->_real()->toDomain(), 2.0], $articleCreated->packaging()->subPackage());
+        // Parcel is now optional
+        self::assertNotNull($articleCreated->packaging()->parcel());
+        self::assertEquals([$colis->_real()->toDomain(), 1.0], $articleCreated->packaging()->parcel());
         self::assertSame(682, $articleCreated->unitPrice()->toInt());
         self::assertSame(0.055, $articleCreated->tax()->rate());
         self::assertSame('TVA taux réduit', $articleCreated->tax()->name()->toString());

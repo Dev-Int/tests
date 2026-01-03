@@ -25,51 +25,53 @@ final class PackagingSnapshotTest extends TestCase
      */
     public static function provideCalculateTotalFromComponentsCases(): iterable
     {
-        yield '1 niveau - 5 colis' => [
+        // Hierarchy: consumerUnit (required) → subPackage (optional) → parcel (optional)
+
+        yield '1 niveau - 5 portions' => [
             new PackagingSnapshot(
-                parcel: new PackagingLevel('colis', 'cls', 1.0),
+                consumerUnit: new PackagingLevel('portion', 'prt', 1.0),
             ),
-            RealStockComponents::fromUnits(parcel: 5.0, subPackage: 0.0, consumerUnit: 0.0),
+            RealStockComponents::fromUnits(consumerUnit: 5.0, subPackage: 0.0, parcel: 0.0),
             5.0,
-            '5 colis sans sous-niveaux = 5 unités',
+            '5 portions = 5 unités de base',
         ];
 
-        yield '2 niveaux - 2 colis de 4 poches' => [
+        yield '2 niveaux - 1 poche de 8 portions + 3 portions' => [
             new PackagingSnapshot(
-                parcel: new PackagingLevel('colis', 'cls', 1.0),
-                subPackage: new PackagingLevel('poche', 'pch', 4.0),
+                consumerUnit: new PackagingLevel('portion', 'prt', 1.0),
+                subPackage: new PackagingLevel('poche', 'pch', 8.0),
             ),
-            RealStockComponents::fromUnits(parcel: 2.0, subPackage: 1.0, consumerUnit: 0.0),
-            9.0,
-            '2 colis (×4 poches) + 1 poche = 9 poches',
+            RealStockComponents::fromUnits(consumerUnit: 3.0, subPackage: 1.0, parcel: 0.0),
+            11.0,
+            '3 portions + 1 poche (×8 portions) = 11 portions',
         ];
 
-        yield '3 niveaux - 2 colis de 4 poches + 4 poches de 8 portions + 5 portions' => [
+        yield '3 niveaux - 2 colis + 3 poches + 5 portions' => [
             new PackagingSnapshot(
-                parcel: new PackagingLevel('colis', 'cls', 1.0),
-                subPackage: new PackagingLevel('poche', 'pch', 4.0),
-                consumerUnit: new PackagingLevel('portion', 'prt', 8.0),
+                consumerUnit: new PackagingLevel('portion', 'prt', 1.0),
+                subPackage: new PackagingLevel('poche', 'pch', 8.0),
+                parcel: new PackagingLevel('colis', 'cls', 4.0),
             ),
-            RealStockComponents::fromUnits(parcel: 2.0, subPackage: 3.0, consumerUnit: 5.0),
+            RealStockComponents::fromUnits(consumerUnit: 5.0, subPackage: 3.0, parcel: 2.0),
             93.0,
-            '2 colis (2x4x8) + 3 poches (3x8) + 5 portions = 93 portions',
+            '5 portions + 3 poches (3×8) + 2 colis (2×4×8) = 5 + 24 + 64 = 93 portions',
         ];
 
         yield 'quantités à zéro' => [
             new PackagingSnapshot(
-                parcel: new PackagingLevel('colis', 'cls', 1.0),
-                subPackage: new PackagingLevel('poche', 'pch', 4.0),
+                consumerUnit: new PackagingLevel('portion', 'prt', 1.0),
+                subPackage: new PackagingLevel('poche', 'pch', 8.0),
             ),
-            RealStockComponents::fromUnits(parcel: 0.0, subPackage: 0.0, consumerUnit: 0.0),
+            RealStockComponents::fromUnits(consumerUnit: 0.0, subPackage: 0.0, parcel: 0.0),
             0.0,
             'Aucune saisie = 0',
         ];
 
         yield 'décimales' => [
             new PackagingSnapshot(
-                parcel: new PackagingLevel('colis', 'cls', 1.0),
+                consumerUnit: new PackagingLevel('kg', 'kg', 1.0),
             ),
-            RealStockComponents::fromUnits(parcel: 2.5, subPackage: 0.0, consumerUnit: 0.0),
+            RealStockComponents::fromUnits(consumerUnit: 2.5, subPackage: 0.0, parcel: 0.0),
             2.5,
             'Support des décimales',
         ];
@@ -77,11 +79,11 @@ final class PackagingSnapshotTest extends TestCase
         // Edge case : valeurs saisies pour niveaux inexistants → ignorées
         yield 'niveaux inexistants ignorés' => [
             new PackagingSnapshot(
-                parcel: new PackagingLevel('colis', 'cls', 1.0),
-                // Pas de subPackage ni consumerUnit
+                consumerUnit: new PackagingLevel('portion', 'prt', 1.0),
+                // Pas de subPackage ni parcel
             ),
-            RealStockComponents::fromUnits(parcel: 3.0, subPackage: 99.0, consumerUnit: 99.0),
-            3.0, // Seul parcel compte
+            RealStockComponents::fromUnits(consumerUnit: 3.0, subPackage: 99.0, parcel: 99.0),
+            3.0, // Seul consumerUnit compte
             'Valeurs pour niveaux inexistants sont ignorées',
         ];
     }

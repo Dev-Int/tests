@@ -104,7 +104,7 @@ final class ArticleDataBuilder implements DataBuilderInterface
             ResourceUuid::fromString($this->uuid),
             NameField::fromString($this->name),
             $this->supplier,
-            Packaging::fromArray($this->packaging),
+            new Packaging($this->packaging[0], $this->packaging[1], $this->packaging[2]),
             Amount::fromCents($this->amount),
             $this->tax,
             $this->minStock,
