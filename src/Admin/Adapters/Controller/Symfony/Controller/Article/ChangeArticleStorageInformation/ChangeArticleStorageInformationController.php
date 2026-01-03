@@ -112,7 +112,6 @@ final class ChangeArticleStorageInformationController extends AbstractController
 
     /**
      * @return array{array{UnitDomain, float}, array{UnitDomain, float}|null, array{UnitDomain, float}|null}
-     *                                                                                                       [consumerUnit, subPackage, parcel]
      */
     private function getPackagingDomain(Packaging $packaging): array
     {

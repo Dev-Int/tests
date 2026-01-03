@@ -24,7 +24,7 @@ final class CreateArticleApiRequest implements CreateArticleRequest
 {
     /**
      * @param array<ZoneStorage>                                                          $zoneStorages
-     * @param array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null} $packaging    [consumerUnit, subPackage, parcel]
+     * @param array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null} $packaging
      */
     public function __construct(
         public string $name,

@@ -100,8 +100,8 @@ final class PackagingTest extends TestCase
     /**
      * @dataProvider provideDistributeTheSubdivisionCases
      *
-     * @param array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null} $packaging [consumerUnit, subPackage, parcel]
-     * @param array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null} $expected  [consumerUnit, subPackage, parcel]
+     * @param array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null} $packaging
+     * @param array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null} $expected
      */
     public function testDistributeTheSubdivision(array $packaging, array $expected): void
     {

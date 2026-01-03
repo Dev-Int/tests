@@ -25,8 +25,11 @@ final class Unit
         return new self($uuid, $label, $abbreviation);
     }
 
-    private function __construct(private ResourceUuid $uuid, private NameField $label, private string $abbreviation)
-    {
+    private function __construct(
+        private readonly ResourceUuid $uuid,
+        private NameField $label,
+        private string $abbreviation
+    ) {
         $this->slug = $label->slugify();
     }
 

@@ -33,7 +33,7 @@ final class ArticleDataBuilder implements DataBuilderInterface
     private Supplier $supplier;
 
     /**
-     * @var array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null} [consumerUnit, subPackage, parcel]
+     * @var array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null}
      */
     private array $packaging;
     private int $amount = 685;
@@ -50,7 +50,6 @@ final class ArticleDataBuilder implements DataBuilderInterface
     /**
      * @param array<ZoneStorage>                                                          $zoneStorages
      * @param array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null} $packaging
-     *                                                                                                  [consumerUnit, subPackage, parcel]
      */
     public function create(
         string $name,

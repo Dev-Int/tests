@@ -162,7 +162,7 @@ final class ArticleFactory extends PersistentProxyObjectFactory
     }
 
     /**
-     * @return array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null} [consumerUnit, subPackage, parcel]
+     * @return array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null}
      */
     private function generateDefaultPackaging(): array
     {

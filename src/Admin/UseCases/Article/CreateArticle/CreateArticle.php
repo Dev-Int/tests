@@ -43,7 +43,7 @@ final readonly class CreateArticle
         );
 
         $packages = $request->packaging();
-        $packaging = new Packaging($packages[0], $packages[1], $packages[2]);
+        $packaging = new Packaging(consumerUnit: $packages[0], subPackage: $packages[1], parcel: $packages[2]);
 
         $article = Article::create(
             ResourceUuid::generate(),
