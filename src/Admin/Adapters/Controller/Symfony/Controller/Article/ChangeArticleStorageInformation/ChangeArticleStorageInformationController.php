@@ -52,16 +52,16 @@ final class ChangeArticleStorageInformationController extends AbstractController
             new ChangeArticleStorageInformationInput(
                 packaging: new Packaging(
                     new Storage(
-                        $article->packaging()->parcelUnit(),
-                        $article->packaging()->parcelQuantity()
+                        $article->packaging()->consumeUnitUnit(),
+                        $article->packaging()->consumeUnitQuantity()
                     ),
                     new Storage(
                         $article->packaging()->subPackageUnit(),
                         $article->packaging()->subPackageQuantity()
                     ),
                     new Storage(
-                        $article->packaging()->consumeUnitUnit(),
-                        $article->packaging()->consumeUnitQuantity()
+                        $article->packaging()->parcelUnit(),
+                        $article->packaging()->parcelQuantity()
                     ),
                 ),
                 minStock: $article->minStock(),
@@ -112,29 +112,34 @@ final class ChangeArticleStorageInformationController extends AbstractController
 
     /**
      * @return array{array{UnitDomain, float}, array{UnitDomain, float}|null, array{UnitDomain, float}|null}
+     *                                                                                                       [consumerUnit, subPackage, parcel]
      */
     private function getPackagingDomain(Packaging $packaging): array
     {
-        $parcel = $packaging->parcel;
-        if (!$parcel?->unit instanceof Unit || $parcel->quantity === null) {
+        // ConsumerUnit is now mandatory
+        $consumeUnit = $packaging->consumeUnit;
+        if (!$consumeUnit?->unit instanceof Unit || $consumeUnit->quantity === null) {
             // @codeCoverageIgnoreStart
             throw new \InvalidArgumentException($this->translator->trans('admin.article.errors.packagingInvalid'));
             // @codeCoverageIgnoreEnd
         }
 
-        /** @var array{UnitDomain, float} $parcelRequest */
-        $parcelRequest = [$parcel->unit->toDomain(), $parcel->quantity];
+        /** @var array{UnitDomain, float} $consumeUnitRequest */
+        $consumeUnitRequest = [$consumeUnit->unit->toDomain(), $consumeUnit->quantity];
+
         $subPackage = $packaging->subPackage;
         $subPackageRequest = null;
         if ($subPackage?->unit instanceof Unit && $subPackage->quantity !== null) {
             $subPackageRequest = [$subPackage->unit->toDomain(), $subPackage->quantity];
         }
-        $consumeUnit = $packaging->consumeUnit;
-        $consumeUnitRequest = null;
-        if ($consumeUnit?->unit instanceof Unit && $consumeUnit->quantity !== null) {
-            $consumeUnitRequest = [$consumeUnit->unit->toDomain(), $consumeUnit->quantity];
+
+        // Parcel is now optional
+        $parcel = $packaging->parcel;
+        $parcelRequest = null;
+        if ($parcel?->unit instanceof Unit && $parcel->quantity !== null) {
+            $parcelRequest = [$parcel->unit->toDomain(), $parcel->quantity];
         }
 
-        return [$parcelRequest, $subPackageRequest, $consumeUnitRequest];
+        return [$consumeUnitRequest, $subPackageRequest, $parcelRequest];
     }
 }

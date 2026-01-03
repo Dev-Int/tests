@@ -30,62 +30,87 @@ final class PackagingTest extends TestCase
     {
         $unitDataBuilder = new UnitDataBuilder();
 
+        // Format: [consumerUnit, subPackage, parcel]
         yield 'full distribution' => [
-            'packaging' => [[$unitDataBuilder->create('Colis', 'cls')->build(), 1.0],
+            'packaging' => [
+                [$unitDataBuilder->create('Portion', 'port')->build(), 32.0],
                 [$unitDataBuilder->create('Poche', 'poc')->build(), 4.0],
-                [$unitDataBuilder->create('Portion', 'port')->build(), 32.0]],
-            'expected' => [[$unitDataBuilder->create('Colis', 'cls')->build(), 1.0],
+                [$unitDataBuilder->create('Colis', 'cls')->build(), 1.0],
+            ],
+            'expected' => [
+                [$unitDataBuilder->create('Portion', 'port')->build(), 32.0],
                 [$unitDataBuilder->create('Poche', 'poc')->build(), 4.0],
-                [$unitDataBuilder->create('Portion', 'port')->build(), 32.0]],
+                [$unitDataBuilder->create('Colis', 'cls')->build(), 1.0],
+            ],
         ];
 
-        yield 'distribution without consumer unit' => [
-            'packaging' => [[$unitDataBuilder->create('Colis', 'cls')->build(), 1.0],
+        yield 'distribution without parcel' => [
+            'packaging' => [
+                [$unitDataBuilder->create('Portion', 'port')->build(), 32.0],
                 [$unitDataBuilder->create('Poche', 'poc')->build(), 4.0],
-                null],
-            'expected' => [[$unitDataBuilder->create('Colis', 'cls')->build(), 1.0],
+                null,
+            ],
+            'expected' => [
+                [$unitDataBuilder->create('Portion', 'port')->build(), 32.0],
                 [$unitDataBuilder->create('Poche', 'poc')->build(), 4.0],
-                null],
+                null,
+            ],
         ];
 
         yield 'distribution without sub package' => [
-            'packaging' => [[$unitDataBuilder->create('Colis', 'cls')->build(), 1.0],
+            'packaging' => [
+                [$unitDataBuilder->create('Portion', 'port')->build(), 32.0],
                 null,
-                [$unitDataBuilder->create('Portion', 'port')->build(), 32.0]],
-            'expected' => [[$unitDataBuilder->create('Colis', 'cls')->build(), 1.0],
+                [$unitDataBuilder->create('Colis', 'cls')->build(), 1.0],
+            ],
+            'expected' => [
+                [$unitDataBuilder->create('Portion', 'port')->build(), 32.0],
                 null,
-                [$unitDataBuilder->create('Portion', 'port')->build(), 32.0]],
+                [$unitDataBuilder->create('Colis', 'cls')->build(), 1.0],
+            ],
         ];
 
         yield 'distribution without sub package and float' => [
-            'packaging' => [[$unitDataBuilder->create('Colis', 'cls')->build(), 1.0],
+            'packaging' => [
+                [$unitDataBuilder->create('Kilogramme', 'kg')->build(), 6.000],
                 null,
-                [$unitDataBuilder->create('Kilogramme', 'kg')->build(), 6.000]],
-            'expected' => [[$unitDataBuilder->create('Colis', 'cls')->build(), 1.0],
+                [$unitDataBuilder->create('Colis', 'cls')->build(), 1.0],
+            ],
+            'expected' => [
+                [$unitDataBuilder->create('Kilogramme', 'kg')->build(), 6.000],
                 null,
-                [$unitDataBuilder->create('Kilogramme', 'kg')->build(), 6.000]],
+                [$unitDataBuilder->create('Colis', 'cls')->build(), 1.0],
+            ],
         ];
 
-        yield 'distribution only parcel' => [
-            'packaging' => [[$unitDataBuilder->create('Colis', 'cls')->build(), 1.0], null, null],
-            'expected' => [[$unitDataBuilder->create('Colis', 'cls')->build(), 1.0], null, null],
+        yield 'distribution only consumer unit' => [
+            'packaging' => [
+                [$unitDataBuilder->create('Portion', 'port')->build(), 1.0],
+                null,
+                null,
+            ],
+            'expected' => [
+                [$unitDataBuilder->create('Portion', 'port')->build(), 1.0],
+                null,
+                null,
+            ],
         ];
     }
 
     /**
      * @dataProvider provideDistributeTheSubdivisionCases
      *
-     * @param array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null} $packaging
-     * @param array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null} $expected
+     * @param array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null} $packaging [consumerUnit, subPackage, parcel]
+     * @param array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null} $expected  [consumerUnit, subPackage, parcel]
      */
     public function testDistributeTheSubdivision(array $packaging, array $expected): void
     {
         // Arrange && Act
-        $packages = Packaging::fromArray($packaging);
+        $packages = new Packaging($packaging[0], $packaging[1], $packaging[2]);
 
         // Assert
-        self::assertEquals($expected[0], $packages->parcel());
+        self::assertEquals($expected[0], $packages->consumerUnit());
         self::assertEquals($expected[1], $packages->subPackage());
-        self::assertEquals($expected[2], $packages->consumerUnit());
+        self::assertEquals($expected[2], $packages->parcel());
     }
 }

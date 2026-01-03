@@ -123,17 +123,17 @@ final class CreateArticleType extends AbstractType
                         }
 
                         return new Packaging(
-                            parcel: new Storage(
-                                $packagingAsArray->parcel?->unit,
-                                $packagingAsArray->parcel?->quantity
+                            consumeUnit: new Storage(
+                                $packagingAsArray->consumeUnit?->unit,
+                                $packagingAsArray->consumeUnit?->quantity
                             ),
                             subPackage: new Storage(
                                 $packagingAsArray->subPackage?->unit,
                                 $packagingAsArray->subPackage?->quantity
                             ),
-                            consumeUnit: new Storage(
-                                $packagingAsArray->consumeUnit?->unit,
-                                $packagingAsArray->consumeUnit?->quantity
+                            parcel: new Storage(
+                                $packagingAsArray->parcel?->unit,
+                                $packagingAsArray->parcel?->quantity
                             )
                         );
                     }

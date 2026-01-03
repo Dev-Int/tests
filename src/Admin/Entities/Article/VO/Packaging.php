@@ -18,35 +18,23 @@ use Admin\Entities\Unit\Unit;
 final readonly class Packaging
 {
     /**
-     * @param array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null} $packages
-     */
-    public static function fromArray(array $packages): self
-    {
-        $parcel = Storage::fromArray($packages[0])->toArray();
-        $subPackage = $packages[1] !== null ? Storage::fromArray($packages[1])->toArray() : null;
-        $consumerUnit = $packages[2] !== null ? Storage::fromArray($packages[2])->toArray() : null;
-
-        return new self($parcel, $subPackage, $consumerUnit);
-    }
-
-    /**
-     * @param array{Unit, float}      $parcel
+     * @param array{Unit, float}      $consumerUnit
      * @param array{Unit, float}|null $subPackage
-     * @param array{Unit, float}|null $consumerUnit
+     * @param array{Unit, float}|null $parcel
      */
     public function __construct(
-        private array $parcel,
+        private array $consumerUnit,
         private ?array $subPackage = null,
-        private ?array $consumerUnit = null
+        private ?array $parcel = null
     ) {
     }
 
     /**
      * @return array{Unit, float}
      */
-    public function parcel(): array
+    public function consumerUnit(): array
     {
-        return $this->parcel;
+        return $this->consumerUnit;
     }
 
     /**
@@ -60,8 +48,8 @@ final readonly class Packaging
     /**
      * @return array{Unit, float}|null
      */
-    public function consumerUnit(): ?array
+    public function parcel(): ?array
     {
-        return $this->consumerUnit;
+        return $this->parcel;
     }
 }

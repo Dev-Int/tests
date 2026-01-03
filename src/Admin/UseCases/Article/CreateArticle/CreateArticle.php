@@ -42,11 +42,14 @@ final readonly class CreateArticle
             $request->zoneStorages()
         );
 
+        $packages = $request->packaging();
+        $packaging = new Packaging($packages[0], $packages[1], $packages[2]);
+
         $article = Article::create(
             ResourceUuid::generate(),
             NameField::fromString($request->name()),
             $request->supplier(),
-            Packaging::fromArray($request->packaging()),
+            $packaging,
             Amount::fromCents($request->unitPrice()),
             $request->tax(),
             $request->minStock(),

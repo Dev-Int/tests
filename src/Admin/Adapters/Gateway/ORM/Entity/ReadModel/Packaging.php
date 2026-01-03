@@ -19,11 +19,12 @@ final class Packaging
 {
     public function __construct(
         #[Assert\Valid]
-        public ?Storage $parcel = null,
+        #[Assert\NotNull(message: 'L\'unité de consommation est obligatoire')]
+        public ?Storage $consumeUnit = null,
         #[Assert\Valid]
         public ?Storage $subPackage = null,
         #[Assert\Valid]
-        public ?Storage $consumeUnit = null
+        public ?Storage $parcel = null
     ) {
     }
 }

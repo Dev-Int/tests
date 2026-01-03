@@ -27,6 +27,7 @@ interface CreateArticleRequest
 
     /**
      * @return array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null}
+     *                                                                                     [consumerUnit, subPackage, parcel]
      */
     public function packaging(): array;
 

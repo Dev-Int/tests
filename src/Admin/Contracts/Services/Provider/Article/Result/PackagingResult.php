@@ -16,16 +16,16 @@ namespace Admin\Contracts\Services\Provider\Article\Result;
 /**
  * Represents the complete packaging structure of an article.
  *
- * - parcel: The base package level (required)
+ * - consumerUnit: The smallest unit level (required) - used for recipes
  * - subPackage: Intermediate packaging level (optional)
- * - consumerUnit: The smallest unit level (optional)
+ * - parcel: The supplier package level (optional)
  */
 final readonly class PackagingResult
 {
     public function __construct(
-        public PackagingLevelResult $parcel,
+        public PackagingLevelResult $consumerUnit,
         public ?PackagingLevelResult $subPackage = null,
-        public ?PackagingLevelResult $consumerUnit = null,
+        public ?PackagingLevelResult $parcel = null,
     ) {
     }
 }

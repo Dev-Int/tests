@@ -25,8 +25,8 @@ final class PackagingType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('parcel', StorageType::class, [
-                'label' => 'Colis',
+            ->add('consumeUnit', StorageType::class, [
+                'label' => 'Unité de consommation',
                 'required' => true,
                 'attr' => [
                     'autofocus' => true,
@@ -36,12 +36,12 @@ final class PackagingType extends AbstractType
                 'label' => 'Sous-colis',
                 'required' => false,
             ])
-            ->add('consumeUnit', StorageType::class, [
-                'label' => 'Unité de consommation',
+            ->add('parcel', StorageType::class, [
+                'label' => 'Colis',
                 'required' => false,
             ])
         ;
-        $builder->get('parcel')->addModelTransformer(
+        $builder->get('consumeUnit')->addModelTransformer(
             new CallbackTransformer(
                 static function (?Storage $storage): ?Storage {
                     if (!$storage instanceof Storage) {
@@ -81,7 +81,7 @@ final class PackagingType extends AbstractType
                 }
             )
         );
-        $builder->get('consumeUnit')->addModelTransformer(
+        $builder->get('parcel')->addModelTransformer(
             new CallbackTransformer(
                 static function (?Storage $storage): ?Storage {
                     if (!$storage instanceof Storage) {

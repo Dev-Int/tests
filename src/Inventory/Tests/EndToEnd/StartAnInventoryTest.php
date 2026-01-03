@@ -92,10 +92,10 @@ final class StartAnInventoryTest extends BasePantherTestCase
         // Act - Click the start button (submit the form)
         $startButton->first()->click();
 
-        // Wait for page to reload and flash message to appear
+        // Wait for page to reload and a flash message to appear
         $client->waitForVisibility('.flash-success');
 
-        // Assert - Flash message is displayed
+        // Assert - A flash message is displayed
         $flash = $client->getCrawler()->filter('.flash-success')->text();
         self::assertStringContainsString($translator->trans('inventory.start.success'), $flash);
 
@@ -108,7 +108,11 @@ final class StartAnInventoryTest extends BasePantherTestCase
         $remainingStartButtons = $client->getCrawler()->filter(
             \sprintf('turbo-frame#inventory_%s button[type="submit"]', $inventoryUuid)
         );
-        self::assertCount(0, $remainingStartButtons, 'Start button should disappear after starting');
+        self::assertCount(
+            1,
+            $remainingStartButtons,
+            'Start button should disappear after starting, but Cancel button should still be visible'
+        );
 
         // Assert - Database status is updated to IN_PROGRESS
         // Clear EntityManager cache to get fresh data from DB (updated by web server)

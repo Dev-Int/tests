@@ -32,30 +32,30 @@ class Packaging
         #[ORM\JoinColumn(name: 'article_id', referencedColumnName: 'uuid', nullable: false)]
         private Article $article,
         #[ORM\ManyToOne(targetEntity: Unit::class)]
-        #[ORM\JoinColumn(name: 'parcel_unit_id', referencedColumnName: 'uuid', nullable: false)]
-        private Unit $parcelUnit,
-        #[ORM\Column(name: 'parcel_quantity', type: 'float', nullable: false)]
-        private float $parcelQuantity,
+        #[ORM\JoinColumn(name: 'consume_unit_unit_id', referencedColumnName: 'uuid', nullable: false)]
+        private Unit $consumeUnitUnit,
+        #[ORM\Column(name: 'consume_unit_quantity', type: 'float', nullable: false)]
+        private float $consumeUnitQuantity,
         #[ORM\ManyToOne(targetEntity: Unit::class)]
         #[ORM\JoinColumn(name: 'sub_package_unit_id', referencedColumnName: 'uuid', nullable: true)]
         private ?Unit $subPackageUnit,
         #[ORM\Column(name: 'sub_package_quantity', type: 'float', nullable: true)]
         private ?float $subPackageQuantity,
         #[ORM\ManyToOne(targetEntity: Unit::class)]
-        #[ORM\JoinColumn(name: 'consume_unit_unit_id', referencedColumnName: 'uuid', nullable: true)]
-        private ?Unit $consumeUnitUnit,
-        #[ORM\Column(name: 'consume_unit_quantity', type: 'float', nullable: true)]
-        private ?float $consumeUnitQuantity,
+        #[ORM\JoinColumn(name: 'parcel_unit_id', referencedColumnName: 'uuid', nullable: true)]
+        private ?Unit $parcelUnit,
+        #[ORM\Column(name: 'parcel_quantity', type: 'float', nullable: true)]
+        private ?float $parcelQuantity,
     ) {
     }
 
     public function toDomain(): PackagingDomain
     {
-        return PackagingDomain::fromArray([
-            [$this->parcelUnit->toDomain(), $this->parcelQuantity],
+        return new PackagingDomain(
+            [$this->consumeUnitUnit->toDomain(), $this->consumeUnitQuantity],
             $this->getPackageInDomainFormat($this->subPackageUnit, $this->subPackageQuantity),
-            $this->getPackageInDomainFormat($this->consumeUnitUnit, $this->consumeUnitQuantity),
-        ]);
+            $this->getPackageInDomainFormat($this->parcelUnit, $this->parcelQuantity),
+        );
     }
 
     public function id(): int
@@ -92,24 +92,24 @@ class Packaging
         return $this;
     }
 
-    public function parcelUnit(): Unit
+    public function parcelUnit(): ?Unit
     {
         return $this->parcelUnit;
     }
 
-    public function setParcelUnit(Unit $parcelUnit): self
+    public function setParcelUnit(?Unit $parcelUnit): self
     {
         $this->parcelUnit = $parcelUnit;
 
         return $this;
     }
 
-    public function parcelQuantity(): float
+    public function parcelQuantity(): ?float
     {
         return $this->parcelQuantity;
     }
 
-    public function setParcelQuantity(float $parcelQuantity): self
+    public function setParcelQuantity(?float $parcelQuantity): self
     {
         $this->parcelQuantity = $parcelQuantity;
 
@@ -140,24 +140,24 @@ class Packaging
         return $this;
     }
 
-    public function consumeUnitUnit(): ?Unit
+    public function consumeUnitUnit(): Unit
     {
         return $this->consumeUnitUnit;
     }
 
-    public function setConsumeUnitUnit(?Unit $consumeUnitUnit): self
+    public function setConsumeUnitUnit(Unit $consumeUnitUnit): self
     {
         $this->consumeUnitUnit = $consumeUnitUnit;
 
         return $this;
     }
 
-    public function consumeUnitQuantity(): ?float
+    public function consumeUnitQuantity(): float
     {
         return $this->consumeUnitQuantity;
     }
 
-    public function setConsumeUnitQuantity(?float $consumeUnitQuantity): self
+    public function setConsumeUnitQuantity(float $consumeUnitQuantity): self
     {
         $this->consumeUnitQuantity = $consumeUnitQuantity;
 

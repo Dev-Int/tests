@@ -85,7 +85,7 @@ final class RecordRealStockByZoneForAnInventoryTest extends BasePantherTestCase
         $startButton = $client->getCrawler()->filter(
             \sprintf('turbo-frame#inventory_%s button[type="submit"]', $inventory->_real()->uuid())
         );
-        self::assertCount(1, $startButton, 'Start button should be visible for DRAFT inventory');
+        self::assertCount(2, $startButton, 'Start and Cancel buttons should be visible for DRAFT inventory');
 
         $startButton->first()->click();
 

@@ -120,10 +120,11 @@ final class ArticleFactory extends PersistentProxyObjectFactory
                 );
 
                 // Créer le Packaging ORM à partir du packaging domain
-                [$parcelUnitDomain, $parcelQuantity] = $packaging[0];
-                $parcelUnitProxy = UnitFactory::repository()->findOneBy(['slug' => $parcelUnitDomain->slug()]);
-                assertNotNull($parcelUnitProxy);
-                $parcelUnitOrm = $parcelUnitProxy->_real();
+                // Format: [consumerUnit, subPackage, parcel]
+                [$consumeUnitDomain, $consumeUnitQuantity] = $packaging[0];
+                $consumeUnitProxy = UnitFactory::repository()->findOneBy(['slug' => $consumeUnitDomain->slug()]);
+                assertNotNull($consumeUnitProxy);
+                $consumeUnitOrm = $consumeUnitProxy->_real();
 
                 $subPackageUnitOrm = null;
                 $subPackageQuantity = null;
@@ -135,22 +136,22 @@ final class ArticleFactory extends PersistentProxyObjectFactory
                     $subPackageUnitOrm = $subPackageUnitProxy?->_real();
                 }
 
-                $consumeUnitOrm = null;
-                $consumeUnitQuantity = null;
+                $parcelUnitOrm = null;
+                $parcelQuantity = null;
                 if ($packaging[2] !== null) {
-                    [$consumeUnitDomain, $consumeUnitQuantity] = $packaging[2];
-                    $consumeUnitProxy = UnitFactory::repository()->findOneBy(['slug' => $consumeUnitDomain->slug()]);
-                    $consumeUnitOrm = $consumeUnitProxy?->_real();
+                    [$parcelUnitDomain, $parcelQuantity] = $packaging[2];
+                    $parcelUnitProxy = UnitFactory::repository()->findOneBy(['slug' => $parcelUnitDomain->slug()]);
+                    $parcelUnitOrm = $parcelUnitProxy?->_real();
                 }
 
                 $packagingOrm = new Packaging(
                     $articleOrm,
-                    $parcelUnitOrm,
-                    $parcelQuantity,
+                    $consumeUnitOrm,
+                    $consumeUnitQuantity,
                     $subPackageUnitOrm,
                     $subPackageQuantity,
-                    $consumeUnitOrm,
-                    $consumeUnitQuantity
+                    $parcelUnitOrm,
+                    $parcelQuantity
                 );
 
                 $articleOrm->setPackaging($packagingOrm);
@@ -161,12 +162,13 @@ final class ArticleFactory extends PersistentProxyObjectFactory
     }
 
     /**
-     * @return array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null}
+     * @return array{array{Unit, float}, array{Unit, float}|null, array{Unit, float}|null} [consumerUnit, subPackage, parcel]
      */
     private function generateDefaultPackaging(): array
     {
         $unit = UnitFactory::createOne();
 
+        // Format: [consumerUnit, subPackage, parcel]
         return [
             [$unit->_real()->toDomain(), self::faker()->randomFloat(3, 1, 10)],
             null,
