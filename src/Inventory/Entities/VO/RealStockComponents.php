@@ -32,28 +32,28 @@ final readonly class RealStockComponents
         );
     }
 
-    public static function fromUnits(float $parcel, float $subPackage, float $consumerUnit): self
+    public static function fromUnits(float $consumerUnit, float $subPackage, float $parcel): self
     {
         return new self(
-            Quantity::fromUnit($parcel),
-            Quantity::fromUnit($subPackage),
             Quantity::fromUnit($consumerUnit),
+            Quantity::fromUnit($subPackage),
+            Quantity::fromUnit($parcel),
         );
     }
 
-    public static function fromMilliemes(int $parcel, int $subPackage, int $consumerUnit): self
+    public static function fromMilliemes(int $consumerUnit, int $subPackage, int $parcel): self
     {
         return new self(
-            Quantity::fromMilliemes($parcel),
-            Quantity::fromMilliemes($subPackage),
             Quantity::fromMilliemes($consumerUnit),
+            Quantity::fromMilliemes($subPackage),
+            Quantity::fromMilliemes($parcel),
         );
     }
 
     public function __construct(
-        public Quantity $parcel,
-        public Quantity $subPackage,
         public Quantity $consumerUnit,
+        public Quantity $subPackage,
+        public Quantity $parcel,
     ) {
     }
 }

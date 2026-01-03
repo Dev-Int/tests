@@ -162,6 +162,9 @@ final class InventoryMapperTest extends TestCase
         $packagingOrm = new InventoryItemPackaging(
             id: null,
             inventoryItem: $itemOrm,
+            consumerUnitLabel: 'portion',
+            consumerUnitAbbreviation: 'prt',
+            consumerUnitQuantity: 1.0,
             parcelUnitLabel: 'colis',
             parcelUnitAbbreviation: 'col',
             parcelQuantity: 4.0,

@@ -77,11 +77,11 @@ final readonly class ArticleGateway implements ArticleGatewayInterface
     private function mapPackaging(PackagingResult $packagingResult): PackagingSnapshot
     {
         return new PackagingSnapshot(
-            parcel: $this->mapPackagingLevel($packagingResult->consumerUnit),
+            consumerUnit: $this->mapPackagingLevel($packagingResult->consumerUnit),
             subPackage: $packagingResult->subPackage instanceof PackagingLevelResult
                 ? $this->mapPackagingLevel($packagingResult->subPackage)
                 : null,
-            consumerUnit: $packagingResult->parcel instanceof PackagingLevelResult
+            parcel: $packagingResult->parcel instanceof PackagingLevelResult
                 ? $this->mapPackagingLevel($packagingResult->parcel)
                 : null,
         );

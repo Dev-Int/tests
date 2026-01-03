@@ -54,9 +54,9 @@ final readonly class RecordRealStockForZonePresenter
 
     private function mapPackaging(PackagingSnapshot $packaging): PackagingForView
     {
-        $parcel = new PackagingLevelForView(
-            $packaging->parcel->unitLabel,
-            $packaging->parcel->unitAbbreviation,
+        $consumerUnit = new PackagingLevelForView(
+            $packaging->consumerUnit->unitLabel,
+            $packaging->consumerUnit->unitAbbreviation,
         );
 
         $subPackage = null;
@@ -67,14 +67,14 @@ final readonly class RecordRealStockForZonePresenter
             );
         }
 
-        $consumerUnit = null;
-        if ($packaging->consumerUnit instanceof PackagingLevel) {
-            $consumerUnit = new PackagingLevelForView(
-                $packaging->consumerUnit->unitLabel,
-                $packaging->consumerUnit->unitAbbreviation,
+        $parcel = null;
+        if ($packaging->parcel instanceof PackagingLevel) {
+            $parcel = new PackagingLevelForView(
+                $packaging->parcel->unitLabel,
+                $packaging->parcel->unitAbbreviation,
             );
         }
 
-        return new PackagingForView($parcel, $subPackage, $consumerUnit);
+        return new PackagingForView($consumerUnit, $subPackage, $parcel);
     }
 }

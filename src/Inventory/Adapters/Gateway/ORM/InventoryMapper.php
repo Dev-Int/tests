@@ -87,9 +87,9 @@ final readonly class InventoryMapper
                 theoreticalStock: Quantity::fromMilliemes($item->theoreticalStock()),
                 realStock: Quantity::fromMilliemes($item->realStock()),
                 realStockComponents: RealStockComponents::fromMilliemes(
-                    $item->realStockParcel() ?? 0,
-                    $item->realStockSubPackage() ?? 0,
                     $item->realStockConsumerUnit() ?? 0,
+                    $item->realStockSubPackage() ?? 0,
+                    $item->realStockParcel() ?? 0,
                 ),
                 amount: Amount::fromCents($item->amount()),
                 packaging: $item->packaging()->toDomain(),

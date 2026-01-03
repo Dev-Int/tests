@@ -37,10 +37,14 @@ final class InventoryItemDataBuilder
 
     public static function defaultPackaging(): PackagingSnapshot
     {
+        // 32 portions = 4 poches = 1 colis
+        // consumerUnit: base unit (qty=1)
+        // subPackage: 8 portions per poche
+        // parcel: 4 poches per colis
         return new PackagingSnapshot(
-            parcel: new PackagingLevel('Colis', 'cls', 1.0),
-            subPackage: new PackagingLevel('Poche', 'pch', 4.0),
-            consumerUnit: new PackagingLevel('Portion', 'prt', 8.0),
+            consumerUnit: new PackagingLevel('Portion', 'prt', 1.0),
+            subPackage: new PackagingLevel('Poche', 'pch', 8.0),
+            parcel: new PackagingLevel('Colis', 'cls', 4.0),
         );
     }
 

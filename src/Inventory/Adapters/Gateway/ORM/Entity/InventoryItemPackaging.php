@@ -26,15 +26,15 @@ class InventoryItemPackaging
         return new self(
             id: null,
             inventoryItem: $inventoryItem,
-            parcelUnitLabel: $packaging->parcel->unitLabel,
-            parcelUnitAbbreviation: $packaging->parcel->unitAbbreviation,
-            parcelQuantity: $packaging->parcel->quantity,
+            consumerUnitLabel: $packaging->consumerUnit->unitLabel,
+            consumerUnitAbbreviation: $packaging->consumerUnit->unitAbbreviation,
+            consumerUnitQuantity: $packaging->consumerUnit->quantity,
             subPackageUnitLabel: $packaging->subPackage?->unitLabel,
             subPackageUnitAbbreviation: $packaging->subPackage?->unitAbbreviation,
             subPackageQuantity: $packaging->subPackage?->quantity,
-            consumerUnitLabel: $packaging->consumerUnit?->unitLabel,
-            consumerUnitAbbreviation: $packaging->consumerUnit?->unitAbbreviation,
-            consumerUnitQuantity: $packaging->consumerUnit?->quantity,
+            parcelUnitLabel: $packaging->parcel?->unitLabel,
+            parcelUnitAbbreviation: $packaging->parcel?->unitAbbreviation,
+            parcelQuantity: $packaging->parcel?->quantity,
         );
     }
 
@@ -47,33 +47,33 @@ class InventoryItemPackaging
         #[ORM\OneToOne(targetEntity: InventoryItem::class, inversedBy: 'packaging')]
         #[ORM\JoinColumn(name: 'inventory_item_id', referencedColumnName: 'id', nullable: false)]
         private InventoryItem $inventoryItem,
-        #[ORM\Column(name: 'parcel_unit_label', type: 'string', length: 50)]
-        private string $parcelUnitLabel,
-        #[ORM\Column(name: 'parcel_unit_abbreviation', type: 'string', length: 10)]
-        private string $parcelUnitAbbreviation,
-        #[ORM\Column(name: 'parcel_quantity', type: 'float')]
-        private float $parcelQuantity,
+        #[ORM\Column(name: 'consumer_unit_label', type: 'string', length: 50)]
+        private string $consumerUnitLabel,
+        #[ORM\Column(name: 'consumer_unit_abbreviation', type: 'string', length: 10)]
+        private string $consumerUnitAbbreviation,
+        #[ORM\Column(name: 'consumer_unit_quantity', type: 'float')]
+        private float $consumerUnitQuantity,
         #[ORM\Column(name: 'sub_package_unit_label', type: 'string', length: 50, nullable: true)]
         private ?string $subPackageUnitLabel = null,
         #[ORM\Column(name: 'sub_package_unit_abbreviation', type: 'string', length: 10, nullable: true)]
         private ?string $subPackageUnitAbbreviation = null,
         #[ORM\Column(name: 'sub_package_quantity', type: 'float', nullable: true)]
         private ?float $subPackageQuantity = null,
-        #[ORM\Column(name: 'consumer_unit_label', type: 'string', length: 50, nullable: true)]
-        private ?string $consumerUnitLabel = null,
-        #[ORM\Column(name: 'consumer_unit_abbreviation', type: 'string', length: 10, nullable: true)]
-        private ?string $consumerUnitAbbreviation = null,
-        #[ORM\Column(name: 'consumer_unit_quantity', type: 'float', nullable: true)]
-        private ?float $consumerUnitQuantity = null,
+        #[ORM\Column(name: 'parcel_unit_label', type: 'string', length: 50, nullable: true)]
+        private ?string $parcelUnitLabel = null,
+        #[ORM\Column(name: 'parcel_unit_abbreviation', type: 'string', length: 10, nullable: true)]
+        private ?string $parcelUnitAbbreviation = null,
+        #[ORM\Column(name: 'parcel_quantity', type: 'float', nullable: true)]
+        private ?float $parcelQuantity = null,
     ) {
     }
 
     public function toDomain(): PackagingSnapshot
     {
-        $parcel = new PackagingLevel(
-            $this->parcelUnitLabel,
-            $this->parcelUnitAbbreviation,
-            $this->parcelQuantity,
+        $consumerUnit = new PackagingLevel(
+            $this->consumerUnitLabel,
+            $this->consumerUnitAbbreviation,
+            $this->consumerUnitQuantity,
         );
 
         $subPackage = null;
@@ -89,20 +89,20 @@ class InventoryItemPackaging
             );
         }
 
-        $consumerUnit = null;
+        $parcel = null;
         if (
-            $this->consumerUnitLabel !== null
-            && $this->consumerUnitAbbreviation !== null
-            && $this->consumerUnitQuantity !== null
+            $this->parcelUnitLabel !== null
+            && $this->parcelUnitAbbreviation !== null
+            && $this->parcelQuantity !== null
         ) {
-            $consumerUnit = new PackagingLevel(
-                $this->consumerUnitLabel,
-                $this->consumerUnitAbbreviation,
-                $this->consumerUnitQuantity,
+            $parcel = new PackagingLevel(
+                $this->parcelUnitLabel,
+                $this->parcelUnitAbbreviation,
+                $this->parcelQuantity,
             );
         }
 
-        return new PackagingSnapshot($parcel, $subPackage, $consumerUnit);
+        return new PackagingSnapshot($consumerUnit, $subPackage, $parcel);
     }
 
     public function id(): ?int
