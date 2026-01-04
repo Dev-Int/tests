@@ -43,23 +43,17 @@ final class ChangeFinancialInformationArticleCancelTest extends BasePantherTestC
         self::assertSelectorTextContains('h1', $translator->trans('home.welcome'));
 
         $client->clickLink($translator->trans('admin.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.titlePage'));
 
         $client->clickLink($translator->trans('admin.article.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.article.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.article.titlePage'));
 
         $changeFinancialInfoButtonText = $translator->trans('admin.article.changeFinancialInformation.button');
         $client->clickLink($changeFinancialInfoButtonText);
-
-        $client->wait(1);
-        self::assertSelectorTextContains('h1', $translator->trans('admin.article.titlePage'));
         $client->waitForVisibility(\sprintf('turbo-frame#article_%s h3', $article->uuid()->toString()));
+        self::assertSelectorTextContains('h1', $translator->trans('admin.article.titlePage'));
         self::assertSelectorTextContains(
             \sprintf('turbo-frame#article_%s h3', $article->uuid()->toString()),
             $translator->trans(
@@ -75,8 +69,7 @@ final class ChangeFinancialInformationArticleCancelTest extends BasePantherTestC
         self::assertSelectorTextContains($cancelButtonSelector, $translator->trans('cancel'));
 
         $client->clickLink($translator->trans('cancel'));
-
-        $client->wait(2);
+        $client->waitForElementToContain('h1', $translator->trans('admin.article.titlePage'));
         $getArticlesUrl = $router->generate(GetArticlesController::ROUTE_NAME);
         self::assertStringContainsString($getArticlesUrl, $client->getCurrentURL());
         self::assertSelectorTextContains('h1', $translator->trans('admin.article.titlePage'));
