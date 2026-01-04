@@ -13,10 +13,10 @@ declare(strict_types=1);
 
 namespace Inventory\Adapters\Controller\Symfony\Controller\GetInventories;
 
+use Shared\Adapters\Gateway\Pagination\Pagination;
 use Inventory\UseCases\GetInventories\GetInventories;
 use Shared\Adapters\Attribute\RequireApplicationReady;
 use Shared\Adapters\Controller\Symfony\Controller\HomeController;
-use Shared\Entities\Pagination\Pagination;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

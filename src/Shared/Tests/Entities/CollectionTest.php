@@ -11,7 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace App\Shared\Tests\Entities;
+namespace Shared\Tests\Entities;
 
 use Faker\Factory;
 use PHPUnit\Framework\TestCase;

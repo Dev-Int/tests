@@ -14,13 +14,13 @@ declare(strict_types=1);
 namespace Inventory\Tests\Adapters\Controller\Symfony\Controller\GetInventories;
 
 use Admin\Tests\Factory\ZoneStorageFactory;
+use Shared\Adapters\Gateway\Pagination\Pagination;
 use Inventory\Adapters\Controller\Symfony\Controller\GetInventories\GetInventoriesController;
 use Inventory\Adapters\Gateway\ORM\Entity\InventoryStatus;
 use Inventory\Tests\Factory\InventoryFactory;
 use Inventory\Tests\Story\InventoryStory;
 use Shared\Adapters\Exception\ApplicationNotReady;
 use Shared\Entities\Clock\ClockFactory;
-use Shared\Entities\Pagination\Pagination;
 use Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

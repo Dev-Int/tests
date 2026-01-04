@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Shared\Twig\Components;
 
-use Shared\Entities\Pagination\Pagination as BasePagination;
+use Shared\Adapters\Gateway\Pagination\Pagination as BasePagination;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;

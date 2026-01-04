@@ -3,7 +3,7 @@
 namespace {BC}\Tests\Adapters\Controller\Symfony\Controller\{Entity}{Action};
 
 use {BC}\Tests\Factory\{Entity}Factory;
-use App\Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\BaseFunctionalTestCase;
 use Zenstruck\Foundry\Test\Factories;
 
 final class {Entity}{Action}ControllerTest extends BaseFunctionalTestCase

@@ -16,7 +16,7 @@ namespace Admin\Adapters\Controller\Symfony\Controller\Article\GetArticles;
 use Admin\Adapters\Controller\Symfony\Controller\ConfigurationController;
 use Admin\Entities\Exception\Article\NoArticleRegistered;
 use Admin\UseCases\Article\GetArticles\GetArticles;
-use Shared\Entities\Pagination\Pagination;
+use Shared\Adapters\Gateway\Pagination\Pagination;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

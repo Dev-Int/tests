@@ -16,8 +16,8 @@ namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Supplier\GetSupplie
 use Admin\Entities\Exception\Supplier\NoSupplierRegistered;
 use Admin\Tests\Factory\FamilyLogFactory;
 use Admin\Tests\Factory\SupplierFactory;
+use Shared\Adapters\Gateway\Pagination\Pagination;
 use Faker\Factory;
-use Shared\Entities\Pagination\Pagination;
 use Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

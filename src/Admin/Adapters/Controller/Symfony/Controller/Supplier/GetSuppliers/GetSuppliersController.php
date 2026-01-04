@@ -16,7 +16,7 @@ namespace Admin\Adapters\Controller\Symfony\Controller\Supplier\GetSuppliers;
 use Admin\Adapters\Controller\Symfony\Controller\ConfigurationController;
 use Admin\Entities\Exception\Supplier\NoSupplierRegistered;
 use Admin\UseCases\Supplier\GetSuppliers\GetSuppliers;
-use Shared\Entities\Pagination\Pagination;
+use Shared\Adapters\Gateway\Pagination\Pagination;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
