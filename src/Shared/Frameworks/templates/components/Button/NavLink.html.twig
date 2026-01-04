@@ -1,0 +1,11 @@
+{% if disabled %}
+    <a href="#"
+       role="button"
+       aria-disabled="true"
+       class="secondary"
+       style="pointer-events: none; opacity: 0.5;">
+        {{ label }}
+    </a>
+{% else %}
+    <a href="{{ href }}" role="button">{{ label }}</a>
+{% endif %}
