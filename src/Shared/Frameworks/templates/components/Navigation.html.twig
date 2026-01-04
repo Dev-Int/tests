@@ -1,0 +1,24 @@
+<nav>
+    <ul>
+        <li class="navbar-brand">
+            <a href="{{ path('home') }}" class="logo">Application</a>
+        </li>
+    </ul>
+    <ul>
+        <li><a href="{{ path('admin_index') }}" role="button">{{ 'admin.titlePage'|trans }}</a></li>
+        <li>
+            {% if this.isApplicationReady() %}
+                <a href="{{ path('inventory_index') }}" role="button">{{ 'inventory.titlePage'|trans }}</a>
+            {% else %}
+                <a href="#"
+                   role="button"
+                   aria-disabled="true"
+                   class="secondary"
+                   style="pointer-events: none; opacity: 0.5;">
+                    {{ 'inventory.titlePage'|trans }}
+                </a>
+            {% endif %}
+        </li>
+        <li><a href="#" role="button">{{ 'connection'|trans }}</a></li>
+    </ul>
+</nav>

@@ -17,20 +17,8 @@
     <body>
         {% block header %}
             <header>
-                <nav>
-                    <ul>
-                        <li class="navbar-brand">
-                            <a href="{{ path('home') }}" class="logo">Application</a>
-                        </li>
-                    </ul>
-                    <ul>
-                        <li><a href="{{ path('admin_index') }}" role="button">{{ 'admin.titlePage'|trans }}</a></li>
-                        <li><a href="{{ path('inventory_index') }}" role="button">{{ 'inventory.titlePage'|trans }}</a></li>
-                        <li><a href="#" role="button">{{ 'connection'|trans }}</a></li>
-                    </ul>
-                </nav>
+                <twig:Navigation />
             </header>
-
         {% endblock %}
 
         <div id="container" class="container">
