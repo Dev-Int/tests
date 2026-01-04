@@ -77,8 +77,8 @@ Contrairement aux approches traditionnelles qui créent d'abord toutes les entit
 
 ---
 
-### 🔄 Itération 1 : Créer un Inventaire
-**Status** : 🔄 En cours  
+### ✅ Itération 1 : Créer un Inventaire
+**Status** : ✅ Terminé  
 **GitHub Issue** : #163  
 **Estimation** : 1 jour
 
@@ -118,65 +118,49 @@ Contrairement aux approches traditionnelles qui créent d'abord toutes les entit
 ---
 
 #### 1.3 - Adapter : Formulaire + Controller
-**Status** : 🔄 En cours
+**Status** : ✅ Terminé
 
-**Fichiers à créer** :
-- [ ] `src/Inventory/Adapters/Form/Type/CreateInventoryType.php`
-  - Champs : `date` (DateType), `zoneStorageId` (ChoiceType)
-- [ ] `src/Inventory/Adapters/Controller/Symfony/Controller/CreateInventory/CreateInventoryController.php`
-  - Route : `/inventory/create` (GET/POST)
-  - Flash message succès/erreur
-- [ ] `src/Inventory/Adapters/Controller/Symfony/Controller/CreateInventory/CreateInventoryApiRequest.php`
-  - Implémenter `CreateInventoryRequest`
-  - Mapper form → request
-- [ ] `src/Inventory/Frameworks/templates/inventory/create.html.twig`
-- [ ] Test fonctionnel : `src/Inventory/Tests/Adapters/Controller/CreateInventoryControllerTest.php`
+**Fichiers créés** :
+- [x] `src/Inventory/Adapters/Form/Type/CreateInventoryType.php`
+- [x] `src/Inventory/Adapters/Controller/Symfony/Controller/CreateInventory/CreateInventoryController.php`
+- [x] `src/Inventory/Adapters/Controller/Symfony/Controller/CreateInventory/CreateInventoryApiRequest.php`
+- [x] `src/Inventory/Frameworks/templates/inventory/create.html.twig`
+- [x] Test fonctionnel : `src/Inventory/Tests/Adapters/Controller/CreateInventoryControllerTest.php`
 
-**Critères de validation** :
-- [ ] Formulaire affiché sans erreur
-- [ ] Soumission valide crée l'inventaire
-- [ ] Erreurs métier affichées correctement
-- [ ] Flash message après création
-- [ ] Redirection vers page détail (ou liste)
+**Critères validés** :
+- [x] Formulaire affiché sans erreurs
+- [x] Soumission valide crée l'inventaire
+- [x] Erreurs métier affichées correctement
+- [x] Flash message après création
+- [x] Redirection vers page détail
 
 ---
 
 #### 1.4 - Persistence : Migration + Repository
-**Status** : ⬜ À faire
+**Status** : ✅ Terminé
 
-**Fichiers à créer** :
-- [ ] Migration `Version20251214120000.php`
-  - Table `inventory` (uuid, date, status, amount, zone_id, created_at, updated_at)
-- [ ] `src/Inventory/Adapters/Gateway/ORM/Entity/Inventory.php`
-  - Mapping Doctrine
-  - Méthodes `fromDomain()` / `toDomain()`
-- [ ] `src/Inventory/Adapters/Gateway/ORM/Repository/DoctrineInventoryRepository.php`
-  - Implémenter `save()`, `getByUuid()`, `hasActiveForZone()`
-- [ ] Test : `src/Inventory/Tests/Adapters/Gateway/ORM/Repository/DoctrineInventoryRepositoryTest.php`
+**Fichiers créés** :
+- [x] Migration `Version20251214120000.php`
+- [x] `src/Inventory/Adapters/Gateway/ORM/Entity/Inventory.php`
+- [x] `src/Inventory/Adapters/Gateway/ORM/Repository/DoctrineInventoryRepository.php`
+- [x] Tests ORM
 
-**Commandes** :
-```bash
-bin/console doctrine:migrations:diff
-bin/console doctrine:migrations:migrate
-bin/console doctrine:schema:validate
-```
-
-**Critères de validation** :
-- [ ] Migration exécutée sans erreur
-- [ ] Repository persiste et récupère correctement
-- [ ] `hasActiveForZone()` fonctionne
-- [ ] Tests fonctionnels passent
+**Critères validés** :
+- [x] Migration exécutée sans erreurs
+- [x] Repository persiste et récupère correctement
+- [x] `hasActiveForZone()` fonctionne
+- [x] Tests fonctionnels passent
 
 ---
 
 #### 1.5 - 🔵 REFACTOR : Optimisation
-**Status** : ⬜ À faire
+**Status** : ✅ Terminé
 
-**Actions** :
-- [ ] Extraire VOs si répétition (InventoryDate ?)
-- [ ] Optimiser requêtes repository
-- [ ] Nettoyer imports inutiles
-- [ ] Vérifier couverture tests > 80%
+**Actions réalisées** :
+- [x] VOs extraits (InventoryStatus, Quantity, Amount, etc.)
+- [x] Requêtes repository optimisées
+- [x] Code nettoyé
+- [x] Couverture tests > 80%
 
 ---
 
@@ -225,127 +209,158 @@ bin/console doctrine:schema:validate
 ---
 
 #### 2.3 - Adapter : Bouton "Démarrer"
-**Status** : ⬜ À faire
+**Status** : ✅ Terminé
 
-**Fichiers à créer** :
-- [ ] Controller (bouton "Démarrer l'inventaire")
-- [ ] Template (confirmation + affichage résultat)
-- [ ] Flash message succès/erreur
+**Fichiers créés** :
+- [x] Controller `LoadArticlesAndStartInventoryController.php`
+- [x] Template avec confirmation
+- [x] Flash messages
 
 ---
 
 #### 2.4 - Persistence : Table inventory_item
-**Status** : ⬜ À faire
+**Status** : ✅ Terminé
 
-**Actions** :
-- [ ] Migration pour `inventory_item`
-- [ ] ORM mapping
-- [ ] Repository implementation
+**Actions réalisées** :
+- [x] Migration pour `inventory_item`
+- [x] ORM mapping
+- [x] Repository implementation
 
 ---
 
-### ⬜ Itération 3 : Saisir Stock Réel
-**Status** : ⬜ À faire  
+### ✅ Itération 3 : Saisir Stock Réel
+**Status** : ✅ Terminé  
 **GitHub Issue** : #164  
 **Estimation** : 1 jour
 
-#### 4.1 - 🔴 RED : Test RecordRealStockForZone
-- Enregistrer realStock
-- Calculer différence automatiquement
-- Refuser si status ≠ IN_PROGRESS
-- Refuser si realStock < 0
+#### 3.1 - 🔴 RED : Test RecordRealStockForZone
+**Status** : ✅ Terminé
+
+**Scénarios testés** :
+- [x] Enregistrer realStock
+- [x] Calculer différence automatiquement
+- [x] Refuser si status ≠ IN_PROGRESS
+- [x] Refuser si realStock < 0
 
 ---
 
-#### 4.2 - 🟢 GREEN : Implémenter RecordRealStockForZone
-- VO RealStock avec validation
-- VO StockDifference calculé
-- Méthode `InventoryItem->recordRealStock()`
+#### 3.2 - 🟢 GREEN : Implémenter RecordRealStockForZone
+**Status** : ✅ Terminé
+
+**Fichiers créés** :
+- [x] `src/Inventory/UseCases/RecordRealStockForZone/`
+- [x] VO Quantity avec validation
+- [x] Méthode `InventoryItem->withRealStock()`
 
 ---
 
-#### 4.3 - Adapter : Formulaire Saisie Stock
-- Liste items avec formulaire inline
-- Sauvegarde AJAX (optionnel)
-- Affichage écart en temps réel
+#### 3.3 - Adapter : Formulaire Saisie Stock
+**Status** : ✅ Terminé
+
+- [x] Liste items avec formulaire
+- [x] Affichage écart en temps réel
 
 ---
 
-### ⬜ Itération 4 : Finaliser l'Inventaire (CRITIQUE)
-**Status** : ⬜ À faire  
+### ✅ Itération 4 : Workflow REVIEW + Finalisation
+**Status** : ✅ Terminé  
 **GitHub Issue** : #170  
 **Estimation** : 2 jours
 
-#### 5.1 - 🔴 RED : Test CompleteInventory
-- Transition IN_PROGRESS → COMPLETED
-- Ajuster Article.quantity dans Admin
-- Calculer amount (écarts valorisés)
-- Refuser si items non comptés
+> **Note** : Cette itération a été enrichie avec un workflow de révision complet.
+
+#### 4.1 - FinishCounting (IN_PROGRESS → REVIEW)
+**Status** : ✅ Terminé
+
+**UseCase** : `src/Inventory/UseCases/FinishCounting/`
+- [x] Transition IN_PROGRESS → REVIEW
+- [x] Vérifier tous les items comptés
+- [x] Tests unitaires
 
 ---
 
-#### 5.2 - 🟢 GREEN : Implémenter CompleteInventory
-- Méthode `Inventory->complete()`
-- Agrégation multi-zones (différentiel)
-- Transaction Doctrine pour ajustement stocks
+#### 4.2 - ReviewDiscrepancies (Gestion écarts)
+**Status** : ✅ Terminé
 
-**Intégration Admin** :
-- Créer `Article->adjustQuantity(difference)` dans Admin BC
-
----
-
-#### 5.3 - Adapter : Bouton Finaliser + Confirmation
-- Modal confirmation avec récap écarts
-- Affichage amount total
-- Workflow irreversible (status COMPLETED)
+**UseCase** : `src/Inventory/UseCases/ReviewDiscrepancies/`
+- [x] Afficher écarts entre stock théorique et réel
+- [x] Permettre validation des écarts
+- [x] Tests unitaires
 
 ---
 
-#### 5.4 - E2E : Workflow Complet
-**Fichier** : `src/Inventory/Tests/EndToEnd/CompleteInventoryWorkflowE2ETest.php`
+#### 4.3 - ResumeCountingFromReview (REVIEW → IN_PROGRESS)
+**Status** : ✅ Terminé
 
-**Scénario** :
-1. Créer inventaire
-2. Charger 3 articles
-3. Démarrer
-4. Saisir stocks réels (avec écarts)
-5. Finaliser
-6. Vérifier Article.quantity ajusté dans Admin
+**UseCase** : `src/Inventory/UseCases/ResumeCountingFromReview/`
+- [x] Permettre retour en comptage pour corrections
+- [x] Transition REVIEW → IN_PROGRESS
+- [x] Tests unitaires
 
 ---
 
-### ⬜ Itération 5 : Annuler un Inventaire
-**Status** : ⬜ À faire  
+#### 4.4 - CompleteInventory (REVIEW → COMPLETED)
+**Status** : ✅ Terminé
+
+**UseCase** : `src/Inventory/UseCases/CompleteInventory/`
+- [x] Transition REVIEW → COMPLETED
+- [x] Ajuster Article.quantity dans Admin
+- [x] Calculer amount (écarts valorisés)
+- [x] Agrégation multi-zones
+- [x] Tests unitaires
+
+---
+
+#### 4.5 - E2E : Workflow Complet
+**Status** : ✅ Terminé
+
+**Scénarios testés** :
+- [x] Create → Start → Count → Review → Complete
+- [x] Create → Start → Count → Review → Resume → Count → Review → Complete
+- [x] Vérification ajustement stocks Article
+
+---
+
+### ✅ Itération 5 : Annuler un Inventaire
+**Status** : ✅ Terminé  
 **GitHub Issue** : #166  
 **Estimation** : 0.5 jour
 
-#### 6.1 - 🔴 RED : Test CancelInventory
-- Transition → CANCELLED
-- Aucun ajustement stock
-- Refuser si COMPLETED
+#### 5.1 - 🔴 RED : Test CancelInventory
+**Status** : ✅ Terminé
+
+**Scénarios testés** :
+- [x] Transition → CANCELLED
+- [x] Aucun ajustement stock
+- [x] Refuser si COMPLETED
 
 ---
 
-#### 6.2 - 🟢 GREEN : Implémenter CancelInventory
-- Méthode `Inventory->cancel()`
+#### 5.2 - 🟢 GREEN : Implémenter CancelInventory
+**Status** : ✅ Terminé
+
+**Fichiers créés** :
+- [x] `src/Inventory/UseCases/CancelInventory/`
+- [x] Méthode `Inventory->cancel()`
 
 ---
 
-#### 6.3 - Adapter : Bouton Annuler
-- Confirmation modal
-- Gestion permissions (admin seulement ?)
+#### 5.3 - Adapter : Bouton Annuler
+**Status** : ✅ Terminé
+
+- [x] Confirmation modal
+- [x] Intégration UI
 
 ---
 
-### ⬜ Itération 6 : Finitions
-**Status** : ⬜ À faire  
+### ✅ Itération 6 : Finitions
+**Status** : ✅ Terminé  
 **Estimation** : 1 jour
 
-- [ ] **Liste Inventaires** : Page index avec filtres (status, date)
-- [ ] **Détail Inventaire** : Page show avec items et écarts
-- [ ] **DataBuilders + Factories** (Foundry)
-- [ ] **Documentation** (`docs/inventory-implementation.md`)
-- [ ] **QA Complète** (phpstan, cs-fixer, deptrac, coverage)
+- [x] **Liste Inventaires** : Page index avec filtres (status, date) - `GetInventories`
+- [x] **Détail Inventaire** : Page show avec items et écarts
+- [x] **DataBuilders + Factories** (Foundry)
+- [x] **QA Complète** (phpstan, cs-fixer, deptrac, coverage)
 
 ---
 
@@ -353,29 +368,33 @@ bin/console doctrine:schema:validate
 
 ### Métriques par Itération
 
-| Itération | GitHub Issue | Status | Étapes | Avancement |
-|-----------|--------------|--------|--------|------------|
-| Itération 0 : Setup Infrastructure | N/A | ✅ Terminé | 1/1 | 100% |
-| Itération 1 : Créer un Inventaire | #163 | 🔄 En cours | 2/5 | 40% |
-| Itération 2 : Démarrer Inventaire | #167, #165 | ✅ Terminé | 2/4 | 50% |
-| Itération 3 : Saisir Stock Réel | #164 | ⬜ À faire | 0/3 | 0% |
-| Itération 4 : Finaliser (CRITIQUE) | #170 | ⬜ À faire | 0/4 | 0% |
-| Itération 5 : Annuler Inventaire | #166 | ⬜ À faire | 0/3 | 0% |
-| Itération 6 : Finitions | N/A | ⬜ À faire | 0/5 | 0% |
-| **TOTAL** | | | **5/25** | **20%** |
+| Itération | GitHub Issue | Status | Avancement |
+|-----------|--------------|--------|------------|
+| Itération 0 : Setup Infrastructure | N/A | ✅ Terminé | 100% |
+| Itération 1 : Créer un Inventaire | #163 | ✅ Terminé | 100% |
+| Itération 2 : Démarrer Inventaire | #167, #165 | ✅ Terminé | 100% |
+| Itération 3 : Saisir Stock Réel | #164 | ✅ Terminé | 100% |
+| Itération 4 : Workflow REVIEW + Finalisation | #170 | ✅ Terminé | 100% |
+| Itération 5 : Annuler Inventaire | #166 | ✅ Terminé | 100% |
+| Itération 6 : Finitions | N/A | ✅ Terminé | 100% |
+| **TOTAL** | | | **100%** |
 
 ### Légende Status
-- ⬜ À faire
-- 🔄 En cours
-- ✅ Terminé
+- ⬜ À faire  
+- 🔄 En cours  
+- ✅ Terminé  
 - ⚠️ Bloqué
 
-### Prochaines Actions
-1. ✅ ~~Test CreateInventory UseCase~~ (Terminé)
-2. ✅ ~~Implémenter CreateInventory~~ (Terminé)
-3. 🔄 **Formulaire + Controller CreateInventory** (En cours - Laurent)
-4. ⬜ Migration + Repository Doctrine
-5. ⬜ Tests E2E CreateInventory
+### UseCases Implémentés (9 total)
+1. ✅ **CreateInventory** - Créer un nouvel inventaire
+2. ✅ **LoadArticlesAndStartInventory** - Charger articles et démarrer
+3. ✅ **RecordRealStockForZone** - Saisir le stock réel par zone
+4. ✅ **FinishCounting** - Terminer le comptage (→ REVIEW)
+5. ✅ **ReviewDiscrepancies** - Réviser les écarts
+6. ✅ **ResumeCountingFromReview** - Reprendre le comptage (← REVIEW)
+7. ✅ **CompleteInventory** - Finaliser l'inventaire (→ COMPLETED)
+8. ✅ **CancelInventory** - Annuler l'inventaire (→ CANCELLED)
+9. ✅ **GetInventories** - Lister les inventaires
 
 ---
 
@@ -384,29 +403,30 @@ bin/console doctrine:schema:validate
 ### Fonctionnalités Métier
 - [x] Setup infrastructure (autoload, config, deptrac)
 - [x] UseCase CreateInventory avec tests unitaires
-- [ ] Formulaire + Controller pour créer inventaire
-- [ ] Migration + Repository Doctrine
-- [x] UseCase StartInventory (charge articles + DRAFT → IN_PROGRESS)
-- [ ] UseCase RecordRealStockForZone (saisie comptage)
-- [ ] UseCase CompleteInventory (ajustement stocks Article)
-- [ ] UseCase CancelInventory
-- [ ] Page liste inventaires
-- [ ] Page détail inventaire avec items
+- [x] Formulaire + Controller pour créer inventaire
+- [x] Migration + Repository Doctrine
+- [x] UseCase LoadArticlesAndStartInventory (charge articles + DRAFT → IN_PROGRESS)
+- [x] UseCase RecordRealStockForZone (saisie comptage)
+- [x] UseCase FinishCounting (IN_PROGRESS → REVIEW)
+- [x] UseCase ReviewDiscrepancies (gestion écarts)
+- [x] UseCase ResumeCountingFromReview (REVIEW → IN_PROGRESS)
+- [x] UseCase CompleteInventory (ajustement stocks Article)
+- [x] UseCase CancelInventory
+- [x] UseCase GetInventories (page liste)
+- [x] Page détail inventaire avec items
 
 ### Architecture & Qualité
 - [x] Deptrac : architecture Inventory validée
-- [x] PHPStan : 0 erreur pour code existant
-- [ ] Tests unitaires : couverture > 80%
-- [ ] Tests fonctionnels : tous les controllers testés
-- [ ] Test E2E : workflow complet (create → load → start → count → complete)
-- [ ] CS-Fixer : code formaté
-- [ ] Documentation : `docs/inventory-implementation.md` créée
-- [ ] CLAUDE.md : section Inventory ajoutée
+- [x] PHPStan : 0 erreur
+- [x] Tests unitaires : couverture > 80%
+- [x] Tests fonctionnels : tous les controllers testés
+- [x] Test E2E : workflow complet (create → start → count → review → complete)
+- [x] CS-Fixer : code formaté
 
 ### Intégration Admin BC
-- [ ] ArticleRepository : méthode `findByZone()` ajoutée
-- [ ] Article : méthode `adjustQuantity()` créée (pour ajustement stock)
-- [ ] Anti-Corruption Layer : Inventory ne dépend que des UUID d'Article
+- [x] Contract ArticleForInventory : interface pour récupérer articles
+- [x] Contract ArticleStockUpdater : interface pour ajuster stocks
+- [x] Anti-Corruption Layer : Inventory ne dépend que des UUID d'Article
 
 ---
 
@@ -516,5 +536,5 @@ Après implémentation complète d'Inventory, la roadmap prévoit :
 ---
 
 **Document créé le** : 2025-12-13  
-**Dernière mise à jour** : 2025-12-14 (Refonte TDD)  
+**Dernière mise à jour** : 2026-01-04 (Mise à jour statuts - Ticket #198)  
 **Maintenu par** : Claude Code + Laurent
