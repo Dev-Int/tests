@@ -1,5 +1,9 @@
 deptrac:
     layers:
+        - name: Shared\Contracts
+          collectors:
+              - type: classNameRegex
+                value: '#Shared\\Contracts\\.*#'
         - name: Shared\Entities
           collectors:
               - type: classNameRegex
@@ -13,10 +17,12 @@ deptrac:
               - type: classNameRegex
                 value: '#Shared\\Adapters\\.*#'
     ruleset:
+        Shared\Contracts:
         Shared\Entities:
         Shared\UseCases:
             - Shared\Entities
         Shared\Adapters:
+            - Shared\Contracts
             - Shared\Entities
             - Shared\UseCases
     skip_violations: []

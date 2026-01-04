@@ -31,7 +31,7 @@ final class HomeController extends AbstractController
     #[Route(path: '/', name: self::ROUTE_NAME)]
     public function __invoke(): Response
     {
-        $isConfigured = $this->configurationService->isConfigured();
+        $isConfigured = $this->configurationService->isApplicationReady();
 
         if ($isConfigured) {
             return $this->render('@admin/layout.html.twig');

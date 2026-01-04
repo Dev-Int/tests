@@ -22,7 +22,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[AsController]
 final class ApplicationConfigureController extends AbstractController
 {
-    public const ROUTE_NAME = 'admin_configure_application';
+    public const string ROUTE_NAME = 'admin_configure_application';
 
     public function __construct(private readonly ConfigurationService $configurationService)
     {
@@ -31,15 +31,15 @@ final class ApplicationConfigureController extends AbstractController
     #[Route(path: '/configure/application', name: 'admin_configure_application')]
     public function __invoke(): Response
     {
-        $hasBefore = $this->configurationService->isCompanyConfigured();
-        if ($hasBefore === false) {
+        $isCompanySetup = $this->configurationService->isCompanyConfigured();
+        if ($isCompanySetup === false) {
             return $this->redirectToRoute('admin_configure');
         }
 
         $hasUnit = $this->configurationService->isUnitConfigured();
         $hasTax = $this->configurationService->isTaxConfigured();
 
-        if ($this->configurationService->isConfigured()) {
+        if ($this->configurationService->isApplicationReady()) {
             $hasUnit = false;
             $hasTax = false;
         }

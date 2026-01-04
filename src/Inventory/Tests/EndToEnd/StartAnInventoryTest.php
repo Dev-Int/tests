@@ -152,7 +152,6 @@ final class StartAnInventoryTest extends BasePantherTestCase
 
         $client->clickLink($translator->trans('inventory.titlePage'));
 
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('inventory.titlePage'));
 
         // Assert - No start button should be visible (inventory is not DRAFT)

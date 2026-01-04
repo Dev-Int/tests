@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Inventory\Adapters\Controller\Symfony\Controller\GetInventories;
 
 use Inventory\UseCases\GetInventories\GetInventories;
+use Shared\Adapters\Attribute\RequireApplicationReady;
 use Shared\Adapters\Controller\Symfony\Controller\HomeController;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,12 +22,14 @@ use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[AsController]
+#[RequireApplicationReady]
 final class GetInventoriesController extends AbstractController
 {
     public const string ROUTE_NAME = 'inventory_index';
 
-    public function __construct(private readonly GetInventories $useCase)
-    {
+    public function __construct(
+        private readonly GetInventories $useCase,
+    ) {
     }
 
     #[Route(path: 'inventories', name: self::ROUTE_NAME, methods: ['GET'])]

@@ -50,4 +50,11 @@ return static function (ContainerConfigurator $configurator): void {
     )
         ->public()
     ;
+
+    $services->alias(
+        id: 'Shared\Contracts\ApplicationReadinessProvider',
+        referencedId: 'Admin\Adapters\Gateway\ConfigurationService'
+    )
+        ->public()
+    ;
 };

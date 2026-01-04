@@ -26,8 +26,10 @@ deptrac:
             - Admin\Entities
             - Admin\UseCases
             - Admin\Contracts
+            - Shared\Contracts
             - Shared\Entities
         Admin\Contracts:
             - Admin\Adapters
+            - Shared\Contracts
             - Shared\Entities
     skip_violations: []

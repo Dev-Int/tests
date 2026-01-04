@@ -13,13 +13,12 @@ declare(strict_types=1);
 
 namespace Inventory\Adapters\Controller\Symfony\Controller\CreateInventory;
 
-use Admin\Contracts\Services\Provider\ConfigurationServiceProvider;
-use Admin\Contracts\Services\Provider\Exception\NoArticleRegistered;
 use Inventory\Adapters\Controller\Symfony\Controller\GetInventories\GetInventoriesController;
 use Inventory\Adapters\Form\Type\CreateInventoryType;
 use Inventory\Entities\VO\ZoneStorage;
 use Inventory\UseCases\CreateInventory\CreateInventory;
 use Inventory\UseCases\Gateway\ZoneStorageGatewayInterface;
+use Shared\Adapters\Attribute\RequireApplicationReady;
 use Shared\Entities\ResourceUuid;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,13 +28,13 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsController]
+#[RequireApplicationReady]
 final class CreateInventoryController extends AbstractController
 {
     public const string ROUTE_NAME = 'inventory_create';
 
     public function __construct(
         private readonly CreateInventory $useCase,
-        private readonly ConfigurationServiceProvider $configurationService,
         private readonly TranslatorInterface $translator,
         private readonly ZoneStorageGatewayInterface $zoneStorageGateway,
     ) {
@@ -44,11 +43,6 @@ final class CreateInventoryController extends AbstractController
     #[Route(path: 'inventories/create', name: self::ROUTE_NAME, methods: ['GET', 'POST'])]
     public function __invoke(Request $request): Response
     {
-        if (!$this->configurationService->isArticleConfigured()) {
-            $this->addFlash('error', NoArticleRegistered::MESSAGE);
-
-            return $this->redirectToRoute(ConfigurationServiceProvider::ROUTE_NAME);
-        }
         $form = $this->createForm(CreateInventoryType::class, new CreateInventoryInput(), [
             'action' => $this->generateUrl(self::ROUTE_NAME),
             'attr' => ['data-turbo-frame' => '_top'],

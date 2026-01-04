@@ -60,13 +60,11 @@ final class CreateAnInventoryTest extends BasePantherTestCase
 
         $client->clickLink($translator->trans('inventory.titlePage'));
 
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('inventory.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('inventory.titlePage'));
 
         $client->clickLink($translator->trans('inventory.create.titleShort'));
 
-        $client->wait(1);
         $client->waitForVisibility('form[name="createInventory"]');
         $client->waitForElementToContain(
             'turbo-frame#inventory_create h3',
@@ -79,8 +77,6 @@ final class CreateAnInventoryTest extends BasePantherTestCase
 
         $client->waitForVisibility('button[type="submit"]');
 
-        // Wait for form to be fully loaded
-        $client->wait(1);
         self::assertSelectorExists('input[name="createInventory[date]"][data-controller="datepicker"]');
         self::assertSelectorExists('select[name="createInventory[zoneStorages][]"]');
 
@@ -94,7 +90,8 @@ final class CreateAnInventoryTest extends BasePantherTestCase
         );
         $client->submitForm($translator->trans('add'));
 
-        $client->wait(1);
+        $client->waitForElementToContain('h1', $translator->trans('inventory.titlePage'));
+
         $getInventoriesUrl = $router->generate(GetInventoriesController::ROUTE_NAME);
         self::assertStringContainsString($getInventoriesUrl, $client->getCurrentURL());
 
@@ -102,10 +99,8 @@ final class CreateAnInventoryTest extends BasePantherTestCase
             'turbo-frame#inventory_create h3',
             $translator->trans('inventory.create.titlePage')
         );
-        $client->waitForElementToContain('h1', $translator->trans('inventory.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('inventory.titlePage'));
 
-        $client->wait(1);
         self::assertSelectorTextContains('ul.table', $expectedDate);
 
         self::assertCount(1, InventoryFactory::all());
@@ -133,12 +128,10 @@ final class CreateAnInventoryTest extends BasePantherTestCase
 
         $client->clickLink($translator->trans('inventory.titlePage'));
 
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('inventory.titlePage'));
 
         $client->clickLink($translator->trans('inventory.create.titleShort'));
 
-        $client->wait(1);
         $client->waitForVisibility('form[name="createInventory"]');
         $client->waitForElementToContain(
             'turbo-frame#inventory_create h3',
@@ -153,7 +146,6 @@ final class CreateAnInventoryTest extends BasePantherTestCase
         );
         $client->submitForm($translator->trans('add'));
 
-        $client->wait(2);
         $client->waitForElementToContain('h1', $translator->trans('inventory.titlePage'));
 
         self::assertCount(0, InventoryFactory::all());
@@ -178,12 +170,10 @@ final class CreateAnInventoryTest extends BasePantherTestCase
 
         $client->clickLink($translator->trans('inventory.titlePage'));
 
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('inventory.titlePage'));
 
         $client->clickLink($translator->trans('inventory.create.titleShort'));
 
-        $client->wait(1);
         $client->waitForVisibility('form[name="createInventory"]');
         $client->waitForElementToContain(
             'turbo-frame#inventory_create h3',
@@ -212,7 +202,6 @@ final class CreateAnInventoryTest extends BasePantherTestCase
             ],
         ]);
 
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('inventory.titlePage'));
 
         self::assertCount(1, InventoryFactory::all());

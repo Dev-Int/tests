@@ -35,11 +35,6 @@ final readonly class ConfigurationService implements ConfigurationServiceProvide
     ) {
     }
 
-    public function isConfigured(): bool
-    {
-        return $this->isArticleConfigured();
-    }
-
     public function isCompanyConfigured(): bool
     {
         return $this->companyRepository->hasCompany();
@@ -90,5 +85,10 @@ final readonly class ConfigurationService implements ConfigurationServiceProvide
         $hasArticle = $this->articleRepository->hasArticle();
 
         return $this->isSupplierConfigured() && $hasArticle;
+    }
+
+    public function isApplicationReady(): bool
+    {
+        return $this->isArticleConfigured();
     }
 }

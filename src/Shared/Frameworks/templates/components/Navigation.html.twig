@@ -1,0 +1,18 @@
+<nav>
+    <ul>
+        <li class="navbar-brand">
+            <a href="{{ path('home') }}" class="logo">Application</a>
+        </li>
+    </ul>
+    <ul>
+        <li><a href="{{ path('admin_index') }}" role="button">{{ 'admin.titlePage'|trans }}</a></li>
+        <li>
+            <twig:Button:NavLink
+                href="{{ path('inventory_index') }}"
+                label="{{ 'inventory.titlePage'|trans }}"
+                :disabled="not this.isApplicationReady()"
+            />
+        </li>
+        <li><a href="#" role="button">{{ 'connection'|trans }}</a></li>
+    </ul>
+</nav>
