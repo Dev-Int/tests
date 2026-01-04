@@ -19,6 +19,7 @@ use Inventory\Adapters\Gateway\ORM\Entity\InventoryStatus;
 use Inventory\Tests\Factory\InventoryFactory;
 use Inventory\Tests\Story\InventoryStory;
 use Shared\Adapters\Exception\ApplicationNotReady;
+use Shared\Adapters\Gateway\Pagination\Pagination;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -104,8 +105,8 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
         self::assertSelectorTextContains('h1', $translator->trans('inventory.titlePage'));
 
         // Verify inventory is displayed with date and status
-        // Note: We filter out inventory_create turbo-frame
-        $inventoryRows = $crawler->filter('turbo-frame[id^="inventory_"]:not(#inventory_create)');
+        // Note: We filter out inventory_create and inventory_paginated turbo-frames
+        $inventoryRows = $crawler->filter('turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)');
         self::assertCount(1, $inventoryRows);
         self::assertStringContainsString($futureDate->format('Y-m-d'), $inventoryRows->text());
         self::assertStringContainsString('draft', $inventoryRows->text());
@@ -167,7 +168,7 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
 
         // Assert
         self::assertResponseIsSuccessful();
-        $inventoryRow = $crawler->filter('turbo-frame[id^="inventory_"]:not(#inventory_create)');
+        $inventoryRow = $crawler->filter('turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)');
         self::assertStringContainsString('draft', $inventoryRow->text());
     }
 
@@ -313,7 +314,7 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
 
         // Assert
         self::assertResponseIsSuccessful();
-        $inventoryRows = $crawler->filter('turbo-frame[id^="inventory_"]:not(#inventory_create)');
+        $inventoryRows = $crawler->filter('turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)');
         self::assertCount(3, $inventoryRows);
     }
 
@@ -329,5 +330,99 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
         self::assertResponseIsSuccessful();
         $backButton = $crawler->filter('a[href="/"]');
         self::assertGreaterThan(0, $backButton->count());
+    }
+
+    public function testGetInventoriesPaginatedDisplaysOnlyFirstPage(): void
+    {
+        // Arrange
+        InventoryStory::load();
+        $now = ClockFactory::clock()->now();
+        $zoneStorages = ZoneStorageFactory::all();
+        $zoneUuid = $zoneStorages[0]->_real()->uuid();
+
+        // Create 30 inventories to force pagination (25 per page)
+        for ($i = 0; $i < 30; $i++) {
+            InventoryFactory::createOne([
+                'date' => $now->modify("+{$i} days"),
+                'zoneStorages' => [$zoneUuid],
+                'status' => InventoryStatus::DRAFT->value,
+                'createdAt' => $now,
+                'updatedAt' => $now,
+                'statusUpdatedAt' => $now,
+            ]);
+        }
+
+        // Act
+        $crawler = $this->client->request(Request::METHOD_GET, self::GET_INVENTORIES_URI);
+
+        // Assert
+        self::assertResponseIsSuccessful();
+        $inventoryRows = $crawler->filter('turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)');
+        self::assertCount(Pagination::DEFAULT_ITEMS_PER_PAGE, $inventoryRows);
+    }
+
+    public function testGetInventoriesSecondPageDisplaysRemainingItems(): void
+    {
+        // Arrange
+        InventoryStory::load();
+        $now = ClockFactory::clock()->now();
+        $zoneStorages = ZoneStorageFactory::all();
+        $zoneUuid = $zoneStorages[0]->_real()->uuid();
+
+        // Create 30 inventories
+        for ($i = 0; $i < 30; $i++) {
+            InventoryFactory::createOne([
+                'date' => $now->modify("+{$i} days"),
+                'zoneStorages' => [$zoneUuid],
+                'status' => InventoryStatus::DRAFT->value,
+                'createdAt' => $now,
+                'updatedAt' => $now,
+                'statusUpdatedAt' => $now,
+            ]);
+        }
+
+        // Act - Request page 2
+        $crawler = $this->client->request(
+            Request::METHOD_GET,
+            self::GET_INVENTORIES_URI . '?page=2&itemsPerPage=25'
+        );
+
+        // Assert - Should show remaining 5 items (30 - 25 = 5)
+        self::assertResponseIsSuccessful();
+        $inventoryRows = $crawler->filter('turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)');
+        self::assertCount(5, $inventoryRows);
+    }
+
+    public function testGetInventoriesPaginationComponentNotDisplayedWhenFewItems(): void
+    {
+        // Arrange
+        InventoryStory::load();
+        $now = ClockFactory::clock()->now();
+        $zoneStorages = ZoneStorageFactory::all();
+        $zoneUuid = $zoneStorages[0]->_real()->uuid();
+
+        // Create only 5 inventories (less than 25)
+        for ($i = 0; $i < 5; $i++) {
+            InventoryFactory::createOne([
+                'date' => $now->modify("+{$i} days"),
+                'zoneStorages' => [$zoneUuid],
+                'status' => InventoryStatus::DRAFT->value,
+                'createdAt' => $now,
+                'updatedAt' => $now,
+                'statusUpdatedAt' => $now,
+            ]);
+        }
+
+        // Act
+        $crawler = $this->client->request(Request::METHOD_GET, self::GET_INVENTORIES_URI);
+
+        // Assert - Pagination nav should not be displayed (only 1 page)
+        self::assertResponseIsSuccessful();
+        $inventoryRows = $crawler->filter('turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)');
+        self::assertCount(5, $inventoryRows);
+
+        // Pagination component exists but nav is hidden (totalPages <= 1)
+        $paginationNav = $crawler->filter('#pagination nav');
+        self::assertCount(0, $paginationNav);
     }
 }

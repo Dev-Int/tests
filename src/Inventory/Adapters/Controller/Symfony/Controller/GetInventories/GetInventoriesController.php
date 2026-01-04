@@ -16,7 +16,9 @@ namespace Inventory\Adapters\Controller\Symfony\Controller\GetInventories;
 use Inventory\UseCases\GetInventories\GetInventories;
 use Shared\Adapters\Attribute\RequireApplicationReady;
 use Shared\Adapters\Controller\Symfony\Controller\HomeController;
+use Shared\Adapters\Gateway\Pagination\Pagination;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
@@ -33,19 +35,25 @@ final class GetInventoriesController extends AbstractController
     }
 
     #[Route(path: 'inventories', name: self::ROUTE_NAME, methods: ['GET'])]
-    public function __invoke(): Response
+    public function __invoke(Request $request): Response
     {
+        $page = $request->query->getInt('page', Pagination::DEFAULT_PAGE);
+        $itemsPerPage = $request->query->getInt('itemsPerPage', Pagination::DEFAULT_ITEMS_PER_PAGE);
+
         try {
-            $inventories = $this->useCase->execute();
+            $response = $this->useCase->execute(new GetInventoriesApiRequest($page, $itemsPerPage));
         } catch (\DomainException $exception) {
             $this->addFlash('error', $exception->getMessage());
 
             return $this->redirectToRoute(HomeController::ROUTE_NAME);
         }
-        $presenter = new GetInventoryPresenter($inventories->inventories);
+
+        $presenter = new GetInventoryPresenter($response->inventories);
+        $pagination = new Pagination($response->inventories->count(), $page, $itemsPerPage);
 
         return $this->render('@inventory/index.html.twig', [
             'inventories' => $presenter->present(),
+            'pagination' => $pagination,
         ]);
     }
 }

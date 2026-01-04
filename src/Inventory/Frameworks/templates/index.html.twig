@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block importmap %}
-    {{ importmap('app') }}
+    {{ importmap(['app', 'pagination']) }}
 {% endblock %}
 
 {% block body %}
@@ -23,78 +23,81 @@
                     />
                 </turbo-frame>
             </div>
-            <ul class="table">
-                <li class="li-unstyled flex-between head">
-                    <span>{{ 'inventory.form.date.label'|trans }}</span>
-                    <span>{{ 'inventory.status.label'|trans }}</span>
-                    <span>{{ 'inventory.form.zoneStorages.label'|trans }}</span>
-                    <span>{{ 'actions'|trans }}</span>
-                </li>
-                {% for inventory in inventories %}
-                   <turbo-frame id="inventory_{{ inventory.uuid }}">
-                       <li class="li-unstyled flex-between">
-                           <span>{{ inventory.date }}</span>
-                           <span>{{ inventory.status }}</span>
-                           <span class="zones-list">
-                               {% for zone in inventory.zoneStorageIds %}
-                                   <div class="zone-item">
-                                       <span>{{ zone.label }}</span>
-                                       {% if inventory.status == 'inProgress' %}
-                                           <twig:Button:UpdateEntity
-                                               href="{{ path('inventory_zone_record_stock', {inventoryUuid: inventory.uuid, zoneStorageUuid: zone.uuid}) }}"
-                                               class="btn-small"
-                                               label="{{ 'inventory.zone.record.button'|trans }}"
-                                               data-turbo-frame="_top"
-                                           />
-                                       {% endif %}
-                                   </div>
-                               {% endfor %}
-                           </span>
-                           <span class="actions-group">
-                               {% if inventory.status == 'draft' %}
-                                   <form action="{{ path('inventory_start', {inventoryUuid: inventory.uuid}) }}" method="post" style="display: inline;" data-turbo-frame="_top">
-                                       <button type="submit" class="btn btn-small btn-primary">
-                                           <i class="fa-solid fa-play"></i> {{ 'inventory.start.button'|trans }}
-                                       </button>
-                                   </form>
-                               {% endif %}
-                               {% if inventory.status == 'inProgress' and inventory.allItemsCounted %}
-                                   <form action="{{ path('inventory_finish_counting', {inventoryUuid: inventory.uuid}) }}" method="post" style="display: inline;" data-turbo-frame="_top">
-                                       <button type="submit" class="btn btn-small btn-success">
-                                           <i class="fa-solid fa-check"></i> {{ 'inventory.finish_counting.button'|trans }}
-                                       </button>
-                                   </form>
-                               {% endif %}
-                               {% if inventory.status == 'review' %}
-                                   {% if inventory.hasUnreviewedDiscrepancies %}
-                                       <a href="{{ path('inventory_review', {inventoryUuid: inventory.uuid}) }}"
-                                          class="btn btn-small btn-warning"
-                                          role="button"
-                                          data-turbo-frame="_top">
-                                           <i class="fa-solid fa-magnifying-glass"></i> {{ 'inventory.review.button'|trans }}
-                                       </a>
-                                   {% endif %}
-                                   {% if not inventory.hasUnreviewedDiscrepancies %}
-                                       <form action="{{ path('inventory_complete', {inventoryUuid: inventory.uuid}) }}" method="post" style="display: inline;" data-turbo-frame="_top">
-                                           <button type="submit" class="btn btn-small btn-success">
-                                               <i class="fa-solid fa-check-circle"></i> {{ 'inventory.complete.submit'|trans }}
+            <turbo-frame id="inventory_paginated">
+                <ul class="table">
+                    <li class="li-unstyled flex-between head">
+                        <span>{{ 'inventory.form.date.label'|trans }}</span>
+                        <span>{{ 'inventory.status.label'|trans }}</span>
+                        <span>{{ 'inventory.form.zoneStorages.label'|trans }}</span>
+                        <span>{{ 'actions'|trans }}</span>
+                    </li>
+                    {% for inventory in inventories %}
+                       <turbo-frame id="inventory_{{ inventory.uuid }}">
+                           <li class="li-unstyled flex-between">
+                               <span>{{ inventory.date }}</span>
+                               <span>{{ inventory.status }}</span>
+                               <span class="zones-list">
+                                   {% for zone in inventory.zoneStorageIds %}
+                                       <div class="zone-item">
+                                           <span>{{ zone.label }}</span>
+                                           {% if inventory.status == 'inProgress' %}
+                                               <twig:Button:UpdateEntity
+                                                   href="{{ path('inventory_zone_record_stock', {inventoryUuid: inventory.uuid, zoneStorageUuid: zone.uuid}) }}"
+                                                   class="btn-small"
+                                                   label="{{ 'inventory.zone.record.button'|trans }}"
+                                                   data-turbo="false"
+                                               />
+                                           {% endif %}
+                                       </div>
+                                   {% endfor %}
+                               </span>
+                               <span class="actions-group">
+                                   {% if inventory.status == 'draft' %}
+                                       <form action="{{ path('inventory_start', {inventoryUuid: inventory.uuid}) }}" method="post" style="display: inline;" data-turbo="false">
+                                           <button type="submit" class="btn btn-small btn-primary">
+                                               <i class="fa-solid fa-play"></i> {{ 'inventory.start.button'|trans }}
                                            </button>
                                        </form>
                                    {% endif %}
-                               {% endif %}
-                               {% if inventory.isCancellable %}
-                                  <form action="{{ path('inventory_cancel', {inventoryUuid: inventory.uuid}) }}" method="post" style="display: inline;" data-turbo-frame="_top">
-                                      <button type="submit" class="btn btn-small btn-secondary" onclick="return confirm('{{ 'inventory.cancel.confirm'|trans }}')">
-                                          <i class="fa-solid fa-ban"></i> {{ 'inventory.cancel.button'|trans }}
-                                      </button>
-                                  </form>
-                              {% endif %}
-                           </span>
-                       </li>
-                   </turbo-frame>
-                {% endfor %}
-            </ul>
+                                   {% if inventory.status == 'inProgress' and inventory.allItemsCounted %}
+                                       <form action="{{ path('inventory_finish_counting', {inventoryUuid: inventory.uuid}) }}" method="post" style="display: inline;" data-turbo="false">
+                                           <button type="submit" class="btn btn-small btn-success">
+                                               <i class="fa-solid fa-check"></i> {{ 'inventory.finish_counting.button'|trans }}
+                                           </button>
+                                       </form>
+                                   {% endif %}
+                                   {% if inventory.status == 'review' %}
+                                       {% if inventory.hasUnreviewedDiscrepancies %}
+                                           <a href="{{ path('inventory_review', {inventoryUuid: inventory.uuid}) }}"
+                                              class="btn btn-small btn-warning"
+                                              role="button"
+                                              data-turbo="false">
+                                               <i class="fa-solid fa-magnifying-glass"></i> {{ 'inventory.review.button'|trans }}
+                                           </a>
+                                       {% endif %}
+                                       {% if not inventory.hasUnreviewedDiscrepancies %}
+                                           <form action="{{ path('inventory_complete', {inventoryUuid: inventory.uuid}) }}" method="post" style="display: inline;" data-turbo="false">
+                                               <button type="submit" class="btn btn-small btn-success">
+                                                   <i class="fa-solid fa-check-circle"></i> {{ 'inventory.complete.submit'|trans }}
+                                               </button>
+                                           </form>
+                                       {% endif %}
+                                   {% endif %}
+                                   {% if inventory.isCancellable %}
+                                      <form action="{{ path('inventory_cancel', {inventoryUuid: inventory.uuid}) }}" method="post" style="display: inline;" data-turbo="false">
+                                          <button type="submit" class="btn btn-small btn-secondary" onclick="return confirm('{{ 'inventory.cancel.confirm'|trans }}')">
+                                              <i class="fa-solid fa-ban"></i> {{ 'inventory.cancel.button'|trans }}
+                                          </button>
+                                      </form>
+                                  {% endif %}
+                               </span>
+                           </li>
+                       </turbo-frame>
+                    {% endfor %}
+                </ul>
 
+                <twig:Pagination page="{{ pagination.page }}" itemsPerPage="{{ pagination.itemsPerPage }}" totalPages="{{ pagination.totalPages }}" route="inventory_index" />
+            </turbo-frame>
             <twig:Button:BackTo href="{{ path('home') }}" label="{{ 'home.titlePage'|trans }}" />
         </article>
     </main>

@@ -3,7 +3,7 @@
 namespace {BC}\Tests\EndToEnd\{Entity};
 
 use {BC}\Tests\Factory\{Entity}Factory;
-use App\Shared\Tests\BasePantherTestCase;
+use Shared\Tests\BasePantherTestCase;
 use Symfony\Component\Panther\PantherTestCase;
 use Zenstruck\Foundry\Test\Factories;
 

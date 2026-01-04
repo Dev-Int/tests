@@ -277,7 +277,7 @@ final readonly class ArticleData {
 - Foundry for fixtures
 - Medium speed (~550ms)
 
-**Base class**: `App\Shared\Tests\BaseFunctionalTestCase`
+**Base class**: `Shared\Tests\BaseFunctionalTestCase`
 
 **Setup**: Foundry (auto-persist)
 
@@ -298,7 +298,7 @@ final readonly class ArticleData {
 - MUST start from `/`
 - Slow (~700ms)
 
-**Base class**: `App\Shared\Tests\BasePantherTestCase`
+**Base class**: `Shared\Tests\BasePantherTestCase`
 
 **Critical rule**: ALWAYS `$client->request('GET', '/')` first
 

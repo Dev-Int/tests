@@ -24,7 +24,7 @@
             </div>
 
             {% if discrepancyCount > 0 %}
-                {{ form_start(form) }}
+                {{ form_start(form, {'attr': {'data-turbo': 'false'}}) }}
                     <table class="table">
                         <thead>
                             <tr>
@@ -82,7 +82,7 @@
                         <p class="text-muted">{{ 'inventory.resume_counting.confirm'|trans }}</p>
                         <div class="grid">
                             {% for zone in zonesWithUnreviewedItems %}
-                                <form method="post" action="{{ path('inventory_resume_counting', {
+                                <form method="post" data-turbo="false" action="{{ path('inventory_resume_counting', {
                                     'inventoryUuid': inventory.uuid.toString,
                                     'zoneStorageUuid': zone.uuid
                                 }) }}">

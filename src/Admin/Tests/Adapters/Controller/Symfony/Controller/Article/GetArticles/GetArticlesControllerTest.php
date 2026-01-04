@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Article\GetArticles;
 
-use Admin\Adapters\Gateway\Pagination\Pagination;
 use Admin\Entities\Exception\Article\NoArticleRegistered;
 use Admin\Tests\Factory\ArticleFactory;
 use Admin\Tests\Factory\FamilyLogFactory;
@@ -23,6 +22,7 @@ use Admin\Tests\Factory\UnitFactory;
 use Admin\Tests\Factory\ZoneStorageFactory;
 use Faker\Factory;
 use FakerRestaurant\Provider\fr_FR\Restaurant;
+use Shared\Adapters\Gateway\Pagination\Pagination;
 use Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

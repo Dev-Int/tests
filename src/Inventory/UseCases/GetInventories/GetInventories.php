@@ -21,9 +21,12 @@ final readonly class GetInventories
     {
     }
 
-    public function execute(): GetInventoriesResponse
+    public function execute(GetInventoriesRequest $request): GetInventoriesResponse
     {
-        $inventories = $this->repository->getAllInventories();
+        $inventories = $this->repository->getAllInventoriesPaginated(
+            $request->page(),
+            $request->itemsPerPage()
+        );
 
         return new GetInventoriesResponse($inventories);
     }

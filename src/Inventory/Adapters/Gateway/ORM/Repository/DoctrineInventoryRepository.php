@@ -16,6 +16,7 @@ namespace Inventory\Adapters\Gateway\ORM\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\ParameterType;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 use Inventory\Adapters\Gateway\ORM\Entity\Inventory;
 use Inventory\Adapters\Gateway\ORM\Entity\InventoryItem;
@@ -121,23 +122,21 @@ final class DoctrineInventoryRepository extends ServiceEntityRepository implemen
         $this->getEntityManager()->flush();
     }
 
-    public function getAllInventories(): InventoryCollection
+    public function getAllInventoriesPaginated(int $page, int $itemsPerPage): InventoryCollection
     {
-        $count = $this->count([]);
-
         $alias = self::ALIAS;
-        $inventories = $this->createQueryBuilder($alias)
+        $query = $this->createQueryBuilder($alias)
+            ->orderBy($alias . '.date', 'DESC')
+            ->setFirstResult(($page - 1) * $itemsPerPage)
+            ->setMaxResults($itemsPerPage)
             ->getQuery()
-            ->getResult()
         ;
-        if (!\is_array($inventories) || $inventories === []) {
-            return new InventoryCollection(0);
-        }
 
-        $collection = new InventoryCollection($count);
+        $paginator = new Paginator($query, fetchJoinCollection: true);
+        $collection = new InventoryCollection($paginator->count());
 
         /** @var Inventory $inventory */
-        foreach ($inventories as $inventory) {
+        foreach ($paginator as $inventory) {
             $collection->add($this->mapper->toDomain($inventory));
         }
 
