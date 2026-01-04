@@ -53,20 +53,14 @@ final class CreateFirstUnitTest extends BasePantherTestCase
         self::assertSelectorTextContains('h1', $translator->trans('home.welcome'));
 
         $client->clickLink($translator->trans('admin.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.configuration.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.titlePage'));
 
         $client->clickLink($translator->trans('admin.configuration.application.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.configuration.application.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.application.titlePage'));
 
         $client->clickLink($translator->trans('admin.unit.create.titleShort'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.unit.create.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.unit.create.titlePage'));
 
@@ -80,12 +74,11 @@ final class CreateFirstUnitTest extends BasePantherTestCase
             'createUnit[abbreviation]' => $unitAbbreviation,
         ]);
 
-        $client->wait(2);
+        $client->waitForVisibility('ul.table');
         $getUnitsUrl = $router->generate(GetUnitsController::ROUTE_NAME);
         self::assertStringContainsString($getUnitsUrl, $client->getCurrentURL());
 
         // Vérifier qu'on a quitté la page de création
-        $client->wait(1);
         self::assertStringNotContainsString(
             $router->generate(CreateUnitController::ROUTE_NAME),
             $client->getCurrentURL()
@@ -116,20 +109,14 @@ final class CreateFirstUnitTest extends BasePantherTestCase
         self::assertSelectorTextContains('h1', $translator->trans('home.welcome'));
 
         $client->clickLink($translator->trans('admin.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.configuration.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.titlePage'));
 
         $client->clickLink($translator->trans('admin.configuration.application.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.configuration.application.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.application.titlePage'));
 
         $client->clickLink($translator->trans('admin.unit.create.titleShort'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.unit.create.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.unit.create.titlePage'));
 
@@ -141,8 +128,7 @@ final class CreateFirstUnitTest extends BasePantherTestCase
 
         // Cliquer sur Cancel
         $client->clickLink($translator->trans('cancel'));
-
-        $client->wait(2);
+        $client->waitForElementToContain('h1', $translator->trans('admin.configuration.titlePage'));
         $configureUrl = $router->generate(ConfigurationController::ROUTE_NAME);
         self::assertStringContainsString($configureUrl, $client->getCurrentURL());
         self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.titlePage'));

@@ -28,9 +28,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 final class SuppliersPaginationTest extends BasePantherTestCase
 {
-    private const DEFAULT_ITEMS_PER_PAGE = 25;
-    private const SUPPLIERS_FOR_THREE_PAGES = 75;
-    private const SUPPLIERS_WITH_PARTIAL_LAST_PAGE = 65;
+    private const int DEFAULT_ITEMS_PER_PAGE = 25;
+    private const int SUPPLIERS_FOR_THREE_PAGES = 75;
+    private const int SUPPLIERS_WITH_PARTIAL_LAST_PAGE = 65;
 
     public function testNavigateToSecondPage(): void
     {
@@ -47,16 +47,12 @@ final class SuppliersPaginationTest extends BasePantherTestCase
 
         // Act
         $client->request('GET', $router->generate(GetSuppliersController::ROUTE_NAME));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.supplier.titlePage'));
 
         self::assertSelectorExists('a.page-link.active[aria-label="Current"]');
         self::assertSelectorTextContains('a.page-link.active', '1');
 
         $client->clickLink('2');
-
-        $client->wait(1);
         $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
 
         // Assert
@@ -80,18 +76,16 @@ final class SuppliersPaginationTest extends BasePantherTestCase
 
         // Act
         $client->request('GET', $router->generate(GetSuppliersController::ROUTE_NAME));
-        $client->wait(1);
+        $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
 
         // Le lien '3' n'est pas visible depuis la page 1, il faut d'abord aller à la page 2
         $client->clickLink('>');
-        $client->wait(1);
         $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
 
         self::assertSelectorTextContains('a.page-link.active', '2');
 
         // Maintenant on peut cliquer sur '3'
         $client->clickLink('3');
-        $client->wait(1);
         $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
 
         // Assert
@@ -115,10 +109,9 @@ final class SuppliersPaginationTest extends BasePantherTestCase
 
         // Act
         $client->request('GET', $router->generate(GetSuppliersController::ROUTE_NAME));
-        $client->wait(1);
+        $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
 
         $client->clickLink('»');
-        $client->wait(1);
         $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
 
         // Assert
@@ -142,12 +135,11 @@ final class SuppliersPaginationTest extends BasePantherTestCase
 
         // Act
         $client->request('GET', $router->generate(GetSuppliersController::ROUTE_NAME, ['page' => 2]));
-        $client->wait(1);
+        $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
 
         self::assertSelectorTextContains('a.page-link.active', '2');
 
         $client->clickLink('1');
-        $client->wait(1);
         $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
 
         // Assert
@@ -171,7 +163,7 @@ final class SuppliersPaginationTest extends BasePantherTestCase
 
         // Act - Page 1
         $client->request('GET', $router->generate(GetSuppliersController::ROUTE_NAME, ['page' => 1]));
-        $client->wait(1);
+        $client->waitForVisibility('ul.table > turbo-frame[id^="supplier_"]');
 
         // Assert
         $crawler = $client->getCrawler();
@@ -184,7 +176,6 @@ final class SuppliersPaginationTest extends BasePantherTestCase
 
         // Act - Page 2
         $client->clickLink('2');
-        $client->wait(1);
         $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
 
         // Assert
@@ -198,7 +189,6 @@ final class SuppliersPaginationTest extends BasePantherTestCase
 
         // Act - Page 3
         $client->clickLink('3');
-        $client->wait(1);
         $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
 
         // Assert
@@ -223,7 +213,7 @@ final class SuppliersPaginationTest extends BasePantherTestCase
 
         // Act
         $client->request('GET', $router->generate(GetSuppliersController::ROUTE_NAME, ['page' => 3]));
-        $client->wait(1);
+        $client->waitForVisibility('ul.table > turbo-frame[id^="supplier_"]');
 
         // Assert
         $expectedItemsOnLastPage = self::SUPPLIERS_WITH_PARTIAL_LAST_PAGE - (2 * self::DEFAULT_ITEMS_PER_PAGE);
@@ -254,12 +244,11 @@ final class SuppliersPaginationTest extends BasePantherTestCase
 
         // Act - Page 1 -> Page 2
         $client->request('GET', $router->generate(GetSuppliersController::ROUTE_NAME));
-        $client->wait(1);
+        $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
 
         self::assertSelectorTextContains('a.page-link.active', '1');
 
         $client->clickLink('>');
-        $client->wait(1);
         $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
 
         // Assert - On page 2
@@ -272,7 +261,6 @@ final class SuppliersPaginationTest extends BasePantherTestCase
 
         // Act - Page 2 -> Page 3
         $client->clickLink('>');
-        $client->wait(1);
         $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
 
         // Assert - On page 3
@@ -296,13 +284,12 @@ final class SuppliersPaginationTest extends BasePantherTestCase
 
         // Act - Start on page 3
         $client->request('GET', $router->generate(GetSuppliersController::ROUTE_NAME, ['page' => 3]));
-        $client->wait(1);
+        $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
 
         self::assertSelectorTextContains('a.page-link.active', '3');
 
         // Act - Page 3 -> Page 2
         $client->clickLink('<');
-        $client->wait(1);
         $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
 
         // Assert - On page 2
@@ -315,7 +302,6 @@ final class SuppliersPaginationTest extends BasePantherTestCase
 
         // Act - Page 2 -> Page 1
         $client->clickLink('<');
-        $client->wait(1);
         $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
 
         // Assert - On page 1
@@ -339,7 +325,7 @@ final class SuppliersPaginationTest extends BasePantherTestCase
 
         // Act - Go to last page
         $client->request('GET', $router->generate(GetSuppliersController::ROUTE_NAME, ['page' => 3]));
-        $client->wait(1);
+        $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
 
         // Assert
         self::assertSelectorTextContains('a.page-link.active', '3');
@@ -377,7 +363,7 @@ final class SuppliersPaginationTest extends BasePantherTestCase
 
         // Act - Go to first page
         $client->request('GET', $router->generate(GetSuppliersController::ROUTE_NAME));
-        $client->wait(1);
+        $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
 
         // Assert
         self::assertSelectorTextContains('a.page-link.active', '1');
@@ -415,7 +401,7 @@ final class SuppliersPaginationTest extends BasePantherTestCase
 
         // Act
         $client->request('GET', $router->generate(GetSuppliersController::ROUTE_NAME));
-        $client->wait(1);
+        $client->waitForVisibility('ul.table > turbo-frame[id^="supplier_"]');
 
         $crawler = $client->getCrawler();
         $suppliers = $crawler->filter('ul.table > turbo-frame[id^="supplier_"]');
@@ -427,8 +413,6 @@ final class SuppliersPaginationTest extends BasePantherTestCase
         $itemsPerPageSelect = $form->get('itemsPerPage');
         $itemsPerPageSelect->select('50');
         $client->submit($form);
-
-        $client->wait(1);
         $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
 
         // Assert
@@ -460,7 +444,7 @@ final class SuppliersPaginationTest extends BasePantherTestCase
 
         // Act - Changer pour 50 items par page
         $client->request('GET', $router->generate(GetSuppliersController::ROUTE_NAME));
-        $client->wait(1);
+        $client->waitForVisibility('ul.table > turbo-frame[id^="supplier_"]');
 
         $crawler = $client->getCrawler();
         $form = $crawler->selectButton('Pagination')->form();
@@ -469,14 +453,11 @@ final class SuppliersPaginationTest extends BasePantherTestCase
         $itemsPerPageSelect = $form->get('itemsPerPage');
         $itemsPerPageSelect->select('50');
         $client->submit($form);
-
-        $client->wait(1);
         $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
 
         self::assertStringContainsString('itemsPerPage=50', $client->getCurrentURL());
 
         $client->clickLink('2');
-        $client->wait(1);
         $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
 
         // Assert

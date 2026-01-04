@@ -41,16 +41,10 @@ final class UpdateACompanyTest extends BasePantherTestCase
         // Act && Assert
         $client->request('GET', '/');
         $client->clickLink($translator->trans('admin.titlePage'));
-
-        // Wait for Turbo to initialize
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.titlePage'));
 
         $client->clickLink($translator->trans('admin.company.titlePage'));
-
-        // Wait for Turbo to initialize
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.company.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.company.titlePage'));
 
@@ -58,9 +52,6 @@ final class UpdateACompanyTest extends BasePantherTestCase
             'admin.company.update.titleShort',
             ['%companyName%' => 'Dev-Int Création']
         ));
-
-        // Wait for Turbo Frame to update (should stay on the same page)
-        $client->wait(1);
         $client->waitForElementToContain('h3', 'Modifier');
 
         // Assert - h1 from index.html.twig (should stay on the index page with Turbo Frame)

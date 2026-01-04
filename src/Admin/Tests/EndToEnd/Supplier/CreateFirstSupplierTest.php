@@ -102,14 +102,10 @@ final class CreateFirstSupplierTest extends BasePantherTestCase
         self::assertSelectorTextContains('h1', $translator->trans('home.welcome'));
 
         $client->clickLink($translator->trans('admin.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.configuration.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.titlePage'));
 
         $client->clickLink($translator->trans('admin.supplier.create.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.supplier.create.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.supplier.create.titlePage'));
 
@@ -134,12 +130,11 @@ final class CreateFirstSupplierTest extends BasePantherTestCase
             'createSupplier[orderDays]' => [0, 2],  // Lundi, Mercredi
         ]);
 
-        $client->wait(2);
+        $client->waitForVisibility('ul.table');
         $getSuppliersUrl = $router->generate(GetSuppliersController::ROUTE_NAME);
         self::assertStringContainsString($getSuppliersUrl, $client->getCurrentURL());
 
         // Vérifier qu'on a quitté la page de création
-        $client->wait(1);
         self::assertStringNotContainsString(
             $router->generate(CreateSupplierController::ROUTE_NAME),
             $client->getCurrentURL()
@@ -211,14 +206,10 @@ final class CreateFirstSupplierTest extends BasePantherTestCase
         self::assertSelectorTextContains('h1', $translator->trans('home.welcome'));
 
         $client->clickLink($translator->trans('admin.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.configuration.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.titlePage'));
 
         $client->clickLink($translator->trans('admin.supplier.create.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.supplier.create.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.supplier.create.titlePage'));
 
@@ -230,8 +221,7 @@ final class CreateFirstSupplierTest extends BasePantherTestCase
 
         // Cliquer sur Cancel
         $client->clickLink($translator->trans('cancel'));
-
-        $client->wait(2);
+        $client->waitForElementToContain('h1', $translator->trans('admin.configuration.titlePage'));
         $configureUrl = $router->generate(ConfigurationController::ROUTE_NAME);
         self::assertStringContainsString($configureUrl, $client->getCurrentURL());
         self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.titlePage'));

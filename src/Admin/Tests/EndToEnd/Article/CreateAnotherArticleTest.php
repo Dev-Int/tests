@@ -48,22 +48,16 @@ final class CreateAnotherArticleTest extends BasePantherTestCase
         self::assertSelectorTextContains('h1', $translator->trans('home.welcome'));
 
         $client->clickLink($translator->trans('admin.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.titlePage'));
 
         $client->clickLink($translator->trans('admin.article.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.article.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.article.titlePage'));
 
         $client->clickLink($translator->trans('admin.article.create.titleShort'));
-
-        $client->wait(1);
-        self::assertSelectorTextContains('h1', $translator->trans('admin.article.titlePage'));
         $client->waitForVisibility('turbo-frame#article_create h3');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.article.titlePage'));
         self::assertSelectorTextContains(
             'turbo-frame#article_create h3',
             $translator->trans('admin.article.create.titlePage')
@@ -93,11 +87,9 @@ final class CreateAnotherArticleTest extends BasePantherTestCase
             'createArticle[quantity]' => 10.0,
         ]);
 
-        $client->wait(2);
+        $client->waitForVisibility('ul.table');
         $getArticlesUrl = $router->generate(GetArticlesController::ROUTE_NAME);
         self::assertStringContainsString($getArticlesUrl, $client->getCurrentURL());
-
-        $client->wait(1);
         self::assertSelectorTextContains('ul.table', $articleName);
 
         // Vérifier qu'on a quitté la page de création
@@ -125,22 +117,16 @@ final class CreateAnotherArticleTest extends BasePantherTestCase
         self::assertSelectorTextContains('h1', $translator->trans('home.welcome'));
 
         $client->clickLink($translator->trans('admin.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.titlePage'));
 
         $client->clickLink($translator->trans('admin.article.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.article.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.article.titlePage'));
 
         $client->clickLink($translator->trans('admin.article.create.titleShort'));
-
-        $client->wait(1);
-        self::assertSelectorTextContains('h1', $translator->trans('admin.article.titlePage'));
         $client->waitForVisibility('turbo-frame#article_create h3');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.article.titlePage'));
         self::assertSelectorTextContains(
             'turbo-frame#article_create h3',
             $translator->trans('admin.article.create.titlePage')
@@ -153,8 +139,7 @@ final class CreateAnotherArticleTest extends BasePantherTestCase
         self::assertSelectorTextContains($cancelButtonSelector, $translator->trans('cancel'));
 
         $client->clickLink($translator->trans('cancel'));
-
-        $client->wait(2);
+        $client->waitForElementToContain('h1', $translator->trans('admin.article.titlePage'));
         $getArticlesUrl = $router->generate(GetArticlesController::ROUTE_NAME);
         self::assertStringContainsString($getArticlesUrl, $client->getCurrentURL());
         self::assertSelectorTextContains('h1', $translator->trans('admin.article.titlePage'));

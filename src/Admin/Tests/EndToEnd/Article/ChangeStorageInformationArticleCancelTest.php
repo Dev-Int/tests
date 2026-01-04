@@ -43,23 +43,17 @@ final class ChangeStorageInformationArticleCancelTest extends BasePantherTestCas
         self::assertSelectorTextContains('h1', $translator->trans('home.welcome'));
 
         $client->clickLink($translator->trans('admin.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.titlePage'));
 
         $client->clickLink($translator->trans('admin.article.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.article.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.article.titlePage'));
 
         $changeStorageInfoButtonText = $translator->trans('admin.article.changeStorageInformation.button');
         $client->clickLink($changeStorageInfoButtonText);
-
-        $client->wait(1);
-        self::assertSelectorTextContains('h1', $translator->trans('admin.article.titlePage'));
         $client->waitForVisibility(\sprintf('turbo-frame#article_%s h3', $article->uuid()->toString()));
+        self::assertSelectorTextContains('h1', $translator->trans('admin.article.titlePage'));
         self::assertSelectorTextContains(
             \sprintf('turbo-frame#article_%s h3', $article->uuid()->toString()),
             $translator->trans(
@@ -75,8 +69,7 @@ final class ChangeStorageInformationArticleCancelTest extends BasePantherTestCas
         self::assertSelectorTextContains($cancelButtonSelector, $translator->trans('cancel'));
 
         $client->clickLink($translator->trans('cancel'));
-
-        $client->wait(2);
+        $client->waitForElementToContain('h1', $translator->trans('admin.article.titlePage'));
         $getArticlesUrl = $router->generate(GetArticlesController::ROUTE_NAME);
         self::assertStringContainsString($getArticlesUrl, $client->getCurrentURL());
         self::assertSelectorTextContains('h1', $translator->trans('admin.article.titlePage'));

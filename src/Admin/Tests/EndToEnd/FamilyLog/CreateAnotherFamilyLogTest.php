@@ -43,22 +43,16 @@ final class CreateAnotherFamilyLogTest extends BasePantherTestCase
         self::assertSelectorTextContains('h1', $translator->trans('home.welcome'));
 
         $client->clickLink($translator->trans('admin.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.titlePage'));
 
         $client->clickLink($translator->trans('admin.familyLog.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.familyLog.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.familyLog.titlePage'));
 
         $client->clickLink($translator->trans('admin.familyLog.create.titleShort'));
-
-        $client->wait(1);
-        self::assertSelectorTextContains('h1', $translator->trans('admin.familyLog.titlePage'));
         $client->waitForVisibility('turbo-frame#familyLog_create h3');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.familyLog.titlePage'));
         self::assertSelectorTextContains(
             'turbo-frame#familyLog_create h3',
             $translator->trans('admin.familyLog.create.titlePage')
@@ -72,12 +66,11 @@ final class CreateAnotherFamilyLogTest extends BasePantherTestCase
             'createFamilyLog[label]' => $familyLogLabel,
         ]);
 
-        $client->wait(2);
+        $client->waitForVisibility('ul.table');
         $getFamilyLogsUrl = $router->generate(GetFamilyLogsController::ROUTE_NAME);
         self::assertStringContainsString($getFamilyLogsUrl, $client->getCurrentURL());
 
         // Vérifier que le nouveau family log apparaît dans la liste
-        $client->wait(1);
         self::assertSelectorTextContains('ul.table', $familyLogLabel);
 
         // Vérifier qu'on a quitté la page de création
@@ -105,22 +98,16 @@ final class CreateAnotherFamilyLogTest extends BasePantherTestCase
         self::assertSelectorTextContains('h1', $translator->trans('home.welcome'));
 
         $client->clickLink($translator->trans('admin.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.titlePage'));
 
         $client->clickLink($translator->trans('admin.familyLog.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.familyLog.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.familyLog.titlePage'));
 
         $client->clickLink($translator->trans('admin.familyLog.create.titleShort'));
-
-        $client->wait(1);
-        self::assertSelectorTextContains('h1', $translator->trans('admin.familyLog.titlePage'));
         $client->waitForVisibility('turbo-frame#familyLog_create h3');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.familyLog.titlePage'));
         self::assertSelectorTextContains(
             'turbo-frame#familyLog_create h3',
             $translator->trans('admin.familyLog.create.titlePage')
@@ -133,8 +120,7 @@ final class CreateAnotherFamilyLogTest extends BasePantherTestCase
         self::assertSelectorTextContains($cancelButtonSelector, $translator->trans('cancel'));
 
         $client->clickLink($translator->trans('cancel'));
-
-        $client->wait(2);
+        $client->waitForElementToContain('h1', $translator->trans('admin.familyLog.titlePage'));
         $getFamilyLogsUrl = $router->generate(GetFamilyLogsController::ROUTE_NAME);
         self::assertStringContainsString($getFamilyLogsUrl, $client->getCurrentURL());
         self::assertSelectorTextContains('h1', $translator->trans('admin.familyLog.titlePage'));
@@ -159,22 +145,16 @@ final class CreateAnotherFamilyLogTest extends BasePantherTestCase
         self::assertSelectorTextContains('h1', $translator->trans('home.welcome'));
 
         $client->clickLink($translator->trans('admin.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.titlePage'));
 
         $client->clickLink($translator->trans('admin.familyLog.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.familyLog.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.familyLog.titlePage'));
 
         $client->clickLink($translator->trans('admin.familyLog.create.titleShort'));
-
-        $client->wait(1);
-        self::assertSelectorTextContains('h1', $translator->trans('admin.familyLog.titlePage'));
         $client->waitForVisibility('turbo-frame#familyLog_create h3');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.familyLog.titlePage'));
         self::assertSelectorTextContains(
             'turbo-frame#familyLog_create h3',
             $translator->trans('admin.familyLog.create.titlePage')
@@ -189,12 +169,11 @@ final class CreateAnotherFamilyLogTest extends BasePantherTestCase
             'createFamilyLog[parent]' => $parentFamilyLog->uuid()->toString(),
         ]);
 
-        $client->wait(2);
+        $client->waitForVisibility('ul.table');
         $getFamilyLogsUrl = $router->generate(GetFamilyLogsController::ROUTE_NAME);
         self::assertStringContainsString($getFamilyLogsUrl, $client->getCurrentURL());
 
         // Vérifier que le nouveau family log apparaît dans la liste
-        $client->wait(1);
         self::assertSelectorTextContains('ul.table', $familyLogLabel);
 
         // Vérifier que le parent est aussi affiché dans la liste

@@ -43,24 +43,18 @@ final class RenameSupplierCancelTest extends BasePantherTestCase
         self::assertSelectorTextContains('h1', $translator->trans('home.welcome'));
 
         $client->clickLink($translator->trans('admin.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.titlePage'));
 
         $client->clickLink($translator->trans('admin.supplier.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.supplier.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.supplier.titlePage'));
 
         // Cliquer sur le bouton "Renommer" du premier fournisseur
         $renameButtonText = $translator->trans('admin.supplier.rename.button');
         $client->clickLink($renameButtonText);
-
-        $client->wait(1);
-        self::assertSelectorTextContains('h1', $translator->trans('admin.supplier.titlePage'));
         $client->waitForVisibility(\sprintf('turbo-frame#supplier_%s h3', $supplier->uuid()->toString()));
+        self::assertSelectorTextContains('h1', $translator->trans('admin.supplier.titlePage'));
         self::assertSelectorTextContains(
             \sprintf('turbo-frame#supplier_%s h3', $supplier->uuid()->toString()),
             $translator->trans('admin.supplier.rename.titlePage', ['%supplierName%' => $supplier->name()->toString()])
@@ -73,8 +67,7 @@ final class RenameSupplierCancelTest extends BasePantherTestCase
         self::assertSelectorTextContains($cancelButtonSelector, $translator->trans('cancel'));
 
         $client->clickLink($translator->trans('cancel'));
-
-        $client->wait(2);
+        $client->waitForElementToContain('h1', $translator->trans('admin.supplier.titlePage'));
         $getSuppliersUrl = $router->generate(GetSuppliersController::ROUTE_NAME);
         self::assertStringContainsString($getSuppliersUrl, $client->getCurrentURL());
         self::assertSelectorTextContains('h1', $translator->trans('admin.supplier.titlePage'));

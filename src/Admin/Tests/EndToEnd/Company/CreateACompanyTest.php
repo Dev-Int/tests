@@ -36,14 +36,10 @@ final class CreateACompanyTest extends BasePantherTestCase
         self::assertSelectorTextContains('h1', $translator->trans('home.welcome'));
 
         $client->clickLink($translator->trans('admin.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.configuration.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.titlePage'));
 
         $client->clickLink($translator->trans('admin.company.create.titleShort'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.company.create.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.company.create.titlePage'));
 
@@ -60,7 +56,6 @@ final class CreateACompanyTest extends BasePantherTestCase
             'createCompany[contact]' => 'Laurent',
         ]);
 
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.configuration.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.titlePage'));
 
@@ -91,22 +86,16 @@ final class CreateACompanyTest extends BasePantherTestCase
         self::assertSelectorTextContains('h1', $translator->trans('home.welcome'));
 
         $client->clickLink($translator->trans('admin.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.configuration.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.titlePage'));
 
         $client->clickLink($translator->trans('admin.company.create.titleShort'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.company.create.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.company.create.titlePage'));
 
         $client->waitForVisibility('a[role="button"][aria-label="Cancel"]');
 
         $client->clickLink($translator->trans('cancel'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.configuration.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.titlePage'));
 
