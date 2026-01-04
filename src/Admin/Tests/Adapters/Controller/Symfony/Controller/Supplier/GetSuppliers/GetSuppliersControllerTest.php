@@ -13,11 +13,11 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Supplier\GetSuppliers;
 
-use Admin\Adapters\Gateway\Pagination\Pagination;
 use Admin\Entities\Exception\Supplier\NoSupplierRegistered;
 use Admin\Tests\Factory\FamilyLogFactory;
 use Admin\Tests\Factory\SupplierFactory;
 use Faker\Factory;
+use Shared\Entities\Pagination\Pagination;
 use Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

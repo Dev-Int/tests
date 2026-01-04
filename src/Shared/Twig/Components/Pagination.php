@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Shared\Twig\Components;
 
-use Admin\Adapters\Gateway\Pagination\Pagination as BasePagination;
+use Shared\Entities\Pagination\Pagination as BasePagination;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -32,12 +32,18 @@ final class Pagination extends AbstractController
     public int $itemsPerPage = BasePagination::DEFAULT_ITEMS_PER_PAGE;
     #[LiveProp]
     public int $totalPages;
+    #[LiveProp]
+    public string $route = '';
 
     #[LiveAction]
     public function paginate(): Response
     {
+        if ($this->route === '') {
+            throw new \LogicException('Pagination route must be set');
+        }
+
         return $this->redirectToRoute(
-            route: 'admin_articles_index',
+            route: $this->route,
             parameters: ['page' => $this->page, 'itemsPerPage' => $this->itemsPerPage]
         );
     }

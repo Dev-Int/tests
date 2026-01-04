@@ -89,6 +89,24 @@ Complete documentation index for the project.
 
 ---
 
+## Bounded Contexts Documentation
+
+### Inventory BC
+
+**File**: [inventory-implementation-plan.md](inventory-implementation-plan.md)
+
+**Content**:
+- Vision et objectifs du BC Inventory (comptage physique)
+- Workflow : DRAFT → IN_PROGRESS → REVIEW → COMPLETED
+- UseCases implémentés (9 total)
+- Tests E2E du workflow complet
+- Intégration avec Admin BC (Contract pattern)
+- **Pagination** : Liste paginée des inventaires (25 items/page)
+
+**When to read**: Working on Inventory features, understanding stock counting workflow
+
+---
+
 ## AI Skills & Workflows
 
 **Index**: [../.claude/README.md](../.claude/README.md)

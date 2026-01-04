@@ -354,13 +354,26 @@ Contrairement aux approches traditionnelles qui créent d'abord toutes les entit
 ---
 
 ### ✅ Itération 6 : Finitions
-**Status** : ✅ Terminé  
+**Status** : ✅ Terminé
 **Estimation** : 1 jour
 
 - [x] **Liste Inventaires** : Page index avec filtres (status, date) - `GetInventories`
 - [x] **Détail Inventaire** : Page show avec items et écarts
 - [x] **DataBuilders + Factories** (Foundry)
 - [x] **QA Complète** (phpstan, cs-fixer, deptrac, coverage)
+
+---
+
+### ✅ Itération 7 : Pagination
+**Status** : ✅ Terminé
+**GitHub Issue** : #200
+**Estimation** : 0.5 jour
+
+- [x] **Pagination côté serveur** : `GetInventoriesRequest` avec `page()` et `itemsPerPage()`
+- [x] **Repository paginé** : `getAllInventoriesPaginated()` avec Doctrine Paginator
+- [x] **Composant UI** : Réutilisation du LiveComponent `Shared\Twig\Components\Pagination`
+- [x] **Tests fonctionnels** : 3 tests de pagination ajoutés
+- [x] **Refactoring** : Classe `Pagination` déplacée vers `Shared\Entities\Pagination`
 
 ---
 
@@ -377,6 +390,7 @@ Contrairement aux approches traditionnelles qui créent d'abord toutes les entit
 | Itération 4 : Workflow REVIEW + Finalisation | #170 | ✅ Terminé | 100% |
 | Itération 5 : Annuler Inventaire | #166 | ✅ Terminé | 100% |
 | Itération 6 : Finitions | N/A | ✅ Terminé | 100% |
+| Itération 7 : Pagination | #200 | ✅ Terminé | 100% |
 | **TOTAL** | | | **100%** |
 
 ### Légende Status
@@ -535,6 +549,6 @@ Après implémentation complète d'Inventory, la roadmap prévoit :
 
 ---
 
-**Document créé le** : 2025-12-13  
-**Dernière mise à jour** : 2026-01-04 (Mise à jour statuts - Ticket #198)  
+**Document créé le** : 2025-12-13
+**Dernière mise à jour** : 2026-01-04 (Pagination liste inventaires - Issue #200)
 **Maintenu par** : Claude Code + Laurent

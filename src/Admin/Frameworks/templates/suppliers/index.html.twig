@@ -59,7 +59,7 @@
                     {% endfor %}
                 </ul>
 
-                <twig:Pagination page="{{ pagination.page }}" itemsPerPage="{{ pagination.itemsPerPage }}" totalPages="{{ pagination.totalPages }}" />
+                <twig:Pagination page="{{ pagination.page }}" itemsPerPage="{{ pagination.itemsPerPage }}" totalPages="{{ pagination.totalPages }}" route="admin_suppliers_index" />
             </turbo-frame>
             <twig:Button:BackTo href="{{ path('admin_index') }}" label="{{ 'admin.adminButton'|trans }}" />
         </article>

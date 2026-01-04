@@ -29,7 +29,7 @@ interface InventoryRepository
 
     public function start(Inventory $inventory): void;
 
-    public function getAllInventories(): InventoryCollection;
+    public function getAllInventoriesPaginated(int $page, int $itemsPerPage): InventoryCollection;
 
     /**
      * @throws InventoryNotFound
