@@ -27,7 +27,7 @@ use Zenstruck\Foundry\Test\Factories;
 /**
  * @group e2eTest
  */
-final class CompleteInventoryE2ETest extends BasePantherTestCase
+final class CompleteAnInventoryTest extends BasePantherTestCase
 {
     use Factories;
     use InventoryE2ETestTrait;
@@ -88,7 +88,6 @@ final class CompleteInventoryE2ETest extends BasePantherTestCase
         $client->waitForVisibility('.flash-success');
         $flash = $client->getCrawler()->filter('.flash-success')->text();
         self::assertStringContainsString($translator->trans('inventory.start.success'), $flash);
-        $client->wait(1);
 
         // === Step 3: Record stocks with different values (create discrepancies) ===
         $recordStockButton = $client->getCrawler()->filterXPath(
@@ -118,12 +117,10 @@ final class CompleteInventoryE2ETest extends BasePantherTestCase
         $client->waitForVisibility('.flash-success');
         $flash = $client->getCrawler()->filter('.flash-success')->text();
         self::assertStringContainsString($translator->trans('inventory.zone.record.success'), $flash);
-        $client->wait(2);
 
         // === Step 4: Finish counting (IN_PROGRESS -> REVIEW) ===
         $client->request('GET', '/inventories');
         $client->waitForElementToContain('h1', $translator->trans('inventory.titlePage'));
-        $client->wait(1);
 
         $finishButton = $client->getCrawler()->filterXPath(
             \sprintf(
@@ -138,7 +135,6 @@ final class CompleteInventoryE2ETest extends BasePantherTestCase
         $client->waitForVisibility('.flash-success');
         $flash = $client->getCrawler()->filter('.flash-success')->text();
         self::assertStringContainsString($translator->trans('inventory.finish_counting.success'), $flash);
-        $client->wait(1);
 
         // === Step 5: Review discrepancies ===
         // Verify inventory is in REVIEW status
@@ -153,7 +149,6 @@ final class CompleteInventoryE2ETest extends BasePantherTestCase
         // Reload page to get fresh UI
         $client->request('GET', '/inventories');
         $client->waitForElementToContain('h1', $translator->trans('inventory.titlePage'));
-        $client->wait(1);
 
         $reviewLink = $client->getCrawler()->filterXPath(
             \sprintf(
@@ -179,7 +174,6 @@ final class CompleteInventoryE2ETest extends BasePantherTestCase
         // === Step 6: Mark all items as reviewed ===
         // Check all checkboxes using JavaScript
         $client->executeScript('document.querySelectorAll(\'.item-checkbox\').forEach(cb => cb.checked = true);');
-        $client->wait(1);
 
         // Find and click the submit button
         $submitButton = $client->getCrawler()->filterXPath(
@@ -191,12 +185,10 @@ final class CompleteInventoryE2ETest extends BasePantherTestCase
         $client->waitForVisibility('.flash-success');
         $flash = $client->getCrawler()->filter('.flash-success')->text();
         self::assertStringContainsString($translator->trans('inventory.review.items_reviewed'), $flash);
-        $client->wait(1);
 
         // === Step 7: Complete inventory (REVIEW -> COMPLETED) ===
         $client->request('GET', '/inventories');
         $client->waitForElementToContain('h1', $translator->trans('inventory.titlePage'));
-        $client->wait(1);
 
         $completeButton = $client->getCrawler()->filterXPath(
             \sprintf(

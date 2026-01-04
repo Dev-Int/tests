@@ -26,7 +26,7 @@ use Zenstruck\Foundry\Test\Factories;
 /**
  * @group e2eTest
  */
-final class ResumeCountingE2ETest extends BasePantherTestCase
+final class ResumeCountingAnInventoryTest extends BasePantherTestCase
 {
     use Factories;
     use InventoryE2ETestTrait;
@@ -76,7 +76,6 @@ final class ResumeCountingE2ETest extends BasePantherTestCase
         );
         $startButton->first()->click();
         $client->waitForVisibility('.flash-success');
-        $client->wait(1);
 
         // Record stocks with different values to create discrepancies
         $recordStockButton = $client->getCrawler()->filterXPath(
@@ -97,12 +96,10 @@ final class ResumeCountingE2ETest extends BasePantherTestCase
         });
         $client->submitForm($translator->trans('inventory.zone.record.submit'), $formData);
         $client->waitForVisibility('.flash-success');
-        $client->wait(2);
 
         // Finish counting
         $client->request('GET', '/inventories');
         $client->waitForElementToContain('h1', $translator->trans('inventory.titlePage'));
-        $client->wait(1);
 
         $finishButton = $client->getCrawler()->filterXPath(
             \sprintf(
@@ -114,7 +111,6 @@ final class ResumeCountingE2ETest extends BasePantherTestCase
         self::assertCount(1, $finishButton, 'Finish counting button should be visible');
         $finishButton->first()->click();
         $client->waitForVisibility('.flash-success');
-        $client->wait(1);
 
         // Verify inventory is in REVIEW status before looking for Review button
         $this->flushAndClearEntityManager();
@@ -128,7 +124,6 @@ final class ResumeCountingE2ETest extends BasePantherTestCase
         // Act - Navigate to review page and resume counting
         $client->request('GET', '/inventories');
         $client->waitForElementToContain('h1', $translator->trans('inventory.titlePage'));
-        $client->wait(1);
 
         $reviewLink = $client->getCrawler()->filterXPath(
             \sprintf(
@@ -147,7 +142,9 @@ final class ResumeCountingE2ETest extends BasePantherTestCase
         );
         self::assertCount(1, $detailsSummary, 'Resume counting section should be visible');
         $detailsSummary->first()->click();
-        $client->wait(1);
+
+        // Wait for accordion content to be visible (details[open] means accordion is expanded)
+        $client->waitForVisibility('details[open] button');
 
         // Click on the zone button to resume counting
         $resumeZoneButton = $client->getCrawler()->filterXPath(

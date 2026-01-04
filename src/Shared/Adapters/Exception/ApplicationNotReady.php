@@ -15,11 +15,11 @@ namespace Shared\Adapters\Exception;
 
 use Shared\Entities\Exception\ExceptionSerializableTrait;
 
-final class ApplicationNotAlreadyConfigured extends \RuntimeException implements \JsonSerializable
+final class ApplicationNotReady extends \RuntimeException implements \JsonSerializable
 {
     use ExceptionSerializableTrait;
 
-    public const string MESSAGE = 'Application is not already configured.';
+    public const string MESSAGE = 'Application is not ready.';
 
     public function __construct()
     {

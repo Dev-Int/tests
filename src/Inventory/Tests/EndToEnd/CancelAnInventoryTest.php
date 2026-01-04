@@ -26,7 +26,7 @@ use Zenstruck\Foundry\Test\Factories;
 /**
  * @group e2eTest
  */
-final class CancelInventoryE2ETest extends BasePantherTestCase
+final class CancelAnInventoryTest extends BasePantherTestCase
 {
     use Factories;
     use InventoryE2ETestTrait;
@@ -133,7 +133,6 @@ final class CancelInventoryE2ETest extends BasePantherTestCase
         );
         $startButton->first()->click();
         $client->waitForVisibility('.flash-success');
-        $client->wait(1);
 
         // Act - Now cancel from IN_PROGRESS
         $client->executeScript('window.confirm = () => true;');
@@ -197,7 +196,6 @@ final class CancelInventoryE2ETest extends BasePantherTestCase
         );
         $startButton->first()->click();
         $client->waitForVisibility('.flash-success');
-        $client->wait(1);
 
         // Record stocks for the zone to be able to finish counting
         $recordStockButton = $client->getCrawler()->filterXPath(
@@ -219,12 +217,10 @@ final class CancelInventoryE2ETest extends BasePantherTestCase
         });
         $client->submitForm($translator->trans('inventory.zone.record.submit'), $formData);
         $client->waitForVisibility('.flash-success');
-        $client->wait(2);
 
         // Finish counting to get to REVIEW state - reload page to get fresh data
         $client->request('GET', '/inventories');
         $client->waitForElementToContain('h1', $translator->trans('inventory.titlePage'));
-        $client->wait(1);
 
         $finishButton = $client->getCrawler()->filterXPath(
             \sprintf(
@@ -236,7 +232,6 @@ final class CancelInventoryE2ETest extends BasePantherTestCase
         self::assertCount(1, $finishButton, 'Finish counting button should be visible when all items counted');
         $finishButton->first()->click();
         $client->waitForVisibility('.flash-success');
-        $client->wait(1);
 
         // Act - Now cancel from REVIEW
         $client->request('GET', '/inventories');

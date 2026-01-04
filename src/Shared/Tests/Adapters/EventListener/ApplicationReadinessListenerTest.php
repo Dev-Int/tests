@@ -15,7 +15,7 @@ namespace Shared\Tests\Adapters\EventListener;
 
 use PHPUnit\Framework\TestCase;
 use Shared\Adapters\EventListener\ApplicationReadinessListener;
-use Shared\Adapters\Exception\ApplicationNotAlreadyConfigured;
+use Shared\Adapters\Exception\ApplicationNotReady;
 use Shared\Contracts\ApplicationReadinessProvider;
 use Shared\Tests\Adapters\EventListener\Fixtures\CustomAttributeController;
 use Shared\Tests\Adapters\EventListener\Fixtures\DefaultAttributeController;
@@ -76,7 +76,7 @@ final class ApplicationReadinessListenerTest extends TestCase
 
         $flashes = $session->getFlashBag()->get('error');
         self::assertCount(1, $flashes);
-        self::assertSame(ApplicationNotAlreadyConfigured::MESSAGE, $flashes[0]);
+        self::assertSame(ApplicationNotReady::MESSAGE, $flashes[0]);
     }
 
     public function testAllowsAccessWhenApplicationReady(): void

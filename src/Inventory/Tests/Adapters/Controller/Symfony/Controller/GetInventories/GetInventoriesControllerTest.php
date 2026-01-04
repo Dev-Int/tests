@@ -18,7 +18,7 @@ use Inventory\Adapters\Controller\Symfony\Controller\GetInventories\GetInventori
 use Inventory\Adapters\Gateway\ORM\Entity\InventoryStatus;
 use Inventory\Tests\Factory\InventoryFactory;
 use Inventory\Tests\Story\InventoryStory;
-use Shared\Adapters\Exception\ApplicationNotAlreadyConfigured;
+use Shared\Adapters\Exception\ApplicationNotReady;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -67,7 +67,7 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
         $crawler = $this->client->followRedirect();
         $flash = $crawler->filter('.flash-error')->text();
 
-        self::assertSame(ApplicationNotAlreadyConfigured::MESSAGE, $flash);
+        self::assertSame(ApplicationNotReady::MESSAGE, $flash);
     }
 
     public function testGetInventoriesRouteNameConstantExists(): void

@@ -13,14 +13,14 @@ declare(strict_types=1);
 
 namespace Shared\Adapters\Attribute;
 
-use Shared\Adapters\Exception\ApplicationNotAlreadyConfigured;
+use Shared\Adapters\Exception\ApplicationNotReady;
 
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD)]
 final readonly class RequireApplicationReady
 {
     public function __construct(
         public string $redirectRoute = 'admin_configure',
-        public string $flashMessage = ApplicationNotAlreadyConfigured::MESSAGE,
+        public string $flashMessage = ApplicationNotReady::MESSAGE,
     ) {
     }
 }

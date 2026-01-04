@@ -14,10 +14,9 @@ declare(strict_types=1);
 namespace Admin\Contracts\Services\Provider;
 
 use Admin\Adapters\Controller\Symfony\Controller\ConfigurationController;
+use Shared\Contracts\ApplicationReadinessProvider;
 
-interface ConfigurationServiceProvider
+interface ConfigurationServiceProvider extends ApplicationReadinessProvider
 {
     public const string ROUTE_NAME = ConfigurationController::ROUTE_NAME;
-
-    public function isApplicationReady(): bool;
 }
