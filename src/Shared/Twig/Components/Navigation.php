@@ -13,19 +13,19 @@ declare(strict_types=1);
 
 namespace Shared\Twig\Components;
 
-use Admin\Contracts\Services\Provider\ConfigurationServiceProvider;
+use Shared\Contracts\ApplicationReadinessProvider;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 #[AsTwigComponent]
 final readonly class Navigation
 {
     public function __construct(
-        private ConfigurationServiceProvider $configurationService,
+        private ApplicationReadinessProvider $applicationReadinessProvider,
     ) {
     }
 
     public function isApplicationReady(): bool
     {
-        return $this->configurationService->isApplicationReady();
+        return $this->applicationReadinessProvider->isApplicationReady();
     }
 }

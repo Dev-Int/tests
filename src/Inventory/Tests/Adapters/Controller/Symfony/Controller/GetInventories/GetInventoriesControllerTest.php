@@ -13,12 +13,12 @@ declare(strict_types=1);
 
 namespace Inventory\Tests\Adapters\Controller\Symfony\Controller\GetInventories;
 
-use Admin\Contracts\Services\Provider\Exception\NoArticleRegistered;
 use Admin\Tests\Factory\ZoneStorageFactory;
 use Inventory\Adapters\Controller\Symfony\Controller\GetInventories\GetInventoriesController;
 use Inventory\Adapters\Gateway\ORM\Entity\InventoryStatus;
 use Inventory\Tests\Factory\InventoryFactory;
 use Inventory\Tests\Story\InventoryStory;
+use Shared\Adapters\Exception\ApplicationNotAlreadyConfigured;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -67,7 +67,7 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
         $crawler = $this->client->followRedirect();
         $flash = $crawler->filter('.flash-error')->text();
 
-        self::assertSame(NoArticleRegistered::MESSAGE, $flash);
+        self::assertSame(ApplicationNotAlreadyConfigured::MESSAGE, $flash);
     }
 
     public function testGetInventoriesRouteNameConstantExists(): void

@@ -21,8 +21,9 @@ use Admin\Entities\Repository\SupplierRepository;
 use Admin\Entities\Repository\TaxRepository;
 use Admin\Entities\Repository\UnitRepository;
 use Admin\Entities\Repository\ZoneStorageRepository;
+use Shared\Contracts\ApplicationReadinessProvider;
 
-final readonly class ConfigurationService implements ConfigurationServiceProvider
+final readonly class ConfigurationService implements ConfigurationServiceProvider, ApplicationReadinessProvider
 {
     public function __construct(
         private CompanyRepository $companyRepository,

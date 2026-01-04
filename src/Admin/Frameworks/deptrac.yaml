@@ -26,6 +26,7 @@ deptrac:
             - Admin\Entities
             - Admin\UseCases
             - Admin\Contracts
+            - Shared\Contracts
             - Shared\Entities
         Admin\Contracts:
             - Admin\Adapters
