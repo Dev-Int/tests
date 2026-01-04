@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Inventory\Adapters\Controller\Symfony\Controller\GetInventories;
 
+use Admin\Contracts\Services\Provider\ConfigurationServiceProvider;
+use Admin\Contracts\Services\Provider\Exception\NoArticleRegistered;
 use Inventory\UseCases\GetInventories\GetInventories;
 use Shared\Adapters\Controller\Symfony\Controller\HomeController;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,13 +27,21 @@ final class GetInventoriesController extends AbstractController
 {
     public const string ROUTE_NAME = 'inventory_index';
 
-    public function __construct(private readonly GetInventories $useCase)
-    {
+    public function __construct(
+        private readonly GetInventories $useCase,
+        private readonly ConfigurationServiceProvider $configurationService,
+    ) {
     }
 
     #[Route(path: 'inventories', name: self::ROUTE_NAME, methods: ['GET'])]
     public function __invoke(): Response
     {
+        if (!$this->configurationService->isArticleConfigured()) {
+            $this->addFlash('error', NoArticleRegistered::MESSAGE);
+
+            return $this->redirectToRoute(ConfigurationServiceProvider::ROUTE_NAME);
+        }
+
         try {
             $inventories = $this->useCase->execute();
         } catch (\DomainException $exception) {
