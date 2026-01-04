@@ -14,10 +14,16 @@ Inventory/
 │   ├── InventoryItemCollection.php
 │   ├── VO/            # Value Objects
 │   └── Exception/     # Exceptions métier
-├── UseCases/          # Cas d'usage
-│   ├── CreateAnInventory/
-│   ├── StartAnInventory/
-│   └── RecordRealStockForZone/
+├── UseCases/          # Cas d'usage (9 au total)
+│   ├── CreateInventory/           # Créer un nouvel inventaire
+│   ├── LoadArticlesAndStartInventory/  # Charger articles et démarrer
+│   ├── RecordRealStockForZone/    # Saisir le stock réel par zone
+│   ├── FinishCounting/            # Terminer le comptage (→ REVIEW)
+│   ├── ReviewDiscrepancies/       # Réviser les écarts
+│   ├── ResumeCountingFromReview/  # Reprendre comptage (← REVIEW)
+│   ├── CompleteInventory/         # Finaliser (→ COMPLETED)
+│   ├── CancelInventory/           # Annuler (→ CANCELLED)
+│   └── GetInventories/            # Lister les inventaires
 ├── Adapters/          # Infrastructure
 │   ├── Controller/
 │   └── Gateway/ORM/
@@ -124,3 +130,72 @@ Le `StockDifference` peut être :
 - **Positif** : surplus (plus compté que prévu)
 - **Négatif** : manque (moins compté que prévu)
 - **Zéro** : stock conforme
+
+## UseCases
+
+### Workflow complet
+
+```
+                    ┌──────────────────┐
+                    │  CreateInventory │
+                    └────────┬─────────┘
+                             │ (DRAFT)
+                             ▼
+              ┌───────────────────────────────┐
+              │ LoadArticlesAndStartInventory │
+              └──────────────┬────────────────┘
+                             │ (IN_PROGRESS)
+                             ▼
+              ┌──────────────────────────────┐
+              │    RecordRealStockForZone    │
+              │   (peut être appelé N fois)  │
+              └──────────────┬───────────────┘
+                             │
+                             ▼
+                    ┌─────────────────┐
+                    │  FinishCounting │
+                    └────────┬────────┘
+                             │ (REVIEW)
+                             ▼
+              ┌──────────────────────────────┐
+              │     ReviewDiscrepancies      │
+              └──────────────┬───────────────┘
+                             │
+              ┌──────────────┼──────────────┐
+              ▼              │              ▼
+┌────────────────────────┐   │     ┌────────────────────┐
+│ResumeCountingFromReview│   │     │  CompleteInventory │
+│  (retour IN_PROGRESS)  │   │     │    (COMPLETED)     │
+└─────────────┬──────────┘   │     └────────────────────┘
+              │              │
+              └──────────────┘
+
+                    ┌─────────────────┐
+                    │ CancelInventory │◄── Depuis DRAFT, IN_PROGRESS ou REVIEW
+                    │   (CANCELLED)   │
+                    └─────────────────┘
+```
+
+### Description des UseCases
+
+| UseCase | Description | Transition |
+|---------|-------------|------------|
+| **CreateInventory** | Crée un inventaire pour une date et des zones | → DRAFT |
+| **LoadArticlesAndStartInventory** | Charge les articles des zones et démarre le comptage | DRAFT → IN_PROGRESS |
+| **RecordRealStockForZone** | Enregistre le stock réel compté par zone (batch) | - |
+| **FinishCounting** | Termine le comptage, passe en révision des écarts | IN_PROGRESS → REVIEW |
+| **ReviewDiscrepancies** | Affiche et permet de valider les écarts | - |
+| **ResumeCountingFromReview** | Permet de corriger des erreurs de comptage | REVIEW → IN_PROGRESS |
+| **CompleteInventory** | Finalise l'inventaire et ajuste les stocks Article | REVIEW → COMPLETED |
+| **CancelInventory** | Annule l'inventaire sans ajustement | * → CANCELLED |
+| **GetInventories** | Liste les inventaires avec filtres | - |
+
+### Contracts (Inter-BC)
+
+Le BC Inventory communique avec Admin via des Contracts :
+
+| Contract | Description |
+|----------|-------------|
+| `ArticleForInventory` | Récupère les articles d'une zone pour le comptage |
+| `ArticleStockUpdater` | Ajuste les stocks Article lors de CompleteInventory |
+| `ZoneStorageGatewayInterface` | Récupère les zones de stockage |
