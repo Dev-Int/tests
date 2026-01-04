@@ -90,14 +90,10 @@ final class CreateFirstZoneStorageTest extends BasePantherTestCase
         self::assertSelectorTextContains('h1', $translator->trans('home.welcome'));
 
         $client->clickLink($translator->trans('admin.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.configuration.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.titlePage'));
 
         $client->clickLink($translator->trans('admin.zoneStorage.create.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.zoneStorage.create.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.zoneStorage.create.titlePage'));
 
@@ -112,12 +108,11 @@ final class CreateFirstZoneStorageTest extends BasePantherTestCase
             'createZoneStorage[familyLog]' => $familyLogOrm->uuid()->toString(),
         ]);
 
-        $client->wait(2);
+        $client->waitForVisibility('ul.table');
         $getZoneStoragesUrl = $router->generate(GetZoneStoragesController::ROUTE_NAME);
         self::assertStringContainsString($getZoneStoragesUrl, $client->getCurrentURL());
 
         // Vérifier qu'on a quitté la page de création
-        $client->wait(1);
         self::assertStringNotContainsString(
             $router->generate(CreateZoneStorageController::ROUTE_NAME),
             $client->getCurrentURL()
@@ -179,14 +174,10 @@ final class CreateFirstZoneStorageTest extends BasePantherTestCase
         self::assertSelectorTextContains('h1', $translator->trans('home.welcome'));
 
         $client->clickLink($translator->trans('admin.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.configuration.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.titlePage'));
 
         $client->clickLink($translator->trans('admin.zoneStorage.create.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.zoneStorage.create.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.zoneStorage.create.titlePage'));
 
@@ -197,8 +188,7 @@ final class CreateFirstZoneStorageTest extends BasePantherTestCase
         self::assertSelectorTextContains($cancelButtonSelector, $translator->trans('cancel'));
 
         $client->clickLink($translator->trans('cancel'));
-
-        $client->wait(2);
+        $client->waitForElementToContain('h1', $translator->trans('admin.configuration.titlePage'));
         $configureUrl = $router->generate(ConfigurationController::ROUTE_NAME);
         self::assertStringContainsString($configureUrl, $client->getCurrentURL());
         self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.titlePage'));

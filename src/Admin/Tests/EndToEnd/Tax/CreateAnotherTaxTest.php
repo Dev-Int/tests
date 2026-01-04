@@ -43,22 +43,16 @@ final class CreateAnotherTaxTest extends BasePantherTestCase
         self::assertSelectorTextContains('h1', $translator->trans('home.welcome'));
 
         $client->clickLink($translator->trans('admin.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.titlePage'));
 
         $client->clickLink($translator->trans('admin.tax.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.tax.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.tax.titlePage'));
 
         $client->clickLink($translator->trans('admin.tax.create.titleShort'));
-
-        $client->wait(1);
-        self::assertSelectorTextContains('h1', $translator->trans('admin.tax.titlePage'));
         $client->waitForVisibility('turbo-frame#tax_create h3');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.tax.titlePage'));
         self::assertSelectorTextContains(
             'turbo-frame#tax_create h3',
             $translator->trans('admin.tax.create.titlePage')
@@ -74,11 +68,9 @@ final class CreateAnotherTaxTest extends BasePantherTestCase
             'createTax[rate]' => $taxRate,
         ]);
 
-        $client->wait(2);
+        $client->waitForVisibility('ul.table');
         $getTaxesUrl = $router->generate(GetTaxesController::ROUTE_NAME);
         self::assertStringContainsString($getTaxesUrl, $client->getCurrentURL());
-
-        $client->wait(1);
         self::assertSelectorTextContains('ul.table', $taxName);
 
         self::assertStringNotContainsString(
@@ -105,22 +97,16 @@ final class CreateAnotherTaxTest extends BasePantherTestCase
         self::assertSelectorTextContains('h1', $translator->trans('home.welcome'));
 
         $client->clickLink($translator->trans('admin.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.titlePage'));
 
         $client->clickLink($translator->trans('admin.tax.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.tax.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.tax.titlePage'));
 
         $client->clickLink($translator->trans('admin.tax.create.titleShort'));
-
-        $client->wait(1);
-        self::assertSelectorTextContains('h1', $translator->trans('admin.tax.titlePage'));
         $client->waitForVisibility('turbo-frame#tax_create h3');
+        self::assertSelectorTextContains('h1', $translator->trans('admin.tax.titlePage'));
         self::assertSelectorTextContains(
             'turbo-frame#tax_create h3',
             $translator->trans('admin.tax.create.titlePage')
@@ -133,8 +119,7 @@ final class CreateAnotherTaxTest extends BasePantherTestCase
         self::assertSelectorTextContains($cancelButtonSelector, $translator->trans('cancel'));
 
         $client->clickLink($translator->trans('cancel'));
-
-        $client->wait(2);
+        $client->waitForElementToContain('h1', $translator->trans('admin.tax.titlePage'));
         $getTaxesUrl = $router->generate(GetTaxesController::ROUTE_NAME);
         self::assertStringContainsString($getTaxesUrl, $client->getCurrentURL());
         self::assertSelectorTextContains('h1', $translator->trans('admin.tax.titlePage'));

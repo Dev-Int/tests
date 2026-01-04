@@ -67,20 +67,14 @@ final class CreateFirstTaxTest extends BasePantherTestCase
         self::assertSelectorTextContains('h1', $translator->trans('home.welcome'));
 
         $client->clickLink($translator->trans('admin.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.configuration.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.titlePage'));
 
         $client->clickLink($translator->trans('admin.configuration.application.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.configuration.application.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.application.titlePage'));
 
         $client->clickLink($translator->trans('admin.tax.create.titleShort'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.tax.create.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.tax.create.titlePage'));
 
@@ -93,13 +87,11 @@ final class CreateFirstTaxTest extends BasePantherTestCase
             'createTax[name]' => $taxName,
             'createTax[rate]' => $taxRate,
         ]);
-
-        $client->wait(2);
+        $client->waitForVisibility('ul.table');
         $getTaxesUrl = $router->generate(GetTaxesController::ROUTE_NAME);
         self::assertStringContainsString($getTaxesUrl, $client->getCurrentURL());
 
         // Vérifier qu'on a quitté la page de création
-        $client->wait(1);
         self::assertStringNotContainsString(
             $router->generate(CreateTaxController::ROUTE_NAME),
             $client->getCurrentURL()
@@ -141,20 +133,14 @@ final class CreateFirstTaxTest extends BasePantherTestCase
         self::assertSelectorTextContains('h1', $translator->trans('home.welcome'));
 
         $client->clickLink($translator->trans('admin.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.configuration.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.titlePage'));
 
         $client->clickLink($translator->trans('admin.configuration.application.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.configuration.application.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.application.titlePage'));
 
         $client->clickLink($translator->trans('admin.tax.create.titleShort'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.tax.create.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.tax.create.titlePage'));
 
@@ -165,8 +151,7 @@ final class CreateFirstTaxTest extends BasePantherTestCase
         self::assertSelectorTextContains($cancelButtonSelector, $translator->trans('cancel'));
 
         $client->clickLink($translator->trans('cancel'));
-
-        $client->wait(2);
+        $client->waitForElementToContain('h1', $translator->trans('admin.configuration.titlePage'));
         $configureUrl = $router->generate(ConfigurationController::ROUTE_NAME);
         self::assertStringContainsString($configureUrl, $client->getCurrentURL());
         self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.titlePage'));

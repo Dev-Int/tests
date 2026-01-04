@@ -122,14 +122,10 @@ final class CreateFirstArticleTest extends BasePantherTestCase
         self::assertSelectorTextContains('h1', $translator->trans('home.welcome'));
 
         $client->clickLink($translator->trans('admin.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.configuration.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.titlePage'));
 
         $client->clickLink($translator->trans('admin.article.create.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.article.create.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.article.create.titlePage'));
 
@@ -160,8 +156,7 @@ final class CreateFirstArticleTest extends BasePantherTestCase
             'createArticle[familyLog]' => $familyLog2->uuid()->toString(),
             'createArticle[quantity]' => 12.500,
         ]);
-
-        $client->wait(2);
+        $client->waitForVisibility('ul.table');
         $getArticlesUrl = $router->generate(GetArticlesController::ROUTE_NAME);
         self::assertStringContainsString($getArticlesUrl, $client->getCurrentURL());
 
@@ -239,14 +234,10 @@ final class CreateFirstArticleTest extends BasePantherTestCase
         self::assertSelectorTextContains('h1', $translator->trans('home.welcome'));
 
         $client->clickLink($translator->trans('admin.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.configuration.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.configuration.titlePage'));
 
         $client->clickLink($translator->trans('admin.article.create.titlePage'));
-
-        $client->wait(1);
         $client->waitForElementToContain('h1', $translator->trans('admin.article.create.titlePage'));
         self::assertSelectorTextContains('h1', $translator->trans('admin.article.create.titlePage'));
 
@@ -257,8 +248,6 @@ final class CreateFirstArticleTest extends BasePantherTestCase
         self::assertSelectorTextContains($cancelButtonSelector, $translator->trans('cancel'));
 
         $client->clickLink($translator->trans('cancel'));
-
-        $client->wait(2);
         // Le Cancel redirige vers GetArticles, qui détecte qu'il n'y a pas d'articles
         // et redirige vers Configuration
         $client->waitForElementToContain('h1', $translator->trans('admin.configuration.titlePage'));
