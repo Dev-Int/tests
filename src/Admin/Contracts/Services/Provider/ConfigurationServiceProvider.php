@@ -19,5 +19,5 @@ interface ConfigurationServiceProvider
 {
     public const string ROUTE_NAME = ConfigurationController::ROUTE_NAME;
 
-    public function isArticleConfigured(): bool;
+    public function isApplicationReady(): bool;
 }

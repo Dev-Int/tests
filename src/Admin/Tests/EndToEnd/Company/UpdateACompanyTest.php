@@ -35,7 +35,7 @@ final class UpdateACompanyTest extends BasePantherTestCase
         /** @var ConfigurationService $configureService */
         $configureService = self::getContainer()->get(ConfigurationService::class);
 
-        $isConfigured = $configureService->isConfigured();
+        $isConfigured = $configureService->isApplicationReady();
         self::assertTrue($isConfigured);
 
         // Act && Assert

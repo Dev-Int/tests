@@ -36,7 +36,7 @@ final class GetInventoriesController extends AbstractController
     #[Route(path: 'inventories', name: self::ROUTE_NAME, methods: ['GET'])]
     public function __invoke(): Response
     {
-        if (!$this->configurationService->isArticleConfigured()) {
+        if (!$this->configurationService->isApplicationReady()) {
             $this->addFlash('error', NoArticleRegistered::MESSAGE);
 
             return $this->redirectToRoute(ConfigurationServiceProvider::ROUTE_NAME);
