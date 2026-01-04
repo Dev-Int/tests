@@ -23,7 +23,7 @@ final class Pagination
     public function __construct(int $totalItems, public int $page = 1, int $itemsPerPage = 25)
     {
         $this->itemsPerPage = max($itemsPerPage, self::DEFAULT_ITEMS_PER_PAGE);
-        $this->totalPages = (int) ceil($totalItems / $itemsPerPage);
+        $this->totalPages = (int) ceil($totalItems / $this->itemsPerPage);
     }
 
     public function itemsPerPage(): int
