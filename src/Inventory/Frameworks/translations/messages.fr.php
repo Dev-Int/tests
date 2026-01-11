@@ -32,6 +32,7 @@ return [
             'date' => [
                 'after' => 'Date début',
                 'before' => 'Date fin',
+                'invalid' => 'Format de date invalide.',
             ],
             'zoneStorage' => [
                 'all' => 'Toutes les zones',

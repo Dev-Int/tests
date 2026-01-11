@@ -40,9 +40,12 @@ final class JsonContainsFilter implements FilterInterface
 
         // TEXT() est une fonction DQL personnalisée définie dans TextFunction.php
         // Elle convertit le JSON en texte pour la compatibilité LIKE de PostgreSQL
+        // Échapper les caractères spéciaux LIKE pour éviter les injections logiques
+        $escapedValue = $this->escapeLikeValue($searchValue);
+
         $queryBuilder
             ->andWhere(\sprintf('TEXT(%s.%s) LIKE :%s', $alias, $property, $parameterName))
-            ->setParameter($parameterName, '%"' . $searchValue . '"%')
+            ->setParameter($parameterName, '%"' . $escapedValue . '"%')
         ;
     }
 
@@ -50,5 +53,13 @@ final class JsonContainsFilter implements FilterInterface
     public function isApplicable(mixed $value): bool
     {
         return $value instanceof ResourceUuid || (\is_string($value) && $value !== '');
+    }
+
+    /**
+     * Échappe les caractères spéciaux LIKE (%, _, \) pour éviter les injections logiques.
+     */
+    private function escapeLikeValue(string $value): string
+    {
+        return str_replace(['\\', '%', '_'], ['\\\\', '\%', '\_'], $value);
     }
 }

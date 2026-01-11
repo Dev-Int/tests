@@ -56,7 +56,7 @@
                        <turbo-frame id="inventory_{{ inventory.uuid }}">
                            <li class="li-unstyled flex-between">
                                <span>{{ inventory.date }}</span>
-                               <span>{{ inventory.status }}</span>
+                               <span>{{ ('inventory.status.' ~ inventory.status)|trans }}</span>
                                <span class="zones-list">
                                    {% for zone in inventory.zoneStorageIds %}
                                        <div class="zone-item">

@@ -40,7 +40,7 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
 
     public function testGetInventoriesDisplaysListWhenConfigured(): void
     {
-        // Arrange - InventoryStory charge toute la config Admin + Articles
+        // Arrange
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
         InventoryStory::load();
@@ -55,20 +55,20 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
 
     public function testGetInventoriesRedirectsToConfigurationWhenNoArticles(): void
     {
-        // Arrange - Base vide = pas d'articles configurés
-
-        // Act
+        // Arrange && Act
         $this->client->request(Request::METHOD_GET, self::GET_INVENTORIES_URI);
 
-        // Assert - Doit rediriger vers /admin/configure
-        self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        self::assertResponseRedirects('/admin/configure');
+        // Assert
+        self::assertResponseRedirects(
+            expectedLocation: '/admin/configure',
+            expectedCode: Response::HTTP_FOUND,
+            message: 'Expected redirect to /admin/configure'
+        );
 
-        // Suivre la redirection et vérifier le flash
         $crawler = $this->client->followRedirect();
         $flash = $crawler->filter('.flash-error')->text();
 
-        self::assertSame(ApplicationNotReady::MESSAGE, $flash);
+        self::assertSame(ApplicationNotReady::MESSAGE, $flash, 'Expected flash message for application not ready');
     }
 
     public function testGetInventoriesRouteNameConstantExists(): void
@@ -106,15 +106,17 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
 
         // Verify inventory is displayed with date and status
         // Note: We filter out inventory_create and inventory_paginated turbo-frames
-        $inventoryRows = $crawler->filter('turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)');
+        $inventoryRows = $crawler->filter(
+            'turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)'
+        );
         self::assertCount(1, $inventoryRows);
         self::assertStringContainsString($futureDate->format('Y-m-d'), $inventoryRows->text());
-        self::assertStringContainsString('draft', $inventoryRows->text());
+        self::assertStringContainsString($translator->trans('inventory.status.draft'), $inventoryRows->text());
     }
 
     public function testGetInventoriesDisplaysTableStructureWhenNoInventoriesExist(): void
     {
-        // Arrange - Config OK but no inventories
+        // Arrange
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
         InventoryStory::load();
@@ -122,12 +124,20 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
         // Act
         $this->client->request(Request::METHOD_GET, self::GET_INVENTORIES_URI);
 
-        // Assert - Page loads with table structure
+        // Assert
         self::assertResponseIsSuccessful();
         self::assertSelectorExists('ul.table');
-        // Verify table headers are present
-        self::assertSelectorTextContains('.head', $translator->trans('inventory.form.date.label'));
-        self::assertSelectorTextContains('.head', $translator->trans('inventory.status.label'));
+
+        self::assertSelectorTextContains(
+            '.head',
+            $translator->trans('inventory.form.date.label'),
+            'Table should have date header'
+        );
+        self::assertSelectorTextContains(
+            '.head',
+            $translator->trans('inventory.status.label'),
+            'Table should have status header'
+        );
     }
 
     public function testGetInventoriesDisplaysCreateButton(): void
@@ -150,6 +160,8 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
     public function testGetInventoriesDisplaysCorrectStatusForDraft(): void
     {
         // Arrange
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
         InventoryStory::load();
         $now = ClockFactory::clock()->now();
         $zoneStorages = ZoneStorageFactory::all();
@@ -168,8 +180,10 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
 
         // Assert
         self::assertResponseIsSuccessful();
-        $inventoryRow = $crawler->filter('turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)');
-        self::assertStringContainsString('draft', $inventoryRow->text());
+        $inventoryRow = $crawler->filter(
+            'turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)'
+        );
+        self::assertStringContainsString($translator->trans('inventory.status.draft'), $inventoryRow->text());
     }
 
     public function testGetInventoriesDisplaysStartButtonForDraftStatus(): void
@@ -314,8 +328,10 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
 
         // Assert
         self::assertResponseIsSuccessful();
-        $inventoryRows = $crawler->filter('turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)');
-        self::assertCount(3, $inventoryRows);
+        $inventoryRows = $crawler->filter(
+            'turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)'
+        );
+        self::assertCount(3, $inventoryRows, 'Expected 3 inventories on first page');
     }
 
     public function testGetInventoriesDisplaysBackToHomeButton(): void
@@ -357,8 +373,10 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
 
         // Assert
         self::assertResponseIsSuccessful();
-        $inventoryRows = $crawler->filter('turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)');
-        self::assertCount(Pagination::DEFAULT_ITEMS_PER_PAGE, $inventoryRows);
+        $inventoryRows = $crawler->filter(
+            'turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)'
+        );
+        self::assertCount(Pagination::DEFAULT_ITEMS_PER_PAGE, $inventoryRows, 'Expected 25 inventories on first page');
     }
 
     public function testGetInventoriesSecondPageDisplaysRemainingItems(): void
@@ -387,10 +405,12 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
             self::GET_INVENTORIES_URI . '?page=2&itemsPerPage=25'
         );
 
-        // Assert - Should show remaining 5 items (30 - 25 = 5)
+        // Assert
         self::assertResponseIsSuccessful();
-        $inventoryRows = $crawler->filter('turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)');
-        self::assertCount(5, $inventoryRows);
+        $inventoryRows = $crawler->filter(
+            'turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)'
+        );
+        self::assertCount(5, $inventoryRows, 'Expected 5 inventories on page 2');
     }
 
     public function testGetInventoriesPaginationComponentNotDisplayedWhenFewItems(): void
@@ -416,14 +436,15 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::GET_INVENTORIES_URI);
 
-        // Assert - Pagination nav should not be displayed (only 1 page)
+        // Assert
         self::assertResponseIsSuccessful();
-        $inventoryRows = $crawler->filter('turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)');
-        self::assertCount(5, $inventoryRows);
+        $inventoryRows = $crawler->filter(
+            'turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)'
+        );
+        self::assertCount(5, $inventoryRows, 'Expected 5 inventories on first page');
 
-        // Pagination component exists but nav is hidden (totalPages <= 1)
         $paginationNav = $crawler->filter('#pagination nav');
-        self::assertCount(0, $paginationNav);
+        self::assertCount(0, $paginationNav, 'Expected pagination nav to be hidden with 1 page');
     }
 
     public function testGetInventoriesWithStatusFilterShowsOnlyMatchingStatus(): void
@@ -452,16 +473,18 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
             'statusUpdatedAt' => $now->modify('+1 second'),
         ]);
 
-        // Act - Filter by status=draft
+        // Act
         $crawler = $this->client->request(
             Request::METHOD_GET,
             self::GET_INVENTORIES_URI . '?status=draft'
         );
 
-        // Assert - Only draft inventory should be shown
+        // Assert
         self::assertResponseIsSuccessful();
-        $inventoryRows = $crawler->filter('turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)');
-        self::assertCount(1, $inventoryRows);
+        $inventoryRows = $crawler->filter(
+            'turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)'
+        );
+        self::assertCount(1, $inventoryRows, 'Expected 1 draft inventory');
     }
 
     public function testGetInventoriesWithDateAfterFilterShowsInventoriesAfterDate(): void
@@ -490,17 +513,19 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
             'statusUpdatedAt' => $now->modify('+1 second'),
         ]);
 
-        // Act - Filter by date[after]=today
+        // Act
         $afterDate = $now->format('Y-m-d');
         $crawler = $this->client->request(
             Request::METHOD_GET,
             self::GET_INVENTORIES_URI . '?date[after]=' . $afterDate
         );
 
-        // Assert - Only future inventory should be shown
+        // Assert
         self::assertResponseIsSuccessful();
-        $inventoryRows = $crawler->filter('turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)');
-        self::assertCount(1, $inventoryRows);
+        $inventoryRows = $crawler->filter(
+            'turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)'
+        );
+        self::assertCount(1, $inventoryRows, 'Expected 1 inventory after today');
     }
 
     public function testGetInventoriesWithDateBeforeFilterShowsInventoriesBeforeDate(): void
@@ -529,17 +554,19 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
             'statusUpdatedAt' => $now->modify('+1 second'),
         ]);
 
-        // Act - Filter by date[before]=today
+        // Act
         $beforeDate = $now->format('Y-m-d');
         $crawler = $this->client->request(
             Request::METHOD_GET,
             self::GET_INVENTORIES_URI . '?date[before]=' . $beforeDate
         );
 
-        // Assert - Only past inventory should be shown
+        // Assert
         self::assertResponseIsSuccessful();
-        $inventoryRows = $crawler->filter('turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)');
-        self::assertCount(1, $inventoryRows);
+        $inventoryRows = $crawler->filter(
+            'turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)'
+        );
+        self::assertCount(1, $inventoryRows, 'Expected 1 inventory before today');
     }
 
     public function testGetInventoriesWithZoneStorageFilterShowsMatchingInventories(): void
@@ -576,16 +603,18 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
             'statusUpdatedAt' => $now->modify('+1 second'),
         ]);
 
-        // Act - Filter by zoneStorage=zone1
+        // Act
         $crawler = $this->client->request(
             Request::METHOD_GET,
             self::GET_INVENTORIES_URI . '?zoneStorage=' . $zoneUuid1
         );
 
-        // Assert - Only inventory with zone 1 should be shown
+        // Assert
         self::assertResponseIsSuccessful();
-        $inventoryRows = $crawler->filter('turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)');
-        self::assertCount(1, $inventoryRows);
+        $inventoryRows = $crawler->filter(
+            'turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)'
+        );
+        self::assertCount(1, $inventoryRows, 'Expected 1 inventory with zone 1');
     }
 
     public function testGetInventoriesWithCombinedFiltersWork(): void
@@ -596,7 +625,6 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
         $zoneStorages = ZoneStorageFactory::all();
         $zoneUuid = $zoneStorages[0]->_real()->uuid();
 
-        // Create inventories with different combinations
         InventoryFactory::createOne([
             'date' => $now->modify('+5 days'),
             'zoneStorages' => [$zoneUuid],
@@ -622,20 +650,22 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
             'statusUpdatedAt' => $now->modify('+2 seconds'),
         ]);
 
-        // Act - Filter by status=draft AND date[after]=today
+        // Act
         $afterDate = $now->format('Y-m-d');
         $crawler = $this->client->request(
             Request::METHOD_GET,
             self::GET_INVENTORIES_URI . '?status=draft&date[after]=' . $afterDate
         );
 
-        // Assert - Only future draft inventory should be shown
+        // Assert
         self::assertResponseIsSuccessful();
-        $inventoryRows = $crawler->filter('turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)');
-        self::assertCount(1, $inventoryRows);
+        $inventoryRows = $crawler->filter(
+            'turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)'
+        );
+        self::assertCount(1, $inventoryRows, 'Expected only future draft inventory to be shown');
     }
 
-    public function testGetInventoriesWithInvalidDateFilterIsIgnored(): void
+    public function testGetInventoriesWithInvalidDateFilterShowsError(): void
     {
         // Arrange
         InventoryStory::load();
@@ -652,16 +682,22 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
             'statusUpdatedAt' => $now,
         ]);
 
-        // Act - Filter with invalid date (should be ignored silently)
+        // Act
         $crawler = $this->client->request(
             Request::METHOD_GET,
             self::GET_INVENTORIES_URI . '?date[after]=invalid-date'
         );
 
-        // Assert - Page should load successfully, filter ignored
+        // Assert
         self::assertResponseIsSuccessful();
-        $inventoryRows = $crawler->filter('turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)');
-        self::assertGreaterThan(0, $inventoryRows->count());
+
+        $errorMessages = $crawler->filter('.form-error, .invalid-feedback, [class*="error"]');
+        self::assertGreaterThan(0, $errorMessages->count(), 'Expected error message for invalid date');
+
+        $inventoryRows = $crawler->filter(
+            'turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)'
+        );
+        self::assertCount(0, $inventoryRows, 'No inventories should be displayed when validation failed');
     }
 
     public function testGetInventoriesFilterFormIsDisplayed(): void
@@ -674,11 +710,14 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
         // Act
         $crawler = $this->client->request(Request::METHOD_GET, self::GET_INVENTORIES_URI);
 
-        // Assert - Filter form is present
         self::assertResponseIsSuccessful();
         $filterSection = $crawler->filter('details.filters-section');
-        self::assertCount(1, $filterSection);
-        self::assertStringContainsString($translator->trans('inventory.filter.title'), $filterSection->text());
+        self::assertCount(1, $filterSection, 'Expected filter section to be present');
+        self::assertStringContainsString(
+            $translator->trans('inventory.filter.title'),
+            $filterSection->text(),
+            'Filter section should contain title'
+        );
     }
 
     public function testGetInventoriesPaginationWorksWithFilters(): void
@@ -689,7 +728,6 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
         $zoneStorages = ZoneStorageFactory::all();
         $zoneUuid = $zoneStorages[0]->_real()->uuid();
 
-        // Create 30 DRAFT inventories
         for ($i = 0; $i < 30; $i++) {
             InventoryFactory::createOne([
                 'date' => $now->modify("+{$i} days"),
@@ -701,15 +739,17 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
             ]);
         }
 
-        // Act - Get page 2 with status filter
+        // Act
         $crawler = $this->client->request(
             Request::METHOD_GET,
             self::GET_INVENTORIES_URI . '?status=draft&page=2'
         );
 
-        // Assert - Should show 5 items (30 - 25 = 5 on page 2)
+        // Assert
         self::assertResponseIsSuccessful();
-        $inventoryRows = $crawler->filter('turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)');
-        self::assertCount(5, $inventoryRows);
+        $inventoryRows = $crawler->filter(
+            'turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)'
+        );
+        self::assertCount(5, $inventoryRows, 'Expected 5 inventories on page 2 with status filter');
     }
 }

@@ -141,9 +141,10 @@ final class DoctrineInventoryRepository extends ServiceEntityRepository implemen
             ->apply($qb)
         ;
 
-        // Tri déterministe (fix PR #213) - tri secondaire sur createdAt
+        // Tri déterministe (fix PR #213) - tri tertiaire sur UUID garantit ordre stable
         $qb->orderBy("{$alias}.date", 'DESC')
             ->addOrderBy("{$alias}.createdAt", 'DESC')
+            ->addOrderBy("{$alias}.uuid", 'ASC')
         ;
 
         // Pagination

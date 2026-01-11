@@ -45,7 +45,6 @@ final class InventoryFilterType extends AbstractType
                 'required' => false,
                 'placeholder' => $this->translator->trans('inventory.filter.status.all'),
                 'label' => $this->translator->trans('inventory.status.label'),
-                'data' => $options['status'],
             ])
             ->add('date', FormType::class, [
                 'compound' => true,
@@ -56,7 +55,6 @@ final class InventoryFilterType extends AbstractType
                 'required' => false,
                 'placeholder' => $this->translator->trans('inventory.filter.zoneStorage.all'),
                 'label' => $this->translator->trans('inventory.form.zoneStorages.label'),
-                'data' => $options['zoneStorage'],
             ])
         ;
 
@@ -65,14 +63,16 @@ final class InventoryFilterType extends AbstractType
             ->add('after', DateType::class, [
                 'widget' => 'single_text',
                 'required' => false,
+                'input' => 'datetime_immutable',
                 'label' => $this->translator->trans('inventory.filter.date.after'),
-                'data' => $options['dateAfter'],
+                'invalid_message' => $this->translator->trans('inventory.filter.date.invalid'),
             ])
             ->add('before', DateType::class, [
                 'widget' => 'single_text',
                 'required' => false,
+                'input' => 'datetime_immutable',
                 'label' => $this->translator->trans('inventory.filter.date.before'),
-                'data' => $options['dateBefore'],
+                'invalid_message' => $this->translator->trans('inventory.filter.date.invalid'),
             ])
         ;
     }
@@ -82,16 +82,10 @@ final class InventoryFilterType extends AbstractType
         $resolver->setDefaults([
             'method' => 'GET',
             'csrf_protection' => false,
-            'status' => null,
-            'dateAfter' => null,
-            'dateBefore' => null,
-            'zoneStorage' => null,
+            // Autorise les paramètres query supplémentaires (page, itemsPerPage)
+            // car getBlockPrefix() vide expose tous les params GET au formulaire
+            'allow_extra_fields' => true,
         ]);
-
-        $resolver->setAllowedTypes('status', ['null', 'string']);
-        $resolver->setAllowedTypes('dateAfter', ['null', \DateTimeImmutable::class]);
-        $resolver->setAllowedTypes('dateBefore', ['null', \DateTimeImmutable::class]);
-        $resolver->setAllowedTypes('zoneStorage', ['null', 'string']);
     }
 
     /**

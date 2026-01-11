@@ -23,8 +23,8 @@ final class GetInventoriesApiRequest implements GetInventoriesRequest
         public int $page,
         public int $itemsPerPage,
         private readonly ?string $status = null,
-        private readonly ?string $dateAfter = null,
-        private readonly ?string $dateBefore = null,
+        private readonly ?\DateTimeImmutable $dateAfter = null,
+        private readonly ?\DateTimeImmutable $dateBefore = null,
         private readonly ?string $zoneStorage = null,
     ) {
     }
@@ -50,12 +50,12 @@ final class GetInventoriesApiRequest implements GetInventoriesRequest
 
     public function dateAfter(): ?\DateTimeImmutable
     {
-        return $this->parseDate($this->dateAfter);
+        return $this->dateAfter;
     }
 
     public function dateBefore(): ?\DateTimeImmutable
     {
-        return $this->parseDate($this->dateBefore);
+        return $this->dateBefore;
     }
 
     public function zoneStorageUuid(): ?ResourceUuid
@@ -65,18 +65,5 @@ final class GetInventoriesApiRequest implements GetInventoriesRequest
         }
 
         return ResourceUuid::fromString($this->zoneStorage);
-    }
-
-    private function parseDate(?string $date): ?\DateTimeImmutable
-    {
-        if ($date === null || $date === '') {
-            return null;
-        }
-
-        try {
-            return new \DateTimeImmutable($date);
-        } catch (\Exception) {
-            return null; // Silently ignore invalid dates (API Platform behavior)
-        }
     }
 }

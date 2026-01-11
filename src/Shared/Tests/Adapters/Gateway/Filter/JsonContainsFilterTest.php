@@ -127,4 +127,58 @@ final class JsonContainsFilterTest extends TestCase
         // Act
         $this->filter->apply($this->queryBuilder, 'entity', 'data', 123, 'param');
     }
+
+    public function testApplyEscapesPercentCharacter(): void
+    {
+        // Arrange - Value containing LIKE wildcard %
+        $this->queryBuilder->expects(self::once())
+            ->method('andWhere')
+            ->with('TEXT(entity.tags) LIKE :param_tags')
+            ->willReturnSelf()
+        ;
+        $this->queryBuilder->expects(self::once())
+            ->method('setParameter')
+            ->with('param_tags', '%"100\%"%')
+            ->willReturnSelf()
+        ;
+
+        // Act
+        $this->filter->apply($this->queryBuilder, 'entity', 'tags', '100%', 'param_tags');
+    }
+
+    public function testApplyEscapesUnderscoreCharacter(): void
+    {
+        // Arrange - Value containing LIKE wildcard _
+        $this->queryBuilder->expects(self::once())
+            ->method('andWhere')
+            ->with('TEXT(entity.tags) LIKE :param_tags')
+            ->willReturnSelf()
+        ;
+        $this->queryBuilder->expects(self::once())
+            ->method('setParameter')
+            ->with('param_tags', '%"zone\_name"%')
+            ->willReturnSelf()
+        ;
+
+        // Act
+        $this->filter->apply($this->queryBuilder, 'entity', 'tags', 'zone_name', 'param_tags');
+    }
+
+    public function testApplyEscapesBackslashCharacter(): void
+    {
+        // Arrange - Value containing backslash
+        $this->queryBuilder->expects(self::once())
+            ->method('andWhere')
+            ->with('TEXT(entity.tags) LIKE :param_tags')
+            ->willReturnSelf()
+        ;
+        $this->queryBuilder->expects(self::once())
+            ->method('setParameter')
+            ->with('param_tags', '%"path\\\file"%')
+            ->willReturnSelf()
+        ;
+
+        // Act
+        $this->filter->apply($this->queryBuilder, 'entity', 'tags', 'path\file', 'param_tags');
+    }
 }

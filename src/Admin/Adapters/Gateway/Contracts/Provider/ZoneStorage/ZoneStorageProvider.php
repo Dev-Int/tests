@@ -23,7 +23,15 @@ use Shared\Entities\ResourceUuid;
 
 final class ZoneStorageProvider implements ZoneStorageProviderContract
 {
-    /** @var array<string, ZoneStorageResult> */
+    /**
+     * Cache instance-based pour éviter les requêtes N+1 au sein d'une même requête HTTP.
+     *
+     * Note: Ce cache persiste pour la durée de vie du service. En environnement synchrone
+     * (une requête = une instance), c'est acceptable. Si le service devient partagé entre
+     * requêtes (workers, async), considérer une invalidation TTL ou event-based.
+     *
+     * @var array<string, ZoneStorageResult>
+     */
     private array $cache = [];
 
     public function __construct(private readonly ZoneStorageFinder $finder)

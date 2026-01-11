@@ -38,22 +38,38 @@ final class GetInventoriesController extends AbstractController
     #[Route(path: 'inventories', name: self::ROUTE_NAME, methods: ['GET'])]
     public function __invoke(Request $request): Response
     {
-        // Parse date[after] et date[before] (format API Platform)
-        $dateParams = $request->query->all('date');
+        $filterForm = $this->createForm(InventoryFilterType::class);
+        $filterForm->handleRequest($request);
 
-        /** @var string|null $dateAfter */
-        $dateAfter = $dateParams['after'] ?? null;
+        if ($filterForm->isSubmitted() && !$filterForm->isValid()) {
+            return $this->render('@inventory/index.html.twig', [
+                'inventories' => [],
+                'pagination' => new Pagination(0, 1, Pagination::DEFAULT_ITEMS_PER_PAGE),
+                'filterForm' => $filterForm->createView(),
+            ]);
+        }
 
-        /** @var string|null $dateBefore */
-        $dateBefore = $dateParams['before'] ?? null;
+        $dateForm = $filterForm->get('date');
+
+        /** @var string|null $status */
+        $status = $filterForm->get('status')->getData();
+
+        /** @var \DateTimeImmutable|null $dateAfter */
+        $dateAfter = $dateForm->get('after')->getData();
+
+        /** @var \DateTimeImmutable|null $dateBefore */
+        $dateBefore = $dateForm->get('before')->getData();
+
+        /** @var string|null $zoneStorage */
+        $zoneStorage = $filterForm->get('zoneStorage')->getData();
 
         $apiRequest = new GetInventoriesApiRequest(
             page: $request->query->getInt('page', Pagination::DEFAULT_PAGE),
             itemsPerPage: $request->query->getInt('itemsPerPage', Pagination::DEFAULT_ITEMS_PER_PAGE),
-            status: $request->query->get('status'),
+            status: $status,
             dateAfter: $dateAfter,
             dateBefore: $dateBefore,
-            zoneStorage: $request->query->get('zoneStorage'),
+            zoneStorage: $zoneStorage,
         );
 
         try {
@@ -63,13 +79,6 @@ final class GetInventoriesController extends AbstractController
 
             return $this->redirectToRoute(HomeController::ROUTE_NAME);
         }
-
-        $filterForm = $this->createForm(InventoryFilterType::class, null, [
-            'status' => $apiRequest->status()?->value,
-            'dateAfter' => $apiRequest->dateAfter(),
-            'dateBefore' => $apiRequest->dateBefore(),
-            'zoneStorage' => $apiRequest->zoneStorageUuid()?->toString(),
-        ]);
 
         $presenter = new GetInventoryPresenter($response->inventories);
         $pagination = new Pagination(
