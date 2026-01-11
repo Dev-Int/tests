@@ -195,7 +195,7 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
 
         // Assert
         self::assertResponseIsSuccessful();
-        $startButton = $crawler->filter('button[type="submit"]');
+        $startButton = $crawler->filter('.actions-group button[type="submit"]');
         self::assertGreaterThan(0, $startButton->count());
         self::assertStringContainsString($translator->trans('inventory.start.button'), $startButton->text());
     }
@@ -424,5 +424,292 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
         // Pagination component exists but nav is hidden (totalPages <= 1)
         $paginationNav = $crawler->filter('#pagination nav');
         self::assertCount(0, $paginationNav);
+    }
+
+    public function testGetInventoriesWithStatusFilterShowsOnlyMatchingStatus(): void
+    {
+        // Arrange
+        InventoryStory::load();
+        $now = ClockFactory::clock()->now();
+        $zoneStorages = ZoneStorageFactory::all();
+        $zoneUuid = $zoneStorages[0]->_real()->uuid();
+
+        // Create inventories with different statuses
+        InventoryFactory::createOne([
+            'date' => $now->modify('+1 day'),
+            'zoneStorages' => [$zoneUuid],
+            'status' => InventoryStatus::DRAFT->value,
+            'createdAt' => $now,
+            'updatedAt' => $now,
+            'statusUpdatedAt' => $now,
+        ]);
+        InventoryFactory::createOne([
+            'date' => $now->modify('+2 days'),
+            'zoneStorages' => [$zoneUuid],
+            'status' => InventoryStatus::COMPLETED->value,
+            'createdAt' => $now->modify('+1 second'),
+            'updatedAt' => $now->modify('+1 second'),
+            'statusUpdatedAt' => $now->modify('+1 second'),
+        ]);
+
+        // Act - Filter by status=draft
+        $crawler = $this->client->request(
+            Request::METHOD_GET,
+            self::GET_INVENTORIES_URI . '?status=draft'
+        );
+
+        // Assert - Only draft inventory should be shown
+        self::assertResponseIsSuccessful();
+        $inventoryRows = $crawler->filter('turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)');
+        self::assertCount(1, $inventoryRows);
+    }
+
+    public function testGetInventoriesWithDateAfterFilterShowsInventoriesAfterDate(): void
+    {
+        // Arrange
+        InventoryStory::load();
+        $now = ClockFactory::clock()->now();
+        $zoneStorages = ZoneStorageFactory::all();
+        $zoneUuid = $zoneStorages[0]->_real()->uuid();
+
+        // Create inventories with different dates
+        InventoryFactory::createOne([
+            'date' => $now->modify('-10 days'),
+            'zoneStorages' => [$zoneUuid],
+            'status' => InventoryStatus::DRAFT->value,
+            'createdAt' => $now,
+            'updatedAt' => $now,
+            'statusUpdatedAt' => $now,
+        ]);
+        InventoryFactory::createOne([
+            'date' => $now->modify('+10 days'),
+            'zoneStorages' => [$zoneUuid],
+            'status' => InventoryStatus::DRAFT->value,
+            'createdAt' => $now->modify('+1 second'),
+            'updatedAt' => $now->modify('+1 second'),
+            'statusUpdatedAt' => $now->modify('+1 second'),
+        ]);
+
+        // Act - Filter by date[after]=today
+        $afterDate = $now->format('Y-m-d');
+        $crawler = $this->client->request(
+            Request::METHOD_GET,
+            self::GET_INVENTORIES_URI . '?date[after]=' . $afterDate
+        );
+
+        // Assert - Only future inventory should be shown
+        self::assertResponseIsSuccessful();
+        $inventoryRows = $crawler->filter('turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)');
+        self::assertCount(1, $inventoryRows);
+    }
+
+    public function testGetInventoriesWithDateBeforeFilterShowsInventoriesBeforeDate(): void
+    {
+        // Arrange
+        InventoryStory::load();
+        $now = ClockFactory::clock()->now();
+        $zoneStorages = ZoneStorageFactory::all();
+        $zoneUuid = $zoneStorages[0]->_real()->uuid();
+
+        // Create inventories with different dates
+        InventoryFactory::createOne([
+            'date' => $now->modify('-10 days'),
+            'zoneStorages' => [$zoneUuid],
+            'status' => InventoryStatus::DRAFT->value,
+            'createdAt' => $now,
+            'updatedAt' => $now,
+            'statusUpdatedAt' => $now,
+        ]);
+        InventoryFactory::createOne([
+            'date' => $now->modify('+10 days'),
+            'zoneStorages' => [$zoneUuid],
+            'status' => InventoryStatus::DRAFT->value,
+            'createdAt' => $now->modify('+1 second'),
+            'updatedAt' => $now->modify('+1 second'),
+            'statusUpdatedAt' => $now->modify('+1 second'),
+        ]);
+
+        // Act - Filter by date[before]=today
+        $beforeDate = $now->format('Y-m-d');
+        $crawler = $this->client->request(
+            Request::METHOD_GET,
+            self::GET_INVENTORIES_URI . '?date[before]=' . $beforeDate
+        );
+
+        // Assert - Only past inventory should be shown
+        self::assertResponseIsSuccessful();
+        $inventoryRows = $crawler->filter('turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)');
+        self::assertCount(1, $inventoryRows);
+    }
+
+    public function testGetInventoriesWithZoneStorageFilterShowsMatchingInventories(): void
+    {
+        // Arrange
+        InventoryStory::load();
+        $now = ClockFactory::clock()->now();
+        $zoneStorages = ZoneStorageFactory::all();
+
+        // Need at least 2 zone storages
+        if (\count($zoneStorages) < 2) {
+            self::markTestSkipped('Need at least 2 zone storages for this test');
+        }
+
+        $zoneUuid1 = $zoneStorages[0]->_real()->uuid();
+        $zoneUuid2 = $zoneStorages[1]->_real()->uuid();
+
+        // Create inventory with zone 1
+        InventoryFactory::createOne([
+            'date' => $now->modify('+1 day'),
+            'zoneStorages' => [$zoneUuid1],
+            'status' => InventoryStatus::DRAFT->value,
+            'createdAt' => $now,
+            'updatedAt' => $now,
+            'statusUpdatedAt' => $now,
+        ]);
+        // Create inventory with zone 2
+        InventoryFactory::createOne([
+            'date' => $now->modify('+2 days'),
+            'zoneStorages' => [$zoneUuid2],
+            'status' => InventoryStatus::DRAFT->value,
+            'createdAt' => $now->modify('+1 second'),
+            'updatedAt' => $now->modify('+1 second'),
+            'statusUpdatedAt' => $now->modify('+1 second'),
+        ]);
+
+        // Act - Filter by zoneStorage=zone1
+        $crawler = $this->client->request(
+            Request::METHOD_GET,
+            self::GET_INVENTORIES_URI . '?zoneStorage=' . $zoneUuid1
+        );
+
+        // Assert - Only inventory with zone 1 should be shown
+        self::assertResponseIsSuccessful();
+        $inventoryRows = $crawler->filter('turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)');
+        self::assertCount(1, $inventoryRows);
+    }
+
+    public function testGetInventoriesWithCombinedFiltersWork(): void
+    {
+        // Arrange
+        InventoryStory::load();
+        $now = ClockFactory::clock()->now();
+        $zoneStorages = ZoneStorageFactory::all();
+        $zoneUuid = $zoneStorages[0]->_real()->uuid();
+
+        // Create inventories with different combinations
+        InventoryFactory::createOne([
+            'date' => $now->modify('+5 days'),
+            'zoneStorages' => [$zoneUuid],
+            'status' => InventoryStatus::DRAFT->value,
+            'createdAt' => $now,
+            'updatedAt' => $now,
+            'statusUpdatedAt' => $now,
+        ]);
+        InventoryFactory::createOne([
+            'date' => $now->modify('+5 days'),
+            'zoneStorages' => [$zoneUuid],
+            'status' => InventoryStatus::COMPLETED->value,
+            'createdAt' => $now->modify('+1 second'),
+            'updatedAt' => $now->modify('+1 second'),
+            'statusUpdatedAt' => $now->modify('+1 second'),
+        ]);
+        InventoryFactory::createOne([
+            'date' => $now->modify('-5 days'),
+            'zoneStorages' => [$zoneUuid],
+            'status' => InventoryStatus::DRAFT->value,
+            'createdAt' => $now->modify('+2 seconds'),
+            'updatedAt' => $now->modify('+2 seconds'),
+            'statusUpdatedAt' => $now->modify('+2 seconds'),
+        ]);
+
+        // Act - Filter by status=draft AND date[after]=today
+        $afterDate = $now->format('Y-m-d');
+        $crawler = $this->client->request(
+            Request::METHOD_GET,
+            self::GET_INVENTORIES_URI . '?status=draft&date[after]=' . $afterDate
+        );
+
+        // Assert - Only future draft inventory should be shown
+        self::assertResponseIsSuccessful();
+        $inventoryRows = $crawler->filter('turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)');
+        self::assertCount(1, $inventoryRows);
+    }
+
+    public function testGetInventoriesWithInvalidDateFilterIsIgnored(): void
+    {
+        // Arrange
+        InventoryStory::load();
+        $now = ClockFactory::clock()->now();
+        $zoneStorages = ZoneStorageFactory::all();
+        $zoneUuid = $zoneStorages[0]->_real()->uuid();
+
+        InventoryFactory::createOne([
+            'date' => $now->modify('+1 day'),
+            'zoneStorages' => [$zoneUuid],
+            'status' => InventoryStatus::DRAFT->value,
+            'createdAt' => $now,
+            'updatedAt' => $now,
+            'statusUpdatedAt' => $now,
+        ]);
+
+        // Act - Filter with invalid date (should be ignored silently)
+        $crawler = $this->client->request(
+            Request::METHOD_GET,
+            self::GET_INVENTORIES_URI . '?date[after]=invalid-date'
+        );
+
+        // Assert - Page should load successfully, filter ignored
+        self::assertResponseIsSuccessful();
+        $inventoryRows = $crawler->filter('turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)');
+        self::assertGreaterThan(0, $inventoryRows->count());
+    }
+
+    public function testGetInventoriesFilterFormIsDisplayed(): void
+    {
+        // Arrange
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+        InventoryStory::load();
+
+        // Act
+        $crawler = $this->client->request(Request::METHOD_GET, self::GET_INVENTORIES_URI);
+
+        // Assert - Filter form is present
+        self::assertResponseIsSuccessful();
+        $filterSection = $crawler->filter('details.filters-section');
+        self::assertCount(1, $filterSection);
+        self::assertStringContainsString($translator->trans('inventory.filter.title'), $filterSection->text());
+    }
+
+    public function testGetInventoriesPaginationWorksWithFilters(): void
+    {
+        // Arrange
+        InventoryStory::load();
+        $now = ClockFactory::clock()->now();
+        $zoneStorages = ZoneStorageFactory::all();
+        $zoneUuid = $zoneStorages[0]->_real()->uuid();
+
+        // Create 30 DRAFT inventories
+        for ($i = 0; $i < 30; $i++) {
+            InventoryFactory::createOne([
+                'date' => $now->modify("+{$i} days"),
+                'zoneStorages' => [$zoneUuid],
+                'status' => InventoryStatus::DRAFT->value,
+                'createdAt' => $now->modify("+{$i} seconds"),
+                'updatedAt' => $now->modify("+{$i} seconds"),
+                'statusUpdatedAt' => $now->modify("+{$i} seconds"),
+            ]);
+        }
+
+        // Act - Get page 2 with status filter
+        $crawler = $this->client->request(
+            Request::METHOD_GET,
+            self::GET_INVENTORIES_URI . '?status=draft&page=2'
+        );
+
+        // Assert - Should show 5 items (30 - 25 = 5 on page 2)
+        self::assertResponseIsSuccessful();
+        $inventoryRows = $crawler->filter('turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)');
+        self::assertCount(5, $inventoryRows);
     }
 }

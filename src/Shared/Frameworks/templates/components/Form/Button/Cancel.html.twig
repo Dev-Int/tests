@@ -1,1 +1,7 @@
-<a role="button" href="{{ href }}" class="secondary" aria-label="Cancel"{% if turboFrame is defined %} data-turbo-frame="{{ turboFrame }}"{% endif %}>{{ label }}</a>
+<a
+    role="button"
+    href="{{ href }}"
+    class="secondary"
+    aria-label="Cancel"
+    {% if turboFrame is defined %} data-turbo-frame="{{ turboFrame }}"{% endif %}
+>{% if icon is defined %}<i class="fa-solid {{ icon }}"></i>&nbsp;{% endif %}{{ label }}</a>

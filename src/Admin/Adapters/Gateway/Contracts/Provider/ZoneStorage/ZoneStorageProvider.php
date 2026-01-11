@@ -21,21 +21,30 @@ use Admin\Entities\ZoneStorage\ZoneStorage;
 use Admin\UseCases\Gateway\Finder\ZoneStorageFinder;
 use Shared\Entities\ResourceUuid;
 
-final readonly class ZoneStorageProvider implements ZoneStorageProviderContract
+final class ZoneStorageProvider implements ZoneStorageProviderContract
 {
-    public function __construct(private ZoneStorageFinder $finder)
+    /** @var array<string, ZoneStorageResult> */
+    private array $cache = [];
+
+    public function __construct(private readonly ZoneStorageFinder $finder)
     {
     }
 
     public function provide(ResourceUuid $uuid): ZoneStorageResult
     {
+        $key = $uuid->toString();
+
+        if (isset($this->cache[$key])) {
+            return $this->cache[$key];
+        }
+
         $zoneStorage = $this->finder->findByUuid($uuid);
 
         if (!$zoneStorage instanceof ZoneStorage) {
-            throw new ZoneStorageNotFound($uuid->toString());
+            throw new ZoneStorageNotFound($key);
         }
 
-        return new ZoneStorageResult($uuid, $zoneStorage->label(), $zoneStorage->slug());
+        return $this->cache[$key] = new ZoneStorageResult($uuid, $zoneStorage->label(), $zoneStorage->slug());
     }
 
     public function provideAll(?iterable $ids = null): ZoneStorageCollectionResult

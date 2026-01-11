@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Inventory\UseCases\GetInventories;
 
+use Inventory\Entities\InventorySearchCriteria;
 use Inventory\Entities\Repository\InventoryRepository;
 
 final readonly class GetInventories
@@ -23,11 +24,15 @@ final readonly class GetInventories
 
     public function execute(GetInventoriesRequest $request): GetInventoriesResponse
     {
-        $inventories = $this->repository->getAllInventoriesPaginated(
-            $request->page(),
-            $request->itemsPerPage()
+        $criteria = new InventorySearchCriteria(
+            page: $request->page(),
+            itemsPerPage: $request->itemsPerPage(),
+            status: $request->status(),
+            dateAfter: $request->dateAfter(),
+            dateBefore: $request->dateBefore(),
+            zoneStorageUuid: $request->zoneStorageUuid(),
         );
 
-        return new GetInventoriesResponse($inventories);
+        return new GetInventoriesResponse($this->repository->findByCriteria($criteria));
     }
 }

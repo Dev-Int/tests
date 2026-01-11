@@ -16,6 +16,7 @@ namespace Inventory\Entities\Repository;
 use Inventory\Entities\Exception\InventoryNotFound;
 use Inventory\Entities\Inventory;
 use Inventory\Entities\InventoryCollection;
+use Inventory\Entities\InventorySearchCriteria;
 use Shared\Entities\ResourceUuid;
 
 interface InventoryRepository
@@ -29,7 +30,7 @@ interface InventoryRepository
 
     public function start(Inventory $inventory): void;
 
-    public function getAllInventoriesPaginated(int $page, int $itemsPerPage): InventoryCollection;
+    public function findByCriteria(InventorySearchCriteria $criteria): InventoryCollection;
 
     /**
      * @throws InventoryNotFound

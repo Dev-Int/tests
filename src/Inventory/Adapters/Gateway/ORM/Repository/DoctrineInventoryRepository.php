@@ -26,8 +26,12 @@ use Inventory\Adapters\Gateway\ORM\InventoryMapper;
 use Inventory\Entities\Exception\InventoryNotFound;
 use Inventory\Entities\Inventory as InventoryDomain;
 use Inventory\Entities\InventoryCollection;
+use Inventory\Entities\InventorySearchCriteria;
 use Inventory\Entities\Repository\InventoryRepository;
-use Inventory\Entities\VO\InventoryStatus;
+use Shared\Adapters\Gateway\Filter\DateFilter;
+use Shared\Adapters\Gateway\Filter\FilterCollection;
+use Shared\Adapters\Gateway\Filter\JsonContainsFilter;
+use Shared\Adapters\Gateway\Filter\SearchFilter;
 use Shared\Entities\ResourceUuid;
 
 /**
@@ -61,7 +65,7 @@ final class DoctrineInventoryRepository extends ServiceEntityRepository implemen
         $stmt = $this->getEntityManager()->getConnection()->executeQuery(
             $sql,
             [
-                'status' => InventoryStatus::ACTIVE_STATUSES,
+                'status' => ORMInventoryStatus::ACTIVE_STATUSES,
                 'zoneStorageIds' => $zoneIds,
             ],
             [
@@ -122,17 +126,32 @@ final class DoctrineInventoryRepository extends ServiceEntityRepository implemen
         $this->getEntityManager()->flush();
     }
 
-    public function getAllInventoriesPaginated(int $page, int $itemsPerPage): InventoryCollection
+    public function findByCriteria(InventorySearchCriteria $criteria): InventoryCollection
     {
         $alias = self::ALIAS;
-        $query = $this->createQueryBuilder($alias)
-            ->orderBy($alias . '.date', 'DESC')
-            ->setFirstResult(($page - 1) * $itemsPerPage)
-            ->setMaxResults($itemsPerPage)
-            ->getQuery()
+        $qb = $this->createQueryBuilder($alias);
+
+        // Applique les filtres avec les classes réutilisables
+        $filters = new FilterCollection();
+        $filters
+            ->add(new SearchFilter(), $alias, 'status', $criteria->status)
+            ->add(DateFilter::after(), $alias, 'date', $criteria->dateAfter)
+            ->add(DateFilter::before(), $alias, 'date', $criteria->dateBefore)
+            ->add(new JsonContainsFilter(), $alias, 'zoneStorages', $criteria->zoneStorageUuid)
+            ->apply($qb)
         ;
 
-        $paginator = new Paginator($query, fetchJoinCollection: true);
+        // Tri déterministe (fix PR #213) - tri secondaire sur createdAt
+        $qb->orderBy("{$alias}.date", 'DESC')
+            ->addOrderBy("{$alias}.createdAt", 'DESC')
+        ;
+
+        // Pagination
+        $qb->setFirstResult(($criteria->page - 1) * $criteria->itemsPerPage)
+            ->setMaxResults($criteria->itemsPerPage)
+        ;
+
+        $paginator = new Paginator($qb->getQuery(), fetchJoinCollection: true);
         $collection = new InventoryCollection($paginator->count());
 
         /** @var Inventory $inventory */

@@ -23,6 +23,27 @@
                     />
                 </turbo-frame>
             </div>
+
+            <details class="filters-section">
+                <summary>{{ 'inventory.filter.title'|trans }}</summary>
+                {{ form_start(filterForm, {'attr': {
+                    'class': 'filters-form',
+                    'data-controller': 'clean-form',
+                    'data-action': 'submit->clean-form#submit'
+                }}) }}
+                    <div class="grid">
+                        {{ form_row(filterForm.status) }}
+                        {{ form_row(filterForm.date.after) }}
+                        {{ form_row(filterForm.date.before) }}
+                        {{ form_row(filterForm.zoneStorage) }}
+                    </div>
+                    <div class="grid">
+                        <twig:Form:Button:Cancel href="{{ path('inventory_index') }}" label="{{ 'inventory.filter.reset'|trans }}" icon="fa-times" />
+                        <twig:Form:Button:Submit icon="fa-filter" label="{{ 'inventory.filter.apply'|trans }}" />
+                    </div>
+                {{ form_end(filterForm) }}
+            </details>
+
             <turbo-frame id="inventory_paginated">
                 <ul class="table">
                     <li class="li-unstyled flex-between head">
