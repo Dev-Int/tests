@@ -13,10 +13,6 @@ declare(strict_types=1);
 
 namespace Admin\Contracts\Services\Updater\Article;
 
-/**
- * DTO for updating article stock quantity.
- * Used when completing inventory to update article quantities.
- */
 final readonly class ArticleStockUpdate
 {
     public function __construct(

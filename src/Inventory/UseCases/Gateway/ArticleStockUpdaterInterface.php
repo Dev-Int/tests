@@ -14,17 +14,14 @@ declare(strict_types=1);
 namespace Inventory\UseCases\Gateway;
 
 /**
- * Gateway interface for updating article stock quantities.
+ * Interface passerelle pour la mise à jour des quantités en stock des articles.
  *
- * This interface abstracts the communication with the Admin BC for stock updates.
- * The implementation in Adapters\Gateway uses Admin\Contracts to perform the actual update.
+ * Cette interface abstrait la communication avec Admin BC pour les mises à jour des stocks.
  */
 interface ArticleStockUpdaterInterface
 {
     /**
-     * Updates the stock quantities for multiple articles.
-     *
-     * @param array<StockUpdateCommand> $commands List of stock update commands
+     * @param array<StockUpdateCommand> $commands
      */
     public function updateStocks(array $commands): void;
 }

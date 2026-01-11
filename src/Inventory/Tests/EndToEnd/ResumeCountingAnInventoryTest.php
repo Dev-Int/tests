@@ -108,7 +108,7 @@ final class ResumeCountingAnInventoryTest extends BasePantherTestCase
                 $translator->trans('inventory.finish_counting.button')
             )
         );
-        self::assertCount(1, $finishButton, 'Finish counting button should be visible');
+        self::assertCount(1, $finishButton, 'Le bouton Terminer le comptage devrait être visible');
         $finishButton->first()->click();
         $client->waitForVisibility('.flash-success');
 
@@ -118,7 +118,7 @@ final class ResumeCountingAnInventoryTest extends BasePantherTestCase
         self::assertSame(
             InventoryStatus::REVIEW->value,
             $inventoryAfterFinish->status()->value,
-            'Inventory should be in REVIEW status after finish counting'
+            'L\'inventaire devrait être en statut REVIEW après le comptage'
         );
 
         // Act - Navigate to review page and resume counting
@@ -131,7 +131,7 @@ final class ResumeCountingAnInventoryTest extends BasePantherTestCase
                 $inventoryUuid
             )
         );
-        self::assertCount(1, $reviewLink, 'Review button should be visible when there are unreviewed discrepancies');
+        self::assertCount(1, $reviewLink, 'Le bouton Réviser devrait être visible quand il y a des écarts non révisés');
         $reviewLink->first()->click();
 
         $client->waitForElementToContain('h1', $translator->trans('inventory.review.titlePage'));
@@ -140,7 +140,7 @@ final class ResumeCountingAnInventoryTest extends BasePantherTestCase
         $detailsSummary = $client->getCrawler()->filterXPath(
             \sprintf('//summary[contains(text(), "%s")]', $translator->trans('inventory.resume_counting.button'))
         );
-        self::assertCount(1, $detailsSummary, 'Resume counting section should be visible');
+        self::assertCount(1, $detailsSummary, 'La section Reprendre le comptage devrait être visible');
         $detailsSummary->first()->click();
 
         // Wait for accordion content to be visible (details[open] means accordion is expanded)
@@ -150,7 +150,7 @@ final class ResumeCountingAnInventoryTest extends BasePantherTestCase
         $resumeZoneButton = $client->getCrawler()->filterXPath(
             \sprintf('//details//button[contains(., "%s")]', $zonePositive->label())
         );
-        self::assertCount(1, $resumeZoneButton, 'Resume counting button for zone should be visible');
+        self::assertCount(1, $resumeZoneButton, 'Le bouton Reprendre le comptage pour la zone devrait être visible');
         $resumeZoneButton->first()->click();
 
         // Assert

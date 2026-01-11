@@ -80,12 +80,12 @@ final class RecordRealStockByZoneForAnInventoryTest extends BasePantherTestCase
                 $translator->trans('inventory.zone.record.button')
             )
         );
-        self::assertCount(0, $recordStockButtons, '"Saisir stock" button should NOT be visible for DRAFT inventory');
+        self::assertCount(0, $recordStockButtons, 'Le bouton "Saisir stock" ne devrait PAS être visible pour un inventaire DRAFT');
 
         $startButton = $client->getCrawler()->filter(
             \sprintf('turbo-frame#inventory_%s button[type="submit"]', $inventory->_real()->uuid())
         );
-        self::assertCount(2, $startButton, 'Start and Cancel buttons should be visible for DRAFT inventory');
+        self::assertCount(2, $startButton, 'Les boutons Démarrer et Annuler devraient être visibles pour un inventaire DRAFT');
 
         $startButton->first()->click();
 
@@ -102,7 +102,7 @@ final class RecordRealStockByZoneForAnInventoryTest extends BasePantherTestCase
                 $translator->trans('inventory.zone.record.button')
             )
         );
-        self::assertCount(1, $recordStockButtons, '"Saisir stock" button should be visible for IN_PROGRESS inventory');
+        self::assertCount(1, $recordStockButtons, 'Le bouton "Saisir stock" devrait être visible pour un inventaire IN_PROGRESS');
 
         $recordStockButtons->first()->click();
 
@@ -110,7 +110,7 @@ final class RecordRealStockByZoneForAnInventoryTest extends BasePantherTestCase
         self::assertSelectorTextContains('h1', 'Réserve positive');
 
         $articleInputs = $client->getCrawler()->filter('input[type="number"]');
-        self::assertGreaterThan(0, $articleInputs->count(), 'Form should contain article stock inputs');
+        self::assertGreaterThan(0, $articleInputs->count(), 'Le formulaire devrait contenir des champs de saisie de stock');
     }
 
     public function testUserCanRecordRealStockAndSeeSuccessMessage(): void
@@ -219,12 +219,12 @@ final class RecordRealStockByZoneForAnInventoryTest extends BasePantherTestCase
         self::assertGreaterThan(
             0,
             $recordStockButtons->count(),
-            '"Saisir stock" button should be visible for IN_PROGRESS inventory'
+            'Le bouton "Saisir stock" devrait être visible pour un inventaire IN_PROGRESS'
         );
 
         $startButtons = $client->getCrawler()->filterXPath(
             \sprintf('//button[contains(text(), "%s")]', $translator->trans('inventory.start.button'))
         );
-        self::assertCount(0, $startButtons, 'Start button should NOT be visible for IN_PROGRESS inventory');
+        self::assertCount(0, $startButtons, 'Le bouton Démarrer ne devrait PAS être visible pour un inventaire IN_PROGRESS');
     }
 }

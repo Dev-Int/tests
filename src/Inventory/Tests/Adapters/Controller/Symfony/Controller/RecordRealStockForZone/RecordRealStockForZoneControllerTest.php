@@ -77,7 +77,7 @@ final class RecordRealStockForZoneControllerTest extends BaseFunctionalTestCase
         self::assertSelectorTextContains('h1', 'Réserve positive');
 
         $articleInputs = $crawler->filter('input[type="number"]');
-        self::assertGreaterThan(0, $articleInputs->count(), 'Form should contain article stock inputs');
+        self::assertGreaterThan(0, $articleInputs->count(), 'Le formulaire devrait contenir des champs de saisie de stock');
     }
 
     public function testPostRecordStockSuccess(): void
@@ -122,8 +122,8 @@ final class RecordRealStockForZoneControllerTest extends BaseFunctionalTestCase
                 $camembertArticle = $article;
             }
         }
-        self::assertNotNull($laitArticle, 'Article "Lait" should exist');
-        self::assertNotNull($camembertArticle, 'Article "Camembert" should exist');
+        self::assertNotNull($laitArticle, 'L\'article "Lait" devrait exister');
+        self::assertNotNull($camembertArticle, 'L\'article "Camembert" devrait exister');
         $laitSlug = $laitArticle->_real()->slug();
         $camembertSlug = $camembertArticle->_real()->slug();
 
@@ -151,14 +151,14 @@ final class RecordRealStockForZoneControllerTest extends BaseFunctionalTestCase
         $laitItem = $updatedInventory->items()->findByArticleAndZone($laitUuid, $zoneStorageUuidVo);
         $camembertItem = $updatedInventory->items()->findByArticleAndZone($camembertUuid, $zoneStorageUuidVo);
 
-        self::assertNotNull($laitItem, 'Lait item should exist in inventory');
-        self::assertNotNull($camembertItem, 'Camembert item should exist in inventory');
+        self::assertNotNull($laitItem, 'L\'item Lait devrait exister dans l\'inventaire');
+        self::assertNotNull($camembertItem, 'L\'item Camembert devrait exister dans l\'inventaire');
 
         // Lait: 15.5 L entered (packaging 1L = 1 unit) → realStock = 15500 milliemes
-        self::assertSame(15500, $laitItem->realStock()->toMilliemes(), 'Lait real stock should be 15.5L (15500 milliemes)');
+        self::assertSame(15500, $laitItem->realStock()->toMilliemes(), 'Le stock réel de Lait devrait être 15.5L (15500 millièmes)');
 
         // Camembert: 8 pieces entered (packaging 1 Pce = 1 unit) → realStock = 8000 milliemes
-        self::assertSame(8000, $camembertItem->realStock()->toMilliemes(), 'Camembert real stock should be 8 pieces (8000 milliemes)');
+        self::assertSame(8000, $camembertItem->realStock()->toMilliemes(), 'Le stock réel de Camembert devrait être 8 pièces (8000 millièmes)');
     }
 
     public function testPostRecordStockWithZeroValue(): void
@@ -200,8 +200,8 @@ final class RecordRealStockForZoneControllerTest extends BaseFunctionalTestCase
                 $camembertArticle = $article;
             }
         }
-        self::assertNotNull($laitArticle, 'Article "Lait" should exist');
-        self::assertNotNull($camembertArticle, 'Article "Camembert" should exist');
+        self::assertNotNull($laitArticle, 'L\'article "Lait" devrait exister');
+        self::assertNotNull($camembertArticle, 'L\'article "Camembert" devrait exister');
         $laitSlug = $laitArticle->_real()->slug();
         $camembertSlug = $camembertArticle->_real()->slug();
 
@@ -224,8 +224,8 @@ final class RecordRealStockForZoneControllerTest extends BaseFunctionalTestCase
         $laitItem = $updatedInventory->items()->findByArticleAndZone($laitUuid, $zoneStorageUuidVo);
         $camembertItem = $updatedInventory->items()->findByArticleAndZone($camembertUuid, $zoneStorageUuidVo);
 
-        self::assertNotNull($laitItem, 'Lait item should exist in inventory');
-        self::assertNotNull($camembertItem, 'Camembert item should exist in inventory');
+        self::assertNotNull($laitItem, 'L\'item Lait devrait exister dans l\'inventaire');
+        self::assertNotNull($camembertItem, 'L\'item Camembert devrait exister dans l\'inventaire');
 
         // Lait: 10 L entered → realStock = 10000 milliemes
         self::assertSame(10000, $laitItem->realStock()->toMilliemes(), 'Lait real stock should be 10L');
@@ -267,7 +267,7 @@ final class RecordRealStockForZoneControllerTest extends BaseFunctionalTestCase
                 $laitArticle = $article;
             }
         }
-        self::assertNotNull($laitArticle, 'Article "Lait" should exist');
+        self::assertNotNull($laitArticle, 'L\'article "Lait" devrait exister');
         $laitSlug = $laitArticle->_real()->slug();
 
         // Act - Only fill Lait, leave Camembert empty (not submitted)
@@ -284,7 +284,7 @@ final class RecordRealStockForZoneControllerTest extends BaseFunctionalTestCase
         $flash = $crawler->filter('.flash-error')->text();
 
         // Error message should mention missing article (Camembert)
-        self::assertStringContainsString('Camembert', $flash, 'Error should mention missing article');
+        self::assertStringContainsString('Camembert', $flash, 'L\'erreur devrait mentionner l\'article manquant');
     }
 
     public function testRecordStockFailsOnNonInProgressInventory(): void
@@ -339,7 +339,7 @@ final class RecordRealStockForZoneControllerTest extends BaseFunctionalTestCase
 
         $crawler = $this->client->followRedirect();
         $flash = $crawler->filter('.flash-error');
-        self::assertGreaterThan(0, $flash->count(), 'Error flash message should be displayed');
+        self::assertGreaterThan(0, $flash->count(), 'Un message flash d\'erreur devrait être affiché');
     }
 
     public function testRouteNameConstantExists(): void

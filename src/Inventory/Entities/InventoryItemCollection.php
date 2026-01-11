@@ -147,7 +147,7 @@ final class InventoryItemCollection implements Collection, \Countable
     }
 
     /**
-     * Get all items that have a discrepancy (realStock != theoreticalStock).
+     * Récupère tous les items ayant un écart (realStock != theoreticalStock).
      *
      * @return array<InventoryItem>
      */
@@ -176,7 +176,7 @@ final class InventoryItemCollection implements Collection, \Countable
     }
 
     /**
-     * Get items with discrepancy that have NOT been reviewed.
+     * Récupère les items avec écart qui n'ont PAS été révisés.
      *
      * @return array<InventoryItem>
      */
@@ -205,12 +205,12 @@ final class InventoryItemCollection implements Collection, \Countable
     }
 
     /**
-     * Reset reviewed flag to false for items in a specific zone.
-     * Used when resuming counting from the review phase.
+     * Réinitialise le flag reviewed à false pour les items d'une zone spécifique.
+     * Utilisé lors de la reprise du comptage depuis la phase de révision.
      *
-     * @param ResourceUuid $zoneStorageUuid The zone to reset reviewed flags for
+     * @param ResourceUuid $zoneStorageUuid la zone pour laquelle réinitialiser les flags reviewed
      *
-     * @return array<InventoryItem> The updated items with reviewed=false
+     * @return array<InventoryItem> les items mis à jour avec reviewed=false
      */
     public function resetReviewedFlagsForZone(ResourceUuid $zoneStorageUuid): array
     {

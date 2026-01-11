@@ -560,6 +560,6 @@ final class ReviewInventoryControllerTest extends BaseFunctionalTestCase
 
         $crawler = $this->client->request(Request::METHOD_GET, $reviewUri);
         $reviewedBadges = $crawler->filter('.badge.badge-success');
-        self::assertCount(0, $reviewedBadges, 'No items should be marked as reviewed with invalid CSRF');
+        self::assertCount(0, $reviewedBadges, 'Aucun item ne devrait être marqué comme révisé avec un CSRF invalide');
     }
 }

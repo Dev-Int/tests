@@ -103,8 +103,8 @@ final readonly class InventoryMapper
     }
 
     /**
-     * Update an ORM item from a Domain item.
-     * This method handles the mapping of updated values from Domain to ORM layer.
+     * Met à jour un item ORM à partir d'un item Domain.
+     * Cette méthode gère le mapping des valeurs mises à jour de la couche Domain vers la couche ORM.
      */
     public function updateOrmItem(InventoryItem $ormItem, InventoryItemDomain $domainItem): void
     {

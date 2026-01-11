@@ -62,7 +62,7 @@ final class DefaultArticleAggregatorBuilderTest extends BaseFunctionalTestCase
         $provider = self::getContainer()->get(ArticleProvider::class);
 
         $zoneStorages = ZoneStorageFactory::findBy(['label' => 'Réserve maraîchère']);
-        self::assertNotEmpty($zoneStorages, 'ZoneStorage "Réserve maraîchère" not found');
+        self::assertNotEmpty($zoneStorages, 'ZoneStorage "Réserve maraîchère" non trouvé');
         $zoneStorageUuid = ResourceUuid::fromString($zoneStorages[0]->_real()->uuid());
 
         // Act
@@ -85,7 +85,7 @@ final class DefaultArticleAggregatorBuilderTest extends BaseFunctionalTestCase
 
         $zoneStorages = ZoneStorageFactory::findBy(['label' => ['Réserve maraîchère', 'Réserve positive']]);
         self::assertCount(2, $zoneStorages);
-        self::assertNotEmpty($zoneStorages, 'ZoneStorage "Réserve maraîchère" and "Réserve positive" not found');
+        self::assertNotEmpty($zoneStorages, 'ZoneStorage "Réserve maraîchère" et "Réserve positive" non trouvés');
         $zoneStorageUuids = array_map(
             static fn (ZoneStorage $zoneStorage): ResourceUuid => ResourceUuid::fromString($zoneStorage->_real()->uuid()),
             $zoneStorages
@@ -110,7 +110,7 @@ final class DefaultArticleAggregatorBuilderTest extends BaseFunctionalTestCase
         $provider = self::getContainer()->get(ArticleProvider::class);
 
         $familyLogs = FamilyLogFactory::findBy(['label' => 'Frais - Fruits & Légumes']);
-        self::assertNotEmpty($familyLogs, 'FamilyLog "Frais - Fruits & Légumes" not found');
+        self::assertNotEmpty($familyLogs, 'FamilyLog "Frais - Fruits & Légumes" non trouvé');
         $familyLogUuid = ResourceUuid::fromString($familyLogs[0]->_real()->uuid());
 
         // Act
@@ -132,7 +132,7 @@ final class DefaultArticleAggregatorBuilderTest extends BaseFunctionalTestCase
         $provider = self::getContainer()->get(ArticleProvider::class);
 
         $suppliers = SupplierFactory::findBy(['name' => 'Fournisseur 1']);
-        self::assertNotEmpty($suppliers, 'Supplier "Fournisseur 1" not found');
+        self::assertNotEmpty($suppliers, 'Supplier "Fournisseur 1" non trouvé');
         $supplierUuid = ResourceUuid::fromString($suppliers[0]->_real()->uuid());
 
         // Act
@@ -215,11 +215,11 @@ final class DefaultArticleAggregatorBuilderTest extends BaseFunctionalTestCase
         $provider = self::getContainer()->get(ArticleProvider::class);
 
         $zoneStorages = ZoneStorageFactory::findBy(['label' => 'Réserve positive']);
-        self::assertNotEmpty($zoneStorages, 'ZoneStorage "Réserve positive" not found');
+        self::assertNotEmpty($zoneStorages, 'ZoneStorage "Réserve positive" non trouvé');
         $zoneStorageUuid = ResourceUuid::fromString($zoneStorages[0]->_real()->uuid());
 
         $suppliers = SupplierFactory::findBy(['name' => 'Fournisseur 1']);
-        self::assertNotEmpty($suppliers, 'Supplier "Fournisseur 1" not found');
+        self::assertNotEmpty($suppliers, 'Supplier "Fournisseur 1" non trouvé');
         $supplierUuid = ResourceUuid::fromString($suppliers[0]->_real()->uuid());
 
         // Act

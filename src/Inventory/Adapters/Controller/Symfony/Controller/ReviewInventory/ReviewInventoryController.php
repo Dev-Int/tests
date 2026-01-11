@@ -168,15 +168,15 @@ final class ReviewInventoryController extends AbstractController
     }
 
     /**
-     * Determines redirect after successful review submission.
+     * Détermine la redirection après une soumission de révision réussie.
      *
-     * Design decision: When items remain unreviewed, we redirect back to the same page
-     * rather than filtering out already-reviewed items. This allows users to:
-     * - See the full context of discrepancies (reviewed + unreviewed)
-     * - Track progress visually with the "✅ Reviewed" indicator
-     * - Process items in batches without losing overview
+     * Décision de conception : quand des items restent non révisés, on redirige vers la même page
+     * plutôt que de filtrer les items déjà révisés. Cela permet aux utilisateurs de :
+     * - Voir le contexte complet des écarts (révisés + non révisés)
+     * - Suivre la progression visuellement avec l'indicateur "✅ Révisé"
+     * - Traiter les items par lots sans perdre la vue d'ensemble
      *
-     * The reviewed items remain visible but non-editable, providing a clear audit trail.
+     * Les items révisés restent visibles mais non modifiables, fournissant une piste d'audit claire.
      */
     private function determineRedirectAfterSuccess(Inventory $inventory, string $inventoryUuid): Response
     {
@@ -193,7 +193,7 @@ final class ReviewInventoryController extends AbstractController
     }
 
     /**
-     * Build zones with their labels from ZoneStorageProvider.
+     * Construit les zones avec leurs labels depuis ZoneStorageProvider.
      *
      * @param array<string> $zoneUuids
      *

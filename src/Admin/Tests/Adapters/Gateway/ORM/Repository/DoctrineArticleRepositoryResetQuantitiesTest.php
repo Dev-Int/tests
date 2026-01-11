@@ -72,7 +72,11 @@ final class DoctrineArticleRepositoryResetQuantitiesTest extends BaseFunctionalT
         $events = $this->repository->resetQuantities($updates);
 
         // Assert
-        self::assertCount(0, $events, 'no low stock events (new quantities are above minStock)');
+        self::assertCount(
+            0,
+            $events,
+            'pas d\'événement de stock bas (les nouvelles quantités sont au-dessus du minStock)'
+        );
 
         $updatedArticle1 = $this->repository->getByUuid(ResourceUuid::fromString($article1->_real()->uuid()));
         $updatedArticle2 = $this->repository->getByUuid(ResourceUuid::fromString($article2->_real()->uuid()));
@@ -111,7 +115,7 @@ final class DoctrineArticleRepositoryResetQuantitiesTest extends BaseFunctionalT
 
         // Assert
         self::assertCount(2, $events);
-        self::assertContainsOnlyInstancesOf(LowStockDetected::class, $events, 'both articles should trigger low stock events');
+        self::assertContainsOnlyInstancesOf(LowStockDetected::class, $events, 'les deux articles devraient déclencher des événements de stock bas');
 
         $eventUuids = array_map(
             static fn (LowStockDetected $event): string => $event->articleUuid->toString(),

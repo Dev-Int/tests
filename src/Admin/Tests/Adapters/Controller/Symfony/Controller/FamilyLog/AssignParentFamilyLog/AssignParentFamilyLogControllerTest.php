@@ -243,7 +243,7 @@ final class AssignParentFamilyLogControllerTest extends BaseFunctionalTestCase
         );
 
         $cancelLink = $crawler->selectLink($translator->trans('cancel'));
-        self::assertCount(1, $cancelLink, 'Cancel link should exist');
+        self::assertCount(1, $cancelLink, 'Le lien Annuler devrait exister');
 
         $this->client->click($cancelLink->link());
 
