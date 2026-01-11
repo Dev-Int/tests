@@ -13,9 +13,20 @@ declare(strict_types=1);
 
 namespace Inventory\UseCases\GetInventories;
 
+use Inventory\Entities\VO\InventoryStatus;
+use Shared\Entities\ResourceUuid;
+
 interface GetInventoriesRequest
 {
     public function page(): int;
 
     public function itemsPerPage(): int;
+
+    public function status(): ?InventoryStatus;
+
+    public function dateAfter(): ?\DateTimeImmutable;
+
+    public function dateBefore(): ?\DateTimeImmutable;
+
+    public function zoneStorageUuid(): ?ResourceUuid;
 }

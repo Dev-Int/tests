@@ -22,6 +22,22 @@ return [
             'completed' => 'Completed',
             'cancelled' => 'Cancelled',
         ],
+        'filter' => [
+            'title' => 'Filters',
+            'apply' => 'Filter',
+            'reset' => 'Reset',
+            'status' => [
+                'all' => 'All statuses',
+            ],
+            'date' => [
+                'after' => 'Start date',
+                'before' => 'End date',
+                'invalid' => 'Invalid date format.',
+            ],
+            'zoneStorage' => [
+                'all' => 'All zones',
+            ],
+        ],
         'create' => [
             'titlePage' => 'Create an inventory',
             'titleShort' => 'New inventory',

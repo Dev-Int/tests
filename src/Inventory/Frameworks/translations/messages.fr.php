@@ -22,6 +22,22 @@ return [
             'completed' => 'Terminé',
             'cancelled' => 'Annulé',
         ],
+        'filter' => [
+            'title' => 'Filtres',
+            'apply' => 'Filtrer',
+            'reset' => 'Réinitialiser',
+            'status' => [
+                'all' => 'Tous les statuts',
+            ],
+            'date' => [
+                'after' => 'Date début',
+                'before' => 'Date fin',
+                'invalid' => 'Format de date invalide.',
+            ],
+            'zoneStorage' => [
+                'all' => 'Toutes les zones',
+            ],
+        ],
         'create' => [
             'titlePage' => 'Créer un inventaire',
             'titleShort' => 'Nouvel inventaire',

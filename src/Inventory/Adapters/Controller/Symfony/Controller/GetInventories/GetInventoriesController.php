@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Inventory\Adapters\Controller\Symfony\Controller\GetInventories;
 
+use Inventory\Adapters\Form\Type\InventoryFilterType;
 use Inventory\UseCases\GetInventories\GetInventories;
 use Shared\Adapters\Attribute\RequireApplicationReady;
 use Shared\Adapters\Controller\Symfony\Controller\HomeController;
@@ -37,11 +38,42 @@ final class GetInventoriesController extends AbstractController
     #[Route(path: 'inventories', name: self::ROUTE_NAME, methods: ['GET'])]
     public function __invoke(Request $request): Response
     {
-        $page = $request->query->getInt('page', Pagination::DEFAULT_PAGE);
-        $itemsPerPage = $request->query->getInt('itemsPerPage', Pagination::DEFAULT_ITEMS_PER_PAGE);
+        $filterForm = $this->createForm(InventoryFilterType::class);
+        $filterForm->handleRequest($request);
+
+        if ($filterForm->isSubmitted() && !$filterForm->isValid()) {
+            return $this->render('@inventory/index.html.twig', [
+                'inventories' => [],
+                'pagination' => new Pagination(0, 1, Pagination::DEFAULT_ITEMS_PER_PAGE),
+                'filterForm' => $filterForm->createView(),
+            ]);
+        }
+
+        $dateForm = $filterForm->get('date');
+
+        /** @var string|null $status */
+        $status = $filterForm->get('status')->getData();
+
+        /** @var \DateTimeImmutable|null $dateAfter */
+        $dateAfter = $dateForm->get('after')->getData();
+
+        /** @var \DateTimeImmutable|null $dateBefore */
+        $dateBefore = $dateForm->get('before')->getData();
+
+        /** @var string|null $zoneStorage */
+        $zoneStorage = $filterForm->get('zoneStorage')->getData();
+
+        $apiRequest = new GetInventoriesApiRequest(
+            page: $request->query->getInt('page', Pagination::DEFAULT_PAGE),
+            itemsPerPage: $request->query->getInt('itemsPerPage', Pagination::DEFAULT_ITEMS_PER_PAGE),
+            status: $status,
+            dateAfter: $dateAfter,
+            dateBefore: $dateBefore,
+            zoneStorage: $zoneStorage,
+        );
 
         try {
-            $response = $this->useCase->execute(new GetInventoriesApiRequest($page, $itemsPerPage));
+            $response = $this->useCase->execute($apiRequest);
         } catch (\DomainException $exception) {
             $this->addFlash('error', $exception->getMessage());
 
@@ -49,11 +81,16 @@ final class GetInventoriesController extends AbstractController
         }
 
         $presenter = new GetInventoryPresenter($response->inventories);
-        $pagination = new Pagination($response->inventories->count(), $page, $itemsPerPage);
+        $pagination = new Pagination(
+            $response->inventories->count(),
+            $apiRequest->page,
+            $apiRequest->itemsPerPage,
+        );
 
         return $this->render('@inventory/index.html.twig', [
             'inventories' => $presenter->present(),
             'pagination' => $pagination,
+            'filterForm' => $filterForm->createView(),
         ]);
     }
 }

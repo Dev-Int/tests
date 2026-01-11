@@ -19,6 +19,9 @@ doctrine:
         auto_mapping: true
         controller_resolver:
             auto_mapping: false
+        dql:
+            string_functions:
+                TEXT: Shared\Adapters\Gateway\Doctrine\DQL\TextFunction
 
 when@test:
     doctrine:

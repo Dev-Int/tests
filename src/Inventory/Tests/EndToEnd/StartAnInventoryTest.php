@@ -82,7 +82,7 @@ final class StartAnInventoryTest extends BasePantherTestCase
         self::assertSelectorTextContains('h1', $translator->trans('inventory.titlePage'));
 
         // Assert - Start button is visible for DRAFT inventory
-        $startButton = $client->getCrawler()->filter('button[type="submit"]');
+        $startButton = $client->getCrawler()->filter('.actions-group button[type="submit"]');
         self::assertGreaterThan(0, $startButton->count(), 'Start button should be visible');
         self::assertStringContainsString(
             $translator->trans('inventory.start.button'),

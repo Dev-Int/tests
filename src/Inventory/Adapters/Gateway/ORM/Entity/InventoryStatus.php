@@ -23,6 +23,15 @@ enum InventoryStatus: string
     case COMPLETED = 'completed';
     case CANCELLED = 'cancelled';
 
+    /**
+     * @var array<string>
+     */
+    public const array ACTIVE_STATUSES = [
+        self::DRAFT->value,
+        self::IN_PROGRESS->value,
+        self::REVIEW->value,
+    ];
+
     public static function fromDomain(InventoryStatusDomain $statusDomain): self
     {
         return match ($statusDomain) {
