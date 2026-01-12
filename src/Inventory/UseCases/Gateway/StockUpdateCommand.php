@@ -16,10 +16,10 @@ namespace Inventory\UseCases\Gateway;
 use Shared\Entities\ResourceUuid;
 
 /**
- * Command to update an article's stock quantity.
+ * Commande pour mettre à jour la quantité en stock d'un article.
  *
- * Used by the Inventory BC to communicate stock updates to the Admin BC
- * through the ArticleStockUpdaterInterface gateway.
+ * Utilisée par le BC Inventory pour communiquer les mises à jour de stock au BC Admin
+ * via le gateway ArticleStockUpdaterInterface.
  */
 final readonly class StockUpdateCommand
 {

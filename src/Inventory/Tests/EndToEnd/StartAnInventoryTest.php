@@ -83,7 +83,7 @@ final class StartAnInventoryTest extends BasePantherTestCase
 
         // Assert - Start button is visible for DRAFT inventory
         $startButton = $client->getCrawler()->filter('.actions-group button[type="submit"]');
-        self::assertGreaterThan(0, $startButton->count(), 'Start button should be visible');
+        self::assertGreaterThan(0, $startButton->count(), 'Le bouton Démarrer devrait être visible');
         self::assertStringContainsString(
             $translator->trans('inventory.start.button'),
             $startButton->first()->text()
@@ -111,7 +111,7 @@ final class StartAnInventoryTest extends BasePantherTestCase
         self::assertCount(
             1,
             $remainingStartButtons,
-            'Start button should disappear after starting, but Cancel button should still be visible'
+            'Le bouton Démarrer devrait disparaître après démarrage, mais le bouton Annuler devrait rester visible'
         );
 
         // Assert - Database status is updated to IN_PROGRESS
@@ -158,6 +158,6 @@ final class StartAnInventoryTest extends BasePantherTestCase
         $startButtons = $client->getCrawler()->filterXPath(
             \sprintf('//button[contains(text(), "%s")]', $translator->trans('inventory.start.button'))
         );
-        self::assertCount(0, $startButtons, 'Start button should NOT be visible for IN_PROGRESS inventory');
+        self::assertCount(0, $startButtons, 'Le bouton Démarrer ne devrait PAS être visible pour un inventaire IN_PROGRESS');
     }
 }

@@ -81,7 +81,7 @@ final class CompleteAnInventoryTest extends BasePantherTestCase
         $startButton = $client->getCrawler()->filter(
             \sprintf('turbo-frame#inventory_%s button[type="submit"]', $inventoryUuid)
         );
-        self::assertGreaterThan(0, $startButton->count(), 'Start button should be visible for DRAFT inventory');
+        self::assertGreaterThan(0, $startButton->count(), 'Le bouton Démarrer devrait être visible pour un inventaire DRAFT');
 
         // === Step 2: Start inventory (DRAFT -> IN_PROGRESS) ===
         $startButton->first()->click();
@@ -97,7 +97,7 @@ final class CompleteAnInventoryTest extends BasePantherTestCase
                 $translator->trans('inventory.zone.record.button')
             )
         );
-        self::assertCount(1, $recordStockButton, 'Record stock button should be visible for zone');
+        self::assertCount(1, $recordStockButton, 'Le bouton Saisir stock devrait être visible pour la zone');
         $recordStockButton->first()->click();
 
         $client->waitForElementToContain('h1', $translator->trans('inventory.zone.record.titlePage'));
@@ -129,7 +129,7 @@ final class CompleteAnInventoryTest extends BasePantherTestCase
                 $translator->trans('inventory.finish_counting.button')
             )
         );
-        self::assertCount(1, $finishButton, 'Finish counting button should be visible');
+        self::assertCount(1, $finishButton, 'Le bouton Terminer le comptage devrait être visible');
         $finishButton->first()->click();
 
         $client->waitForVisibility('.flash-success');
@@ -143,7 +143,7 @@ final class CompleteAnInventoryTest extends BasePantherTestCase
         self::assertSame(
             InventoryStatus::REVIEW->value,
             $inventoryAfterFinish->status()->value,
-            'Inventory should be in REVIEW status'
+            'L\'inventaire devrait être en statut REVIEW'
         );
 
         // Reload page to get fresh UI
@@ -156,20 +156,20 @@ final class CompleteAnInventoryTest extends BasePantherTestCase
                 $inventoryUuid
             )
         );
-        self::assertCount(1, $reviewLink, 'Review button should be visible');
+        self::assertCount(1, $reviewLink, 'Le bouton Réviser devrait être visible');
         $reviewLink->first()->click();
 
         $client->waitForElementToContain('h1', $translator->trans('inventory.review.titlePage'));
 
         // Verify we have discrepancies to review (check if the form exists)
         $form = $client->getCrawler()->filter('form');
-        self::assertGreaterThan(0, $form->count(), 'Review form should be present (discrepancies exist)');
+        self::assertGreaterThan(0, $form->count(), 'Le formulaire de révision devrait être présent (des écarts existent)');
 
         // Verify we have unreviewed items with pending status
         $pendingBadges = $client->getCrawler()->filterXPath(
             \sprintf('//span[contains(@class, "badge-warning") and contains(., "%s")]', $translator->trans('inventory.review.pending'))
         );
-        self::assertGreaterThan(0, $pendingBadges->count(), 'Should have pending items to review');
+        self::assertGreaterThan(0, $pendingBadges->count(), 'Des items en attente de révision devraient être présents');
 
         // === Step 6: Mark all items as reviewed ===
         // Check all checkboxes using JavaScript
@@ -179,7 +179,7 @@ final class CompleteAnInventoryTest extends BasePantherTestCase
         $submitButton = $client->getCrawler()->filterXPath(
             \sprintf('//button[contains(., "%s")]', $translator->trans('inventory.review.mark_as_reviewed'))
         );
-        self::assertCount(1, $submitButton, 'Submit button should exist');
+        self::assertCount(1, $submitButton, 'Le bouton Soumettre devrait exister');
         $submitButton->first()->click();
 
         $client->waitForVisibility('.flash-success');
@@ -197,7 +197,7 @@ final class CompleteAnInventoryTest extends BasePantherTestCase
                 $translator->trans('inventory.complete.submit')
             )
         );
-        self::assertCount(1, $completeButton, 'Complete button should be visible when all items reviewed');
+        self::assertCount(1, $completeButton, 'Le bouton Finaliser devrait être visible quand tous les items sont révisés');
         $completeButton->first()->click();
 
         $client->waitForVisibility('.flash-success');
@@ -220,12 +220,12 @@ final class CompleteAnInventoryTest extends BasePantherTestCase
         self::assertNotEquals(
             $initialLaitQuantity,
             $updatedLait->quantity(),
-            'Lait stock should have been updated after inventory completion'
+            'Le stock de Lait devrait avoir été mis à jour après finalisation de l\'inventaire'
         );
         self::assertNotEquals(
             $initialCamembertQuantity,
             $updatedCamembert->quantity(),
-            'Camembert stock should have been updated after inventory completion'
+            'Le stock de Camembert devrait avoir été mis à jour après finalisation de l\'inventaire'
         );
     }
 }

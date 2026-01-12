@@ -42,8 +42,8 @@ use Liip\TestFixturesBundle\Services\DatabaseTools\AbstractDatabaseTool;
 use Symfony\Component\Panther\PantherTestCase;
 
 /**
- * Base class for E2E tests with Panther.
- * Uses LiipTestFixturesBundle for database reset before each test.
+ * Classe de base pour les tests E2E avec Panther.
+ * Utilise LiipTestFixturesBundle pour réinitialiser la base de données avant chaque test.
  */
 class BasePantherTestCase extends PantherTestCase
 {
@@ -59,7 +59,7 @@ class BasePantherTestCase extends PantherTestCase
         $databaseToolCollection = static::getContainer()->get(DatabaseToolCollection::class);
         $this->databaseTool = $databaseToolCollection->get();
 
-        // Purge the database before each test for E2E tests
+        // Purge la base de données avant chaque test E2E
         $this->databaseTool->loadFixtures();
     }
 
@@ -68,13 +68,13 @@ class BasePantherTestCase extends PantherTestCase
         parent::tearDown();
         $this->databaseTool = null;
 
-        // Ensure a clean state between tests
+        // Assure un état propre entre les tests
         self::ensureKernelShutdown();
         self::stopWebServer();
     }
 
     /**
-     * Force flush and clear entity manager so the Panther server can see the data.
+     * Force le flush et le clear de l'EntityManager pour que le serveur Panther puisse voir les données.
      */
     protected function flushAndClearEntityManager(): void
     {
@@ -86,10 +86,10 @@ class BasePantherTestCase extends PantherTestCase
     }
 
     /**
-     * Create minimal configuration entities required for ConfigurationService::isConfigured().
-     * Creates one instance of each required entity: Company, Unit, Tax, FamilyLog, ZoneStorage, Supplier, Article.
+     * Crée les entités de configuration minimales requises pour ConfigurationService::isConfigured().
+     * Crée une instance de chaque entité requise : Company, Unit, Tax, FamilyLog, ZoneStorage, Supplier, Article.
      *
-     * This is useful for E2E tests that need a configured system but don't care about specific data.
+     * Utile pour les tests E2E qui nécessitent un système configuré mais sans données spécifiques.
      *
      * @return array{
      *     company: Company,
@@ -128,32 +128,32 @@ class BasePantherTestCase extends PantherTestCase
         /** @var DoctrineArticleRepository $articleRepository */
         $articleRepository = static::getContainer()->get(DoctrineArticleRepository::class);
 
-        // Create Company
+        // Crée Company
         $company = (new CompanyDataBuilder())->create('Dev-Int Création')->build();
         $companyRepository->save($company);
 
-        // Create Unit
+        // Crée Unit
         $colis = (new UnitDataBuilder())->create('Colis', 'cls')
             ->withUuid($faker->uuid())
             ->build()
         ;
         $unitRepository->save($colis);
 
-        // Create Tax
+        // Crée Tax
         $tax = (new TaxDataBuilder())->create('TVA taux réduit', 5.5)
             ->withUuid($faker->uuid())
             ->build()
         ;
         $taxRepository->save($tax);
 
-        // Create a FamilyLog
+        // Crée FamilyLog
         $familyLog = (new FamilyLogDataBuilder())->create('Surgelé')
             ->withUuid($faker->uuid())
             ->build()
         ;
         $familyLogRepository->save($familyLog);
 
-        // Create ZoneStorage
+        // Crée ZoneStorage
         $zoneStorage = (new ZoneStorageDataBuilder())
             ->create('Reserve froide', $familyLog)
             ->withUuid($faker->uuid())
@@ -161,7 +161,7 @@ class BasePantherTestCase extends PantherTestCase
         ;
         $zoneStorageRepository->save($zoneStorage);
 
-        // Create Supplier
+        // Crée Supplier
         $supplier = (new SupplierDataBuilder())
             ->create('Supplier 1', $familyLog)
             ->withUuid($faker->uuid())
@@ -169,7 +169,7 @@ class BasePantherTestCase extends PantherTestCase
         ;
         $supplierRepository->save($supplier);
 
-        // Create Article
+        // Crée Article
         $article = (new ArticleDataBuilder())->create(
             'Jambon Trad 6kg',
             $supplier,
@@ -183,7 +183,7 @@ class BasePantherTestCase extends PantherTestCase
         ;
         $articleRepository->save($article);
 
-        // Flush data so the Panther server can see it
+        // Flush les données pour que le serveur Panther puisse les voir
         $this->flushAndClearEntityManager();
 
         return [

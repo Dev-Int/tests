@@ -14,18 +14,18 @@ declare(strict_types=1);
 namespace Shared\Entities\Persistence;
 
 /**
- * Abstraction for transactional execution of operations.
+ * Abstraction pour l'exécution transactionnelle d'opérations.
  *
- * Allows UseCases to wrap operations in a transaction without
- * depending on infrastructure (Doctrine, etc.).
+ * Permet aux UseCases d'encapsuler des opérations dans une transaction
+ * sans dépendre de l'infrastructure (Doctrine, etc.).
  */
 interface TransactionalExecutorInterface
 {
     /**
-     * Executes the given operation within a transaction.
+     * Exécute l'opération donnée dans une transaction.
      *
-     * If the operation throws, the transaction is rolled back.
-     * If successful, the transaction is committed.
+     * Si l'opération lève une exception, la transaction est annulée (rollback).
+     * Si elle réussit, la transaction est validée (commit).
      *
      * @template T
      *
@@ -33,7 +33,7 @@ interface TransactionalExecutorInterface
      *
      * @return T
      *
-     * @throws \Throwable If operation fails, transaction is rolled back
+     * @throws \Throwable si l'opération échoue, la transaction est annulée
      */
     public function execute(callable $operation): mixed;
 }

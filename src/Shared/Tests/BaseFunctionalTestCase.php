@@ -21,9 +21,9 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
- * Base class for functional tests.
- * Uses LiipTestFixturesBundle to reset database before each test.
- * This ensures data is visible to HTTP requests (unlike transaction-based isolation).
+ * Classe de base pour les tests fonctionnels.
+ * Utilise LiipTestFixturesBundle pour réinitialiser la base de données avant chaque test.
+ * Cela garantit que les données sont visibles pour les requêtes HTTP (contrairement à l'isolation par transaction).
  */
 abstract class BaseFunctionalTestCase extends WebTestCase
 {
@@ -34,18 +34,18 @@ abstract class BaseFunctionalTestCase extends WebTestCase
     {
         parent::setUp();
 
-        // Reset the clock to system time before each test
+        // Réinitialise l'horloge à l'heure système avant chaque test
         ClockFactory::initialize(new SystemClock());
 
-        // Create the client first to boot the kernel
+        // Crée le client en premier pour démarrer le kernel
         $this->client = static::createClient();
 
-        // Get a database tool for resetting the database
+        // Récupère l'outil de base de données pour la réinitialisation
         /** @var DatabaseToolCollection $databaseToolCollection */
         $databaseToolCollection = static::getContainer()->get(DatabaseToolCollection::class);
         $this->databaseTool = $databaseToolCollection->get();
 
-        // Reset database before each test
+        // Réinitialise la base de données avant chaque test
         $this->databaseTool->loadFixtures([]);
     }
 

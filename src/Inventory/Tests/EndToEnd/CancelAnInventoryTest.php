@@ -80,7 +80,7 @@ final class CancelAnInventoryTest extends BasePantherTestCase
                 $inventoryUuid
             )
         );
-        self::assertCount(1, $cancelButton, 'Cancel button should be visible for DRAFT inventory');
+        self::assertCount(1, $cancelButton, 'Le bouton Annuler devrait être visible pour un inventaire DRAFT');
         $cancelButton->first()->click();
 
         // Assert
@@ -143,7 +143,7 @@ final class CancelAnInventoryTest extends BasePantherTestCase
                 $inventoryUuid
             )
         );
-        self::assertCount(1, $cancelButton, 'Cancel button should be visible for IN_PROGRESS inventory');
+        self::assertCount(1, $cancelButton, 'Le bouton Annuler devrait être visible pour un inventaire IN_PROGRESS');
         $cancelButton->first()->click();
 
         // Assert
@@ -229,7 +229,7 @@ final class CancelAnInventoryTest extends BasePantherTestCase
                 $translator->trans('inventory.finish_counting.button')
             )
         );
-        self::assertCount(1, $finishButton, 'Finish counting button should be visible when all items counted');
+        self::assertCount(1, $finishButton, 'Le bouton Terminer le comptage devrait être visible quand tous les items sont comptés');
         $finishButton->first()->click();
         $client->waitForVisibility('.flash-success');
 
@@ -245,7 +245,7 @@ final class CancelAnInventoryTest extends BasePantherTestCase
                 $inventoryUuid
             )
         );
-        self::assertCount(1, $cancelButton, 'Cancel button should be visible for REVIEW inventory');
+        self::assertCount(1, $cancelButton, 'Le bouton Annuler devrait être visible pour un inventaire REVIEW');
         $cancelButton->first()->click();
 
         // Assert

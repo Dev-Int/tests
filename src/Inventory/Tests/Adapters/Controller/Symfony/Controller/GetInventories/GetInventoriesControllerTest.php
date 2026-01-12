@@ -62,13 +62,13 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
         self::assertResponseRedirects(
             expectedLocation: '/admin/configure',
             expectedCode: Response::HTTP_FOUND,
-            message: 'Expected redirect to /admin/configure'
+            message: 'Redirection attendue vers /admin/configure'
         );
 
         $crawler = $this->client->followRedirect();
         $flash = $crawler->filter('.flash-error')->text();
 
-        self::assertSame(ApplicationNotReady::MESSAGE, $flash, 'Expected flash message for application not ready');
+        self::assertSame(ApplicationNotReady::MESSAGE, $flash, 'Message flash attendu pour application non configurée');
     }
 
     public function testGetInventoriesRouteNameConstantExists(): void
@@ -131,12 +131,12 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
         self::assertSelectorTextContains(
             '.head',
             $translator->trans('inventory.form.date.label'),
-            'Table should have date header'
+            'Le tableau devrait avoir un en-tête date'
         );
         self::assertSelectorTextContains(
             '.head',
             $translator->trans('inventory.status.label'),
-            'Table should have status header'
+            'Le tableau devrait avoir un en-tête statut'
         );
     }
 
@@ -331,7 +331,7 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
         $inventoryRows = $crawler->filter(
             'turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)'
         );
-        self::assertCount(3, $inventoryRows, 'Expected 3 inventories on first page');
+        self::assertCount(3, $inventoryRows, '3 inventaires attendus sur la première page');
     }
 
     public function testGetInventoriesDisplaysBackToHomeButton(): void
@@ -376,7 +376,7 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
         $inventoryRows = $crawler->filter(
             'turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)'
         );
-        self::assertCount(Pagination::DEFAULT_ITEMS_PER_PAGE, $inventoryRows, 'Expected 25 inventories on first page');
+        self::assertCount(Pagination::DEFAULT_ITEMS_PER_PAGE, $inventoryRows, '25 inventaires attendus sur la première page');
     }
 
     public function testGetInventoriesSecondPageDisplaysRemainingItems(): void
@@ -410,7 +410,7 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
         $inventoryRows = $crawler->filter(
             'turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)'
         );
-        self::assertCount(5, $inventoryRows, 'Expected 5 inventories on page 2');
+        self::assertCount(5, $inventoryRows, '5 inventaires attendus sur la page 2');
     }
 
     public function testGetInventoriesPaginationComponentNotDisplayedWhenFewItems(): void
@@ -441,10 +441,10 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
         $inventoryRows = $crawler->filter(
             'turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)'
         );
-        self::assertCount(5, $inventoryRows, 'Expected 5 inventories on first page');
+        self::assertCount(5, $inventoryRows, '5 inventaires attendus sur la première page');
 
         $paginationNav = $crawler->filter('#pagination nav');
-        self::assertCount(0, $paginationNav, 'Expected pagination nav to be hidden with 1 page');
+        self::assertCount(0, $paginationNav, 'La navigation de pagination devrait être masquée avec 1 seule page');
     }
 
     public function testGetInventoriesWithStatusFilterShowsOnlyMatchingStatus(): void
@@ -484,7 +484,7 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
         $inventoryRows = $crawler->filter(
             'turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)'
         );
-        self::assertCount(1, $inventoryRows, 'Expected 1 draft inventory');
+        self::assertCount(1, $inventoryRows, '1 inventaire brouillon attendu');
     }
 
     public function testGetInventoriesWithDateAfterFilterShowsInventoriesAfterDate(): void
@@ -525,7 +525,7 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
         $inventoryRows = $crawler->filter(
             'turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)'
         );
-        self::assertCount(1, $inventoryRows, 'Expected 1 inventory after today');
+        self::assertCount(1, $inventoryRows, '1 inventaire attendu après aujourd\'hui');
     }
 
     public function testGetInventoriesWithDateBeforeFilterShowsInventoriesBeforeDate(): void
@@ -566,7 +566,7 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
         $inventoryRows = $crawler->filter(
             'turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)'
         );
-        self::assertCount(1, $inventoryRows, 'Expected 1 inventory before today');
+        self::assertCount(1, $inventoryRows, '1 inventaire attendu avant aujourd\'hui');
     }
 
     public function testGetInventoriesWithZoneStorageFilterShowsMatchingInventories(): void
@@ -614,7 +614,7 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
         $inventoryRows = $crawler->filter(
             'turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)'
         );
-        self::assertCount(1, $inventoryRows, 'Expected 1 inventory with zone 1');
+        self::assertCount(1, $inventoryRows, '1 inventaire attendu avec la zone 1');
     }
 
     public function testGetInventoriesWithCombinedFiltersWork(): void
@@ -662,7 +662,7 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
         $inventoryRows = $crawler->filter(
             'turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)'
         );
-        self::assertCount(1, $inventoryRows, 'Expected only future draft inventory to be shown');
+        self::assertCount(1, $inventoryRows, 'Seul l\'inventaire brouillon futur devrait être affiché');
     }
 
     public function testGetInventoriesWithInvalidDateFilterShowsError(): void
@@ -692,12 +692,12 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
         self::assertResponseIsSuccessful();
 
         $errorMessages = $crawler->filter('.form-error, .invalid-feedback, [class*="error"]');
-        self::assertGreaterThan(0, $errorMessages->count(), 'Expected error message for invalid date');
+        self::assertGreaterThan(0, $errorMessages->count(), 'Message d\'erreur attendu pour date invalide');
 
         $inventoryRows = $crawler->filter(
             'turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)'
         );
-        self::assertCount(0, $inventoryRows, 'No inventories should be displayed when validation failed');
+        self::assertCount(0, $inventoryRows, 'Aucun inventaire ne devrait être affiché si la validation a échoué');
     }
 
     public function testGetInventoriesFilterFormIsDisplayed(): void
@@ -712,11 +712,11 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
 
         self::assertResponseIsSuccessful();
         $filterSection = $crawler->filter('details.filters-section');
-        self::assertCount(1, $filterSection, 'Expected filter section to be present');
+        self::assertCount(1, $filterSection, 'Section de filtres attendue');
         self::assertStringContainsString(
             $translator->trans('inventory.filter.title'),
             $filterSection->text(),
-            'Filter section should contain title'
+            'La section de filtres devrait contenir le titre'
         );
     }
 
@@ -750,6 +750,6 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
         $inventoryRows = $crawler->filter(
             'turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)'
         );
-        self::assertCount(5, $inventoryRows, 'Expected 5 inventories on page 2 with status filter');
+        self::assertCount(5, $inventoryRows, '5 inventaires attendus sur la page 2 avec filtre de statut');
     }
 }
