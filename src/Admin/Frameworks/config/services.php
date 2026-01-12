@@ -11,6 +11,8 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
+use Admin\Adapters\Gateway\CachedConfigurationService;
+use Shared\Contracts\ApplicationReadinessProvider;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
 return static function (ContainerConfigurator $configurator): void {
@@ -37,24 +39,9 @@ return static function (ContainerConfigurator $configurator): void {
         resource: __DIR__ . '/../../../Admin/UseCases/Gateway/Finder'
     );
 
+    // Utilise le service avec cache pour la vérification de configuration
     $services->alias(
-        id: 'Admin\Contracts\Services\Provider\Article\ArticleProvider',
-        referencedId: 'Admin\Adapters\Gateway\Contracts\Provider\Article\ArticleProvider'
-    )
-        ->public()
-    ;
-
-    $services->alias(
-        id: 'Admin\Contracts\Services\Updater\Article\ArticleQuantityUpdater',
-        referencedId: 'Admin\Adapters\Gateway\Contracts\Updater\Article\ArticleQuantityUpdater'
-    )
-        ->public()
-    ;
-
-    $services->alias(
-        id: 'Shared\Contracts\ApplicationReadinessProvider',
-        referencedId: 'Admin\Adapters\Gateway\ConfigurationService'
-    )
-        ->public()
-    ;
+        id: ApplicationReadinessProvider::class,
+        referencedId: CachedConfigurationService::class
+    );
 };

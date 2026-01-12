@@ -19,7 +19,9 @@ use Admin\Entities\Repository\ArticleRepository;
 use Psr\Log\LoggerInterface;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\Quantity;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
+#[AsAlias(ArticleQuantityUpdaterContract::class)]
 final readonly class ArticleQuantityUpdater implements ArticleQuantityUpdaterContract
 {
     public function __construct(
