@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Gateway\Doctrine;
 
+use Admin\Adapters\Gateway\Cache\ConfigurationState;
 use Admin\Adapters\Gateway\Cache\ConfigurationStateCache;
 use Admin\Adapters\Gateway\ORM\Entity\Article\Article;
 use Admin\Adapters\Gateway\ORM\Entity\Company;
@@ -26,6 +27,12 @@ use Doctrine\ORM\Events;
 
 /**
  * Invalide le cache de configuration quand une entité de configuration est créée/supprimée.
+ *
+ * Optimisations :
+ * - postPersist : invalide seulement si le cache indique que ce type d'entité n'existe pas encore
+ *   (évite les invalidations inutiles lors d'ajouts bulk)
+ * - postRemove : invalide toujours (les suppressions bulk sont rares pour les entités de config)
+ * - postUpdate : non écouté car le cache vérifie l'existence, pas le contenu
  */
 #[AsEntityListener(event: Events::postPersist, entity: Company::class)]
 #[AsEntityListener(event: Events::postRemove, entity: Company::class)]
@@ -48,13 +55,39 @@ final readonly class ConfigurationStateInvalidator
     ) {
     }
 
-    public function postPersist(): void
+    public function postPersist(object $entity): void
     {
-        $this->cache->invalidate();
+        if ($this->shouldInvalidateOnPersist($entity)) {
+            $this->cache->invalidate();
+        }
     }
 
     public function postRemove(): void
     {
         $this->cache->invalidate();
+    }
+
+    /**
+     * Vérifie si l'invalidation est nécessaire : seulement si le cache indique
+     * que ce type d'entité n'existe pas encore.
+     */
+    private function shouldInvalidateOnPersist(object $entity): bool
+    {
+        $state = $this->cache->get();
+
+        if (!$state instanceof ConfigurationState) {
+            return true;
+        }
+
+        return match (true) {
+            $entity instanceof Company => !$state->hasCompany,
+            $entity instanceof Unit => !$state->hasUnit,
+            $entity instanceof Tax => !$state->hasTax,
+            $entity instanceof FamilyLog => !$state->hasFamilyLog,
+            $entity instanceof ZoneStorage => !$state->hasZoneStorage,
+            $entity instanceof Supplier => !$state->hasSupplier,
+            $entity instanceof Article => !$state->hasArticle,
+            default => true,
+        };
     }
 }

@@ -23,6 +23,7 @@ use Admin\Entities\Repository\SupplierRepository;
 use Admin\Entities\Repository\TaxRepository;
 use Admin\Entities\Repository\UnitRepository;
 use Admin\Entities\Repository\ZoneStorageRepository;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 /**
  * Service de configuration avec cache.
@@ -32,6 +33,7 @@ use Admin\Entities\Repository\ZoneStorageRepository;
  * - Request-scoped (mémoire) pour éviter les multiples lectures dans une même requête
  * - Pool Symfony (filesystem/Redis) pour persister entre les requêtes
  */
+#[AsAlias(ConfigurationServiceProvider::class)]
 final class CachedConfigurationService implements ConfigurationServiceProvider
 {
     private ?ConfigurationState $requestScopedState = null;

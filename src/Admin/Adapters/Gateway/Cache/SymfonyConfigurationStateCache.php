@@ -23,7 +23,15 @@ use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 final readonly class SymfonyConfigurationStateCache implements ConfigurationStateCache
 {
     public const string CACHE_KEY = 'admin.configuration_state';
-    public const int TTL = 3600; // 1 heure
+
+    /**
+     * TTL de 1 heure : compromis entre performance et fraîcheur des données.
+     *
+     * Note : En cas de modification directe en base (hors Doctrine), le cache reste
+     * valide jusqu'à expiration. Les modifications via l'application sont invalidées
+     * immédiatement par ConfigurationStateInvalidator.
+     */
+    public const int TTL = 3600;
 
     public function __construct(
         private CacheItemPoolInterface $cachePool,

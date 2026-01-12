@@ -13,10 +13,25 @@ declare(strict_types=1);
 
 namespace Admin\Contracts\Services\Provider;
 
-use Admin\Adapters\Controller\Symfony\Controller\ConfigurationController;
 use Shared\Contracts\ApplicationReadinessProvider;
 
 interface ConfigurationServiceProvider extends ApplicationReadinessProvider
 {
-    public const string ROUTE_NAME = ConfigurationController::ROUTE_NAME;
+    public const string ROUTE_NAME = 'admin_configure';
+
+    public function isCompanyConfigured(): bool;
+
+    public function isUnitConfigured(): bool;
+
+    public function isTaxConfigured(): bool;
+
+    public function isApplicationConfigured(): bool;
+
+    public function isFamilyLogConfigured(): bool;
+
+    public function isZoneStorageConfigured(): bool;
+
+    public function isSupplierConfigured(): bool;
+
+    public function isArticleConfigured(): bool;
 }
