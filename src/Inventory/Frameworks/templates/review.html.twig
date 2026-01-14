@@ -24,6 +24,7 @@
             </div>
 
             {% if discrepancyCount > 0 %}
+                {# data-turbo="false" requis: tests E2E Panther incompatibles avec Turbo Drive (voir #221) #}
                 {{ form_start(form, {'attr': {'data-turbo': 'false'}}) }}
                     <table class="table">
                         <thead>
