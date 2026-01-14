@@ -16,7 +16,7 @@ namespace Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\CreateZoneSto
 use Admin\Adapters\Controller\Symfony\Controller\ConfigurationController;
 use Admin\Adapters\Controller\Symfony\Controller\ZoneStorage\GetZoneStorages\GetZoneStoragesController;
 use Admin\Adapters\Form\Type\ZoneStorage\ZoneStorageType;
-use Admin\Adapters\Gateway\ConfigurationService;
+use Admin\Contracts\Services\Provider\ConfigurationServiceProvider;
 use Admin\Entities\Exception\FamilyLog\NoFamilyLogRegistered;
 use Admin\Entities\Exception\ZoneStorage\ZoneStorageAlreadyExists;
 use Admin\UseCases\ZoneStorage\CreateZoneStorage\CreateZoneStorage;
@@ -35,7 +35,7 @@ final class CreateZoneStorageController extends AbstractController
 
     public function __construct(
         private readonly CreateZoneStorage $useCase,
-        private readonly ConfigurationService $configurationService,
+        private readonly ConfigurationServiceProvider $configurationService,
         private readonly TranslatorInterface $translator,
     ) {
     }

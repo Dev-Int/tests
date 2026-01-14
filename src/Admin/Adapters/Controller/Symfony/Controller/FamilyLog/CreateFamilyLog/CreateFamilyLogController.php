@@ -16,7 +16,7 @@ namespace Admin\Adapters\Controller\Symfony\Controller\FamilyLog\CreateFamilyLog
 use Admin\Adapters\Controller\Symfony\Controller\ConfigurationController;
 use Admin\Adapters\Controller\Symfony\Controller\FamilyLog\GetFamilyLogs\GetFamilyLogsController;
 use Admin\Adapters\Form\Type\FamilyLog\CreateFamilyLogType;
-use Admin\Adapters\Gateway\ConfigurationService;
+use Admin\Contracts\Services\Provider\ConfigurationServiceProvider;
 use Admin\Entities\Exception\FamilyLog\FamilyLogAlreadyExists;
 use Admin\Entities\Exception\Tax\NoTaxRegistered;
 use Admin\UseCases\FamilyLog\CreateFamilyLog\CreateFamilyLog;
@@ -34,7 +34,7 @@ final class CreateFamilyLogController extends AbstractController
 
     public function __construct(
         private readonly CreateFamilyLog $useCase,
-        private readonly ConfigurationService $configurationService,
+        private readonly ConfigurationServiceProvider $configurationService,
         private readonly TranslatorInterface $translator,
     ) {
     }

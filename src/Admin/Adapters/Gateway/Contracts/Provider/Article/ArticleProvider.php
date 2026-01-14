@@ -26,7 +26,9 @@ use Admin\Entities\Unit\Unit;
 use Admin\UseCases\Gateway\Finder\ArticleFinder;
 use Doctrine\ORM\EntityManagerInterface;
 use Shared\Entities\ResourceUuid;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
+#[AsAlias(ArticleProviderContract::class)]
 final readonly class ArticleProvider implements ArticleProviderContract
 {
     public function __construct(

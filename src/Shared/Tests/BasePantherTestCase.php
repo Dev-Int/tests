@@ -39,6 +39,8 @@ use Doctrine\ORM\NonUniqueResultException;
 use Faker\Factory;
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
 use Liip\TestFixturesBundle\Services\DatabaseTools\AbstractDatabaseTool;
+use Shared\Entities\Clock\ClockFactory;
+use Shared\Entities\Clock\SystemClock;
 use Symfony\Component\Panther\PantherTestCase;
 
 /**
@@ -55,6 +57,10 @@ class BasePantherTestCase extends PantherTestCase
         self::stopWebServer();
         parent::setUp();
 
+        // Réinitialise l'horloge à l'heure système avant chaque test
+        // (comme dans BaseFunctionalTestCase)
+        ClockFactory::initialize(new SystemClock());
+
         /** @var DatabaseToolCollection $databaseToolCollection */
         $databaseToolCollection = static::getContainer()->get(DatabaseToolCollection::class);
         $this->databaseTool = $databaseToolCollection->get();
@@ -65,6 +71,9 @@ class BasePantherTestCase extends PantherTestCase
 
     protected function tearDown(): void
     {
+        // Reset ClockFactory pour éviter pollution vers autres tests
+        ClockFactory::initialize(new SystemClock());
+
         parent::tearDown();
         $this->databaseTool = null;
 

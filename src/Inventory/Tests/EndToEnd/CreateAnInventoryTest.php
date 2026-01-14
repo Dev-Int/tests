@@ -118,6 +118,7 @@ final class CreateAnInventoryTest extends BasePantherTestCase
         $translator = self::getContainer()->get('translator');
 
         InventoryStory::load();
+        $this->flushAndClearEntityManager();
 
         $pastDate = ClockFactory::clock()->now()->modify('-1 day');
         $expectedDate = $pastDate->format('Y-m-d');
@@ -160,6 +161,7 @@ final class CreateAnInventoryTest extends BasePantherTestCase
         $translator = self::getContainer()->get('translator');
 
         InventoryStory::load();
+        $this->flushAndClearEntityManager();
 
         $futureDate = ClockFactory::clock()->now()->modify('+5 days');
         $expectedDate = $futureDate->format('Y-m-d');

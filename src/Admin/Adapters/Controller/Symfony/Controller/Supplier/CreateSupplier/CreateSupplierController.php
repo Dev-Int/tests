@@ -16,7 +16,7 @@ namespace Admin\Adapters\Controller\Symfony\Controller\Supplier\CreateSupplier;
 use Admin\Adapters\Controller\Symfony\Controller\ConfigurationController;
 use Admin\Adapters\Controller\Symfony\Controller\Supplier\GetSuppliers\GetSuppliersController;
 use Admin\Adapters\Form\Type\Supplier\SupplierType;
-use Admin\Adapters\Gateway\ConfigurationService;
+use Admin\Contracts\Services\Provider\ConfigurationServiceProvider;
 use Admin\Entities\Exception\Supplier\SupplierAlreadyExists;
 use Admin\Entities\Exception\ZoneStorage\NoZoneStorageRegistered;
 use Admin\UseCases\Supplier\CreateSupplier\CreateSupplier;
@@ -34,7 +34,7 @@ final class CreateSupplierController extends AbstractController
 
     public function __construct(
         private readonly CreateSupplier $useCase,
-        private readonly ConfigurationService $configurationService,
+        private readonly ConfigurationServiceProvider $configurationService,
         private readonly TranslatorInterface $translator,
     ) {
     }

@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller;
 
-use Admin\Adapters\Gateway\ConfigurationService;
+use Admin\Contracts\Services\Provider\ConfigurationServiceProvider;
 use Admin\Entities\Repository\ArticleRepository;
 use Admin\Entities\Repository\CompanyRepository;
 use Admin\Entities\Repository\FamilyLogRepository;
@@ -27,11 +27,11 @@ use Symfony\Component\Routing\Attribute\Route;
 #[AsController]
 final class ConfigurationController extends AbstractController
 {
-    public const ROUTE_NAME = 'admin_configure';
+    public const ROUTE_NAME = ConfigurationServiceProvider::ROUTE_NAME;
 
     public function __construct(
         private readonly CompanyRepository $companyRepository,
-        private readonly ConfigurationService $configurationService,
+        private readonly ConfigurationServiceProvider $configurationService,
         private readonly FamilyLogRepository $familyLogRepository,
         private readonly ZoneStorageRepository $zoneStorageRepository,
         private readonly SupplierRepository $supplierRepository,

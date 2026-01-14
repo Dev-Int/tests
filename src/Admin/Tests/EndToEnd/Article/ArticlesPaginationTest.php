@@ -53,7 +53,7 @@ final class ArticlesPaginationTest extends BasePantherTestCase
         self::assertSelectorTextContains('a.page-link.active', '1');
 
         $client->clickLink('2');
-        $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
+        $client->waitForElementToContain('a.page-link.active', '2');
 
         // Assert
         $crawler = $client->getCrawler();
@@ -76,17 +76,17 @@ final class ArticlesPaginationTest extends BasePantherTestCase
 
         // Act
         $client->request('GET', $router->generate(GetArticlesController::ROUTE_NAME));
-        $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
+        $client->waitForElementToContain('a.page-link.active', '1');
 
         // Le lien '3' n'est pas visible depuis la page 1, il faut d'abord aller à la page 2
         $client->clickLink('>');
-        $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
+        $client->waitForElementToContain('a.page-link.active', '2');
 
         self::assertSelectorTextContains('a.page-link.active', '2');
 
         // Maintenant on peut cliquer sur '3'
         $client->clickLink('3');
-        $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
+        $client->waitForElementToContain('a.page-link.active', '3');
 
         // Assert
         $crawler = $client->getCrawler();
@@ -109,10 +109,10 @@ final class ArticlesPaginationTest extends BasePantherTestCase
 
         // Act
         $client->request('GET', $router->generate(GetArticlesController::ROUTE_NAME));
-        $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
+        $client->waitForElementToContain('a.page-link.active', '1');
 
         $client->clickLink('»');
-        $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
+        $client->waitForElementToContain('a.page-link.active', '3');
 
         // Assert
         $crawler = $client->getCrawler();
@@ -135,12 +135,12 @@ final class ArticlesPaginationTest extends BasePantherTestCase
 
         // Act
         $client->request('GET', $router->generate(GetArticlesController::ROUTE_NAME, ['page' => 2]));
-        $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
+        $client->waitForElementToContain('a.page-link.active', '2');
 
         self::assertSelectorTextContains('a.page-link.active', '2');
 
         $client->clickLink('1');
-        $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
+        $client->waitForElementToContain('a.page-link.active', '1');
 
         // Assert
         $crawler = $client->getCrawler();
@@ -176,7 +176,7 @@ final class ArticlesPaginationTest extends BasePantherTestCase
 
         // Act - Page 2
         $client->clickLink('2');
-        $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
+        $client->waitForElementToContain('a.page-link.active', '2');
 
         // Assert
         $crawler = $client->getCrawler();
@@ -189,7 +189,7 @@ final class ArticlesPaginationTest extends BasePantherTestCase
 
         // Act - Page 3
         $client->clickLink('3');
-        $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
+        $client->waitForElementToContain('a.page-link.active', '3');
 
         // Assert
         $crawler = $client->getCrawler();
@@ -244,12 +244,12 @@ final class ArticlesPaginationTest extends BasePantherTestCase
 
         // Act - Page 1 -> Page 2
         $client->request('GET', $router->generate(GetArticlesController::ROUTE_NAME));
-        $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
+        $client->waitForElementToContain('a.page-link.active', '1');
 
         self::assertSelectorTextContains('a.page-link.active', '1');
 
         $client->clickLink('>');
-        $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
+        $client->waitForElementToContain('a.page-link.active', '2');
 
         // Assert - On page 2
         $crawler = $client->getCrawler();
@@ -261,7 +261,7 @@ final class ArticlesPaginationTest extends BasePantherTestCase
 
         // Act - Page 2 -> Page 3
         $client->clickLink('>');
-        $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
+        $client->waitForElementToContain('a.page-link.active', '3');
 
         // Assert - On page 3
         $crawler = $client->getCrawler();
@@ -284,13 +284,13 @@ final class ArticlesPaginationTest extends BasePantherTestCase
 
         // Act - Start on page 3
         $client->request('GET', $router->generate(GetArticlesController::ROUTE_NAME, ['page' => 3]));
-        $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
+        $client->waitForElementToContain('a.page-link.active', '3');
 
         self::assertSelectorTextContains('a.page-link.active', '3');
 
         // Act - Page 3 -> Page 2
         $client->clickLink('<');
-        $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
+        $client->waitForElementToContain('a.page-link.active', '2');
 
         // Assert - On page 2
         $crawler = $client->getCrawler();
@@ -302,7 +302,7 @@ final class ArticlesPaginationTest extends BasePantherTestCase
 
         // Act - Page 2 -> Page 1
         $client->clickLink('<');
-        $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
+        $client->waitForElementToContain('a.page-link.active', '1');
 
         // Assert - On page 1
         $crawler = $client->getCrawler();
@@ -325,7 +325,7 @@ final class ArticlesPaginationTest extends BasePantherTestCase
 
         // Act - Go to the last page
         $client->request('GET', $router->generate(GetArticlesController::ROUTE_NAME, ['page' => 3]));
-        $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
+        $client->waitForElementToContain('a.page-link.active', '3');
 
         // Assert
         self::assertSelectorTextContains('a.page-link.active', '3');
@@ -362,7 +362,7 @@ final class ArticlesPaginationTest extends BasePantherTestCase
 
         // Act - Go to first page
         $client->request('GET', $router->generate(GetArticlesController::ROUTE_NAME));
-        $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
+        $client->waitForElementToContain('a.page-link.active', '1');
 
         // Assert
         self::assertSelectorTextContains('a.page-link.active', '1');
@@ -412,7 +412,7 @@ final class ArticlesPaginationTest extends BasePantherTestCase
         $itemsPerPageSelect = $form->get('itemsPerPage');
         $itemsPerPageSelect->select('50');
         $client->submit($form);
-        $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
+        $client->waitForElementToContain('a.page-link.active', '1');
 
         // Assert
         $crawler = $client->getCrawler();
@@ -452,12 +452,12 @@ final class ArticlesPaginationTest extends BasePantherTestCase
         $itemsPerPageSelect = $form->get('itemsPerPage');
         $itemsPerPageSelect->select('50');
         $client->submit($form);
-        $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
+        $client->waitForElementToContain('a.page-link.active', '1');
 
         self::assertStringContainsString('itemsPerPage=50', $client->getCurrentURL());
 
         $client->clickLink('2');
-        $client->waitForVisibility('a.page-link.active[aria-label="Current"]');
+        $client->waitForElementToContain('a.page-link.active', '2');
 
         // Assert
         self::assertStringContainsString('itemsPerPage=50', $client->getCurrentURL());

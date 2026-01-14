@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller;
 
-use Admin\Adapters\Gateway\ConfigurationService;
+use Admin\Contracts\Services\Provider\ConfigurationServiceProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -24,7 +24,7 @@ final class HomeController extends AbstractController
 {
     public const ROUTE_NAME = 'admin_index';
 
-    public function __construct(private readonly ConfigurationService $configurationService)
+    public function __construct(private readonly ConfigurationServiceProvider $configurationService)
     {
     }
 

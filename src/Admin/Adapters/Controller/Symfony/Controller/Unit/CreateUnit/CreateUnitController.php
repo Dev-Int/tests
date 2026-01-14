@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Admin\Adapters\Controller\Symfony\Controller\Unit\CreateUnit;
 
 use Admin\Adapters\Form\Type\Unit\UnitType;
-use Admin\Adapters\Gateway\ConfigurationService;
+use Admin\Contracts\Services\Provider\ConfigurationServiceProvider;
 use Admin\Entities\Exception\Company\NoCompanyRegistered;
 use Admin\UseCases\Unit\CreateUnit\CreateUnit;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -31,7 +31,7 @@ final class CreateUnitController extends AbstractController
 
     public function __construct(
         private readonly CreateUnit $useCase,
-        private readonly ConfigurationService $configurationService,
+        private readonly ConfigurationServiceProvider $configurationService,
         private readonly TranslatorInterface $translator,
     ) {
     }

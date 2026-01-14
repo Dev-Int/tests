@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Tests\EndToEnd\Company;
 
-use Admin\Adapters\Gateway\ConfigurationService;
+use Admin\Contracts\Services\Provider\ConfigurationServiceProvider;
 use Shared\Tests\BasePantherTestCase;
 use Symfony\Component\Panther\PantherTestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -32,8 +32,8 @@ final class UpdateACompanyTest extends BasePantherTestCase
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
-        /** @var ConfigurationService $configureService */
-        $configureService = self::getContainer()->get(ConfigurationService::class);
+        /** @var ConfigurationServiceProvider $configureService */
+        $configureService = self::getContainer()->get(ConfigurationServiceProvider::class);
 
         $isConfigured = $configureService->isApplicationReady();
         self::assertTrue($isConfigured);

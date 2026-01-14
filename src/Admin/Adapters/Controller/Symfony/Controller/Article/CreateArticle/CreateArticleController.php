@@ -16,9 +16,9 @@ namespace Admin\Adapters\Controller\Symfony\Controller\Article\CreateArticle;
 use Admin\Adapters\Controller\Symfony\Controller\Article\GetArticles\GetArticlesController;
 use Admin\Adapters\Controller\Symfony\Controller\ConfigurationController;
 use Admin\Adapters\Form\Type\Article\CreateArticleType;
-use Admin\Adapters\Gateway\ConfigurationService;
 use Admin\Adapters\Gateway\ORM\Entity\ReadModel\Packaging;
 use Admin\Adapters\Gateway\ORM\Entity\Unit;
+use Admin\Contracts\Services\Provider\ConfigurationServiceProvider;
 use Admin\Entities\Exception\Supplier\NoSupplierRegistered;
 use Admin\Entities\Repository\FamilyLogRepository;
 use Admin\Entities\Repository\SupplierRepository;
@@ -39,7 +39,7 @@ final class CreateArticleController extends AbstractController
 
     public function __construct(
         private readonly CreateArticle $useCase,
-        private readonly ConfigurationService $configurationService,
+        private readonly ConfigurationServiceProvider $configurationService,
         private readonly SupplierRepository $supplierRepository,
         private readonly FamilyLogRepository $familyLogRepository,
         private readonly ZoneStorageRepository $zoneStorageRepository,
