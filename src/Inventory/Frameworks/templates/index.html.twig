@@ -74,13 +74,14 @@
                                </span>
                                <span class="actions-group">
                                    {% if inventory.status == 'draft' %}
-                                       <form action="{{ path('inventory_start', {inventoryUuid: inventory.uuid}) }}" method="post" style="display: inline;" data-turbo="false">
+                                       <form action="{{ path('inventory_start', {inventoryUuid: inventory.uuid}) }}" method="post" style="display: inline;" data-turbo-frame="_top">
                                            <button type="submit" class="btn btn-small btn-primary">
                                                <i class="fa-solid fa-play"></i> {{ 'inventory.start.button'|trans }}
                                            </button>
                                        </form>
                                    {% endif %}
                                    {% if inventory.status == 'inProgress' and inventory.allItemsCounted %}
+                                       {# data-turbo="false" requis: tests E2E Panther incompatibles avec Turbo Drive (voir #221) #}
                                        <form action="{{ path('inventory_finish_counting', {inventoryUuid: inventory.uuid}) }}" method="post" style="display: inline;" data-turbo="false">
                                            <button type="submit" class="btn btn-small btn-success">
                                                <i class="fa-solid fa-check"></i> {{ 'inventory.finish_counting.button'|trans }}
@@ -92,12 +93,12 @@
                                            <a href="{{ path('inventory_review', {inventoryUuid: inventory.uuid}) }}"
                                               class="btn btn-small btn-warning"
                                               role="button"
-                                              data-turbo="false">
+                                              data-turbo-frame="_top">
                                                <i class="fa-solid fa-magnifying-glass"></i> {{ 'inventory.review.button'|trans }}
                                            </a>
                                        {% endif %}
                                        {% if not inventory.hasUnreviewedDiscrepancies %}
-                                           <form action="{{ path('inventory_complete', {inventoryUuid: inventory.uuid}) }}" method="post" style="display: inline;" data-turbo="false">
+                                           <form action="{{ path('inventory_complete', {inventoryUuid: inventory.uuid}) }}" method="post" style="display: inline;" data-turbo-frame="_top">
                                                <button type="submit" class="btn btn-small btn-success">
                                                    <i class="fa-solid fa-check-circle"></i> {{ 'inventory.complete.submit'|trans }}
                                                </button>
@@ -105,7 +106,7 @@
                                        {% endif %}
                                    {% endif %}
                                    {% if inventory.isCancellable %}
-                                      <form action="{{ path('inventory_cancel', {inventoryUuid: inventory.uuid}) }}" method="post" style="display: inline;" data-turbo="false">
+                                      <form action="{{ path('inventory_cancel', {inventoryUuid: inventory.uuid}) }}" method="post" style="display: inline;" data-turbo-frame="_top">
                                           <button type="submit" class="btn btn-small btn-secondary" onclick="return confirm('{{ 'inventory.cancel.confirm'|trans }}')">
                                               <i class="fa-solid fa-ban"></i> {{ 'inventory.cancel.button'|trans }}
                                           </button>
