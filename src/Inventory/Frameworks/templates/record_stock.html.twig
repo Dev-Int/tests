@@ -14,7 +14,13 @@
 
     <main>
         <article>
-            <form method="post" action="{{ path('inventory_zone_record_stock', {inventoryUuid: inventoryUuid, zoneStorageUuid: zoneStorageUuid}) }}" data-turbo="false" id="record-stock-form">
+            {# data-turbo="false" requis: tests E2E Panther incompatibles avec Turbo Drive #}
+            <form method="post"
+                  action="{{ path('inventory_zone_record_stock', {inventoryUuid: inventoryUuid, zoneStorageUuid: zoneStorageUuid}) }}"
+                  data-turbo="false"
+                  data-controller="confirm-zero-stock"
+                  data-confirm-zero-stock-message-value="{{ 'inventory.zone.record.confirm_zero'|trans }}"
+                  data-action="submit->confirm-zero-stock#submit">
                 <p class="alert alert-info">
                     <i class="fa-solid fa-circle-info"></i>
                     {{ 'inventory.zone.record.info'|trans }}
@@ -113,36 +119,4 @@
         </article>
     </main>
 
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('record-stock-form');
-            if (!form) return;
-
-            form.addEventListener('submit', function(event) {
-                const zeroInputs = [];
-                const consumerUnitInputs = form.querySelectorAll('input[name*="_consumer_unit"]');
-
-                consumerUnitInputs.forEach(function(input) {
-                    if (input.value === '0' || input.value === '0.0' || input.value === '0.000') {
-                        const row = input.closest('tr');
-                        if (row) {
-                            const articleName = row.querySelector('td:first-child').textContent.trim();
-                            zeroInputs.push(articleName);
-                        }
-                    }
-                });
-
-                if (zeroInputs.length > 0) {
-                    const message = '{{ 'inventory.zone.record.confirm_zero'|trans }}\n\n' + zeroInputs.join('\n');
-                    if (!confirm(message)) {
-                        event.preventDefault();
-                    }
-                }
-            });
-        });
-    </script>
 {% endblock %}
