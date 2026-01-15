@@ -17,9 +17,8 @@ export default class extends Controller {
         this.element.querySelectorAll('input[name*="_consumer_unit"]').forEach(input => {
             if (input.value === '0' || input.value === '0.0' || input.value === '0.000') {
                 const row = input.closest('tr');
-                if (row) {
-                    const articleName = row.querySelector('td:first-child').textContent.trim();
-                    zeroInputs.push(articleName);
+                if (row && row.dataset.articleName) {
+                    zeroInputs.push(row.dataset.articleName);
                 }
             }
         });

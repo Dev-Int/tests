@@ -36,7 +36,7 @@
                     </thead>
                     <tbody>
                         {% for item in items %}
-                            <tr class="{{ item.countedAt ? 'already-counted' : '' }}">
+                            <tr class="{{ item.countedAt ? 'already-counted' : '' }}" data-article-name="{{ item.articleName }}">
                                 <td>
                                     {{ item.articleName }}
                                     {% if item.countedAt %}
