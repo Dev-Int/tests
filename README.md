@@ -52,6 +52,44 @@ To know all you can do with the Makefile, just run:
 make
 ```
 
+## Developer Tools
+
+### grepai - Semantic Code Search
+
+[grepai](https://github.com/yoanbernabeu/grepai) enables semantic code search for AI agents, reducing token consumption by ~50%.
+
+#### Installation
+
+1. **Install grepai**
+```bash
+curl -sSL https://raw.githubusercontent.com/yoanbernabeu/grepai/main/install.sh | sh
+```
+
+2. **Install Ollama** (for 100% local execution)
+```bash
+curl -fsSL https://ollama.com/install.sh | sh
+ollama pull nomic-embed-text
+```
+
+3. **Initialize in project**
+```bash
+grepai init
+grepai watch  # Start background indexing
+```
+
+#### Usage
+
+```bash
+# Semantic search
+grepai search "authentication error handling" --json --compact
+
+# Call tracing
+grepai trace callers "UserRepository" --json
+grepai trace callees "CreateUserHandler" --json
+```
+
+For full documentation, see the [grepai docs](https://yoanbernabeu.github.io/grepai/).
+
 ## Licence
 
 [MIT](https://choosealicense.com/licenses/mit/)
