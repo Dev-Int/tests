@@ -52,7 +52,9 @@
       "Bash(do grep -l '^final class' $file)",
       "Bash(if ! grep -q \"AsLiveComponent\" \"$f\")",
       "mcp__plugin_context7_context7__resolve-library-id",
-      "mcp__plugin_context7_context7__query-docs"
+      "mcp__plugin_context7_context7__query-docs",
+      "Bash(grepai trace callers:*)",
+      "mcp__jetbrains-phpstorm__find_files_by_glob"
     ],
     "deny": [
       "../.env",
