@@ -172,8 +172,9 @@ final class CompleteAnInventoryTest extends BasePantherTestCase
         self::assertGreaterThan(0, $pendingBadges->count(), 'Des items en attente de révision devraient être présents');
 
         // === Step 6: Mark all items as reviewed ===
-        // Check all checkboxes using JavaScript
-        $client->executeScript('document.querySelectorAll(\'.item-checkbox\').forEach(cb => cb.checked = true);');
+        // Check all checkboxes using the select-all controller
+        $selectAllCheckbox = $client->getCrawler()->filter('#select-all');
+        $selectAllCheckbox->first()->click();
 
         // Find and click the submit button
         $submitButton = $client->getCrawler()->filterXPath(
