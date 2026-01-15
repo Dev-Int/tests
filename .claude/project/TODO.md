@@ -1,6 +1,6 @@
 # TODO List - Tâches actives
 
-**Dernière mise à jour** : 2026-01-01
+**Dernière mise à jour** : 2026-01-15
 
 ---
 
@@ -51,40 +51,7 @@ Packaging
 - [ ] Mettre à jour les tests fonctionnels concernés
 - [ ] Saisie stock fonctionne toujours correctement
 
-**Note** : À faire AVANT les tests E2E (#197) pour éviter de refaire les tests.
-
----
-
-### Tests E2E workflow complet Inventory
-
-**Status** : ⬜ À faire
-**GitHub Issue** : [#197](https://github.com/Dev-Int/tests/issues/197)
-**Dépend de** : #196 (consumerUnit)
-
-**Objectif** :
-Créer un test E2E qui valide le workflow complet d'un inventaire.
-
-**Scénarios à tester** :
-- [ ] Scénario "happy path" complet (créer → compter → réviser → finaliser)
-- [ ] Scénario avec annulation
-- [ ] Scénario avec retour en correction (ResumeCountingFromReview)
-
----
-
-### Mettre à jour documentation BC Inventory
-
-**Status** : ⬜ À faire
-**GitHub Issue** : [#198](https://github.com/Dev-Int/tests/issues/198)
-
-**Contexte** :
-La documentation du BC Inventory est obsolète :
-- `docs/inventory-implementation-plan.md` : montre des itérations "À faire" alors que tout est implémenté
-- `src/Inventory/README.md` : liste incomplète des UseCases
-
-**Tâches** :
-- [ ] Marquer toutes les itérations comme ✅ Terminé
-- [ ] Mettre à jour avec tous les UseCases actuels (9 use cases)
-- [ ] Supprimer les sections obsolètes "À faire"
+**Note** : Les tests E2E (#197) sont déjà terminés. Cette tâche impactera principalement la Fiche Recette.
 
 ---
 
@@ -101,21 +68,6 @@ La documentation du BC Inventory est obsolète :
 - Workflow de statuts et transitions
 - Intégration avec Admin BC via Gateways
 - Valorisation des écarts (discrepancyAmount)
-
----
-
-### Pagination sur liste des inventaires
-
-**Status** : ⬜ À faire
-**GitHub Issue** : [#200](https://github.com/Dev-Int/tests/issues/200)
-
-**Objectif** :
-Ajouter la pagination à la liste des inventaires pour supporter de grands volumes.
-
-**Tâches** :
-- [ ] Pagination côté serveur (offset/limit)
-- [ ] 20 éléments par page par défaut
-- [ ] Utiliser le component `Shared\Twig\Components\Pagination` existant
 
 ---
 
@@ -182,18 +134,6 @@ Les exceptions domaine (`DomainException`) ont leurs messages en anglais, mais l
 
 ## 🟢 Priority Low
 
-### Filtres avancés sur liste des inventaires
-
-**Status** : ⬜ À faire
-**GitHub Issue** : [#201](https://github.com/Dev-Int/tests/issues/201)
-
-**Filtres à implémenter** :
-- Status (DRAFT, IN_PROGRESS, REVIEW, COMPLETED, CANCELLED)
-- Plage de dates
-- Zone de stockage
-
----
-
 ### End-to-End Tests Coverage - Améliorations optionnelles
 
 **Status** : 🟢 **BONNE COUVERTURE** (améliorations optionnelles possibles)
@@ -246,4 +186,5 @@ Nouveau Bounded Context pour la gestion quotidienne des stocks :
 ## 📚 Archive
 
 Historique des tâches complétées :
-→ Voir `.claude/archive/TODO_2024.md`
+→ Voir `.claude/archive/TODO_2025.md` (2024-2025)
+→ Voir `.claude/archive/TODO_2026.md` (2026)
