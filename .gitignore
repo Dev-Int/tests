@@ -47,3 +47,5 @@ clover.xml
 ###> phpstan/phpstan ###
 phpstan.neon
 ###< phpstan/phpstan ###
+
+.grepai/*.gob

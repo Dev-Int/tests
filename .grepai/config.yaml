@@ -1,0 +1,105 @@
+version: 1
+embedder:
+    provider: ollama
+    model: nomic-embed-text
+    endpoint: http://localhost:11434
+    dimensions: 768
+store:
+    backend: gob
+chunking:
+    size: 512
+    overlap: 50
+watch:
+    debounce_ms: 500
+search:
+    boost:
+        enabled: true
+        penalties:
+            # Tests (dans src/*/Tests/)
+            - pattern: /Tests/
+              factor: 0.5
+            - pattern: Test.php
+              factor: 0.5
+            # Adapters = Infrastructure (moins prioritaire que le domaine)
+            - pattern: /Adapters/
+              factor: 0.8
+            # Frameworks = Config Symfony spécifique
+            - pattern: /Frameworks/
+              factor: 0.7
+            # Templates Twig
+            - pattern: /Twig/
+              factor: 0.6
+            # Fichiers générés / migrations
+            - pattern: /migrations/
+              factor: 0.4
+            # Docs
+            - pattern: .md
+              factor: 0.6
+            - pattern: /docs/
+              factor: 0.6
+        bonuses:
+            # Domaine = priorité maximale
+            - pattern: /Entities/
+              factor: 1.3
+            # Use Cases = logique applicative
+            - pattern: /UseCases/
+              factor: 1.25
+            # Contracts = Ports/Interfaces
+            - pattern: /Contracts/
+              factor: 1.2
+            # Bounded contexts métier
+            - pattern: /Admin/
+              factor: 1.1
+            - pattern: /Inventory/
+              factor: 1.1
+            # Shared = code partagé important
+            - pattern: /Shared/Entities/
+              factor: 1.15
+            - pattern: /Shared/Contracts/
+              factor: 1.1
+    hybrid:
+        enabled: false
+        k: 60
+trace:
+    mode: fast
+    enabled_languages:
+        - .go
+        - .js
+        - .ts
+        - .jsx
+        - .tsx
+        - .py
+        - .php
+        - .c
+        - .h
+        - .cpp
+        - .hpp
+        - .cc
+        - .cxx
+        - .rs
+        - .zig
+        - .cs
+    exclude_patterns:
+        - '*_test.go'
+        - '*.spec.ts'
+        - '*.spec.js'
+        - '*.test.ts'
+        - '*.test.js'
+        - __tests__/*
+update:
+    check_on_startup: false
+ignore:
+    - .git
+    - .grepai
+    - node_modules
+    - vendor
+    - bin
+    - dist
+    - __pycache__
+    - .venv
+    - venv
+    - .idea
+    - .vscode
+    - target
+    - .zig-cache
+    - zig-out
