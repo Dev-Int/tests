@@ -97,6 +97,7 @@
             "App\\": "src",
             "Shared\\": "src/Shared",
             "Admin\\": "src/Admin",
+            "Auth\\": "src/Auth",
             "Inventory\\": "src/Inventory"
         }
     },
@@ -104,6 +105,7 @@
         "psr-4": {
             "App\\Tests\\": "tests/",
             "Admin\\Tests\\": "src/Admin/Tests/",
+            "Auth\\Tests\\": "src/Auth/Tests/",
             "Shared\\Tests\\": "src/Shared/Tests/",
             "Inventory\\Tests\\": "src/Inventory/Tests/"
         }
