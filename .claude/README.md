@@ -14,6 +14,7 @@ Index of available skills, workflows, and templates for AI-assisted development.
 ├─ skills/            # AI workflows and skills
 │   ├─ tdd-workflow/         # TDD workflow (MANDATORY)
 │   ├─ create-use-case/      # Create use case
+│   ├─ create-paginated-list/   # Create paginated list
 │   ├─ add-bc-contract/      # Add BC contract
 │   ├─ create-functional-test/  # Create functional test
 │   ├─ create-entity/        # Create domain entity
@@ -141,18 +142,38 @@ Index of available skills, workflows, and templates for AI-assisted development.
 
 #### create-value-object
 
-**Location**: skills/create-value-object/  
-**Type**: Generator  
+**Location**: skills/create-value-object/
+**Type**: Generator
 **Usage**: Domain value types
 
 **Generates**:
 - Immutable Value Object with validation
 
-**When to use**: Encapsulate primitives, avoid primitive obsession  
-**Prerequisites**: DDD understanding  
+**When to use**: Encapsulate primitives, avoid primitive obsession
+**Prerequisites**: DDD understanding
 **Related**: create-entity
 
 **Reference**: skills/create-value-object/SKILL.md
+
+---
+
+#### create-paginated-list
+
+**Location**: skills/create-paginated-list/
+**Type**: Generator
+**Usage**: Paginated entity lists
+
+**Generates**:
+- Get{Entities}Request interface
+- Get{Entities} UseCase
+- Get{Entities}Response
+- Unit test
+
+**When to use**: Listing entities with pagination (page/itemsPerPage)
+**Prerequisites**: Entity + Collection + Repository exist
+**Related**: create-use-case, tdd-workflow
+
+**Reference**: skills/create-paginated-list/SKILL.md
 
 ---
 

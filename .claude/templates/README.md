@@ -8,19 +8,19 @@ Centralized code templates for DDD patterns
 
 All templates use these placeholders:
 
-| Variable           | Description                       | Example                      |
-|--------------------|-----------------------------------|------------------------------|
-| `{BC}`             | Bounded Context                   | `Admin`, `Inventory`         |
-| `{Entity}`         | Entity name (singular)            | `Article`, `Supplier`        |
-| `{EntityPlural}`   | Entity name (plural, for methods) | `Articles`, `Categories`     |
-| `{Action}`         | Action verb (infinitive)          | `Create`, `Rename`, `Delete` |
-| `{Name}`           | Contract/Provider name            | `Article`, `ZoneStorage`     |
-| `{ProviderBC}`     | BC providing the contract         | `Admin`                      |
-| `{ConsumerBC}`     | BC consuming the contract         | `Inventory`                  |
-| `{ControllerName}` | Controller class name             | `GetArticlesController`      |
-| `{WorkflowName}`   | E2E workflow name                 | `CreateArticle`              |
-| `{actionMethod}`   | Method name on entity             | `rename`, `update`           |
-| `{param}`          | Parameter name                    | `name`, `price`              |
+| Variable           | Description                        | Example                      |
+|--------------------|------------------------------------|------------------------------|
+| `{BC}`             | Bounded Context                    | `Admin`, `Inventory`         |
+| `{Entity}`         | Entity name (singular)             | `Article`, `Supplier`        |
+| `{EntityPlural}`   | Entity name (plural, PascalCase)   | `Articles`, `Categories`     |
+| `{Action}`         | Action verb (infinitive)           | `Create`, `Rename`, `Delete` |
+| `{Name}`           | Contract/Provider name             | `Article`, `ZoneStorage`     |
+| `{ProviderBC}`     | BC providing the contract          | `Admin`                      |
+| `{ConsumerBC}`     | BC consuming the contract          | `Inventory`                  |
+| `{ControllerName}` | Controller class name              | `GetArticlesController`      |
+| `{WorkflowName}`   | E2E workflow name                  | `CreateArticle`              |
+| `{actionMethod}`   | Method name on entity              | `rename`, `update`           |
+| `{param}`          | Parameter name                     | `name`, `price`              |
 
 > **Note**: `{EntityPlural}` handles irregular plurals (Category→Categories, Entity→Entities).
 > When using skills, specify the plural form explicitly if it differs from adding 's'.
@@ -44,6 +44,15 @@ All templates use these placeholders:
 |--------------------|-----------------|-------------------|
 | `use-case.php.tpl` | UseCase class   | `create-use-case` |
 | `request.php.tpl`  | UseCase request | `create-use-case` |
+
+### Paginated Lists
+
+| Template                    | Usage                     | Skills                  |
+|-----------------------------|---------------------------|-------------------------|
+| `paginated-request.php.tpl` | Request with page/items   | `create-paginated-list` |
+| `paginated-use-case.php.tpl`| UseCase Get{EntityPlural} | `create-paginated-list` |
+| `paginated-response.php.tpl`| Response with Collection  | `create-paginated-list` |
+| `paginated-test.php.tpl`    | Pagination unit test      | `create-paginated-list` |
 
 ### Contracts (Inter-BC)
 

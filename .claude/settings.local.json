@@ -54,7 +54,8 @@
       "mcp__plugin_context7_context7__resolve-library-id",
       "mcp__plugin_context7_context7__query-docs",
       "Bash(grepai trace callers:*)",
-      "mcp__jetbrains-phpstorm__find_files_by_glob"
+      "mcp__jetbrains-phpstorm__find_files_by_glob",
+      "Bash(grepai search:*)"
     ],
     "deny": [
       "../.env",
