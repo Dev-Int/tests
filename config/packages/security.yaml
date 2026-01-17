@@ -16,26 +16,26 @@ security:
         main:
             lazy: true
             provider: app_user_provider
-            # form_login, logout, and remember_me will be enabled in issue #229
-            # when LoginController and auth routes are implemented
-            #
-            # form_login:
-            #     login_path: auth_login
-            #     check_path: auth_login
-            #     username_parameter: _email
-            #     password_parameter: _password
-            #     enable_csrf: true
-            # logout:
-            #     path: auth_logout
-            #     target: auth_login
-            # remember_me:
-            #     secret: '%kernel.secret%'
-            #     lifetime: 604800
-            #     signature_properties: [password]
+            form_login:
+                login_path: auth_login
+                check_path: auth_login
+                username_parameter: _email
+                password_parameter: _password
+                enable_csrf: true
+                default_target_path: home
+            logout:
+                path: auth_logout
+                target: auth_login
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 604800
+                signature_properties: [password]
 
-    # Access control will be enabled in issue #229 when LoginController is ready
+    # access_control will be enabled in issue #237 after fixing all functional tests
+    # to include authentication. Each BC should be fixed separately.
     # access_control:
     #     - { path: ^/login$, roles: PUBLIC_ACCESS }
+    #     - { path: ^/logout$, roles: PUBLIC_ACCESS }
     #     - { path: ^/, roles: ROLE_USER }
 
 when@test:

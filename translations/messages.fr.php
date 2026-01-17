@@ -1,7 +1,8 @@
 <?php
 
 return [
-    'connection' => 'Connexion',
+    'login' => 'Connexion',
+    'logout' => 'Déconnexion',
     'actions' => 'Actions',
     'cancel' => 'Annuler',
     'add' => 'Ajouter',
