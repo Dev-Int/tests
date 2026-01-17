@@ -13,7 +13,6 @@
         "ext-iconv": "*",
         "ext-intl": "*",
         "ext-pdo": "*",
-        "ext-bcmath": "*",
         "cocur/slugify": "^4.5",
         "doctrine/doctrine-bundle": "^2.2",
         "doctrine/doctrine-migrations-bundle": "^3.3",

@@ -30,6 +30,7 @@ final class UserDataBuilder
     private array $roles = [Role::USER];
     private \DateTimeImmutable $createdAt;
     private \DateTimeImmutable $updatedAt;
+    private ?\DateTimeImmutable $disabledAt = null;
 
     public static function aUser(): self
     {
@@ -105,6 +106,13 @@ final class UserDataBuilder
         return $this;
     }
 
+    public function withDisabledAt(?\DateTimeImmutable $disabledAt): self
+    {
+        $this->disabledAt = $disabledAt;
+
+        return $this;
+    }
+
     public function build(): User
     {
         return User::reconstitute(
@@ -114,6 +122,7 @@ final class UserDataBuilder
             roles: $this->roles,
             createdAt: $this->createdAt,
             updatedAt: $this->updatedAt,
+            disabledAt: $this->disabledAt,
         );
     }
 }

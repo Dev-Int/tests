@@ -14,27 +14,13 @@ declare(strict_types=1);
 namespace Auth\Entities\Exception;
 
 use Shared\Entities\Exception\DomainException;
-use Shared\Entities\Exception\ExceptionSerializableTrait;
-use Shared\Entities\ResourceUuid;
 
-final class UserNotFound extends DomainException implements \JsonSerializable
+abstract class UserNotFound extends DomainException
 {
-    use ExceptionSerializableTrait;
-
     public const string MESSAGE = 'User not found.';
 
-    public function __construct(private readonly ResourceUuid $userUuid)
+    protected function __construct(string $message = self::MESSAGE)
     {
-        parent::__construct(self::MESSAGE, DomainException::NOT_FOUND_CODE);
-    }
-
-    /**
-     * @return iterable<string, array<int, string>|int|string>
-     */
-    public function jsonSerialize(): iterable
-    {
-        return $this->toJson() + [
-            'userUuid' => $this->userUuid->toString(),
-        ];
+        parent::__construct($message, DomainException::NOT_FOUND_CODE);
     }
 }

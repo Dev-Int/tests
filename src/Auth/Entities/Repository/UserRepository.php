@@ -13,7 +13,8 @@ declare(strict_types=1);
 
 namespace Auth\Entities\Repository;
 
-use Auth\Entities\Exception\UserNotFound;
+use Auth\Entities\Exception\UserNotFoundByEmail;
+use Auth\Entities\Exception\UserNotFoundById;
 use Auth\Entities\User;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\EmailField;
@@ -21,12 +22,12 @@ use Shared\Entities\VO\EmailField;
 interface UserRepository
 {
     /**
-     * @throws UserNotFound
+     * @throws UserNotFoundById
      */
     public function getByUuid(ResourceUuid $uuid): User;
 
     /**
-     * @throws UserNotFound
+     * @throws UserNotFoundByEmail
      */
     public function getByEmail(EmailField $email): User;
 
@@ -36,5 +37,5 @@ interface UserRepository
 
     public function update(User $user): void;
 
-    public function delete(User $user): void;
+    public function disable(User $user): void;
 }

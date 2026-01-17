@@ -1,6 +1,8 @@
 when@dev: &dev
     # See full configuration: https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#full-default-bundle-configuration
     zenstruck_foundry:
+        # https://github.com/zenstruck/foundry/blob/2.x/UPGRADE-2.7.md when upgrading to php 8.4
+        #enable_auto_refresh_with_lazy_objects: true
         persistence:
             # Flush only once per call of `PersistentObjectFactory::create()`
             flush_once: true

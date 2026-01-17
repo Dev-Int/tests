@@ -20,7 +20,8 @@
         <server name="BROWSER_ALWAYS_START_WEBSERVER" value="1"/>
         <server name="PANTHER_APP_ENV" value="test" />
         <env name="APP_ENV" value="test" force="true" />
-        <env name="SYMFONY_DEPRECATIONS_HELPER" value="max[total]=999999"/>
+        <!-- TODO #236: Revenir à max[direct]=0 après migration Foundry (PHP 8.4 + Rector) -->
+        <env name="SYMFONY_DEPRECATIONS_HELPER" value="disabled"/>
     </php>
 
     <testsuites>
@@ -45,6 +46,7 @@
             <file>src/Kernel.php</file>
             <directory>src/**/Tests</directory>
             <directory>src/**/Adapters/DataFixtures</directory>
+            <directory>src/**/Adapters/Symfony/Maker/Templates</directory>
         </exclude>
         <report>
             <clover outputFile="clover.xml" />
