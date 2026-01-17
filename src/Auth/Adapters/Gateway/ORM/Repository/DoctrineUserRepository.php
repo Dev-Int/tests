@@ -13,49 +13,75 @@ declare(strict_types=1);
 
 namespace Auth\Adapters\Gateway\ORM\Repository;
 
+use Auth\Adapters\Gateway\ORM\Entity\User;
+use Auth\Entities\Exception\UserNotFoundByEmail;
+use Auth\Entities\Exception\UserNotFoundById;
 use Auth\Entities\Repository\UserRepository;
-use Auth\Entities\User;
-use Auth\Tests\DataBuilder\UserDataBuilder;
+use Auth\Entities\User as UserDomain;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\EmailField;
 
 /**
- * Stub implementation - ORM integration in issue #228.
- *
- * @see https://github.com/Dev-Int/tests/issues/228
+ * @extends ServiceEntityRepository<User>
  */
-final class DoctrineUserRepository implements UserRepository
+final class DoctrineUserRepository extends ServiceEntityRepository implements UserRepository
 {
-    public function getByUuid(ResourceUuid $uuid): User
+    public function __construct(ManagerRegistry $registry)
     {
-        // Stub: return fake user
-        return UserDataBuilder::aUser()->build();
+        parent::__construct($registry, User::class);
     }
 
-    public function getByEmail(EmailField $email): User
+    public function getByUuid(ResourceUuid $uuid): UserDomain
     {
-        // Stub: return fake user
-        return UserDataBuilder::aUser()->build();
+        $userOrm = $this->find($uuid->toString());
+        if (!$userOrm instanceof User) {
+            throw new UserNotFoundById($uuid);
+        }
+
+        return $userOrm->toDomain();
+    }
+
+    public function getByEmail(EmailField $email): UserDomain
+    {
+        $userOrm = $this->findOneBy(['email' => $email->toString()]);
+        if (!$userOrm instanceof User) {
+            throw new UserNotFoundByEmail($email);
+        }
+
+        return $userOrm->toDomain();
     }
 
     public function emailExists(EmailField $email): bool
     {
-        // Stub: minimal implementation
-        return true;
+        return $this->findOneBy(['email' => $email->toString()]) !== null;
     }
 
-    public function create(User $user): void
+    public function create(UserDomain $user): void
     {
-        // To implement with Doctrine...
+        $userOrm = User::fromDomain($user);
+        $this->getEntityManager()->persist($userOrm);
+        $this->getEntityManager()->flush();
     }
 
-    public function update(User $user): void
+    public function update(UserDomain $user): void
     {
-        // To implement with Doctrine...
+        $userOrm = $this->find($user->uuid()->toString());
+        if (!$userOrm instanceof User) {
+            throw new UserNotFoundById($user->uuid());
+        }
+        $userOrm->updateFromDomain($user);
+        $this->getEntityManager()->flush();
     }
 
-    public function delete(User $user): void
+    public function disable(UserDomain $user): void
     {
-        // To implement with Doctrine...
+        $userOrm = $this->find($user->uuid()->toString());
+        if (!$userOrm instanceof User) {
+            throw new UserNotFoundById($user->uuid());
+        }
+        $userOrm->updateFromDomain($user);
+        $this->getEntityManager()->flush();
     }
 }

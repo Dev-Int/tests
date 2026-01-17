@@ -31,7 +31,7 @@ use Zenstruck\Foundry\Test\ResetDatabase;
 /**
  * @group functionalTest
  *
- * @covers \Admin\Adapters\Gateway\Contracts\Provider\Article\DefaultArticleAggregatorBuilder
+ * @covers \Admin\Adapters\Gateway\ORM\Provider\Article\DefaultArticleAggregatorBuilder
  */
 final class DefaultArticleAggregatorBuilderTest extends BaseFunctionalTestCase
 {

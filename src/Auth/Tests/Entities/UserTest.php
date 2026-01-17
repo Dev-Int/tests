@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Auth\Tests\Entities;
 
+use Auth\Entities\Exception\UserAlreadyDisabled;
 use Auth\Entities\Role;
 use Auth\Entities\User;
 use Auth\Entities\VO\HashedPassword;
@@ -230,5 +231,62 @@ final class UserTest extends TestCase
         self::assertContains(Role::INVENTORY_MANAGER, $user->roles());
         self::assertContains(Role::USER, $user->roles(), 'Always present');
         self::assertEquals($updateTime, $user->updatedAt());
+    }
+
+    public function testIsActiveReturnsTrueWhenNotDisabled(): void
+    {
+        // Arrange
+        $user = UserDataBuilder::aUser()->build();
+
+        // Act & Assert
+        self::assertTrue($user->isActive());
+        self::assertNull($user->disabledAt());
+    }
+
+    public function testIsActiveReturnsFalseWhenDisabled(): void
+    {
+        // Arrange
+        $disabledAt = new \DateTimeImmutable('2025-01-10 12:00:00');
+        $user = UserDataBuilder::aUser()
+            ->withDisabledAt($disabledAt)
+            ->build()
+        ;
+
+        // Act & Assert
+        self::assertFalse($user->isActive());
+        self::assertEquals($disabledAt, $user->disabledAt());
+    }
+
+    public function testDisableUserSetsDisabledAt(): void
+    {
+        // Arrange
+        $disableTime = new \DateTimeImmutable('2025-01-15 14:30:00');
+        ClockFactory::initialize(new FrozenClock($disableTime));
+
+        $user = UserDataBuilder::aUser()->build();
+        self::assertTrue($user->isActive());
+
+        // Act
+        $user->disable();
+
+        // Assert
+        self::assertFalse($user->isActive());
+        self::assertEquals($disableTime, $user->disabledAt());
+        self::assertEquals($disableTime, $user->updatedAt());
+    }
+
+    public function testDisableAlreadyDisabledUserThrows(): void
+    {
+        // Arrange
+        $user = UserDataBuilder::aUser()
+            ->withDisabledAt(new \DateTimeImmutable('2025-01-10 12:00:00'))
+            ->build()
+        ;
+
+        // Assert
+        $this->expectException(UserAlreadyDisabled::class);
+
+        // Act
+        $user->disable();
     }
 }

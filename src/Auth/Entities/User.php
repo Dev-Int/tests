@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Auth\Entities;
 
+use Auth\Entities\Exception\UserAlreadyDisabled;
 use Auth\Entities\VO\HashedPassword;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\ResourceUuid;
@@ -53,6 +54,7 @@ final class User
         array $roles,
         \DateTimeImmutable $createdAt,
         \DateTimeImmutable $updatedAt,
+        ?\DateTimeImmutable $disabledAt = null,
     ): self {
         return new self(
             uuid: $uuid,
@@ -61,6 +63,7 @@ final class User
             roles: self::normalizeRoles($roles),
             createdAt: $createdAt,
             updatedAt: $updatedAt,
+            disabledAt: $disabledAt,
         );
     }
 
@@ -74,6 +77,7 @@ final class User
         private array $roles,
         private readonly \DateTimeImmutable $createdAt,
         private \DateTimeImmutable $updatedAt,
+        private ?\DateTimeImmutable $disabledAt = null,
     ) {
     }
 
@@ -108,6 +112,25 @@ final class User
     public function updatedAt(): \DateTimeImmutable
     {
         return $this->updatedAt;
+    }
+
+    public function disabledAt(): ?\DateTimeImmutable
+    {
+        return $this->disabledAt;
+    }
+
+    public function isActive(): bool
+    {
+        return !$this->disabledAt instanceof \DateTimeImmutable;
+    }
+
+    public function disable(): void
+    {
+        if (!$this->isActive()) {
+            throw new UserAlreadyDisabled($this->uuid);
+        }
+        $this->disabledAt = ClockFactory::clock()->now();
+        $this->updatedAt = ClockFactory::clock()->now();
     }
 
     public function hasRole(Role $role): bool
