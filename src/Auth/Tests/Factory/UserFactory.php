@@ -39,6 +39,7 @@ final class UserFactory extends PersistentProxyObjectFactory
             'password' => '$2y$13$' . self::faker()->sha256(), // Valid bcrypt-like hash
             'roles' => [Role::USER],
             'uuid' => self::faker()->uuid(),
+            'disabledAt' => null,
         ];
     }
 
@@ -50,12 +51,14 @@ final class UserFactory extends PersistentProxyObjectFactory
                 \assert(\is_string($attributes['password']));
                 \assert(\is_array($attributes['roles']));
                 \assert(\is_string($attributes['uuid']));
+                \assert($attributes['disabledAt'] === null || $attributes['disabledAt'] instanceof \DateTimeImmutable);
 
                 $userDomain = UserDataBuilder::aUser()
                     ->withUuid(ResourceUuid::fromString($attributes['uuid']))
                     ->withEmail($attributes['email'])
                     ->withPassword($attributes['password'])
                     ->withRoles($attributes['roles'])
+                    ->withDisabledAt($attributes['disabledAt'])
                     ->build()
                 ;
 
