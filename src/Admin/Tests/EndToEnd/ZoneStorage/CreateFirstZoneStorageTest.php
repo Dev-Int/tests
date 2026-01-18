@@ -25,6 +25,7 @@ use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Faker\Factory;
+use Shared\Tests\AuthenticatedPantherTestTrait;
 use Shared\Tests\BasePantherTestCase;
 use Symfony\Component\Panther\PantherTestCase;
 use Symfony\Component\Routing\RouterInterface;
@@ -35,6 +36,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 final class CreateFirstZoneStorageTest extends BasePantherTestCase
 {
+    use AuthenticatedPantherTestTrait;
+
     public function testCreateFirstZoneStorageSuccessfully(): void
     {
         // Arrange
@@ -58,6 +61,8 @@ final class CreateFirstZoneStorageTest extends BasePantherTestCase
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get('router');
+
+        $this->loginViaForm($client, $translator);
 
         $company = (new CompanyDataBuilder())->create(name: $faker->company())->build();
         $companyRepository->save($company);
@@ -142,6 +147,8 @@ final class CreateFirstZoneStorageTest extends BasePantherTestCase
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get('router');
+
+        $this->loginViaForm($client, $translator);
 
         $company = (new CompanyDataBuilder())->create(name: $faker->company())->build();
         $companyRepository->save($company);

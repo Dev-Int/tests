@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Admin\Tests\EndToEnd\Article;
 
 use Admin\Adapters\Controller\Symfony\Controller\Article\GetArticles\GetArticlesController;
+use Shared\Tests\AuthenticatedPantherTestTrait;
 use Shared\Tests\BasePantherTestCase;
 use Symfony\Component\Panther\PantherTestCase;
 use Symfony\Component\Routing\RouterInterface;
@@ -24,6 +25,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 final class ChangeStorageInformationArticleCancelTest extends BasePantherTestCase
 {
+    use AuthenticatedPantherTestTrait;
+
     public function testCancelDuringArticleChangeStorageInformation(): void
     {
         // Arrange
@@ -34,6 +37,8 @@ final class ChangeStorageInformationArticleCancelTest extends BasePantherTestCas
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get('router');
+
+        $this->loginViaForm($client, $translator);
 
         $config = $this->createMinimalConfiguration();
         $article = $config['article'];

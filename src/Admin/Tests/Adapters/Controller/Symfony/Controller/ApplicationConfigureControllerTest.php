@@ -21,6 +21,7 @@ use Admin\Tests\Factory\TaxFactory;
 use Admin\Tests\Factory\UnitFactory;
 use Admin\Tests\Factory\ZoneStorageFactory;
 use Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Zenstruck\Foundry\Test\Factories;
@@ -31,8 +32,9 @@ use Zenstruck\Foundry\Test\Factories;
 final class ApplicationConfigureControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
+    use RedirectsToLoginTestTrait;
 
-    private const APPLICATION_CONFIGURE_URI = '/admin/configure/application';
+    private const string APPLICATION_CONFIGURE_URI = '/admin/configure/application';
 
     public function testApplicationConfigurePageWillSucceed(): void
     {
@@ -92,5 +94,10 @@ final class ApplicationConfigureControllerTest extends BaseFunctionalTestCase
 
         // Assert
         self::assertResponseRedirects('/admin/configure');
+    }
+
+    protected function getProtectedUri(): string
+    {
+        return self::APPLICATION_CONFIGURE_URI;
     }
 }

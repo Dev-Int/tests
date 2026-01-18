@@ -16,6 +16,7 @@ namespace Admin\Tests\Adapters\Controller\Symfony\Controller\FamilyLog\GetFamily
 use Admin\Entities\Exception\FamilyLog\NoFamilyLogRegistered;
 use Admin\Tests\Factory\FamilyLogFactory;
 use Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -27,8 +28,9 @@ use Zenstruck\Foundry\Test\Factories;
 final class GetFamilyLogsControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
+    use RedirectsToLoginTestTrait;
 
-    private const GET_FAMILY_LOGS_URI = '/admin/family_logs';
+    private const string GET_FAMILY_LOGS_URI = '/admin/family_logs';
 
     public function testGetFamilyLogsWillSucceed(): void
     {
@@ -67,5 +69,10 @@ final class GetFamilyLogsControllerTest extends BaseFunctionalTestCase
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame(NoFamilyLogRegistered::MESSAGE, $flash);
+    }
+
+    protected function getProtectedUri(): string
+    {
+        return self::GET_FAMILY_LOGS_URI;
     }
 }

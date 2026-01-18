@@ -22,6 +22,7 @@ use Admin\Tests\Factory\UnitFactory;
 use Admin\Tests\Factory\ZoneStorageFactory;
 use Faker\Factory;
 use Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -33,8 +34,9 @@ use Zenstruck\Foundry\Test\Factories;
 final class ReAssignArticleSupplierControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
+    use RedirectsToLoginTestTrait;
 
-    private const REASSIGN_ARTICLE_SUPPLIER_URI = '/admin/articles/%s/reassign-supplier';
+    private const string REASSIGN_ARTICLE_SUPPLIER_URI = '/admin/articles/%s/reassign-supplier';
 
     public function testReAssignArticleSupplierWillSucceed(): void
     {
@@ -304,5 +306,10 @@ final class ReAssignArticleSupplierControllerTest extends BaseFunctionalTestCase
         $title = $response->filter('h1')->text();
 
         self::assertEquals('Page non trouvée', $title);
+    }
+
+    protected function getProtectedUri(): string
+    {
+        return \sprintf(self::REASSIGN_ARTICLE_SUPPLIER_URI, '00000000-0000-0000-0000-000000000000');
     }
 }

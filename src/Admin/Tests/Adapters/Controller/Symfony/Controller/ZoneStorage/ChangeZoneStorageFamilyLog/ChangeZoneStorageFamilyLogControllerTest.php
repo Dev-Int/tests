@@ -20,6 +20,7 @@ use Admin\Tests\Factory\FamilyLogFactory;
 use Admin\Tests\Factory\ZoneStorageFactory;
 use Faker\Factory;
 use Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -31,8 +32,9 @@ use Zenstruck\Foundry\Test\Factories;
 final class ChangeZoneStorageFamilyLogControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
+    use RedirectsToLoginTestTrait;
 
-    private const CHANGE_FAMILY_LOG_URI = '/admin/zone_storages/%s/change-family_log';
+    private const string CHANGE_FAMILY_LOG_URI = '/admin/zone_storages/%s/change-family_log';
 
     public function testChangeFamilyLogWillSucceed(): void
     {
@@ -175,5 +177,10 @@ final class ChangeZoneStorageFamilyLogControllerTest extends BaseFunctionalTestC
 
         $zoneStorages = $zoneStorageRepository->getAllZones();
         self::assertCount(1, $zoneStorages);
+    }
+
+    protected function getProtectedUri(): string
+    {
+        return \sprintf(self::CHANGE_FAMILY_LOG_URI, '00000000-0000-0000-0000-000000000000');
     }
 }

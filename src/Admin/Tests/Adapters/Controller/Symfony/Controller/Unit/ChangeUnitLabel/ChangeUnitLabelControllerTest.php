@@ -19,6 +19,7 @@ use Admin\Entities\Unit\Unit;
 use Admin\Tests\Factory\UnitFactory;
 use Faker\Factory;
 use Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -30,8 +31,9 @@ use Zenstruck\Foundry\Test\Factories;
 final class ChangeUnitLabelControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
+    use RedirectsToLoginTestTrait;
 
-    private const CHANGE_LABEL_URI = '/admin/units/%s/change-label';
+    private const string CHANGE_LABEL_URI = '/admin/units/%s/change-label';
 
     public function testChangeLabelWillSucceed(): void
     {
@@ -294,5 +296,10 @@ final class ChangeUnitLabelControllerTest extends BaseFunctionalTestCase
 
         $units = $unitRepository->getAllUnits();
         self::assertCount(1, $units);
+    }
+
+    protected function getProtectedUri(): string
+    {
+        return \sprintf(self::CHANGE_LABEL_URI, '00000000-0000-0000-0000-000000000000');
     }
 }

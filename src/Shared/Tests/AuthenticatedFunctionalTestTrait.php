@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Shared\Tests;
 
 use Auth\Adapters\Gateway\ORM\Entity\User;
+use Auth\Entities\Role;
 use Auth\Tests\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
@@ -26,15 +27,19 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 trait AuthenticatedFunctionalTestTrait
 {
     /**
-     * Crée un utilisateur et l'authentifie pour le client HTTP.
+     * Crée un utilisateur admin et l'authentifie pour le client HTTP.
      *
-     * @param string|null $email L'email de l'utilisateur (optionnel, génère un email aléatoire par défaut)
+     * @param string|null $email L'email de l'utilisateur (optionnel)
+     * @param list<Role>  $roles Les rôles de l'utilisateur (défaut: ROLE_ADMIN)
      *
      * @return User L'entité utilisateur créée
      */
-    protected function authenticateUser(?string $email = null): User
+    protected function authenticateUser(?string $email = null, array $roles = [Role::ADMIN]): User
     {
-        $attributes = $email !== null ? ['email' => $email] : [];
+        $attributes = ['roles' => $roles];
+        if ($email !== null) {
+            $attributes['email'] = $email;
+        }
         $user = UserFactory::createOne($attributes);
 
         $this->getHttpClient()->loginUser($user->_real());
@@ -42,5 +47,26 @@ trait AuthenticatedFunctionalTestTrait
         return $user->_real();
     }
 
+    /**
+     * Authentifie un utilisateur avec seulement ROLE_USER (sans ROLE_ADMIN).
+     * Utile pour tester le refus d'accès aux routes admin.
+     */
+    protected function authenticateAsRoleUser(): User
+    {
+        return $this->authenticateUser(roles: [Role::USER]);
+    }
+
+    /**
+     * Déconnecte l'utilisateur actuel pour tester les accès non-authentifiés.
+     * Réinitialise le client HTTP pour effacer la session.
+     */
+    protected function logoutUser(): void
+    {
+        static::ensureKernelShutdown();
+        $this->setHttpClient(static::createClient());
+    }
+
     abstract protected function getHttpClient(): KernelBrowser;
+
+    abstract protected function setHttpClient(KernelBrowser $client): void;
 }
