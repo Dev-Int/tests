@@ -23,8 +23,10 @@ use Inventory\Tests\Story\InventoryStory;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\ResourceUuid;
 use Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Zenstruck\Foundry\Test\Factories;
 
@@ -36,6 +38,7 @@ use Zenstruck\Foundry\Test\Factories;
 final class ResumeCountingFromReviewControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
+    use RedirectsToLoginTestTrait;
 
     public const string RESUME_URI = '/inventories/%s/zones/%s/resume-counting';
 
@@ -178,7 +181,7 @@ final class ResumeCountingFromReviewControllerTest extends BaseFunctionalTestCas
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        self::assertResponseRedirects('/inventories');
+        self::assertResponseRedirects('/inventories/');
 
         $crawler = $this->client->followRedirect();
         $flash = $crawler->filter('.flash-error')->text();
@@ -189,5 +192,30 @@ final class ResumeCountingFromReviewControllerTest extends BaseFunctionalTestCas
     {
         self::assertTrue(\defined(ResumeCountingFromReviewController::class . '::ROUTE_NAME'));
         self::assertSame('inventory_resume_counting', ResumeCountingFromReviewController::ROUTE_NAME);
+    }
+
+    public function testAccessDeniedForRoleUser(): void
+    {
+        $this->logoutUser();
+        $this->authenticateAsRoleUser();
+        $this->client->catchExceptions(false);
+        $this->expectException(AccessDeniedException::class);
+        $this->expectExceptionMessage('Access Denied.');
+        $this->client->request(Request::METHOD_POST, $this->getProtectedUri());
+    }
+
+    protected function getProtectedUri(): string
+    {
+        // UUIDs factices, access_control vérifie l'auth avant le routage complet
+        return \sprintf(
+            self::RESUME_URI,
+            '00000000-0000-0000-0000-000000000000',
+            '00000000-0000-0000-0000-000000000001'
+        );
+    }
+
+    protected function getProtectedHttpMethod(): string
+    {
+        return Request::METHOD_POST;
     }
 }

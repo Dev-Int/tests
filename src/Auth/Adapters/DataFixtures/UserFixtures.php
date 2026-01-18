@@ -20,11 +20,13 @@ use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 /**
- * Fixtures pour créer un utilisateur admin par défaut.
+ * Fixtures pour créer les utilisateurs par défaut (un par rôle).
  *
  * Utilisé pour :
- * - Développement local : connexion manuelle avec admin@tests.local / password
+ * - Développement local : connexion manuelle avec {email} / password
  * - Tests E2E (Panther) : connexion via le formulaire réel
+ *
+ * @see docs/testing.md pour la liste des comptes disponibles
  */
 final class UserFixtures extends Fixture
 {
@@ -39,10 +41,25 @@ final class UserFixtures extends Fixture
         $tempUser = UserFactory::new()->withoutPersisting()->create();
         $hashedPassword = $this->passwordHasher->hashPassword($tempUser->_real(), 'password');
 
+        // Admin - accès complet
         UserFactory::createOne([
             'email' => 'admin@tests.local',
             'password' => $hashedPassword,
             'roles' => [Role::ADMIN],
+        ]);
+
+        // Inventory Manager - gestion des stocks
+        UserFactory::createOne([
+            'email' => 'inventory_manager@tests.local',
+            'password' => $hashedPassword,
+            'roles' => [Role::INVENTORY_MANAGER],
+        ]);
+
+        // User standard - accès limité
+        UserFactory::createOne([
+            'email' => 'user@tests.local',
+            'password' => $hashedPassword,
+            'roles' => [Role::USER],
         ]);
     }
 }

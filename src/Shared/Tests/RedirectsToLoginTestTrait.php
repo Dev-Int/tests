@@ -31,7 +31,7 @@ trait RedirectsToLoginTestTrait
     public function testRedirectsToLoginWhenUnauthenticated(): void
     {
         $this->logoutUser();
-        $this->getHttpClient()->request(Request::METHOD_GET, $this->getProtectedUri());
+        $this->getHttpClient()->request($this->getProtectedHttpMethod(), $this->getProtectedUri());
         self::assertResponseRedirects('/login');
     }
 
@@ -39,6 +39,15 @@ trait RedirectsToLoginTestTrait
      * Retourne l'URI protégée à tester.
      */
     abstract protected function getProtectedUri(): string;
+
+    /**
+     * Retourne la méthode HTTP à utiliser pour tester l'URI protégée.
+     * Par défaut GET, à surcharger si la route requiert POST, etc.
+     */
+    protected function getProtectedHttpMethod(): string
+    {
+        return Request::METHOD_GET;
+    }
 
     /**
      * Déconnecte l'utilisateur actuel.

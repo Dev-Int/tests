@@ -19,6 +19,7 @@ use Inventory\Tests\Factory\InventoryFactory;
 use Inventory\Tests\Story\InventoryStory;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\Clock\FrozenClock;
+use Shared\Tests\AuthenticatedPantherTestTrait;
 use Shared\Tests\BasePantherTestCase;
 use Symfony\Component\Panther\PantherTestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -29,6 +30,7 @@ use Zenstruck\Foundry\Test\Factories;
  */
 final class RecordRealStockByZoneForAnInventoryTest extends BasePantherTestCase
 {
+    use AuthenticatedPantherTestTrait;
     use Factories;
 
     protected function setUp(): void
@@ -44,6 +46,8 @@ final class RecordRealStockByZoneForAnInventoryTest extends BasePantherTestCase
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
+
+        $this->loginViaForm($client, $translator);
 
         $now = ClockFactory::clock()->now();
         $futureDate = $now->modify('+1 day');
@@ -121,6 +125,8 @@ final class RecordRealStockByZoneForAnInventoryTest extends BasePantherTestCase
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
 
+        $this->loginViaForm($client, $translator);
+
         $now = ClockFactory::clock()->now();
         $futureDate = $now->modify('+1 day');
 
@@ -191,6 +197,8 @@ final class RecordRealStockByZoneForAnInventoryTest extends BasePantherTestCase
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
+
+        $this->loginViaForm($client, $translator);
 
         InventoryStory::load();
         $this->flushAndClearEntityManager();

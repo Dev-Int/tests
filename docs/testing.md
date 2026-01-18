@@ -121,6 +121,35 @@ $this->flushAndClearEntityManager();
 
 ---
 
+## Test Fixtures: User Accounts
+
+Comptes disponibles après `make reload` ou dans les tests :
+
+| Email | Password | Rôle | Usage |
+|-------|----------|------|-------|
+| `admin@tests.local` | `password` | ROLE_ADMIN | Accès complet |
+| `inventory_manager@tests.local` | `password` | ROLE_INVENTORY_MANAGER | Gestion stocks |
+| `user@tests.local` | `password` | ROLE_USER | Utilisateur standard |
+
+**Connexion manuelle** : https://localhost/login
+
+**Dans les tests fonctionnels** :
+```php
+use Shared\Tests\AuthenticatedFunctionalTestTrait;
+
+$this->loginAsAdmin();           // ou
+$this->loginAs('inventory_manager@tests.local');
+```
+
+**Dans les tests E2E** :
+```php
+use Shared\Tests\AuthenticatedPantherTestTrait;
+
+$this->loginAsPanther($client);  // Login via formulaire réel
+```
+
+---
+
 ## Performance Summary
 
 | Type       | Setup                      | Execution | Total      | Isolation |
