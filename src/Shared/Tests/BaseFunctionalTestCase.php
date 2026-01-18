@@ -54,9 +54,4 @@ abstract class BaseFunctionalTestCase extends WebTestCase
         parent::tearDown();
         $this->databaseTool = null;
     }
-
-    protected function getHttpClient(): KernelBrowser
-    {
-        return $this->client;
-    }
 }
