@@ -17,9 +17,11 @@ use Auth\Adapters\Gateway\ORM\Entity\User;
 use Auth\Contracts\CurrentUserProvider;
 use Auth\Contracts\DTO\CurrentUserData;
 use Auth\Contracts\Exception\UnauthenticatedUser;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
+#[AsAlias(CurrentUserProvider::class)]
 final readonly class AuthCurrentUserProvider implements CurrentUserProvider
 {
     public function __construct(
