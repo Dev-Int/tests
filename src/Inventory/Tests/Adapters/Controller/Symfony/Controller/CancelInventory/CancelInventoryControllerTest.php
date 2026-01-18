@@ -23,8 +23,10 @@ use Inventory\Tests\Story\InventoryStory;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\ResourceUuid;
 use Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Zenstruck\Foundry\Test\Factories;
 
@@ -36,6 +38,7 @@ use Zenstruck\Foundry\Test\Factories;
 final class CancelInventoryControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
+    use RedirectsToLoginTestTrait;
 
     public const string CANCEL_URI = '/inventories/%s/cancel';
     public const string START_URI = '/inventories/%s/start';
@@ -70,7 +73,7 @@ final class CancelInventoryControllerTest extends BaseFunctionalTestCase
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        self::assertResponseRedirects('/inventories');
+        self::assertResponseRedirects('/inventories/');
 
         $crawler = $this->client->followRedirect();
         $flash = $crawler->filter('.flash-success')->text();
@@ -111,7 +114,7 @@ final class CancelInventoryControllerTest extends BaseFunctionalTestCase
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        self::assertResponseRedirects('/inventories');
+        self::assertResponseRedirects('/inventories/');
 
         $this->client->followRedirect();
 
@@ -146,7 +149,7 @@ final class CancelInventoryControllerTest extends BaseFunctionalTestCase
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        self::assertResponseRedirects('/inventories');
+        self::assertResponseRedirects('/inventories/');
 
         $crawler = $this->client->followRedirect();
         $flash = $crawler->filter('.flash-error')->text();
@@ -168,7 +171,7 @@ final class CancelInventoryControllerTest extends BaseFunctionalTestCase
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        self::assertResponseRedirects('/inventories');
+        self::assertResponseRedirects('/inventories/');
 
         $crawler = $this->client->followRedirect();
         $flash = $crawler->filter('.flash-error')->text();
@@ -179,5 +182,26 @@ final class CancelInventoryControllerTest extends BaseFunctionalTestCase
     {
         self::assertTrue(\defined(CancelInventoryController::class . '::ROUTE_NAME'));
         self::assertSame('inventory_cancel', CancelInventoryController::ROUTE_NAME);
+    }
+
+    public function testAccessDeniedForRoleUser(): void
+    {
+        $this->logoutUser();
+        $this->authenticateAsRoleUser();
+        $this->client->catchExceptions(false);
+        $this->expectException(AccessDeniedException::class);
+        $this->expectExceptionMessage('Access Denied.');
+        $this->client->request(Request::METHOD_POST, $this->getProtectedUri());
+    }
+
+    protected function getProtectedUri(): string
+    {
+        // UUID factice, access_control vérifie l'auth avant le routage complet
+        return \sprintf(self::CANCEL_URI, '00000000-0000-0000-0000-000000000000');
+    }
+
+    protected function getProtectedHttpMethod(): string
+    {
+        return Request::METHOD_POST;
     }
 }

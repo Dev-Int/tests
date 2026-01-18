@@ -21,6 +21,7 @@ use Admin\Tests\Factory\TaxFactory;
 use Admin\Tests\Factory\UnitFactory;
 use Admin\Tests\Factory\ZoneStorageFactory;
 use Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Zenstruck\Foundry\Test\Factories;
@@ -31,8 +32,9 @@ use Zenstruck\Foundry\Test\Factories;
 final class HomeControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
+    use RedirectsToLoginTestTrait;
 
-    private const HOME_URI = '/admin/';
+    private const string HOME_URI = '/admin/';
 
     public function testHomePageWillSucceed(): void
     {
@@ -69,5 +71,10 @@ final class HomeControllerTest extends BaseFunctionalTestCase
         self::assertSelectorTextContains('h1', $translator->trans('admin.titlePage'));
         $brand = $crawler->filter('body > header > nav')->children('ul')->first();
         self::assertSame('Application', $brand->text());
+    }
+
+    protected function getProtectedUri(): string
+    {
+        return self::HOME_URI;
     }
 }

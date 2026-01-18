@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Admin\Tests\EndToEnd\Supplier;
 
 use Admin\Adapters\Controller\Symfony\Controller\Supplier\GetSuppliers\GetSuppliersController;
+use Shared\Tests\AuthenticatedPantherTestTrait;
 use Shared\Tests\BasePantherTestCase;
 use Symfony\Component\Panther\PantherTestCase;
 use Symfony\Component\Routing\RouterInterface;
@@ -24,6 +25,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 final class RenameSupplierCancelTest extends BasePantherTestCase
 {
+    use AuthenticatedPantherTestTrait;
+
     public function testCancelDuringSupplierRename(): void
     {
         // Arrange
@@ -34,6 +37,8 @@ final class RenameSupplierCancelTest extends BasePantherTestCase
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get('router');
+
+        $this->loginViaForm($client, $translator);
 
         $config = $this->createMinimalConfiguration();
         $supplier = $config['supplier'];

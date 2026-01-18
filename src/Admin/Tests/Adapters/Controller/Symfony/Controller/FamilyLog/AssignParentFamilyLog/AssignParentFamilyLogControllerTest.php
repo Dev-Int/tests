@@ -20,6 +20,7 @@ use Admin\Tests\Factory\FamilyLogFactory;
 use Faker\Factory;
 use Shared\Entities\ResourceUuid;
 use Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -31,8 +32,9 @@ use Zenstruck\Foundry\Test\Factories;
 final class AssignParentFamilyLogControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
+    use RedirectsToLoginTestTrait;
 
-    private const ASSIGN_PARENT_FAMILY_LOG_URI = '/admin/family_logs/%s/assign-parent';
+    private const string ASSIGN_PARENT_FAMILY_LOG_URI = '/admin/family_logs/%s/assign-parent';
 
     public function testAssignParentWithoutParentWithoutChildrenWillSucceed(): void
     {
@@ -387,5 +389,10 @@ final class AssignParentFamilyLogControllerTest extends BaseFunctionalTestCase
         self::assertSame('Poulet', $childAfter->label()->toString());
         self::assertSame('viande_poulet', $childAfter->slug());
         self::assertSame(1, $childAfter->level());
+    }
+
+    protected function getProtectedUri(): string
+    {
+        return \sprintf(self::ASSIGN_PARENT_FAMILY_LOG_URI, '00000000-0000-0000-0000-000000000000');
     }
 }

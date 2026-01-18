@@ -24,9 +24,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsController]
+#[IsGranted('ROLE_INVENTORY_MANAGER')]
 final class CompleteInventoryController extends AbstractController
 {
     public const string ROUTE_NAME = 'inventory_complete';
@@ -40,7 +42,7 @@ final class CompleteInventoryController extends AbstractController
     }
 
     #[Route(
-        path: 'inventories/{inventoryUuid}/complete',
+        path: '{inventoryUuid}/complete',
         name: self::ROUTE_NAME,
         requirements: ['inventoryUuid' => self::UUID_PATTERN],
         methods: ['POST']

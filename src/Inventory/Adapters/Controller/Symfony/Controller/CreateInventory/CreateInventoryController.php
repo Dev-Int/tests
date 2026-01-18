@@ -40,7 +40,7 @@ final class CreateInventoryController extends AbstractController
     ) {
     }
 
-    #[Route(path: 'inventories/create', name: self::ROUTE_NAME, methods: ['GET', 'POST'])]
+    #[Route(path: 'create', name: self::ROUTE_NAME, methods: ['GET', 'POST'])]
     public function __invoke(Request $request): Response
     {
         $form = $this->createForm(CreateInventoryType::class, new CreateInventoryInput(), [

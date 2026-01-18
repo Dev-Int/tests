@@ -104,6 +104,10 @@ return (new PhpCsFixer\Config())
             ],
         ],
         'yoda_style' => false,
+        'types_spaces' => [
+            'space' => 'none',
+            'space_multiple_catch' => 'single',
+        ],
     ])
     ->setRiskyAllowed(true)
     ->setIndent('    ')

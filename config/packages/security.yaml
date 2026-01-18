@@ -31,12 +31,18 @@ security:
                 lifetime: 604800
                 signature_properties: [password]
 
-    # access_control will be enabled in issue #237 after fixing all functional tests
-    # to include authentication. Each BC should be fixed separately.
-    # access_control:
-    #     - { path: ^/login$, roles: PUBLIC_ACCESS }
-    #     - { path: ^/logout$, roles: PUBLIC_ACCESS }
-    #     - { path: ^/, roles: ROLE_USER }
+    role_hierarchy:
+        ROLE_INVENTORY_MANAGER: ROLE_USER
+        ROLE_ADMIN: ROLE_INVENTORY_MANAGER
+
+    # Access control: authentication layer (redirects to log in)
+    # Controller #[IsGranted]: authorization layer (403 if a wrong role)
+    access_control:
+        - { path: ^/login$, roles: PUBLIC_ACCESS }
+        - { path: ^/logout$, roles: PUBLIC_ACCESS }
+        - { path: ^/admin/, roles: ROLE_ADMIN }
+        # Inventory BC: ROLE_USER (saisie) + ROLE_INVENTORY_MANAGER via #[IsGranted] (validation)
+        - { path: ^/inventories/, roles: ROLE_USER }
 
 when@test:
     security:

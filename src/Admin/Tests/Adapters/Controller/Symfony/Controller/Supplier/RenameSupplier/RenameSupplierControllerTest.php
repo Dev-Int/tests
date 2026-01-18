@@ -20,6 +20,7 @@ use Admin\Tests\Factory\FamilyLogFactory;
 use Admin\Tests\Factory\SupplierFactory;
 use Faker\Factory;
 use Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -31,8 +32,9 @@ use Zenstruck\Foundry\Test\Factories;
 final class RenameSupplierControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
+    use RedirectsToLoginTestTrait;
 
-    private const RENAME_SUPPLIER_URI = '/admin/suppliers/%s/rename';
+    private const string RENAME_SUPPLIER_URI = '/admin/suppliers/%s/rename';
 
     public function testRenameSupplierWillSucceed(): void
     {
@@ -158,5 +160,10 @@ final class RenameSupplierControllerTest extends BaseFunctionalTestCase
         $title = $response->filter('h1')->text();
 
         self::assertEquals('Page non trouvée', $title);
+    }
+
+    protected function getProtectedUri(): string
+    {
+        return \sprintf(self::RENAME_SUPPLIER_URI, '00000000-0000-0000-0000-000000000000');
     }
 }

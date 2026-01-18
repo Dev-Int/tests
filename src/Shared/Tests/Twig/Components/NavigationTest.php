@@ -45,7 +45,7 @@ final class NavigationTest extends KernelTestCase
         self::assertTrue($component->isApplicationReady());
 
         $crawler = $renderer->crawler();
-        $inventoryLink = $crawler->filter('a[href="/inventories"]');
+        $inventoryLink = $crawler->filter('a[href="/inventories/"]');
         self::assertCount(1, $inventoryLink);
         self::assertNull($inventoryLink->attr('aria-disabled'));
     }

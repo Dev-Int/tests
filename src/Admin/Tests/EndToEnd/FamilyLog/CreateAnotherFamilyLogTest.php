@@ -15,6 +15,7 @@ namespace Admin\Tests\EndToEnd\FamilyLog;
 
 use Admin\Adapters\Controller\Symfony\Controller\FamilyLog\CreateFamilyLog\CreateFamilyLogController;
 use Admin\Adapters\Controller\Symfony\Controller\FamilyLog\GetFamilyLogs\GetFamilyLogsController;
+use Shared\Tests\AuthenticatedPantherTestTrait;
 use Shared\Tests\BasePantherTestCase;
 use Symfony\Component\Panther\PantherTestCase;
 use Symfony\Component\Routing\RouterInterface;
@@ -25,6 +26,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 final class CreateAnotherFamilyLogTest extends BasePantherTestCase
 {
+    use AuthenticatedPantherTestTrait;
+
     public function testCreateAnotherFamilyLogSuccessfully(): void
     {
         // Arrange
@@ -35,6 +38,8 @@ final class CreateAnotherFamilyLogTest extends BasePantherTestCase
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get('router');
+
+        $this->loginViaForm($client, $translator);
 
         $this->createMinimalConfiguration();
 
@@ -91,6 +96,8 @@ final class CreateAnotherFamilyLogTest extends BasePantherTestCase
         /** @var RouterInterface $router */
         $router = self::getContainer()->get('router');
 
+        $this->loginViaForm($client, $translator);
+
         $this->createMinimalConfiguration();
 
         // Act && Assert
@@ -136,6 +143,8 @@ final class CreateAnotherFamilyLogTest extends BasePantherTestCase
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get('router');
+
+        $this->loginViaForm($client, $translator);
 
         $config = $this->createMinimalConfiguration();
         $parentFamilyLog = $config['familyLog'];

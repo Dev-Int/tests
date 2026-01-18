@@ -59,7 +59,9 @@
       "Bash(jq:*)",
       "Bash(git -C /home/www/tests show *)",
       "Bash(git -C /home/www/tests log *)",
-      "WebSearch"
+      "WebSearch",
+      "WebFetch(domain:cs.symfony.com)",
+      "mcp__jetbrains-phpstorm__reformat_file"
     ],
     "deny": [
       "../.env",

@@ -15,6 +15,7 @@ namespace Admin\Tests\EndToEnd\Tax;
 
 use Admin\Adapters\Controller\Symfony\Controller\Tax\CreateTax\CreateTaxController;
 use Admin\Adapters\Controller\Symfony\Controller\Tax\GetTaxes\GetTaxesController;
+use Shared\Tests\AuthenticatedPantherTestTrait;
 use Shared\Tests\BasePantherTestCase;
 use Symfony\Component\Panther\PantherTestCase;
 use Symfony\Component\Routing\RouterInterface;
@@ -25,6 +26,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 final class CreateAnotherTaxTest extends BasePantherTestCase
 {
+    use AuthenticatedPantherTestTrait;
+
     public function testCreateAnotherTaxSuccessfully(): void
     {
         // Arrange
@@ -35,6 +38,8 @@ final class CreateAnotherTaxTest extends BasePantherTestCase
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get('router');
+
+        $this->loginViaForm($client, $translator);
 
         $this->createMinimalConfiguration();
 
@@ -89,6 +94,8 @@ final class CreateAnotherTaxTest extends BasePantherTestCase
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get('router');
+
+        $this->loginViaForm($client, $translator);
 
         $this->createMinimalConfiguration();
 

@@ -23,9 +23,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsController]
+#[IsGranted('ROLE_INVENTORY_MANAGER')]
 final class CancelInventoryController extends AbstractController
 {
     public const string ROUTE_NAME = 'inventory_cancel';
@@ -39,7 +41,7 @@ final class CancelInventoryController extends AbstractController
     }
 
     #[Route(
-        path: 'inventories/{inventoryUuid}/cancel',
+        path: '{inventoryUuid}/cancel',
         name: self::ROUTE_NAME,
         requirements: ['inventoryUuid' => self::UUID_PATTERN],
         methods: ['POST']

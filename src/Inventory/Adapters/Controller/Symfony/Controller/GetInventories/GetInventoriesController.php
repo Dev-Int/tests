@@ -35,7 +35,7 @@ final class GetInventoriesController extends AbstractController
     ) {
     }
 
-    #[Route(path: 'inventories', name: self::ROUTE_NAME, methods: ['GET'])]
+    #[Route(path: '/', name: self::ROUTE_NAME, methods: ['GET'])]
     public function __invoke(Request $request): Response
     {
         $filterForm = $this->createForm(InventoryFilterType::class);

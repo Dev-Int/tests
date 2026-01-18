@@ -16,6 +16,7 @@ namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Company\UpdateCompa
 use Admin\Entities\Repository\CompanyRepository;
 use Admin\Tests\Factory\CompanyFactory;
 use Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -27,8 +28,9 @@ use Zenstruck\Foundry\Test\Factories;
 final class UpdateCompanyControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
+    use RedirectsToLoginTestTrait;
 
-    private const UPDATE_COMPANY_URI = '/admin/company/%s/update';
+    private const string UPDATE_COMPANY_URI = '/admin/company/%s/update';
 
     public function testUpdateCompanyControllerWillSucceed(): void
     {
@@ -102,5 +104,10 @@ final class UpdateCompanyControllerTest extends BaseFunctionalTestCase
         $title = $response->filter('h1')->text();
 
         self::assertEquals('Page non trouvée', $title);
+    }
+
+    protected function getProtectedUri(): string
+    {
+        return \sprintf(self::UPDATE_COMPANY_URI, '00000000-0000-0000-0000-000000000000');
     }
 }

@@ -19,6 +19,7 @@ use Admin\Tests\Factory\FamilyLogFactory;
 use Admin\Tests\Factory\SupplierFactory;
 use Faker\Factory;
 use Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -30,8 +31,9 @@ use Zenstruck\Foundry\Test\Factories;
 final class ChangeContactControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
+    use RedirectsToLoginTestTrait;
 
-    private const CHANGE_CONTACT_SUPPLIER = '/admin/suppliers/%s/change-contact';
+    private const string CHANGE_CONTACT_SUPPLIER = '/admin/suppliers/%s/change-contact';
 
     public function testChangeContactSupplierWillSucceed(): void
     {
@@ -116,5 +118,10 @@ final class ChangeContactControllerTest extends BaseFunctionalTestCase
         $title = $response->filter('h1')->text();
 
         self::assertEquals('Page non trouvée', $title);
+    }
+
+    protected function getProtectedUri(): string
+    {
+        return \sprintf(self::CHANGE_CONTACT_SUPPLIER, '00000000-0000-0000-0000-000000000000');
     }
 }
