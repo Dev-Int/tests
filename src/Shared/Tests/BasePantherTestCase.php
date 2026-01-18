@@ -34,6 +34,7 @@ use Admin\Tests\DataBuilder\SupplierDataBuilder;
 use Admin\Tests\DataBuilder\TaxDataBuilder;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Admin\Tests\DataBuilder\ZoneStorageDataBuilder;
+use Auth\Adapters\DataFixtures\UserFixtures;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\NonUniqueResultException;
 use Faker\Factory;
@@ -65,8 +66,8 @@ class BasePantherTestCase extends PantherTestCase
         $databaseToolCollection = static::getContainer()->get(DatabaseToolCollection::class);
         $this->databaseTool = $databaseToolCollection->get();
 
-        // Purge la base de données avant chaque test E2E
-        $this->databaseTool->loadFixtures();
+        // Charge UserFixtures pour avoir un utilisateur authentifiable (admin@tests.local/password)
+        $this->databaseTool->loadFixtures([UserFixtures::class]);
     }
 
     protected function tearDown(): void

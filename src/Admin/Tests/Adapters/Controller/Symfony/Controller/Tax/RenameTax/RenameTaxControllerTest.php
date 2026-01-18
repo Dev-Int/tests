@@ -20,6 +20,7 @@ use Admin\Entities\Tax\Tax;
 use Admin\Tests\Factory\TaxFactory;
 use Faker\Factory;
 use Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -31,8 +32,9 @@ use Zenstruck\Foundry\Test\Factories;
 final class RenameTaxControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
+    use RedirectsToLoginTestTrait;
 
-    private const RENAME_TAX_URI = '/admin/taxes/%s/rename';
+    private const string RENAME_TAX_URI = '/admin/taxes/%s/rename';
 
     public function testRenameTaxWillSucceed(): void
     {
@@ -201,5 +203,10 @@ final class RenameTaxControllerTest extends BaseFunctionalTestCase
 
         $taxes = $taxRepository->getAllTaxes();
         self::assertCount(1, $taxes);
+    }
+
+    protected function getProtectedUri(): string
+    {
+        return \sprintf(self::RENAME_TAX_URI, '00000000-0000-0000-0000-000000000000');
     }
 }

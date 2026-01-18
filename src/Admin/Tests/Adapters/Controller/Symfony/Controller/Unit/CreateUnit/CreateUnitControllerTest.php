@@ -19,6 +19,7 @@ use Admin\Entities\Unit\Unit;
 use Admin\Tests\Factory\CompanyFactory;
 use Admin\Tests\Factory\UnitFactory;
 use Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -30,8 +31,9 @@ use Zenstruck\Foundry\Test\Factories;
 final class CreateUnitControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
+    use RedirectsToLoginTestTrait;
 
-    private const CREATE_UNIT_URI = '/admin/units/create';
+    private const string CREATE_UNIT_URI = '/admin/units/create';
 
     public function testCreateUnitWillSucceed(): void
     {
@@ -170,5 +172,10 @@ final class CreateUnitControllerTest extends BaseFunctionalTestCase
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame(NoCompanyRegistered::MESSAGE, $flash);
+    }
+
+    protected function getProtectedUri(): string
+    {
+        return self::CREATE_UNIT_URI;
     }
 }

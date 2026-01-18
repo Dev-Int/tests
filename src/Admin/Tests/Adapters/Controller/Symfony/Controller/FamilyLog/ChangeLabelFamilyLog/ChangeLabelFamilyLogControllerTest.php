@@ -20,6 +20,7 @@ use Admin\Tests\Factory\FamilyLogFactory;
 use Faker\Factory;
 use Shared\Entities\ResourceUuid;
 use Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -31,8 +32,9 @@ use Zenstruck\Foundry\Test\Factories;
 final class ChangeLabelFamilyLogControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
+    use RedirectsToLoginTestTrait;
 
-    private const CHANGE_LABEL_FAMILY_LOG_URI = '/admin/family_logs/%s/change-label';
+    private const string CHANGE_LABEL_FAMILY_LOG_URI = '/admin/family_logs/%s/change-label';
 
     public function testChangeLabelFamilyLogWillSucceed(): void
     {
@@ -293,5 +295,10 @@ final class ChangeLabelFamilyLogControllerTest extends BaseFunctionalTestCase
 
         $familyLogs = $familyLogRepository->getFamilyLogsOrderingBySlug();
         self::assertCount(2, $familyLogs->toArray());
+    }
+
+    protected function getProtectedUri(): string
+    {
+        return \sprintf(self::CHANGE_LABEL_FAMILY_LOG_URI, '00000000-0000-0000-0000-000000000000');
     }
 }

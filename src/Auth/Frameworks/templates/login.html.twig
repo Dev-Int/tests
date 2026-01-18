@@ -3,13 +3,11 @@
 {% block title %}{{ 'auth.login.titlePage'|trans }}{% endblock %}
 
 {% block body %}
-<div class="login-container">
+<article class="login-form">
     <h1>{{ 'auth.login.titlePage'|trans }}</h1>
 
     {% if error %}
-        <div class="flash flash-error">
-            {{ error.messageKey|trans(error.messageData, 'security') }}
-        </div>
+        <twig:Flashes label="error" message=" {{ error.messageKey|trans(error.messageData, 'security') }}" />
     {% endif %}
 
     <form method="post" action="{{ path('auth_login') }}">
@@ -32,7 +30,10 @@
         </div>
 
         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-        <button type="submit">{{ 'auth.login.form.submit'|trans }}</button>
+        <div class="grid">
+            <twig:Form:Button:Cancel href="{{ path('home') }}" label="{{ 'cancel'|trans }}" />
+            <twig:Form:Button:Submit label="{{ 'auth.login.form.submit'|trans }}" icon="fa-right-to-bracket" />
+        </div>
     </form>
-</div>
+</article>
 {% endblock %}

@@ -21,6 +21,7 @@ use Admin\Adapters\Gateway\ORM\Repository\DoctrineUnitRepository;
 use Admin\Tests\DataBuilder\CompanyDataBuilder;
 use Admin\Tests\DataBuilder\UnitDataBuilder;
 use Faker\Factory;
+use Shared\Tests\AuthenticatedPantherTestTrait;
 use Shared\Tests\BasePantherTestCase;
 use Symfony\Component\Panther\PantherTestCase;
 use Symfony\Component\Routing\RouterInterface;
@@ -31,6 +32,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 final class CreateFirstTaxTest extends BasePantherTestCase
 {
+    use AuthenticatedPantherTestTrait;
+
     public function testCreateFirstTaxSuccessfully(): void
     {
         // Arrange
@@ -48,6 +51,8 @@ final class CreateFirstTaxTest extends BasePantherTestCase
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get('router');
+
+        $this->loginViaForm($client, $translator);
 
         // Créer Company et Unit (prérequis pour créer une Tax)
         $company = (new CompanyDataBuilder())->create(name: $faker->company())->build();
@@ -115,6 +120,8 @@ final class CreateFirstTaxTest extends BasePantherTestCase
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get('router');
+
+        $this->loginViaForm($client, $translator);
 
         $company = (new CompanyDataBuilder())->create(name: $faker->company())->build();
         $companyRepository->save($company);

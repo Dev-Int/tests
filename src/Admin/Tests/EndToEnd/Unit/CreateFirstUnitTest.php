@@ -19,6 +19,7 @@ use Admin\Adapters\Controller\Symfony\Controller\Unit\GetUnits\GetUnitsControlle
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineCompanyRepository;
 use Admin\Tests\DataBuilder\CompanyDataBuilder;
 use Faker\Factory;
+use Shared\Tests\AuthenticatedPantherTestTrait;
 use Shared\Tests\BasePantherTestCase;
 use Symfony\Component\Panther\PantherTestCase;
 use Symfony\Component\Routing\RouterInterface;
@@ -29,6 +30,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 final class CreateFirstUnitTest extends BasePantherTestCase
 {
+    use AuthenticatedPantherTestTrait;
+
     public function testCreateFirstUnitSuccessfully(): void
     {
         // Arrange
@@ -43,6 +46,8 @@ final class CreateFirstUnitTest extends BasePantherTestCase
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get('router');
+
+        $this->loginViaForm($client, $translator);
 
         $company = (new CompanyDataBuilder())->create(name: $faker->company())->build();
         $companyRepository->save($company);
@@ -99,6 +104,8 @@ final class CreateFirstUnitTest extends BasePantherTestCase
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get('router');
+
+        $this->loginViaForm($client, $translator);
 
         $company = (new CompanyDataBuilder())->create(name: $faker->company())->build();
         $companyRepository->save($company);

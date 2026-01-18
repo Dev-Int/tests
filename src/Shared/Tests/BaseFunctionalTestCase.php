@@ -27,6 +27,8 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  */
 abstract class BaseFunctionalTestCase extends WebTestCase
 {
+    use AuthenticatedFunctionalTestTrait;
+
     protected KernelBrowser $client;
     protected ?AbstractDatabaseTool $databaseTool = null;
 
@@ -47,6 +49,9 @@ abstract class BaseFunctionalTestCase extends WebTestCase
 
         // Réinitialise la base de données avant chaque test
         $this->databaseTool->loadFixtures([]);
+
+        // Authentifie un utilisateur par défaut pour les tests protégés
+        $this->authenticateUser();
     }
 
     protected function tearDown(): void
@@ -58,5 +63,10 @@ abstract class BaseFunctionalTestCase extends WebTestCase
     protected function getHttpClient(): KernelBrowser
     {
         return $this->client;
+    }
+
+    protected function setHttpClient(KernelBrowser $client): void
+    {
+        $this->client = $client;
     }
 }

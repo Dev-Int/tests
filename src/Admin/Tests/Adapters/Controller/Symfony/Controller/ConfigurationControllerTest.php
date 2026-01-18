@@ -20,7 +20,9 @@ use Admin\Tests\Factory\TaxFactory;
 use Admin\Tests\Factory\UnitFactory;
 use Admin\Tests\Factory\ZoneStorageFactory;
 use Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Zenstruck\Foundry\Test\Factories;
 
@@ -30,8 +32,19 @@ use Zenstruck\Foundry\Test\Factories;
 final class ConfigurationControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
+    use RedirectsToLoginTestTrait;
 
-    private const CONFIGURATION_URI = '/admin/configure';
+    private const string CONFIGURATION_URI = '/admin/configure';
+
+    public function testDeniesAccessToRoleUser(): void
+    {
+        $this->logoutUser();
+        $this->authenticateAsRoleUser();
+        $this->client->catchExceptions(false);
+        $this->expectException(AccessDeniedException::class);
+        $this->expectExceptionMessage('Access Denied.');
+        $this->client->request(Request::METHOD_GET, self::CONFIGURATION_URI);
+    }
 
     public function testConfigurePageWillSucceed(): void
     {
@@ -213,5 +226,10 @@ final class ConfigurationControllerTest extends BaseFunctionalTestCase
 
         self::assertCount(6, $list->children('li > a.w100'));
         self::assertCount(5, $list->children('li > a.disable-link'));
+    }
+
+    protected function getProtectedUri(): string
+    {
+        return self::CONFIGURATION_URI;
     }
 }

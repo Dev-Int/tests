@@ -17,6 +17,7 @@ use Admin\Entities\Exception\ZoneStorage\NoZoneStorageRegistered;
 use Admin\Tests\Factory\FamilyLogFactory;
 use Admin\Tests\Factory\ZoneStorageFactory;
 use Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -28,8 +29,9 @@ use Zenstruck\Foundry\Test\Factories;
 final class GetZoneStoragesControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
+    use RedirectsToLoginTestTrait;
 
-    private const GET_ZONE_STORAGES_URI = '/admin/zone_storages';
+    private const string GET_ZONE_STORAGES_URI = '/admin/zone_storages';
 
     public function testGetZoneStoragesWillSucceed(): void
     {
@@ -73,5 +75,10 @@ final class GetZoneStoragesControllerTest extends BaseFunctionalTestCase
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame(NoZoneStorageRegistered::MESSAGE, $flash);
+    }
+
+    protected function getProtectedUri(): string
+    {
+        return self::GET_ZONE_STORAGES_URI;
     }
 }
