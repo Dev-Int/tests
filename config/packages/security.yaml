@@ -31,8 +31,10 @@ security:
                 lifetime: 604800
                 signature_properties: [password]
 
-    # access_control will be enabled in issue #237 after fixing all functional tests
-    # to include authentication. Each BC should be fixed separately.
+    # Issue #237: access_control enabled progressively per BC
+    # Phase 1: Infrastructure only - pas d'access_control activé
+    # Phase 2: ajouter ^/inventories + ROLE_USER
+    # Phase 3: ajouter ^/admin + ROLE_USER
     # access_control:
     #     - { path: ^/login$, roles: PUBLIC_ACCESS }
     #     - { path: ^/logout$, roles: PUBLIC_ACCESS }
