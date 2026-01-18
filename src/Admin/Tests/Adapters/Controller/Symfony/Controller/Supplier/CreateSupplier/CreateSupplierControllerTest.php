@@ -26,8 +26,10 @@ use Admin\Tests\Factory\TaxFactory;
 use Admin\Tests\Factory\UnitFactory;
 use Admin\Tests\Factory\ZoneStorageFactory;
 use Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Zenstruck\Foundry\Test\Factories;
 
@@ -39,10 +41,21 @@ use function PHPUnit\Framework\assertInstanceOf;
 final class CreateSupplierControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
+    use RedirectsToLoginTestTrait;
 
-    private const CREATE_SUPPLIER_URI = '/admin/suppliers/create';
+    private const string CREATE_SUPPLIER_URI = '/admin/suppliers/create';
 
-    public function testCreateSupplierWillSucceed(): void
+    public function testDeniesAccessToRoleUser(): void
+    {
+        $this->logoutUser();
+        $this->authenticateAsRoleUser();
+        $this->client->catchExceptions(false);
+        $this->expectException(AccessDeniedException::class);
+        $this->expectExceptionMessage('Access Denied.');
+        $this->client->request(Request::METHOD_GET, self::CREATE_SUPPLIER_URI);
+    }
+
+    public function testCreateSupplierWhenAuthenticatedAsAdminWillSucceed(): void
     {
         // Arrange
         /** @var DoctrineFamilyLogRepository $familyLogRepository */
@@ -201,5 +214,10 @@ final class CreateSupplierControllerTest extends BaseFunctionalTestCase
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertEquals(NoZoneStorageRegistered::MESSAGE, $flash);
+    }
+
+    protected function getProtectedUri(): string
+    {
+        return self::CREATE_SUPPLIER_URI;
     }
 }

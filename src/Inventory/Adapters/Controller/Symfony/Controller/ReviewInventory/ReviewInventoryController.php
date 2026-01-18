@@ -31,9 +31,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsController]
+#[IsGranted('ROLE_INVENTORY_MANAGER')]
 final class ReviewInventoryController extends AbstractController
 {
     public const string ROUTE_NAME = 'inventory_review';
@@ -49,7 +51,7 @@ final class ReviewInventoryController extends AbstractController
     }
 
     #[Route(
-        path: 'inventories/{inventoryUuid}/review',
+        path: '{inventoryUuid}/review',
         name: self::ROUTE_NAME,
         requirements: ['inventoryUuid' => self::UUID_PATTERN],
         methods: ['GET', 'POST']

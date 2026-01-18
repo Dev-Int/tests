@@ -24,6 +24,7 @@ use Faker\Factory;
 use FakerRestaurant\Provider\fr_FR\Restaurant;
 use Shared\Adapters\Gateway\Pagination\Pagination;
 use Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -35,8 +36,9 @@ use Zenstruck\Foundry\Test\Factories;
 final class GetArticlesControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
+    use RedirectsToLoginTestTrait;
 
-    private const GET_ARTICLES_URI = '/admin/articles';
+    private const string GET_ARTICLES_URI = '/admin/articles';
 
     public function testGetArticlesPaginatedWillSucceed(): void
     {
@@ -102,5 +104,10 @@ final class GetArticlesControllerTest extends BaseFunctionalTestCase
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame(NoArticleRegistered::MESSAGE, $flash);
+    }
+
+    protected function getProtectedUri(): string
+    {
+        return self::GET_ARTICLES_URI;
     }
 }

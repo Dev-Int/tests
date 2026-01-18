@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block javascripts %}
+    {% block importmap %}{{ importmap(['app','error']) }}{% endblock %}
+{% endblock %}
+
+{% block body %}
+    <h1>Accès refusé</h1>
+
+    <p>
+        Vous n'avez pas les droits nécessaires pour accéder à cette ressource.
+    </p>
+    <p>
+        Vérifiez vos permissions ou <a id="go-back">retournez d'où vous venez</a>.
+    </p>
+{% endblock %}

@@ -176,4 +176,16 @@ final class SymfonyUserProviderTest extends TestCase
         // Act
         $this->provider->loadUserByIdentifier('disabled@example.com');
     }
+
+    public function testLoadUserByIdentifierThrowsForInvalidEmail(): void
+    {
+        // Arrange - no mock setup needed, EmailField::fromString() throws before repository call
+
+        // Assert
+        $this->expectException(UserNotFoundException::class);
+        $this->expectExceptionMessage('User "admin" not found.');
+
+        // Act - "admin" is not a valid email format
+        $this->provider->loadUserByIdentifier('admin');
+    }
 }

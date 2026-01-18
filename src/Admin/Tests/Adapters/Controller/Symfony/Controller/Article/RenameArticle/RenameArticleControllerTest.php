@@ -23,6 +23,7 @@ use Admin\Tests\Factory\UnitFactory;
 use Admin\Tests\Factory\ZoneStorageFactory;
 use Faker\Factory;
 use Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -36,6 +37,7 @@ use Zenstruck\Foundry\Test\Factories;
 final class RenameArticleControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
+    use RedirectsToLoginTestTrait;
 
     private const string RENAME_ARTICLE_URI = '/admin/articles/%s/rename';
 
@@ -193,5 +195,10 @@ final class RenameArticleControllerTest extends BaseFunctionalTestCase
         $title = $response->filter('h1')->text();
 
         self::assertEquals('Page non trouvée', $title);
+    }
+
+    protected function getProtectedUri(): string
+    {
+        return \sprintf(self::RENAME_ARTICLE_URI, '00000000-0000-0000-0000-000000000000');
     }
 }

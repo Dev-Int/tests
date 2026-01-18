@@ -15,6 +15,7 @@ namespace Admin\Tests\EndToEnd\Supplier;
 
 use Admin\Adapters\Controller\Symfony\Controller\Supplier\CreateSupplier\CreateSupplierController;
 use Admin\Adapters\Controller\Symfony\Controller\Supplier\GetSuppliers\GetSuppliersController;
+use Shared\Tests\AuthenticatedPantherTestTrait;
 use Shared\Tests\BasePantherTestCase;
 use Symfony\Component\Panther\PantherTestCase;
 use Symfony\Component\Routing\RouterInterface;
@@ -25,6 +26,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 final class CreateAnotherSupplierTest extends BasePantherTestCase
 {
+    use AuthenticatedPantherTestTrait;
+
     public function testCreateAnotherSupplierSuccessfully(): void
     {
         // Arrange
@@ -35,6 +38,8 @@ final class CreateAnotherSupplierTest extends BasePantherTestCase
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get('router');
+
+        $this->loginViaForm($client, $translator);
 
         $config = $this->createMinimalConfiguration();
         $familyLog = $config['familyLog'];
@@ -100,6 +105,8 @@ final class CreateAnotherSupplierTest extends BasePantherTestCase
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get('router');
+
+        $this->loginViaForm($client, $translator);
 
         $this->createMinimalConfiguration();
 

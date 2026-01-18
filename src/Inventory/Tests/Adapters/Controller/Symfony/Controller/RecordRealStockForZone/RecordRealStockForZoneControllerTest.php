@@ -23,6 +23,7 @@ use Inventory\Tests\Story\InventoryStory;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\ResourceUuid;
 use Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -36,6 +37,7 @@ use Zenstruck\Foundry\Test\Factories;
 final class RecordRealStockForZoneControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
+    use RedirectsToLoginTestTrait;
 
     public const string RECORD_STOCK_URI = '/inventories/%s/zones/%s/record';
     public const string START_INVENTORY_URI = '/inventories/%s/start';
@@ -136,7 +138,7 @@ final class RecordRealStockForZoneControllerTest extends BaseFunctionalTestCase
 
         // Assert HTTP response
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        self::assertResponseRedirects('/inventories');
+        self::assertResponseRedirects('/inventories/');
 
         $crawler = $this->client->followRedirect();
         $flash = $crawler->filter('.flash-success')->text();
@@ -335,7 +337,7 @@ final class RecordRealStockForZoneControllerTest extends BaseFunctionalTestCase
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        self::assertResponseRedirects('/inventories');
+        self::assertResponseRedirects('/inventories/');
 
         $crawler = $this->client->followRedirect();
         $flash = $crawler->filter('.flash-error');
@@ -346,5 +348,15 @@ final class RecordRealStockForZoneControllerTest extends BaseFunctionalTestCase
     {
         self::assertTrue(\defined(RecordRealStockForZoneController::class . '::ROUTE_NAME'));
         self::assertSame('inventory_zone_record_stock', RecordRealStockForZoneController::ROUTE_NAME);
+    }
+
+    protected function getProtectedUri(): string
+    {
+        // UUIDs factices, access_control vérifie l'auth avant le routage complet
+        return \sprintf(
+            self::RECORD_STOCK_URI,
+            '00000000-0000-0000-0000-000000000000',
+            '00000000-0000-0000-0000-000000000001'
+        );
     }
 }

@@ -16,6 +16,7 @@ namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Tax\GetTaxes;
 use Admin\Entities\Exception\Tax\NoTaxRegistered;
 use Admin\Tests\Factory\TaxFactory;
 use Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -27,8 +28,9 @@ use Zenstruck\Foundry\Test\Factories;
 final class GetTaxesControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
+    use RedirectsToLoginTestTrait;
 
-    private const GET_TAXES_URI = '/admin/taxes';
+    private const string GET_TAXES_URI = '/admin/taxes';
 
     public function testGetTaxesWillSucceed(): void
     {
@@ -65,5 +67,10 @@ final class GetTaxesControllerTest extends BaseFunctionalTestCase
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame(NoTaxRegistered::MESSAGE, $flash);
+    }
+
+    protected function getProtectedUri(): string
+    {
+        return self::GET_TAXES_URI;
     }
 }

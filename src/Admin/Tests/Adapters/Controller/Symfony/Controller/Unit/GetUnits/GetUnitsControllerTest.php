@@ -16,6 +16,7 @@ namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Unit\GetUnits;
 use Admin\Entities\Exception\Unit\NoUnitRegistered;
 use Admin\Tests\Factory\UnitFactory;
 use Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -27,8 +28,9 @@ use Zenstruck\Foundry\Test\Factories;
 final class GetUnitsControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
+    use RedirectsToLoginTestTrait;
 
-    private const GET_UNITS_URI = '/admin/units';
+    private const string GET_UNITS_URI = '/admin/units';
 
     public function testGetUnitsWillSucceed(): void
     {
@@ -66,5 +68,10 @@ final class GetUnitsControllerTest extends BaseFunctionalTestCase
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame(NoUnitRegistered::MESSAGE, $flash);
+    }
+
+    protected function getProtectedUri(): string
+    {
+        return self::GET_UNITS_URI;
     }
 }

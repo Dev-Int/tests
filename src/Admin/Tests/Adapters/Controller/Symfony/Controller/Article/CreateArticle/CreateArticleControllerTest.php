@@ -24,8 +24,10 @@ use Admin\Tests\Factory\TaxFactory;
 use Admin\Tests\Factory\UnitFactory;
 use Admin\Tests\Factory\ZoneStorageFactory;
 use Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Zenstruck\Foundry\Test\Factories;
 
@@ -35,10 +37,21 @@ use Zenstruck\Foundry\Test\Factories;
 final class CreateArticleControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
+    use RedirectsToLoginTestTrait;
 
-    private const CREATE_ARTICLE_URI = '/admin/articles/create';
+    private const string CREATE_ARTICLE_URI = '/admin/articles/create';
 
-    public function testCreateArticleWillSucceed(): void
+    public function testDeniesAccessToRoleUser(): void
+    {
+        $this->logoutUser();
+        $this->authenticateAsRoleUser();
+        $this->client->catchExceptions(false);
+        $this->expectException(AccessDeniedException::class);
+        $this->expectExceptionMessage('Access Denied.');
+        $this->client->request(Request::METHOD_GET, self::CREATE_ARTICLE_URI);
+    }
+
+    public function testCreateArticleWhenAuthenticatedAsAdminWillSucceed(): void
     {
         // Arrange
         /** @var ArticleRepository $articleRepository */
@@ -56,7 +69,7 @@ final class CreateArticleControllerTest extends BaseFunctionalTestCase
         $piece = UnitFactory::createOne(['label' => 'Pièce']);
         $kilogramme = UnitFactory::createOne(['label' => 'Kilogramme']);
 
-        // Créer la hiérarchie FamilyLog: Alimentaire > Frais > Viande
+        // Créer la hiérarchie FamilyLog : Alimentaire > Frais > Viande
         $familyLog0 = FamilyLogFactory::createOne(['label' => 'Alimentaire']);
         $familyLog1 = FamilyLogFactory::createOne(['label' => 'Frais', 'parent' => $familyLog0->_real()]);
         $familyLog2 = FamilyLogFactory::createOne(['label' => 'Viande', 'parent' => $familyLog1->_real()]);
@@ -332,5 +345,10 @@ final class CreateArticleControllerTest extends BaseFunctionalTestCase
             . 'du fournisseur: "Viande"',
             $zoneStorageField->children('ul > li')->text()
         );
+    }
+
+    protected function getProtectedUri(): string
+    {
+        return self::CREATE_ARTICLE_URI;
     }
 }

@@ -17,6 +17,7 @@ use Admin\Adapters\Controller\Symfony\Controller\Article\GetArticles\GetArticles
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineArticleRepository;
 use Admin\Tests\DataBuilder\ArticleDataBuilder;
 use Faker\Factory;
+use Shared\Tests\AuthenticatedPantherTestTrait;
 use Shared\Tests\BasePantherTestCase;
 use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 use Symfony\Component\Panther\PantherTestCase;
@@ -28,6 +29,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 final class ArticlesPaginationTest extends BasePantherTestCase
 {
+    use AuthenticatedPantherTestTrait;
+
     private const int DEFAULT_ITEMS_PER_PAGE = 25;
     private const int ARTICLES_FOR_THREE_PAGES = 75;
     private const int ARTICLES_WITH_PARTIAL_LAST_PAGE = 65;
@@ -35,8 +38,6 @@ final class ArticlesPaginationTest extends BasePantherTestCase
     public function testNavigateToSecondPage(): void
     {
         // Arrange
-        $this->createArticlesForPagination(self::ARTICLES_FOR_THREE_PAGES);
-
         $client = self::createPantherClient(['browser' => PantherTestCase::FIREFOX]);
 
         /** @var TranslatorInterface $translator */
@@ -44,6 +45,10 @@ final class ArticlesPaginationTest extends BasePantherTestCase
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get('router');
+
+        $this->loginViaForm($client, $translator);
+
+        $this->createArticlesForPagination(self::ARTICLES_FOR_THREE_PAGES);
 
         // Act
         $client->request('GET', $router->generate(GetArticlesController::ROUTE_NAME));
@@ -67,12 +72,17 @@ final class ArticlesPaginationTest extends BasePantherTestCase
     public function testNavigateToThirdPage(): void
     {
         // Arrange
-        $this->createArticlesForPagination(self::ARTICLES_FOR_THREE_PAGES);
-
         $client = self::createPantherClient(['browser' => PantherTestCase::FIREFOX]);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get('router');
+
+        $this->loginViaForm($client, $translator);
+
+        $this->createArticlesForPagination(self::ARTICLES_FOR_THREE_PAGES);
 
         // Act
         $client->request('GET', $router->generate(GetArticlesController::ROUTE_NAME));
@@ -100,12 +110,17 @@ final class ArticlesPaginationTest extends BasePantherTestCase
     public function testNavigateToLastPage(): void
     {
         // Arrange
-        $this->createArticlesForPagination(self::ARTICLES_FOR_THREE_PAGES);
-
         $client = self::createPantherClient(['browser' => PantherTestCase::FIREFOX]);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get('router');
+
+        $this->loginViaForm($client, $translator);
+
+        $this->createArticlesForPagination(self::ARTICLES_FOR_THREE_PAGES);
 
         // Act
         $client->request('GET', $router->generate(GetArticlesController::ROUTE_NAME));
@@ -126,12 +141,17 @@ final class ArticlesPaginationTest extends BasePantherTestCase
     public function testNavigateBackToFirstPage(): void
     {
         // Arrange
-        $this->createArticlesForPagination(self::ARTICLES_FOR_THREE_PAGES);
-
         $client = self::createPantherClient(['browser' => PantherTestCase::FIREFOX]);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get('router');
+
+        $this->loginViaForm($client, $translator);
+
+        $this->createArticlesForPagination(self::ARTICLES_FOR_THREE_PAGES);
 
         // Act
         $client->request('GET', $router->generate(GetArticlesController::ROUTE_NAME, ['page' => 2]));
@@ -154,12 +174,17 @@ final class ArticlesPaginationTest extends BasePantherTestCase
     public function testCorrectNumberOfItemsPerPage(): void
     {
         // Arrange
-        $this->createArticlesForPagination(self::ARTICLES_FOR_THREE_PAGES);
-
         $client = self::createPantherClient(['browser' => PantherTestCase::FIREFOX]);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get('router');
+
+        $this->loginViaForm($client, $translator);
+
+        $this->createArticlesForPagination(self::ARTICLES_FOR_THREE_PAGES);
 
         // Act - Page 1
         $client->request('GET', $router->generate(GetArticlesController::ROUTE_NAME, ['page' => 1]));
@@ -204,12 +229,17 @@ final class ArticlesPaginationTest extends BasePantherTestCase
     public function testLastPageWithPartialItems(): void
     {
         // Arrange
-        $this->createArticlesForPagination(self::ARTICLES_WITH_PARTIAL_LAST_PAGE);
-
         $client = self::createPantherClient(['browser' => PantherTestCase::FIREFOX]);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get('router');
+
+        $this->loginViaForm($client, $translator);
+
+        $this->createArticlesForPagination(self::ARTICLES_WITH_PARTIAL_LAST_PAGE);
 
         // Act
         $client->request('GET', $router->generate(GetArticlesController::ROUTE_NAME, ['page' => 3]));
@@ -235,12 +265,17 @@ final class ArticlesPaginationTest extends BasePantherTestCase
     public function testNextButtonNavigation(): void
     {
         // Arrange
-        $this->createArticlesForPagination(self::ARTICLES_FOR_THREE_PAGES);
-
         $client = self::createPantherClient(['browser' => PantherTestCase::FIREFOX]);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get('router');
+
+        $this->loginViaForm($client, $translator);
+
+        $this->createArticlesForPagination(self::ARTICLES_FOR_THREE_PAGES);
 
         // Act - Page 1 -> Page 2
         $client->request('GET', $router->generate(GetArticlesController::ROUTE_NAME));
@@ -275,12 +310,17 @@ final class ArticlesPaginationTest extends BasePantherTestCase
     public function testPreviousButtonNavigation(): void
     {
         // Arrange
-        $this->createArticlesForPagination(self::ARTICLES_FOR_THREE_PAGES);
-
         $client = self::createPantherClient(['browser' => PantherTestCase::FIREFOX]);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get('router');
+
+        $this->loginViaForm($client, $translator);
+
+        $this->createArticlesForPagination(self::ARTICLES_FOR_THREE_PAGES);
 
         // Act - Start on page 3
         $client->request('GET', $router->generate(GetArticlesController::ROUTE_NAME, ['page' => 3]));
@@ -316,12 +356,17 @@ final class ArticlesPaginationTest extends BasePantherTestCase
     public function testNextButtonDisabledOnLastPage(): void
     {
         // Arrange
-        $this->createArticlesForPagination(self::ARTICLES_FOR_THREE_PAGES);
-
         $client = self::createPantherClient(['browser' => PantherTestCase::FIREFOX]);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get('router');
+
+        $this->loginViaForm($client, $translator);
+
+        $this->createArticlesForPagination(self::ARTICLES_FOR_THREE_PAGES);
 
         // Act - Go to the last page
         $client->request('GET', $router->generate(GetArticlesController::ROUTE_NAME, ['page' => 3]));
@@ -353,12 +398,17 @@ final class ArticlesPaginationTest extends BasePantherTestCase
     public function testPreviousButtonDisabledOnFirstPage(): void
     {
         // Arrange
-        $this->createArticlesForPagination(self::ARTICLES_FOR_THREE_PAGES);
-
         $client = self::createPantherClient(['browser' => PantherTestCase::FIREFOX]);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get('router');
+
+        $this->loginViaForm($client, $translator);
+
+        $this->createArticlesForPagination(self::ARTICLES_FOR_THREE_PAGES);
 
         // Act - Go to first page
         $client->request('GET', $router->generate(GetArticlesController::ROUTE_NAME));
@@ -391,12 +441,17 @@ final class ArticlesPaginationTest extends BasePantherTestCase
     public function testChangeItemsPerPageTo50(): void
     {
         // Arrange - Créer 75 articles pour avoir 3 pages avec 25 items, mais 2 pages avec 50 items
-        $this->createArticlesForPagination(self::ARTICLES_FOR_THREE_PAGES);
-
         $client = self::createPantherClient(['browser' => PantherTestCase::FIREFOX]);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get('router');
+
+        $this->loginViaForm($client, $translator);
+
+        $this->createArticlesForPagination(self::ARTICLES_FOR_THREE_PAGES);
 
         // Act
         $client->request('GET', $router->generate(GetArticlesController::ROUTE_NAME));
@@ -434,12 +489,17 @@ final class ArticlesPaginationTest extends BasePantherTestCase
     public function testItemsPerPagePersistsAcrossPages(): void
     {
         // Arrange
-        $this->createArticlesForPagination(self::ARTICLES_FOR_THREE_PAGES);
-
         $client = self::createPantherClient(['browser' => PantherTestCase::FIREFOX]);
+
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get('router');
+
+        $this->loginViaForm($client, $translator);
+
+        $this->createArticlesForPagination(self::ARTICLES_FOR_THREE_PAGES);
 
         // Act - Changer pour 50 items par page
         $client->request('GET', $router->generate(GetArticlesController::ROUTE_NAME));

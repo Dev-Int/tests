@@ -15,6 +15,7 @@ namespace Admin\Tests\EndToEnd\Article;
 
 use Admin\Adapters\Controller\Symfony\Controller\Article\CreateArticle\CreateArticleController;
 use Admin\Adapters\Controller\Symfony\Controller\Article\GetArticles\GetArticlesController;
+use Shared\Tests\AuthenticatedPantherTestTrait;
 use Shared\Tests\BasePantherTestCase;
 use Symfony\Component\Panther\PantherTestCase;
 use Symfony\Component\Routing\RouterInterface;
@@ -25,6 +26,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 final class CreateAnotherArticleTest extends BasePantherTestCase
 {
+    use AuthenticatedPantherTestTrait;
+
     public function testCreateAnotherArticleSuccessfully(): void
     {
         // Arrange
@@ -35,6 +38,8 @@ final class CreateAnotherArticleTest extends BasePantherTestCase
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get('router');
+
+        $this->loginViaForm($client, $translator);
 
         $config = $this->createMinimalConfiguration();
         $supplier = $config['supplier'];
@@ -109,6 +114,8 @@ final class CreateAnotherArticleTest extends BasePantherTestCase
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get('router');
+
+        $this->loginViaForm($client, $translator);
 
         $this->createMinimalConfiguration();
 

@@ -1,0 +1,6 @@
+controllers:
+    resource:
+        path: ../../Adapters/Controller/Symfony/Controller/
+        namespace: Inventory\Adapters\Controller\Symfony\Controller
+    type: attribute
+    prefix: /inventories

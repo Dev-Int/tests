@@ -17,8 +17,10 @@ use Admin\Entities\Exception\Company\CompanyAlreadyExists;
 use Admin\Entities\Repository\CompanyRepository;
 use Admin\Tests\Factory\CompanyFactory;
 use Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Zenstruck\Foundry\Test\Factories;
 
@@ -28,10 +30,21 @@ use Zenstruck\Foundry\Test\Factories;
 final class CreateCompanyControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
+    use RedirectsToLoginTestTrait;
 
-    private const CREATE_COMPANY_URI = '/admin/company/create';
+    private const string CREATE_COMPANY_URI = '/admin/company/create';
 
-    public function testCreateCompanyControllerWillSucceed(): void
+    public function testDeniesAccessToRoleUser(): void
+    {
+        $this->logoutUser();
+        $this->authenticateAsRoleUser();
+        $this->client->catchExceptions(false);
+        $this->expectException(AccessDeniedException::class);
+        $this->expectExceptionMessage('Access Denied.');
+        $this->client->request(Request::METHOD_GET, self::CREATE_COMPANY_URI);
+    }
+
+    public function testCreateCompanyWhenAuthenticatedAsAdminWillSucceed(): void
     {
         // Arrange
         /** @var CompanyRepository $companyRepository */
@@ -148,5 +161,10 @@ final class CreateCompanyControllerTest extends BaseFunctionalTestCase
 
         self::assertSame($translator->trans('phone'), $phoneField->children('label')->text());
         self::assertSame('Cette valeur n\'est pas valide.', $phoneField->children('ul > li')->text());
+    }
+
+    protected function getProtectedUri(): string
+    {
+        return self::CREATE_COMPANY_URI;
     }
 }

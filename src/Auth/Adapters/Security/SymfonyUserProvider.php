@@ -17,6 +17,7 @@ use Auth\Adapters\Gateway\ORM\Entity\User as UserOrm;
 use Auth\Entities\Exception\UserNotFoundByEmail;
 use Auth\Entities\Exception\UserNotFoundById;
 use Auth\Entities\Repository\UserRepository;
+use Shared\Entities\Exception\InvalidEmailException;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\EmailField;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
@@ -57,7 +58,7 @@ final readonly class SymfonyUserProvider implements UserProviderInterface
             }
 
             return UserOrm::fromDomain($domainUser);
-        } catch (UserNotFoundByEmail) {
+        } catch (InvalidEmailException | UserNotFoundByEmail) {
             throw new UserNotFoundException(\sprintf('User "%s" not found.', $identifier));
         }
     }

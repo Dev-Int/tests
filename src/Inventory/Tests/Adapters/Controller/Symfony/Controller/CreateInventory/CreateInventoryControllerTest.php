@@ -23,6 +23,7 @@ use Inventory\Tests\Story\InventoryStory;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\Clock\FrozenClock;
 use Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -36,6 +37,7 @@ use Zenstruck\Foundry\Test\Factories;
 final class CreateInventoryControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
+    use RedirectsToLoginTestTrait;
 
     public const string CREATE_INVENTORY_URI = '/inventories/create';
 
@@ -86,7 +88,7 @@ final class CreateInventoryControllerTest extends BaseFunctionalTestCase
         $this->client->submit($form);
 
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        self::assertResponseRedirects('/inventories');
+        self::assertResponseRedirects('/inventories/');
 
         $inventory = $this->client->followRedirect();
         $flash = $inventory->filter('.flash-success')->text();
@@ -196,7 +198,7 @@ final class CreateInventoryControllerTest extends BaseFunctionalTestCase
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        self::assertResponseRedirects('/inventories');
+        self::assertResponseRedirects('/inventories/');
 
         $inventory = $this->client->followRedirect();
         $flash = $inventory->filter('.flash-success')->text();
@@ -222,5 +224,10 @@ final class CreateInventoryControllerTest extends BaseFunctionalTestCase
         // Assert
         self::assertTrue(\defined(CreateInventoryController::class . '::ROUTE_NAME'));
         self::assertSame('inventory_create', CreateInventoryController::ROUTE_NAME);
+    }
+
+    protected function getProtectedUri(): string
+    {
+        return self::CREATE_INVENTORY_URI;
     }
 }
