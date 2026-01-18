@@ -20,6 +20,7 @@ use Inventory\Tests\Factory\InventoryFactory;
 use Inventory\Tests\Story\InventoryStory;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\Clock\FrozenClock;
+use Shared\Tests\AuthenticatedPantherTestTrait;
 use Shared\Tests\BasePantherTestCase;
 use Symfony\Component\Panther\PantherTestCase;
 use Symfony\Component\Routing\RouterInterface;
@@ -31,6 +32,7 @@ use Zenstruck\Foundry\Test\Factories;
  */
 final class StartAnInventoryTest extends BasePantherTestCase
 {
+    use AuthenticatedPantherTestTrait;
     use Factories;
 
     protected function setUp(): void
@@ -49,6 +51,8 @@ final class StartAnInventoryTest extends BasePantherTestCase
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get('router');
+
+        $this->loginViaForm($client, $translator);
 
         $now = ClockFactory::clock()->now();
         $futureDate = $now->modify('+1 day');
@@ -128,6 +132,8 @@ final class StartAnInventoryTest extends BasePantherTestCase
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
+
+        $this->loginViaForm($client, $translator);
 
         InventoryStory::load();
         $this->flushAndClearEntityManager();
