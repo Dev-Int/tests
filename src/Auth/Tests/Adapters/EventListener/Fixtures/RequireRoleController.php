@@ -11,17 +11,14 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Auth\Contracts\DTO;
+namespace Auth\Tests\Adapters\EventListener\Fixtures;
 
-final readonly class CurrentUserData
+use Auth\Contracts\Attribute\RequireRole;
+
+#[RequireRole(role: 'ROLE_ADMIN')]
+final class RequireRoleController
 {
-    /**
-     * @param array<string> $roles
-     */
-    public function __construct(
-        public string $uuid,
-        public string $email,
-        public array $roles,
-    ) {
+    public function __invoke(): void
+    {
     }
 }

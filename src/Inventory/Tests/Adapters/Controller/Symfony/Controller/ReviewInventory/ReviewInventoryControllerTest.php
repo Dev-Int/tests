@@ -572,7 +572,7 @@ final class ReviewInventoryControllerTest extends BaseFunctionalTestCase
         $this->authenticateAsRoleUser();
         $this->client->catchExceptions(false);
         $this->expectException(AccessDeniedException::class);
-        $this->expectExceptionMessage('Access Denied.');
+        $this->expectExceptionMessage('Access denied. Required role: ROLE_INVENTORY_MANAGER');
         $this->client->request(Request::METHOD_GET, $this->getProtectedUri());
     }
 

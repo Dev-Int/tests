@@ -19,6 +19,7 @@ use Auth\Contracts\Exception\UnauthenticatedUser;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -36,8 +37,9 @@ final class AuthCurrentUserProviderTest extends TestCase
             ->method('getToken')
             ->willReturn(null)
         ;
+        $authChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
-        $provider = new AuthCurrentUserProvider($tokenStorage);
+        $provider = new AuthCurrentUserProvider($tokenStorage, $authChecker);
 
         // Act
         $result = $provider->getCurrentUser();
@@ -62,8 +64,9 @@ final class AuthCurrentUserProviderTest extends TestCase
             ->method('getToken')
             ->willReturn($token)
         ;
+        $authChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
-        $provider = new AuthCurrentUserProvider($tokenStorage);
+        $provider = new AuthCurrentUserProvider($tokenStorage, $authChecker);
 
         // Act
         $result = $provider->getCurrentUser();
@@ -83,8 +86,9 @@ final class AuthCurrentUserProviderTest extends TestCase
             ->method('getToken')
             ->willReturn(null)
         ;
+        $authChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
-        $provider = new AuthCurrentUserProvider($tokenStorage);
+        $provider = new AuthCurrentUserProvider($tokenStorage, $authChecker);
 
         // Assert
         $this->expectException(UnauthenticatedUser::class);
@@ -108,8 +112,9 @@ final class AuthCurrentUserProviderTest extends TestCase
             ->method('getToken')
             ->willReturn($token)
         ;
+        $authChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
-        $provider = new AuthCurrentUserProvider($tokenStorage);
+        $provider = new AuthCurrentUserProvider($tokenStorage, $authChecker);
 
         // Act
         $result = $provider->getCurrentUser();
@@ -131,8 +136,9 @@ final class AuthCurrentUserProviderTest extends TestCase
             ->method('getToken')
             ->willReturn($token)
         ;
+        $authChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
-        $provider = new AuthCurrentUserProvider($tokenStorage);
+        $provider = new AuthCurrentUserProvider($tokenStorage, $authChecker);
 
         // Act
         $result = $provider->isAuthenticated();
@@ -145,9 +151,6 @@ final class AuthCurrentUserProviderTest extends TestCase
     {
         // Arrange
         $user = $this->createMock(User::class);
-        $user->method('uuid')->willReturn('550e8400-e29b-41d4-a716-446655440000');
-        $user->method('getUserIdentifier')->willReturn('test@example.com');
-        $user->method('getRoles')->willReturn(['ROLE_USER', 'ROLE_ADMIN']);
 
         $token = $this->createMock(TokenInterface::class);
         $token->method('getUser')->willReturn($user);
@@ -155,11 +158,30 @@ final class AuthCurrentUserProviderTest extends TestCase
         $tokenStorage = $this->createMock(TokenStorageInterface::class);
         $tokenStorage->method('getToken')->willReturn($token);
 
-        $provider = new AuthCurrentUserProvider($tokenStorage);
+        $authChecker = $this->createMock(AuthorizationCheckerInterface::class);
+        $authChecker->method('isGranted')
+            ->willReturnCallback(static fn (string $role): bool => \in_array($role, ['ROLE_ADMIN', 'ROLE_USER'], true))
+        ;
+
+        $provider = new AuthCurrentUserProvider($tokenStorage, $authChecker);
 
         // Act & Assert
         self::assertTrue($provider->hasRole('ROLE_ADMIN'));
         self::assertTrue($provider->hasRole('ROLE_USER'));
         self::assertFalse($provider->hasRole('ROLE_SUPER_ADMIN'));
+    }
+
+    public function testHasRoleReturnsFalseWhenNotAuthenticated(): void
+    {
+        // Arrange
+        $tokenStorage = $this->createMock(TokenStorageInterface::class);
+        $tokenStorage->method('getToken')->willReturn(null);
+
+        $authChecker = $this->createMock(AuthorizationCheckerInterface::class);
+
+        $provider = new AuthCurrentUserProvider($tokenStorage, $authChecker);
+
+        // Act & Assert
+        self::assertFalse($provider->hasRole('ROLE_ADMIN'));
     }
 }
