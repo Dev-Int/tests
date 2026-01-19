@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Inventory\Adapters\Controller\Symfony\Controller\ResumeCountingFromReview;
 
+use Auth\Contracts\Attribute\RequireRole;
 use Inventory\Adapters\Controller\Symfony\Controller\GetInventories\GetInventoriesController;
 use Inventory\Adapters\Controller\Symfony\Controller\RecordRealStockForZone\RecordRealStockForZoneController;
 use Inventory\Adapters\Controller\Symfony\Controller\ReviewInventory\ReviewInventoryController;
@@ -25,11 +26,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsController]
-#[IsGranted('ROLE_INVENTORY_MANAGER')]
+#[RequireRole(role: 'ROLE_INVENTORY_MANAGER')]
 final class ResumeCountingFromReviewController extends AbstractController
 {
     public const string ROUTE_NAME = 'inventory_resume_counting';

@@ -20,12 +20,14 @@ use Auth\Contracts\Exception\UnauthenticatedUser;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 #[AsAlias(CurrentUserProvider::class)]
 final readonly class AuthCurrentUserProvider implements CurrentUserProvider
 {
     public function __construct(
         private TokenStorageInterface $tokenStorage,
+        private AuthorizationCheckerInterface $authorizationChecker,
     ) {
     }
 
@@ -66,12 +68,10 @@ final readonly class AuthCurrentUserProvider implements CurrentUserProvider
 
     public function hasRole(string $role): bool
     {
-        $currentUser = $this->getCurrentUser();
-
-        if (!$currentUser instanceof CurrentUserData) {
+        if (!$this->isAuthenticated()) {
             return false;
         }
 
-        return $currentUser->hasRole($role);
+        return $this->authorizationChecker->isGranted($role);
     }
 }

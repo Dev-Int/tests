@@ -11,17 +11,14 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Auth\Contracts\DTO;
+namespace Auth\Contracts\Attribute;
 
-final readonly class CurrentUserData
+#[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD)]
+final readonly class RequireAuthenticated
 {
-    /**
-     * @param array<string> $roles
-     */
     public function __construct(
-        public string $uuid,
-        public string $email,
-        public array $roles,
+        public string $redirectRoute = 'auth_login',
+        public string $flashMessage = 'auth.login_required',
     ) {
     }
 }
