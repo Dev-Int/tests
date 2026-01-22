@@ -36,6 +36,4 @@ interface UserRepository
     public function create(User $user): void;
 
     public function update(User $user): void;
-
-    public function disable(User $user): void;
 }
