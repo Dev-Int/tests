@@ -31,12 +31,12 @@ final class EmployeeNotFound extends \DomainException implements \JsonSerializab
     }
 
     /**
-     * @return iterable<string, array<int, string>|int|string>
+     * @return iterable<string, string>
      */
     public function jsonSerialize(): iterable
     {
         return [
-            'userId' => $this->id->toString(),
+            'employeeId' => $this->id->toString(),
         ];
     }
 }

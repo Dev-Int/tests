@@ -298,6 +298,49 @@ return [
                 'packagingInvalid' => 'parcel should have unit and quantity',
             ],
         ],
+        'employee' => [
+            'titlePage' => 'Employees',
+            'form' => [
+                'firstName' => [
+                    'label' => 'First Name',
+                    'placeholder' => 'Employee first name',
+                ],
+                'lastName' => [
+                    'label' => 'Last Name',
+                    'placeholder' => 'Employee last name',
+                ],
+                'email' => [
+                    'label' => 'Email',
+                    'placeholder' => 'Employee email',
+                ],
+                'phone' => [
+                    'label' => 'Phone',
+                    'placeholder' => 'Employee phone',
+                ],
+                'position' => [
+                    'label' => 'Position',
+                    'placeholder' => 'Employee position',
+                ],
+                'department' => [
+                    'label' => 'Department',
+                    'placeholder' => 'Employee department',
+                ],
+                'hiredAt' => [
+                    'label' => 'Hired At',
+                ],
+            ],
+            'create' => [
+                'titlePage' => 'Create an employee',
+                'titleShort' => 'New employee',
+                'success' => 'Employee created successfully.',
+                'error' => [
+                    'userEmailExists' => 'An employee with this email already exists.',
+                ],
+            ],
+            'index' => [
+                'titlePage' => 'List of employees',
+            ],
+        ],
         'homePage' => [
             'titlePage' => 'Home',
             'resume' => '<p>Here is how you administrate your application.</p>

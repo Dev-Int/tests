@@ -25,7 +25,7 @@ final class UserEmailAlreadyExists extends \DomainException implements \JsonSeri
     }
 
     /**
-     * @return iterable<string, array<int, string>|int|string>
+     * @return iterable<string, string>
      */
     public function jsonSerialize(): iterable
     {

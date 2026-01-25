@@ -301,6 +301,49 @@ return [
                 'packagingInvalid' => 'Le colis doit avoir une unité et une quantité',
             ],
         ],
+        'employee' => [
+            'titlePage' => 'Employés',
+            'form' => [
+                'firstName' => [
+                    'label' => 'Prénom',
+                    'placeholder' => 'Prénom de l\'employé',
+                ],
+                'lastName' => [
+                    'label' => 'Nom',
+                    'placeholder' => 'Nom de l\'employé',
+                ],
+                'email' => [
+                    'label' => 'Email',
+                    'placeholder' => 'Email de l\'employé',
+                ],
+                'phone' => [
+                    'label' => 'Téléphone',
+                    'placeholder' => 'Téléphone de l\'employé',
+                ],
+                'position' => [
+                    'label' => 'Poste',
+                    'placeholder' => 'Poste de l\'employé',
+                ],
+                'department' => [
+                    'label' => 'Département',
+                    'placeholder' => 'Département de l\'employé',
+                ],
+                'hiredAt' => [
+                    'label' => 'Date d\'embauche',
+                ],
+            ],
+            'create' => [
+                'titlePage' => 'Créer un employé',
+                'titleShort' => 'Nouvel employé',
+                'success' => 'Employé créé avec succès.',
+                'error' => [
+                    'userEmailExists' => 'Un utilisateur avec cet email existe déjà.',
+                ],
+            ],
+            'index' => [
+                'titlePage' => 'Liste des employés',
+            ],
+        ],
         'homePage' => [
             'titlePage' => 'Home',
             'resume' => '<p>C\'est ici que vous administrez votre application.</p>
