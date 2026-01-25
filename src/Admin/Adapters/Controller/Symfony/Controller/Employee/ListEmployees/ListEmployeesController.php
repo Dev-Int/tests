@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\Employee\ListEmployees;
 
+use Admin\Entities\Exception\Employee\NoEmployeeRegistered;
+use Admin\UseCases\Employee\GetEmployees\GetEmployees;
 use Auth\Contracts\Attribute\RequireRole;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,14 +25,26 @@ use Symfony\Component\Routing\Attribute\Route;
 #[RequireRole('ROLE_ADMIN')]
 final class ListEmployeesController extends AbstractController
 {
-    public const ROUTE_NAME = 'admin_employees_index';
+    public const string ROUTE_NAME = 'admin_employees_index';
+
+    public function __construct(
+        private readonly GetEmployees $useCase,
+    ) {
+    }
 
     #[Route(path: 'employees', name: self::ROUTE_NAME, methods: ['GET'])]
     public function __invoke(): Response
     {
-        // @todo Implement GetEmployees UseCase
-        return $this->render('@admin/employees/index.html.twig', [
-            'employees' => [],
-        ]);
+        try {
+            $response = $this->useCase->execute();
+
+            return $this->render('@admin/employees/index.html.twig', [
+                'employees' => $response->employees(),
+            ]);
+        } catch (NoEmployeeRegistered) {
+            return $this->render('@admin/employees/index.html.twig', [
+                'employees' => [],
+            ]);
+        }
     }
 }

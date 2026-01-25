@@ -8,6 +8,49 @@
 
     <h1><i class="fa fa-users"></i> {{ 'admin.employee.index.titlePage'|trans }}</h1>
 
-    <p>TODO: Liste des employés</p>
+    <div class="mb-4">
+        <a href="{{ path('admin_employees_create') }}" role="button">
+            <i class="fa fa-plus"></i> {{ 'admin.employee.create.titleShort'|trans }}
+        </a>
+    </div>
+
+    {% if employees|length == 0 %}
+        <p>{{ 'admin.employee.index.noEmployee'|trans }}</p>
+    {% else %}
+        <table>
+            <thead>
+                <tr>
+                    <th>{{ 'admin.employee.index.table.firstName'|trans }}</th>
+                    <th>{{ 'admin.employee.index.table.lastName'|trans }}</th>
+                    <th>{{ 'admin.employee.index.table.email'|trans }}</th>
+                    <th>{{ 'admin.employee.index.table.phone'|trans }}</th>
+                    <th>{{ 'admin.employee.index.table.position'|trans }}</th>
+                    <th>{{ 'admin.employee.index.table.department'|trans }}</th>
+                    <th>{{ 'admin.employee.index.table.status'|trans }}</th>
+                    <th>{{ 'admin.employee.index.table.hiredAt'|trans }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for employee in employees %}
+                    <tr>
+                        <td>{{ employee.firstName.toString }}</td>
+                        <td>{{ employee.lastName.toString }}</td>
+                        <td>{{ employee.contactInformation.email.toString }}</td>
+                        <td>{{ employee.contactInformation.phone.toNumber }}</td>
+                        <td>{{ employee.position.toString }}</td>
+                        <td>{{ employee.department.toString }}</td>
+                        <td>
+                            {% if employee.isActive %}
+                                <span class="badge badge-success">{{ 'admin.employee.status.active'|trans }}</span>
+                            {% else %}
+                                <span class="badge badge-secondary">{{ 'admin.employee.status.inactive'|trans }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ employee.hiredAt|date('d/m/Y') }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
 
 {% endblock %}

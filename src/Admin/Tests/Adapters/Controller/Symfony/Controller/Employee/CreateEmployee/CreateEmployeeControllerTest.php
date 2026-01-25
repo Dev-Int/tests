@@ -79,7 +79,8 @@ final class CreateEmployeeControllerTest extends BaseFunctionalTestCase
         $employees = $employeeRepository->getAllEmployees();
         self::assertCount(1, $employees);
 
-        $employee = $employees[0];
+        $employeesArray = $employees->toArray();
+        $employee = $employeesArray[0];
         self::assertSame('John', $employee->firstName()->toString());
         self::assertSame('Doe', $employee->lastName()->toString());
         self::assertSame('john.doe@example.com', $employee->contactInformation()->email->toString());

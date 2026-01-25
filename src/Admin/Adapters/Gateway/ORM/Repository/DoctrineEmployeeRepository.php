@@ -15,6 +15,7 @@ namespace Admin\Adapters\Gateway\ORM\Repository;
 
 use Admin\Adapters\Gateway\ORM\Entity\Employee;
 use Admin\Entities\Employee\Employee as EmployeeDomain;
+use Admin\Entities\Employee\EmployeeCollection;
 use Admin\Entities\Exception\Employee\EmployeeNotFound;
 use Admin\Entities\Exception\Employee\NoEmployeeRegistered;
 use Admin\Entities\Repository\EmployeeRepository;
@@ -62,21 +63,20 @@ final class DoctrineEmployeeRepository extends ServiceEntityRepository implement
         return $employee->toDomain();
     }
 
-    /**
-     * @return array<EmployeeDomain>
-     */
-    public function getAllEmployees(): array
+    public function getAllEmployees(): EmployeeCollection
     {
         $employees = $this->findAll();
+        $collection = new EmployeeCollection(\count($employees));
 
         if ($employees === []) {
             throw new NoEmployeeRegistered();
         }
 
-        return array_map(
-            static fn (Employee $employee): EmployeeDomain => $employee->toDomain(),
-            $employees
-        );
+        foreach ($employees as $employee) {
+            $collection->add($employee->toDomain());
+        }
+
+        return $collection;
     }
 
     /**

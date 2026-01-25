@@ -339,6 +339,21 @@ return [
             ],
             'index' => [
                 'titlePage' => 'List of employees',
+                'noEmployee' => 'No employees registered.',
+                'table' => [
+                    'firstName' => 'First Name',
+                    'lastName' => 'Last Name',
+                    'email' => 'Email',
+                    'phone' => 'Phone',
+                    'position' => 'Position',
+                    'department' => 'Department',
+                    'status' => 'Status',
+                    'hiredAt' => 'Hired At',
+                ],
+            ],
+            'status' => [
+                'active' => 'Active',
+                'inactive' => 'Inactive',
             ],
         ],
         'homePage' => [

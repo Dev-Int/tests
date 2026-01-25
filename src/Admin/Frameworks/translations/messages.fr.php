@@ -342,6 +342,21 @@ return [
             ],
             'index' => [
                 'titlePage' => 'Liste des employés',
+                'noEmployee' => 'Aucun employé enregistré.',
+                'table' => [
+                    'firstName' => 'Prénom',
+                    'lastName' => 'Nom',
+                    'email' => 'Email',
+                    'phone' => 'Téléphone',
+                    'position' => 'Poste',
+                    'department' => 'Département',
+                    'status' => 'Statut',
+                    'hiredAt' => 'Date d\'embauche',
+                ],
+            ],
+            'status' => [
+                'active' => 'Actif',
+                'inactive' => 'Inactif',
             ],
         ],
         'homePage' => [

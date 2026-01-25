@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Admin\Entities\Repository;
 
 use Admin\Entities\Employee\Employee;
+use Admin\Entities\Employee\EmployeeCollection;
 use Admin\Entities\Exception\Employee\EmployeeNotFound;
 use Admin\Entities\Exception\Employee\NoEmployeeRegistered;
 use Shared\Entities\ResourceUuid;
@@ -32,11 +33,9 @@ interface EmployeeRepository
     public function getByEmail(EmailField $email): Employee;
 
     /**
-     * @return array<Employee>
-     *
      * @throws NoEmployeeRegistered
      */
-    public function getAllEmployees(): array;
+    public function getAllEmployees(): EmployeeCollection;
 
     public function emailExists(EmailField $email): bool;
 
