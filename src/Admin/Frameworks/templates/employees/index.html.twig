@@ -4,53 +4,67 @@
     {{ 'admin.employee.index.titlePage'|trans }} | {{ parent() }}
 {% endblock %}
 
+{% block importmap %}
+    {{ importmap(['app']) }}
+{% endblock %}
+
 {% block body %}
 
     <h1><i class="fa fa-users"></i> {{ 'admin.employee.index.titlePage'|trans }}</h1>
 
-    <div class="mb-4">
-        <a href="{{ path('admin_employees_create') }}" role="button">
-            <i class="fa fa-plus"></i> {{ 'admin.employee.create.titleShort'|trans }}
-        </a>
-    </div>
+    <main>
+        <article>
+            <div>
+                <turbo-frame id="employee_create" class="flex-between">
+                    <span></span>
+                    <twig:Button:CreateEntity href="{{ path('admin_employees_create') }}" label="{{ 'admin.employee.create.titleShort'|trans }}" />
+                </turbo-frame>
+            </div>
 
-    {% if employees|length == 0 %}
-        <p>{{ 'admin.employee.index.noEmployee'|trans }}</p>
-    {% else %}
-        <table>
-            <thead>
-                <tr>
-                    <th>{{ 'admin.employee.index.table.firstName'|trans }}</th>
-                    <th>{{ 'admin.employee.index.table.lastName'|trans }}</th>
-                    <th>{{ 'admin.employee.index.table.email'|trans }}</th>
-                    <th>{{ 'admin.employee.index.table.phone'|trans }}</th>
-                    <th>{{ 'admin.employee.index.table.position'|trans }}</th>
-                    <th>{{ 'admin.employee.index.table.department'|trans }}</th>
-                    <th>{{ 'admin.employee.index.table.status'|trans }}</th>
-                    <th>{{ 'admin.employee.index.table.hiredAt'|trans }}</th>
-                </tr>
-            </thead>
-            <tbody>
+            <ul class="table">
+                <li class="li-unstyled flex-between head">
+                    <span>{{ 'admin.employee.index.table.firstName'|trans }}</span>
+                    <span>{{ 'admin.employee.index.table.lastName'|trans }}</span>
+                    <span>{{ 'admin.employee.index.table.email'|trans }}</span>
+                    <span>{{ 'admin.employee.index.table.phone'|trans }}</span>
+                    <span>{{ 'admin.employee.index.table.position'|trans }}</span>
+                    <span>{{ 'admin.employee.index.table.department'|trans }}</span>
+                    <span>{{ 'admin.employee.index.table.status'|trans }}</span>
+                    <span>{{ 'admin.employee.index.table.hiredAt'|trans }}</span>
+                    <span>{{ 'actions'|trans }}</span>
+                </li>
+                {% if employees|length == 0 %}
+                    <p>{{ 'admin.employee.index.noEmployee'|trans }}</p>
+                {% endif %}
                 {% for employee in employees %}
-                    <tr>
-                        <td>{{ employee.firstName.toString }}</td>
-                        <td>{{ employee.lastName.toString }}</td>
-                        <td>{{ employee.contactInformation.email.toString }}</td>
-                        <td>{{ employee.contactInformation.phone.toNumber }}</td>
-                        <td>{{ employee.position.toString }}</td>
-                        <td>{{ employee.department.toString }}</td>
-                        <td>
-                            {% if employee.isActive %}
-                                <span class="badge badge-success">{{ 'admin.employee.status.active'|trans }}</span>
-                            {% else %}
-                                <span class="badge badge-secondary">{{ 'admin.employee.status.inactive'|trans }}</span>
-                            {% endif %}
-                        </td>
-                        <td>{{ employee.hiredAt|date('d/m/Y') }}</td>
-                    </tr>
+                    <turbo-frame id="employee_{{ employee.uuid.toString }}">
+                        <li class="li-unstyled flex-between">
+                            <span>{{ employee.firstName.toString }}</span>
+                            <span>{{ employee.lastName.toString }}</span>
+                            <span>{{ employee.contactInformation.email.toString }}</span>
+                            <span>{{ employee.contactInformation.phone.toNumber }}</span>
+                            <span>{{ employee.position.toString }}</span>
+                            <span>{{ employee.department.toString }}</span>
+                            <span>
+                                {% if employee.isActive %}
+                                    <span class="badge badge-success">{{ 'admin.employee.status.active'|trans }}</span>
+                                {% else %}
+                                    <span class="badge badge-secondary">{{ 'admin.employee.status.inactive'|trans }}</span>
+                                {% endif %}
+                            </span>
+                            <span>{{ employee.hiredAt|date('d/m/Y') }}</span>
+                            <span>
+                                <twig:Button:UpdateEntity
+                                    href="{{ path('admin_employees_update', {employee: employee.uuid.toString}) }}"
+                                    class="btn-small"
+                                    label="{{ 'admin.employee.update.titleShort'|trans }}" />
+                            </span>
+                        </li>
+                    </turbo-frame>
                 {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
+            </ul>
+
+        </article>
+    </main>
 
 {% endblock %}

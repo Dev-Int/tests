@@ -328,6 +328,9 @@ return [
                 'hiredAt' => [
                     'label' => 'Hired At',
                 ],
+                'status' => [
+                    'label' => 'Status',
+                ],
             ],
             'create' => [
                 'titlePage' => 'Create an employee',
@@ -336,6 +339,15 @@ return [
                 'error' => [
                     'userEmailExists' => 'An employee with this email already exists.',
                 ],
+            ],
+            'update' => [
+                'titlePage' => 'Update %employeeName%',
+                'titleShort' => 'Update',
+                'success' => 'Employee updated successfully.',
+                'immutableField' => 'This field cannot be modified',
+            ],
+            'error' => [
+                'notFound' => 'Employee not found.',
             ],
             'index' => [
                 'titlePage' => 'List of employees',

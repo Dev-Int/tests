@@ -126,4 +126,49 @@ class Employee
     {
         return $this->uuid;
     }
+
+    public function firstName(): string
+    {
+        return $this->firstName;
+    }
+
+    public function lastName(): string
+    {
+        return $this->lastName;
+    }
+
+    public function fullName(): string
+    {
+        return \sprintf('%s %s', $this->firstName, $this->lastName);
+    }
+
+    public function email(): string
+    {
+        return $this->email;
+    }
+
+    public function phone(): string
+    {
+        return $this->phone;
+    }
+
+    public function position(): string
+    {
+        return $this->position;
+    }
+
+    public function department(): string
+    {
+        return $this->department;
+    }
+
+    public function hiredAt(): \DateTimeImmutable
+    {
+        return $this->hiredAt;
+    }
+
+    public function status(): string
+    {
+        return $this->status;
+    }
 }

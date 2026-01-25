@@ -15,6 +15,6 @@ namespace Admin\Entities\VO;
 
 enum EmployeeStatus: string
 {
-    case ACTIVE = 'ACTIVE';
-    case INACTIVE = 'INACTIVE';
+    case ACTIVE = 'active';
+    case INACTIVE = 'inactive';
 }

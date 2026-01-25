@@ -1,0 +1,33 @@
+<div class="flex-1">
+
+    <h3>{{ 'admin.employee.update.titlePage'|trans({ '%employeeName%': employee.fullName }) }}</h3>
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    <div class="grid">
+        {{ form_row(form.firstName) }}
+        {{ form_row(form.lastName) }}
+        {{ form_row(form.hiredAt) }}
+    </div>
+
+    <div class="grid">
+        {{ form_row(form.email) }}
+        {{ form_row(form.phone) }}
+    </div>
+
+    <div class="grid">
+        {{ form_row(form.position) }}
+        {{ form_row(form.department) }}
+    </div>
+
+    {{ form_row(form.status) }}
+
+    <div class="grid">
+        <twig:Form:Button:Cancel href="{{ path('admin_employees_index') }}" label="{{ 'cancel'|trans }}" turboFrame="_top" />
+        <twig:Form:Button:Submit label="{{ 'save'|trans }}" icon="fa-save" />
+    </div>
+
+    {{ form_end(form) }}
+
+</div>

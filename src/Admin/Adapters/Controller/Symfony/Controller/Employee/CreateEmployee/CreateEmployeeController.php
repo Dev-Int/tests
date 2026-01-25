@@ -70,7 +70,7 @@ final class CreateEmployeeController extends AbstractController
                         $employeeInput->hiredAt,
                     )
                 );
-            } catch (UserEmailAlreadyExists $exception) {
+            } catch (UserEmailAlreadyExists) {
                 $this->addFlash('error', $this->translator->trans('admin.employee.create.error.userEmailExists'));
 
                 return $this->redirectToRoute('admin_employees_index');

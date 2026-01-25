@@ -331,6 +331,9 @@ return [
                 'hiredAt' => [
                     'label' => 'Date d\'embauche',
                 ],
+                'status' => [
+                    'label' => 'Statut',
+                ],
             ],
             'create' => [
                 'titlePage' => 'Créer un employé',
@@ -339,6 +342,15 @@ return [
                 'error' => [
                     'userEmailExists' => 'Un utilisateur avec cet email existe déjà.',
                 ],
+            ],
+            'update' => [
+                'titlePage' => 'Modifier %employeeName%',
+                'titleShort' => 'Modifier',
+                'success' => 'Employé modifié avec succès.',
+                'immutableField' => 'Ce champ ne peut pas être modifié',
+            ],
+            'error' => [
+                'notFound' => 'Employé non trouvé.',
             ],
             'index' => [
                 'titlePage' => 'Liste des employés',
