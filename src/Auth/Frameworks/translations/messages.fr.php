@@ -17,5 +17,14 @@ return [
                 'submit' => 'Se connecter',
             ],
         ],
+        'user' => [
+            'titlePage' => 'Gestion des utilisateurs',
+            'email' => 'Email',
+            'roles' => 'Rôles',
+            'status' => 'Statut',
+            'createdAt' => 'Date de création',
+            'active' => 'Actif',
+            'disabled' => 'Désactivé',
+        ],
     ],
 ];

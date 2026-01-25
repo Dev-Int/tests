@@ -61,7 +61,8 @@
       "Bash(git -C /home/www/tests log *)",
       "WebSearch",
       "WebFetch(domain:cs.symfony.com)",
-      "mcp__jetbrains-phpstorm__reformat_file"
+      "mcp__jetbrains-phpstorm__reformat_file",
+      "Skill(create-functional-test)"
     ],
     "deny": [
       "../.env",

@@ -74,14 +74,4 @@ final class DoctrineUserRepository extends ServiceEntityRepository implements Us
         $userOrm->updateFromDomain($user);
         $this->getEntityManager()->flush();
     }
-
-    public function disable(UserDomain $user): void
-    {
-        $userOrm = $this->find($user->uuid()->toString());
-        if (!$userOrm instanceof User) {
-            throw new UserNotFoundById($user->uuid());
-        }
-        $userOrm->updateFromDomain($user);
-        $this->getEntityManager()->flush();
-    }
 }

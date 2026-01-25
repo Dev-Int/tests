@@ -17,5 +17,14 @@ return [
                 'submit' => 'Sign in',
             ],
         ],
+        'user' => [
+            'titlePage' => 'User management',
+            'email' => 'Email',
+            'roles' => 'Roles',
+            'status' => 'Status',
+            'createdAt' => 'Created at',
+            'active' => 'Active',
+            'disabled' => 'Disabled',
+        ],
     ],
 ];
