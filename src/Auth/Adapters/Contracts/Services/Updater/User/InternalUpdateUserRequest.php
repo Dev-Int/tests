@@ -30,7 +30,7 @@ final readonly class InternalUpdateUserRequest implements UpdateUserRequest
     public function __construct(private UpdateUserCommand $command)
     {
         $this->uuid = ResourceUuid::fromString($this->command->uuid);
-        $this->email = $this->command->email !== null ? EmailField::fromString($this->command->email) : null;
+        $this->email = $this->command->email;
         $this->roles = $command->roles !== null
             ? array_map(
                 static fn (string $role): Role => Role::from($role),

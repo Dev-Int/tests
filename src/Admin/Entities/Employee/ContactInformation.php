@@ -11,19 +11,16 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Auth\Contracts\Services\Creator\User;
+namespace Admin\Entities\Employee;
 
 use Shared\Entities\VO\EmailField;
+use Shared\Entities\VO\PhoneField;
 
-final readonly class CreateUserCommand
+final readonly class ContactInformation
 {
-    /**
-     * @param array<string> $roles
-     */
     public function __construct(
         public EmailField $email,
-        public string $plainPassword,
-        public array $roles = [],
+        public PhoneField $phone
     ) {
     }
 }

@@ -11,19 +11,14 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Auth\Contracts\Services\Creator\User;
+namespace Admin\UseCases\Employee\CreateEmployee;
 
-use Shared\Entities\VO\EmailField;
+use Admin\Entities\Employee\Employee;
 
-final readonly class CreateUserCommand
+final readonly class CreateEmployeeResponse
 {
-    /**
-     * @param array<string> $roles
-     */
     public function __construct(
-        public EmailField $email,
-        public string $plainPassword,
-        public array $roles = [],
+        public Employee $employee,
     ) {
     }
 }

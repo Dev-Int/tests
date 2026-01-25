@@ -11,19 +11,16 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Auth\Contracts\Services\Creator\User;
+namespace Admin\UseCases\DTO;
 
+use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\EmailField;
 
-final readonly class CreateUserCommand
+final readonly class CreatedUserDTO
 {
-    /**
-     * @param array<string> $roles
-     */
     public function __construct(
+        public ResourceUuid $uuid,
         public EmailField $email,
-        public string $plainPassword,
-        public array $roles = [],
     ) {
     }
 }

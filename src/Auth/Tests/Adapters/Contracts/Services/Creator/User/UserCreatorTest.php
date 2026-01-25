@@ -20,6 +20,7 @@ use Auth\Entities\Repository\UserRepository;
 use Auth\Tests\Factory\UserFactory;
 use Auth\UseCases\User\CreateUser\CreateUser;
 use Shared\Entities\ResourceUuid;
+use Shared\Entities\VO\EmailField;
 use Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -57,7 +58,7 @@ final class UserCreatorTest extends BaseFunctionalTestCase
     {
         // Arrange
         $command = new CreateUserCommand(
-            email: 'newuser@example.com',
+            email: EmailField::fromString('newuser@example.com'),
             plainPassword: 'SecureP@ssw0rd!',
             roles: ['ROLE_USER'],
         );
@@ -77,7 +78,7 @@ final class UserCreatorTest extends BaseFunctionalTestCase
         // Arrange
         $plainPassword = 'MySecureP@ss123!';
         $command = new CreateUserCommand(
-            email: 'hashtest@example.com',
+            email: EmailField::fromString('hashtest@example.com'),
             plainPassword: $plainPassword,
             roles: ['ROLE_USER'],
         );
@@ -99,14 +100,14 @@ final class UserCreatorTest extends BaseFunctionalTestCase
         UserFactory::createOne(['email' => 'existing@example.com']);
 
         $command = new CreateUserCommand(
-            email: 'existing@example.com',
+            email: EmailField::fromString('existing@example.com'),
             plainPassword: 'SecureP@ssw0rd!',
             roles: ['ROLE_USER'],
         );
 
         // Assert
         $this->expectException(ContractEmailAlreadyExists::class);
-        $this->expectExceptionMessage('existing@example.com');
+        $this->expectExceptionMessage(ContractEmailAlreadyExists::MESSAGE);
 
         // Act
         $this->userCreator->createUser($command);
@@ -116,7 +117,7 @@ final class UserCreatorTest extends BaseFunctionalTestCase
     {
         // Arrange
         $command = new CreateUserCommand(
-            email: 'admin@example.com',
+            email: EmailField::fromString('admin@example.com'),
             plainPassword: 'AdminP@ss!',
             roles: ['ROLE_USER', 'ROLE_ADMIN'],
         );

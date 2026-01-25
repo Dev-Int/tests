@@ -1,0 +1,54 @@
+<?php
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the Tests package.
+ *
+ * (c) Dev-Int Création <info@developpement-interessant.com>.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Admin\Entities\Repository;
+
+use Admin\Entities\Employee\Employee;
+use Admin\Entities\Exception\Employee\EmployeeNotFound;
+use Admin\Entities\Exception\Employee\NoEmployeeRegistered;
+use Shared\Entities\ResourceUuid;
+use Shared\Entities\VO\EmailField;
+
+interface EmployeeRepository
+{
+    /**
+     * @throws EmployeeNotFound
+     */
+    public function getByUuid(ResourceUuid $uuid): Employee;
+
+    /**
+     * @throws EmployeeNotFound
+     */
+    public function getByEmail(EmailField $email): Employee;
+
+    /**
+     * @return array<Employee>
+     *
+     * @throws NoEmployeeRegistered
+     */
+    public function getAllEmployees(): array;
+
+    public function emailExists(EmailField $email): bool;
+
+    public function hasEmployees(): bool;
+
+    public function save(Employee $employee): void;
+
+    public function updateContactInfo(Employee $employee): void;
+
+    public function updatePosition(Employee $employee): void;
+
+    public function changeStatus(Employee $employee): void;
+
+    public function disable(Employee $employee): void;
+}

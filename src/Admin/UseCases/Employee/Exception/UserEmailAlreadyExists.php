@@ -11,26 +11,26 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Auth\Contracts\Exception;
+namespace Admin\UseCases\Employee\Exception;
 
 use Shared\Entities\VO\EmailField;
 
-final class EmailAlreadyExists extends \DomainException implements \JsonSerializable
+final class UserEmailAlreadyExists extends \DomainException implements \JsonSerializable
 {
     public const string MESSAGE = 'Un utilisateur avec cet email existe déjà.';
 
-    public function __construct(private readonly ?EmailField $email)
+    public function __construct(private readonly EmailField $email)
     {
         parent::__construct(self::MESSAGE);
     }
 
     /**
-     * @return iterable<string, string|null>
+     * @return iterable<string, array<int, string>|int|string>
      */
     public function jsonSerialize(): iterable
     {
         return [
-            'email' => $this->email?->toString(),
+            'email' => $this->email->toString(),
         ];
     }
 }

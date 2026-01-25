@@ -48,7 +48,7 @@ final readonly class UserUpdater implements UserUpdaterContract
                 roles: $roles,
             );
         } catch (DomainEmailAlreadyExists) {
-            throw new EmailAlreadyExists($command->email ?? '');
+            throw new EmailAlreadyExists($command->email);
         }
     }
 }

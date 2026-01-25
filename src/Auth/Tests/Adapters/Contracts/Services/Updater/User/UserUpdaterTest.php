@@ -23,6 +23,7 @@ use Auth\UseCases\User\UpdateUser\UpdateUser;
 use Faker\Factory;
 use Faker\Generator;
 use Shared\Entities\ResourceUuid;
+use Shared\Entities\VO\EmailField;
 use Shared\Tests\BaseFunctionalTestCase;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -70,7 +71,7 @@ final class UserUpdaterTest extends BaseFunctionalTestCase
 
         $command = new UpdateUserCommand(
             uuid: $uuid,
-            email: 'updated@example.com',
+            email: EmailField::fromString('updated@example.com'),
         );
 
         // Act
@@ -87,10 +88,10 @@ final class UserUpdaterTest extends BaseFunctionalTestCase
     {
         // Arrange
         $uuid = $this->faker->uuid();
-        $sameEmail = 'same@example.com';
+        $sameEmail = EmailField::fromString('same@example.com');
         UserFactory::createOne([
             'uuid' => $uuid,
-            'email' => $sameEmail,
+            'email' => $sameEmail->toString(),
             'roles' => [Role::USER],
         ]);
 
@@ -103,7 +104,7 @@ final class UserUpdaterTest extends BaseFunctionalTestCase
         $result = $this->userUpdater->updateUser($command);
 
         // Assert
-        self::assertSame($sameEmail, $result->email);
+        self::assertSame($sameEmail->toString(), $result->email);
     }
 
     public function testUpdateUserThrowsContractExceptionWhenEmailTaken(): void
@@ -122,12 +123,12 @@ final class UserUpdaterTest extends BaseFunctionalTestCase
 
         $command = new UpdateUserCommand(
             uuid: $uuid,
-            email: 'taken@example.com',
+            email: EmailField::fromString('taken@example.com'),
         );
 
         // Assert
         $this->expectException(ContractEmailAlreadyExists::class);
-        $this->expectExceptionMessage('taken@example.com');
+        $this->expectExceptionMessage(ContractEmailAlreadyExists::MESSAGE);
 
         // Act
         $this->userUpdater->updateUser($command);

@@ -28,7 +28,7 @@ final readonly class InternalCreateUserRequest implements CreateUserRequest
 
     public function __construct(CreateUserCommand $command)
     {
-        $this->email = EmailField::fromString($command->email);
+        $this->email = $command->email;
         $this->plainPassword = $command->plainPassword;
         $this->roles = array_map(
             static fn (string $role): Role => Role::from($role),

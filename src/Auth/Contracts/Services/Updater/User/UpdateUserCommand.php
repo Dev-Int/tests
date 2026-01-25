@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Auth\Contracts\Services\Updater\User;
 
+use Shared\Entities\VO\EmailField;
+
 final readonly class UpdateUserCommand
 {
     /**
@@ -20,7 +22,7 @@ final readonly class UpdateUserCommand
      */
     public function __construct(
         public string $uuid,
-        public ?string $email = null,
+        public ?EmailField $email = null,
         public ?string $plainPassword = null,
         public ?array $roles = null,
     ) {
