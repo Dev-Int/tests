@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Auth\UseCases\Gateway\Finder;
 
 use Auth\Entities\User;
+use Auth\Entities\UserCollection;
 use Shared\Entities\ResourceUuid;
 
 interface UserFinder
@@ -25,12 +26,7 @@ interface UserFinder
      */
     public function findAllUsers(): iterable;
 
-    /**
-     * @return iterable<User>
-     */
-    public function findAllUsersPaginated(int $page, int $itemsPerPage): iterable;
-
-    public function countAll(): int;
+    public function findAllUsersPaginated(int $page, int $itemsPerPage): UserCollection;
 
     /**
      * @return iterable<User>

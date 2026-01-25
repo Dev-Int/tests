@@ -38,9 +38,9 @@ final class GetUsersTest extends TestCase
         $user1 = UserDataBuilder::aUser()->withEmail('user1@example.com')->build();
         $user2 = UserDataBuilder::aUser()->withEmail('user2@example.com')->build();
 
-        $users = new UserCollection(totalItems: 2);
-        $users->add($user1);
-        $users->add($user2);
+        $usersCollection = new UserCollection(totalItems: 2);
+        $usersCollection->add($user1);
+        $usersCollection->add($user2);
 
         $request->expects(self::once())->method('page')->willReturn(1);
         $request->expects(self::once())->method('itemsPerPage')->willReturn(10);
@@ -48,11 +48,7 @@ final class GetUsersTest extends TestCase
         $userFinder->expects(self::once())
             ->method('findAllUsersPaginated')
             ->with(1, 10)
-            ->willReturn([$user1, $user2])
-        ;
-        $userFinder->expects(self::once())
-            ->method('countAll')
-            ->willReturn(2)
+            ->willReturn($usersCollection)
         ;
 
         // Act
@@ -75,16 +71,15 @@ final class GetUsersTest extends TestCase
         $useCase = new GetUsers($userFinder);
         $request = $this->createMock(GetUsersRequest::class);
 
+        $emptyCollection = new UserCollection(totalItems: 0);
+
         $request->expects(self::once())->method('page')->willReturn(1);
         $request->expects(self::once())->method('itemsPerPage')->willReturn(10);
 
         $userFinder->expects(self::once())
             ->method('findAllUsersPaginated')
-            ->willReturn([])
-        ;
-        $userFinder->expects(self::once())
-            ->method('countAll')
-            ->willReturn(0)
+            ->with(1, 10)
+            ->willReturn($emptyCollection)
         ;
 
         // Act

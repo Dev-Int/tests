@@ -15,8 +15,10 @@ namespace Auth\Adapters\Gateway\ORM\Finder;
 
 use Auth\Adapters\Gateway\ORM\Entity\User as UserOrm;
 use Auth\Entities\User;
+use Auth\Entities\UserCollection;
 use Auth\UseCases\Gateway\Finder\UserFinder;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Shared\Entities\ResourceUuid;
 
 final readonly class DoctrineUserFinder implements UserFinder
@@ -70,39 +72,27 @@ final readonly class DoctrineUserFinder implements UserFinder
         }
     }
 
-    /**
-     * @return iterable<User>
-     */
-    public function findAllUsersPaginated(int $page, int $itemsPerPage): iterable
+    public function findAllUsersPaginated(int $page, int $itemsPerPage): UserCollection
     {
         $alias = self::ALIAS;
 
-        /** @var array<UserOrm> $usersOrm */
-        $usersOrm = $this->entityManager->createQueryBuilder()
+        $query = $this->entityManager->createQueryBuilder()
             ->select($alias)
             ->from(UserOrm::class, $alias)
             ->orderBy("{$alias}.createdAt", 'DESC')
             ->setFirstResult(($page - 1) * $itemsPerPage)
             ->setMaxResults($itemsPerPage)
             ->getQuery()
-            ->getResult()
         ;
 
-        foreach ($usersOrm as $userOrm) {
-            yield $userOrm->toDomain();
+        $paginator = new Paginator($query, fetchJoinCollection: false);
+        $collection = new UserCollection($paginator->count());
+
+        foreach ($paginator as $userOrm) {
+            $collection->add($userOrm->toDomain());
         }
-    }
 
-    public function countAll(): int
-    {
-        $alias = self::ALIAS;
-
-        return (int) $this->entityManager->createQueryBuilder()
-            ->select("COUNT({$alias}.uuid)")
-            ->from(UserOrm::class, $alias)
-            ->getQuery()
-            ->getSingleScalarResult()
-        ;
+        return $collection;
     }
 
     /**

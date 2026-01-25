@@ -22,20 +22,20 @@ final readonly class EmailField
         return new self($email);
     }
 
-    private function __construct(private string $email)
+    private function __construct(private string $value)
     {
-        if (filter_var($email, \FILTER_VALIDATE_EMAIL) === false) {
-            throw new InvalidEmailException($this->email);
+        if (filter_var($value, \FILTER_VALIDATE_EMAIL) === false) {
+            throw new InvalidEmailException($this->value);
         }
     }
 
     public function toString(): string
     {
-        return $this->email;
+        return $this->value;
     }
 
     public function equals(self $email): bool
     {
-        return $this->email === $email->toString();
+        return $this->value === $email->value;
     }
 }

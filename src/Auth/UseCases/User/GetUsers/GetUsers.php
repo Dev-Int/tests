@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Auth\UseCases\User\GetUsers;
 
-use Auth\Entities\UserCollection;
 use Auth\UseCases\Gateway\Finder\UserFinder;
 
 final readonly class GetUsers
@@ -24,13 +23,10 @@ final readonly class GetUsers
 
     public function execute(GetUsersRequest $request): GetUsersResponse
     {
-        $users = $this->userFinder->findAllUsersPaginated($request->page(), $request->itemsPerPage());
-        $totalItems = $this->userFinder->countAll();
-
-        $collection = new UserCollection($totalItems);
-        foreach ($users as $user) {
-            $collection->add($user);
-        }
+        $collection = $this->userFinder->findAllUsersPaginated(
+            $request->page(),
+            $request->itemsPerPage()
+        );
 
         return new GetUsersResponse($collection);
     }
