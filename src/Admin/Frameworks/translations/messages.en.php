@@ -346,8 +346,13 @@ return [
                 'success' => 'Employee updated successfully.',
                 'immutableField' => 'This field cannot be modified',
             ],
+            'disable' => [
+                'button' => 'Disable',
+                'success' => 'Employee disabled successfully.',
+            ],
             'error' => [
                 'notFound' => 'Employee not found.',
+                'alreadyDisabled' => 'The employee is already disabled.',
             ],
             'index' => [
                 'titlePage' => 'List of employees',

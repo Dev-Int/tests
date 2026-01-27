@@ -349,8 +349,13 @@ return [
                 'success' => 'Employé modifié avec succès.',
                 'immutableField' => 'Ce champ ne peut pas être modifié',
             ],
+            'disable' => [
+                'button' => 'Désactiver',
+                'success' => 'Employé désactivé avec succès.',
+            ],
             'error' => [
                 'notFound' => 'Employé non trouvé.',
+                'alreadyDisabled' => 'L\'employé est déjà désactivé.',
             ],
             'index' => [
                 'titlePage' => 'Liste des employés',

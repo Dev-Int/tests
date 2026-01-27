@@ -33,6 +33,7 @@ final class EmployeeDataBuilder
     private \DateTimeImmutable $hiredAt;
     private EmployeeStatus $status = EmployeeStatus::ACTIVE;
     private ?ResourceUuid $userUuid;
+    private ?\DateTimeImmutable $disabledAt = null;
 
     public static function anEmployee(): self
     {
@@ -122,13 +123,20 @@ final class EmployeeDataBuilder
         return $this;
     }
 
+    public function disabled(): self
+    {
+        $this->disabledAt = new \DateTimeImmutable();
+
+        return $this;
+    }
+
     public function build(): Employee
     {
         if (!$this->userUuid instanceof ResourceUuid) {
             throw new \LogicException('userUuid must be set before building Employee');
         }
 
-        return Employee::create(
+        return Employee::reconstitute(
             $this->uuid,
             $this->firstName,
             $this->lastName,
@@ -138,6 +146,9 @@ final class EmployeeDataBuilder
             $this->hiredAt,
             $this->status,
             $this->userUuid,
+            new \DateTimeImmutable('2024-01-01'),
+            new \DateTimeImmutable('2024-01-15'),
+            $this->disabledAt,
         );
     }
 }

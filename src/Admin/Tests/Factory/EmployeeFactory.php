@@ -57,7 +57,8 @@ final class EmployeeFactory extends PersistentProxyObjectFactory
              *     position: string,
              *     department: string,
              *     hiredAt: \DateTimeImmutable,
-             *     status: EmployeeStatus
+             *     status: EmployeeStatus,
+             *     disabledAt?: ?\DateTimeImmutable
              * } $attributes
              */
             static function (array $attributes) {
@@ -70,7 +71,7 @@ final class EmployeeFactory extends PersistentProxyObjectFactory
                 \assert($attributes['hiredAt'] instanceof \DateTimeImmutable);
                 \assert($attributes['status'] instanceof EmployeeStatus);
 
-                $employeeDomain = EmployeeDataBuilder::anEmployee()
+                $builder = EmployeeDataBuilder::anEmployee()
                     ->withFirstName($attributes['firstName'])
                     ->withLastName($attributes['lastName'])
                     ->withEmail($attributes['email'])
@@ -79,10 +80,13 @@ final class EmployeeFactory extends PersistentProxyObjectFactory
                     ->withDepartment($attributes['department'])
                     ->withHiredAt($attributes['hiredAt'])
                     ->withStatus($attributes['status'])
-                    ->build()
                 ;
 
-                return (new Employee())->fromDomain($employeeDomain);
+                if (isset($attributes['disabledAt']) && $attributes['disabledAt'] instanceof \DateTimeImmutable) {
+                    $builder->disabled();
+                }
+
+                return (new Employee())->fromDomain($builder->build());
             }
         );
     }

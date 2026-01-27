@@ -58,6 +58,13 @@
                                     href="{{ path('admin_employees_update', {employee: employee.uuid.toString}) }}"
                                     class="btn-small"
                                     label="{{ 'admin.employee.update.titleShort'|trans }}" />
+                                {% if employee.isActive %}
+                                    <form action="{{ path('admin_employees_disable', {employee: employee.uuid.toString}) }}" method="post" style="display:inline;" onsubmit="return confirm('{{ 'Êtes-vous sûr de vouloir désactiver cet employé ?'|trans }}');">
+                                        <button type="submit" class="btn btn-small btn-error">
+                                            <i class="fa fa-ban"></i> {{ 'admin.employee.disable.button'|trans }}
+                                        </button>
+                                    </form>
+                                {% endif %}
                             </span>
                         </li>
                     </turbo-frame>
