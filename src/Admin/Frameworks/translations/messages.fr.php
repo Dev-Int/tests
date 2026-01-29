@@ -340,6 +340,7 @@ return [
                 'titleShort' => 'Nouvel employé',
                 'success' => 'Employé créé avec succès.',
                 'error' => [
+                    'employeeExists' => 'Un employé avec cet email existe déjà.',
                     'userEmailExists' => 'Un utilisateur avec cet email existe déjà.',
                 ],
             ],

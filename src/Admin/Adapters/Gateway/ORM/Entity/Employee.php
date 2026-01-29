@@ -69,23 +69,24 @@ class Employee
     #[ORM\Column(type: 'datetimetz_immutable', nullable: true)]
     private ?\DateTimeImmutable $disabledAt;
 
-    public function fromDomain(EmployeeDomain $employee): self
+    public static function fromDomain(EmployeeDomain $employee): self
     {
-        $this->uuid = $employee->uuid()->toString();
-        $this->firstName = $employee->firstName()->toString();
-        $this->lastName = $employee->lastName()->toString();
-        $this->email = $employee->contactInformation()->email->toString();
-        $this->phone = $employee->contactInformation()->phone->toNumber();
-        $this->position = $employee->position()->toString();
-        $this->department = $employee->department()->toString();
-        $this->hiredAt = $employee->hiredAt();
-        $this->status = $employee->status()->value;
-        $this->userUuid = $employee->userUuid()->toString();
-        $this->createdAt = $employee->createdAt();
-        $this->updatedAt = $employee->updatedAt();
-        $this->disabledAt = $employee->disabledAt();
+        $employeeOrm = new self();
+        $employeeOrm->uuid = $employee->uuid()->toString();
+        $employeeOrm->firstName = $employee->firstName()->toString();
+        $employeeOrm->lastName = $employee->lastName()->toString();
+        $employeeOrm->email = $employee->contactInformation()->email->toString();
+        $employeeOrm->phone = $employee->contactInformation()->phone->toNumber();
+        $employeeOrm->position = $employee->position()->toString();
+        $employeeOrm->department = $employee->department()->toString();
+        $employeeOrm->hiredAt = $employee->hiredAt();
+        $employeeOrm->status = $employee->status()->value;
+        $employeeOrm->userUuid = $employee->userUuid()->toString();
+        $employeeOrm->createdAt = $employee->createdAt();
+        $employeeOrm->updatedAt = $employee->updatedAt();
+        $employeeOrm->disabledAt = $employee->disabledAt();
 
-        return $this;
+        return $employeeOrm;
     }
 
     public function toDomain(): EmployeeDomain

@@ -337,7 +337,8 @@ return [
                 'titleShort' => 'New employee',
                 'success' => 'Employee created successfully.',
                 'error' => [
-                    'userEmailExists' => 'An employee with this email already exists.',
+                    'employeeExists' => 'An employee with this email already exists.',
+                    'userEmailExists' => 'A user with this email already exists.',
                 ],
             ],
             'update' => [

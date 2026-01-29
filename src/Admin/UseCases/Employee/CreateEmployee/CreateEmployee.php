@@ -20,6 +20,8 @@ use Admin\Entities\Repository\EmployeeRepository;
 use Admin\Entities\VO\EmployeeStatus;
 use Admin\UseCases\DTO\CreateUserDTO;
 use Admin\UseCases\Employee\Exception\UserEmailAlreadyExists;
+use Admin\UseCases\Gateway\NotificationGateway;
+use Admin\UseCases\Gateway\PasswordResetGateway;
 use Admin\UseCases\Gateway\UserCreatorGateway;
 use Shared\Entities\ResourceUuid;
 
@@ -28,6 +30,8 @@ final readonly class CreateEmployee
     public function __construct(
         private EmployeeRepository $repository,
         private UserCreatorGateway $userCreatorGateway,
+        private PasswordResetGateway $passwordResetGateway,
+        private NotificationGateway $notificationGateway,
     ) {
     }
 
@@ -49,6 +53,14 @@ final readonly class CreateEmployee
                 plainPassword: bin2hex(random_bytes(16)),
                 roles: ['ROLE_USER'],
             )
+        );
+
+        $resetToken = $this->passwordResetGateway->createResetToken($result->uuid);
+
+        $this->notificationGateway->sendEmployeeWelcomeEmail(
+            $email,
+            $request->firstName(),
+            $resetToken
         );
 
         $employee = Employee::create(

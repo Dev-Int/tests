@@ -76,7 +76,7 @@ final class UpdateEmployeeTest extends TestCase
 
         $this->repository
             ->expects(self::once())
-            ->method('updateContactInfo')
+            ->method('update')
         ;
 
         // Act
@@ -115,7 +115,7 @@ final class UpdateEmployeeTest extends TestCase
 
         $this->repository
             ->expects(self::once())
-            ->method('updatePosition')
+            ->method('update')
         ;
 
         $request->expects(self::once())->method('uuid')->willReturn($uuid);
@@ -154,7 +154,7 @@ final class UpdateEmployeeTest extends TestCase
 
         $this->repository
             ->expects(self::once())
-            ->method('changeStatus')
+            ->method('update')
         ;
 
         $request->expects(self::once())->method('uuid')->willReturn($uuid);
@@ -188,7 +188,7 @@ final class UpdateEmployeeTest extends TestCase
 
         $this->repository
             ->expects(self::never())
-            ->method('updateContactInfo')
+            ->method('update')
         ;
 
         $request->expects(self::once())->method('uuid')->willReturn($uuid);

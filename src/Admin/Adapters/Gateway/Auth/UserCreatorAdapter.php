@@ -18,8 +18,8 @@ use Admin\UseCases\DTO\CreateUserDTO;
 use Admin\UseCases\Employee\Exception\UserEmailAlreadyExists;
 use Admin\UseCases\Gateway\UserCreatorGateway;
 use Auth\Contracts\Exception\EmailAlreadyExists;
-use Auth\Contracts\Services\Creator\User\CreateUserCommand;
-use Auth\Contracts\Services\Creator\User\UserCreator;
+use Auth\Contracts\Services\CommandHandler\CreateUser\CreateUserCommand;
+use Auth\Contracts\Services\CommandHandler\CreateUser\CreateUserCommandHandler;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\EmailField;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -28,7 +28,7 @@ use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 final readonly class UserCreatorAdapter implements UserCreatorGateway
 {
     public function __construct(
-        private UserCreator $userCreator,
+        private CreateUserCommandHandler $userCreator,
     ) {
     }
 

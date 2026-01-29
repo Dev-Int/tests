@@ -15,7 +15,9 @@ namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Employee\CreateEmpl
 
 use Admin\Entities\Repository\EmployeeRepository;
 use Admin\Tests\Factory\CompanyFactory;
+use Admin\Tests\Factory\EmployeeFactory;
 use Auth\Entities\Repository\UserRepository;
+use Auth\Tests\Factory\UserFactory;
 use Shared\Tests\BaseFunctionalTestCase;
 use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
@@ -93,6 +95,183 @@ final class CreateEmployeeControllerTest extends BaseFunctionalTestCase
         $user = $userRepository->getByEmail($employee->contactInformation()->email);
         self::assertSame($employee->userUuid()->toString(), $user->uuid()->toString());
         self::assertTrue($user->isActive());
+    }
+
+    public function testCreateEmployeeFailsWhenEmailAlreadyExistsInEmployeeRepository(): void
+    {
+        // Arrange
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
+        CompanyFactory::createOne(['name' => 'Test company']);
+
+        // Créer un Employee existant avec cet email
+        EmployeeFactory::createOne([
+            'email' => 'john.doe@example.com',
+        ]);
+
+        // Act
+        $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_EMPLOYEE_URI);
+
+        self::assertResponseIsSuccessful();
+
+        $form = $crawler->selectButton($translator->trans('add'))->form([
+            'createEmployee[firstName]' => 'Jane',
+            'createEmployee[lastName]' => 'Smith',
+            'createEmployee[email]' => 'john.doe@example.com', // ← Email existant
+            'createEmployee[phone]' => '0612345679',
+            'createEmployee[position]' => 'Manager',
+            'createEmployee[department]' => 'Sales',
+            'createEmployee[hiredAt]' => '2024-02-15',
+        ]);
+        $this->client->submit($form);
+
+        // Assert
+        self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
+        self::assertResponseRedirects('/admin/employees');
+
+        $admin = $this->client->followRedirect();
+        $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
+
+        self::assertEquals(
+            $translator->trans('admin.employee.create.error.employeeExists'),
+            $flash
+        );
+    }
+
+    public function testCreateEmployeeFailsWhenEmailAlreadyExistsInAuthBC(): void
+    {
+        // Arrange
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
+        CompanyFactory::createOne(['name' => 'Test company']);
+
+        // Créer un User existant (sans Employee associé)
+        UserFactory::createOne([
+            'email' => 'existing.user@example.com',
+        ]);
+
+        // Act
+        $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_EMPLOYEE_URI);
+
+        self::assertResponseIsSuccessful();
+
+        $form = $crawler->selectButton($translator->trans('add'))->form([
+            'createEmployee[firstName]' => 'John',
+            'createEmployee[lastName]' => 'Doe',
+            'createEmployee[email]' => 'existing.user@example.com', // ← Email existe dans Auth
+            'createEmployee[phone]' => '0612345678',
+            'createEmployee[position]' => 'Developer',
+            'createEmployee[department]' => 'IT',
+            'createEmployee[hiredAt]' => '2024-01-15',
+        ]);
+        $this->client->submit($form);
+
+        // Assert
+        self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
+        self::assertResponseRedirects('/admin/employees');
+
+        $admin = $this->client->followRedirect();
+        $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
+
+        self::assertEquals(
+            $translator->trans('admin.employee.create.error.userEmailExists'),
+            $flash
+        );
+    }
+
+    public function testCreateEmployeeFailsWithInvalidEmail(): void
+    {
+        // Arrange
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
+        CompanyFactory::createOne(['name' => 'Test company']);
+
+        // Act
+        $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_EMPLOYEE_URI);
+        self::assertResponseIsSuccessful();
+
+        $form = $crawler->selectButton($translator->trans('add'))->form([
+            'createEmployee[firstName]' => 'John',
+            'createEmployee[lastName]' => 'Doe',
+            'createEmployee[email]' => 'invalid-email',
+            'createEmployee[phone]' => '0612345678',
+            'createEmployee[position]' => 'Developer',
+            'createEmployee[department]' => 'IT',
+            'createEmployee[hiredAt]' => '2024-01-15',
+        ]);
+        $this->client->submit($form);
+
+        // Assert
+        self::assertResponseStatusCodeSame(
+            Response::HTTP_UNPROCESSABLE_ENTITY,
+            'Le formulaire devrait être rejeté avec un email invalide'
+        );
+        self::assertSelectorExists('.form-error', 'Un message d\'erreur de validation devrait être affiché');
+    }
+
+    public function testCreateEmployeeFailsWithMissingRequiredFields(): void
+    {
+        // Arrange
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
+        CompanyFactory::createOne(['name' => 'Test company']);
+
+        // Act
+        $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_EMPLOYEE_URI);
+        self::assertResponseIsSuccessful();
+
+        $form = $crawler->selectButton($translator->trans('add'))->form([
+            'createEmployee[firstName]' => '',
+            'createEmployee[lastName]' => '',
+            'createEmployee[email]' => 'john@example.com',
+            'createEmployee[phone]' => '0612345678',
+            'createEmployee[position]' => 'Developer',
+            'createEmployee[department]' => 'IT',
+            'createEmployee[hiredAt]' => '2024-01-15',
+        ]);
+        $this->client->submit($form);
+
+        // Assert
+        self::assertResponseStatusCodeSame(
+            Response::HTTP_UNPROCESSABLE_ENTITY,
+            'Le formulaire devrait être rejeté avec des champs requis vides (firstName, lastName)'
+        );
+        self::assertSelectorExists('.form-error', 'Un message d\'erreur de validation devrait être affiché');
+    }
+
+    public function testCreateEmployeeFailsWithTooLongFields(): void
+    {
+        // Arrange
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
+
+        CompanyFactory::createOne(['name' => 'Test company']);
+
+        // Act
+        $crawler = $this->client->request(Request::METHOD_GET, self::CREATE_EMPLOYEE_URI);
+        self::assertResponseIsSuccessful();
+
+        $form = $crawler->selectButton($translator->trans('add'))->form([
+            'createEmployee[firstName]' => str_repeat('A', 256),
+            'createEmployee[lastName]' => 'Doe',
+            'createEmployee[email]' => 'john@example.com',
+            'createEmployee[phone]' => '0612345678',
+            'createEmployee[position]' => str_repeat('B', 101),
+            'createEmployee[department]' => 'IT',
+            'createEmployee[hiredAt]' => '2024-01-15',
+        ]);
+        $this->client->submit($form);
+
+        // Assert
+        self::assertResponseStatusCodeSame(
+            Response::HTTP_UNPROCESSABLE_ENTITY,
+            'Le formulaire devrait être rejeté avec des champs trop longs (firstName > 255, position > 100)'
+        );
+        self::assertSelectorExists('.form-error', 'Un message d\'erreur de validation devrait être affiché');
     }
 
     protected function getProtectedUri(): string

@@ -22,6 +22,7 @@ use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 
 final class UpdateEmployeeType extends AbstractType
 {
@@ -48,15 +49,40 @@ final class UpdateEmployeeType extends AbstractType
             ])
             ->add('email', EmailType::class, [
                 'label' => 'admin.employee.form.email.label',
+                'required' => true,
+                'constraints' => [
+                    new Assert\NotBlank(message: 'admin.employee.form.email.not_blank'),
+                    new Assert\Email(message: 'admin.employee.form.email.invalid'),
+                ],
             ])
             ->add('phone', TextType::class, [
                 'label' => 'admin.employee.form.phone.label',
+                'required' => true,
+                'constraints' => [
+                    new Assert\NotBlank(message: 'admin.employee.form.phone.not_blank'),
+                ],
             ])
             ->add('position', TextType::class, [
                 'label' => 'admin.employee.form.position.label',
+                'required' => true,
+                'constraints' => [
+                    new Assert\NotBlank(message: 'admin.employee.form.position.not_blank'),
+                    new Assert\Length(
+                        max: 100,
+                        maxMessage: 'admin.employee.form.position.max_length'
+                    ),
+                ],
             ])
             ->add('department', TextType::class, [
                 'label' => 'admin.employee.form.department.label',
+                'required' => true,
+                'constraints' => [
+                    new Assert\NotBlank(message: 'admin.employee.form.department.not_blank'),
+                    new Assert\Length(
+                        max: 100,
+                        maxMessage: 'admin.employee.form.department.max_length'
+                    ),
+                ],
             ])
             ->add('status', EnumType::class, [
                 'class' => EmployeeStatus::class,

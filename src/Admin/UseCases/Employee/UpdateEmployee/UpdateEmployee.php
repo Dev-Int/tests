@@ -36,7 +36,6 @@ final readonly class UpdateEmployee
                 $contactInformation->email,
                 $contactInformation->phone,
             );
-            $this->repository->updateContactInfo($employee);
         }
 
         // Vérifier si la position ou le département ont changé
@@ -49,15 +48,15 @@ final readonly class UpdateEmployee
                 $position,
                 $request->department(),
             );
-            $this->repository->updatePosition($employee);
         }
 
         // Vérifier si le statut a changé
         $status = $request->status();
         if ($employee->status() !== $status) {
             $employee->changeStatus($status);
-            $this->repository->changeStatus($employee);
         }
+
+        $this->repository->update($employee);
 
         return new UpdateEmployeeResponse($employee);
     }

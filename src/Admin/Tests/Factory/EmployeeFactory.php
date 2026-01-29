@@ -86,7 +86,7 @@ final class EmployeeFactory extends PersistentProxyObjectFactory
                     $builder->disabled();
                 }
 
-                return (new Employee())->fromDomain($builder->build());
+                return Employee::fromDomain($builder->build());
             }
         );
     }

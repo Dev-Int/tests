@@ -43,11 +43,7 @@ interface EmployeeRepository
 
     public function save(Employee $employee): void;
 
-    public function updateContactInfo(Employee $employee): void;
-
-    public function updatePosition(Employee $employee): void;
-
-    public function changeStatus(Employee $employee): void;
+    public function update(Employee $employee): void;
 
     public function disable(Employee $employee): void;
 }

@@ -16,11 +16,12 @@ namespace Auth\Tests\UseCases\User\CreateUser;
 use Auth\Entities\Exception\EmailAlreadyExists;
 use Auth\Entities\Repository\UserRepository;
 use Auth\Entities\Role;
+use Auth\Entities\VO\HashedPassword;
+use Auth\UseCases\Gateway\PasswordHasherGateway;
 use Auth\UseCases\User\CreateUser\CreateUser;
 use Auth\UseCases\User\CreateUser\CreateUserRequest;
 use PHPUnit\Framework\TestCase;
 use Shared\Entities\VO\EmailField;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 /**
  * @group unitTest
@@ -34,7 +35,7 @@ final class CreateUserTest extends TestCase
     {
         // Arrange
         $userRepository = $this->createMock(UserRepository::class);
-        $passwordHasher = $this->createMock(UserPasswordHasherInterface::class);
+        $passwordHasher = $this->createMock(PasswordHasherGateway::class);
         $useCase = new CreateUser($userRepository, $passwordHasher);
         $request = $this->createMock(CreateUserRequest::class);
 
@@ -50,7 +51,8 @@ final class CreateUserTest extends TestCase
 
         $passwordHasher->expects(self::once())
             ->method('hashPassword')
-            ->willReturn('$2y$13$hashedpassword')
+            ->with('SecureP@ss123')
+            ->willReturn(HashedPassword::fromHash('$2y$13$hashedpassword'))
         ;
 
         // Act
@@ -68,7 +70,7 @@ final class CreateUserTest extends TestCase
     {
         // Arrange
         $userRepository = $this->createMock(UserRepository::class);
-        $passwordHasher = $this->createMock(UserPasswordHasherInterface::class);
+        $passwordHasher = $this->createMock(PasswordHasherGateway::class);
         $useCase = new CreateUser($userRepository, $passwordHasher);
         $request = $this->createMock(CreateUserRequest::class);
 

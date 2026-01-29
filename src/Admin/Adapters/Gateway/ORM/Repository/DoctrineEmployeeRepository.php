@@ -119,43 +119,13 @@ final class DoctrineEmployeeRepository extends ServiceEntityRepository implement
 
     public function save(EmployeeDomain $employee): void
     {
-        $employeeOrm = (new Employee())->fromDomain($employee);
+        $employeeOrm = Employee::fromDomain($employee);
 
         $this->getEntityManager()->persist($employeeOrm);
         $this->getEntityManager()->flush();
     }
 
-    public function updateContactInfo(EmployeeDomain $employee): void
-    {
-        $employeeOrm = $this->find($employee->uuid()->toString());
-
-        if (!$employeeOrm instanceof Employee) {
-            // @codeCoverageIgnoreStart
-            throw new EmployeeNotFound($employee->uuid());
-            // @codeCoverageIgnoreEnd
-        }
-
-        $employeeOrm->updateFromDomain($employee);
-
-        $this->getEntityManager()->flush();
-    }
-
-    public function updatePosition(EmployeeDomain $employee): void
-    {
-        $employeeOrm = $this->find($employee->uuid()->toString());
-
-        if (!$employeeOrm instanceof Employee) {
-            // @codeCoverageIgnoreStart
-            throw new EmployeeNotFound($employee->uuid());
-            // @codeCoverageIgnoreEnd
-        }
-
-        $employeeOrm->updateFromDomain($employee);
-
-        $this->getEntityManager()->flush();
-    }
-
-    public function changeStatus(EmployeeDomain $employee): void
+    public function update(EmployeeDomain $employee): void
     {
         $employeeOrm = $this->find($employee->uuid()->toString());
 
@@ -172,16 +142,6 @@ final class DoctrineEmployeeRepository extends ServiceEntityRepository implement
 
     public function disable(EmployeeDomain $employee): void
     {
-        $employeeOrm = $this->find($employee->uuid()->toString());
-
-        if (!$employeeOrm instanceof Employee) {
-            // @codeCoverageIgnoreStart
-            throw new EmployeeNotFound($employee->uuid());
-            // @codeCoverageIgnoreEnd
-        }
-
-        $employeeOrm->updateFromDomain($employee);
-
-        $this->getEntityManager()->flush();
+        $this->update($employee);
     }
 }

@@ -21,6 +21,8 @@ use Admin\UseCases\DTO\CreateUserDTO;
 use Admin\UseCases\Employee\CreateEmployee\CreateEmployee;
 use Admin\UseCases\Employee\CreateEmployee\CreateEmployeeRequest;
 use Admin\UseCases\Employee\Exception\UserEmailAlreadyExists;
+use Admin\UseCases\Gateway\NotificationGateway;
+use Admin\UseCases\Gateway\PasswordResetGateway;
 use Admin\UseCases\Gateway\UserCreatorGateway;
 use PHPUnit\Framework\TestCase;
 use Shared\Entities\ResourceUuid;
@@ -38,13 +40,22 @@ final class CreateEmployeeTest extends TestCase
         // Arrange
         $employeeRepository = $this->createMock(EmployeeRepository::class);
         $userCreatorGateway = $this->createMock(UserCreatorGateway::class);
-        $useCase = new CreateEmployee($employeeRepository, $userCreatorGateway);
+        $passwordResetTokenCreator = $this->createMock(PasswordResetGateway::class);
+        $notificationGateway = $this->createMock(NotificationGateway::class);
+        $useCase = new CreateEmployee(
+            $employeeRepository,
+            $userCreatorGateway,
+            $passwordResetTokenCreator,
+            $notificationGateway
+        );
         $request = $this->createMock(CreateEmployeeRequest::class);
 
         $email = EmailField::fromString('john.doe@example.com');
+        $firstName = NameField::fromString('John');
         $userUuid = ResourceUuid::fromString('a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d');
+        $resetToken = 'mock-reset-token-123';
 
-        $request->expects(self::once())->method('firstName')->willReturn(NameField::fromString('John'));
+        $request->expects(self::exactly(2))->method('firstName')->willReturn($firstName);
         $request->expects(self::once())->method('lastName')->willReturn(NameField::fromString('Doe'));
         $request->expects(self::once())->method('email')->willReturn($email);
         $request->expects(self::once())->method('phone')->willReturn(PhoneField::fromString('0612345678'));
@@ -69,6 +80,17 @@ final class CreateEmployeeTest extends TestCase
             ->willReturn(new CreatedUserDTO($userUuid, $email))
         ;
 
+        $passwordResetTokenCreator->expects(self::once())
+            ->method('createResetToken')
+            ->with($userUuid)
+            ->willReturn($resetToken)
+        ;
+
+        $notificationGateway->expects(self::once())
+            ->method('sendEmployeeWelcomeEmail')
+            ->with($email, $firstName, $resetToken)
+        ;
+
         $employeeRepository->expects(self::once())
             ->method('save')
             ->with(self::callback(static function (Employee $employee) use ($userUuid): bool {
@@ -91,7 +113,6 @@ final class CreateEmployeeTest extends TestCase
         self::assertSame('Doe', $employee->lastName()->toString());
         self::assertSame($email->toString(), $employee->contactInformation()->email->toString());
         self::assertSame($userUuid->toString(), $employee->userUuid()->toString());
-        self::assertSame($userUuid->toString(), $employee->userUuid()->toString());
         self::assertTrue($employee->isActive());
     }
 
@@ -100,7 +121,14 @@ final class CreateEmployeeTest extends TestCase
         // Arrange
         $employeeRepository = $this->createMock(EmployeeRepository::class);
         $userCreatorGateway = $this->createMock(UserCreatorGateway::class);
-        $useCase = new CreateEmployee($employeeRepository, $userCreatorGateway);
+        $passwordResetTokenCreator = $this->createMock(PasswordResetGateway::class);
+        $notificationGateway = $this->createMock(NotificationGateway::class);
+        $useCase = new CreateEmployee(
+            $employeeRepository,
+            $userCreatorGateway,
+            $passwordResetTokenCreator,
+            $notificationGateway
+        );
         $request = $this->createMock(CreateEmployeeRequest::class);
 
         $email = EmailField::fromString('john.doe@example.com');
@@ -121,6 +149,8 @@ final class CreateEmployeeTest extends TestCase
         ;
 
         $userCreatorGateway->expects(self::never())->method('createUser');
+        $passwordResetTokenCreator->expects(self::never())->method('createResetToken');
+        $notificationGateway->expects(self::never())->method('sendEmployeeWelcomeEmail');
         $employeeRepository->expects(self::never())->method('save');
 
         // Act
@@ -134,7 +164,14 @@ final class CreateEmployeeTest extends TestCase
         // Arrange
         $employeeRepository = $this->createMock(EmployeeRepository::class);
         $userCreatorGateway = $this->createMock(UserCreatorGateway::class);
-        $useCase = new CreateEmployee($employeeRepository, $userCreatorGateway);
+        $passwordResetTokenCreator = $this->createMock(PasswordResetGateway::class);
+        $notificationGateway = $this->createMock(NotificationGateway::class);
+        $useCase = new CreateEmployee(
+            $employeeRepository,
+            $userCreatorGateway,
+            $passwordResetTokenCreator,
+            $notificationGateway
+        );
         $request = $this->createMock(CreateEmployeeRequest::class);
 
         $email = EmailField::fromString('existing.user@example.com');
@@ -162,6 +199,8 @@ final class CreateEmployeeTest extends TestCase
             ->willThrowException(new UserEmailAlreadyExists($email))
         ;
 
+        $passwordResetTokenCreator->expects(self::never())->method('createResetToken');
+        $notificationGateway->expects(self::never())->method('sendEmployeeWelcomeEmail');
         $employeeRepository->expects(self::never())->method('save');
 
         $this->expectException(UserEmailAlreadyExists::class);

@@ -20,6 +20,7 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class EmployeeType extends AbstractType
@@ -34,6 +35,14 @@ class EmployeeType extends AbstractType
             ->add('firstName', TextType::class, [
                 'label' => $this->translator->trans('admin.employee.form.firstName.label'),
                 'empty_data' => '',
+                'required' => true,
+                'constraints' => [
+                    new Assert\NotBlank(message: 'admin.employee.form.firstName.not_blank'),
+                    new Assert\Length(
+                        max: 255,
+                        maxMessage: 'admin.employee.form.firstName.max_length'
+                    ),
+                ],
                 'attr' => [
                     'autofocus' => true,
                     'placeholder' => $this->translator->trans('admin.employee.form.firstName.placeholder'),
@@ -42,6 +51,14 @@ class EmployeeType extends AbstractType
             ->add('lastName', TextType::class, [
                 'label' => $this->translator->trans('admin.employee.form.lastName.label'),
                 'empty_data' => '',
+                'required' => true,
+                'constraints' => [
+                    new Assert\NotBlank(message: 'admin.employee.form.lastName.not_blank'),
+                    new Assert\Length(
+                        max: 255,
+                        maxMessage: 'admin.employee.form.lastName.max_length'
+                    ),
+                ],
                 'attr' => [
                     'placeholder' => $this->translator->trans('admin.employee.form.lastName.placeholder'),
                 ],
@@ -49,6 +66,11 @@ class EmployeeType extends AbstractType
             ->add('email', EmailType::class, [
                 'label' => $this->translator->trans('admin.employee.form.email.label'),
                 'empty_data' => '',
+                'required' => true,
+                'constraints' => [
+                    new Assert\NotBlank(message: 'admin.employee.form.email.not_blank'),
+                    new Assert\Email(message: 'admin.employee.form.email.invalid'),
+                ],
                 'attr' => [
                     'placeholder' => $this->translator->trans('admin.employee.form.email.placeholder'),
                 ],
@@ -56,6 +78,10 @@ class EmployeeType extends AbstractType
             ->add('phone', TextType::class, [
                 'label' => $this->translator->trans('admin.employee.form.phone.label'),
                 'empty_data' => '',
+                'required' => true,
+                'constraints' => [
+                    new Assert\NotBlank(message: 'admin.employee.form.phone.not_blank'),
+                ],
                 'attr' => [
                     'placeholder' => $this->translator->trans('admin.employee.form.phone.placeholder'),
                 ],
@@ -63,6 +89,14 @@ class EmployeeType extends AbstractType
             ->add('position', TextType::class, [
                 'label' => $this->translator->trans('admin.employee.form.position.label'),
                 'empty_data' => '',
+                'required' => true,
+                'constraints' => [
+                    new Assert\NotBlank(message: 'admin.employee.form.position.not_blank'),
+                    new Assert\Length(
+                        max: 100,
+                        maxMessage: 'admin.employee.form.position.max_length'
+                    ),
+                ],
                 'attr' => [
                     'placeholder' => $this->translator->trans('admin.employee.form.position.placeholder'),
                 ],
@@ -70,6 +104,14 @@ class EmployeeType extends AbstractType
             ->add('department', TextType::class, [
                 'label' => $this->translator->trans('admin.employee.form.department.label'),
                 'empty_data' => '',
+                'required' => true,
+                'constraints' => [
+                    new Assert\NotBlank(message: 'admin.employee.form.department.not_blank'),
+                    new Assert\Length(
+                        max: 100,
+                        maxMessage: 'admin.employee.form.department.max_length'
+                    ),
+                ],
                 'attr' => [
                     'placeholder' => $this->translator->trans('admin.employee.form.department.placeholder'),
                 ],

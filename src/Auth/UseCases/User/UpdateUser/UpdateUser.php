@@ -15,16 +15,14 @@ namespace Auth\UseCases\User\UpdateUser;
 
 use Auth\Entities\Exception\EmailAlreadyExists;
 use Auth\Entities\Repository\UserRepository;
-use Auth\Entities\VO\HashedPassword;
-use Auth\UseCases\User\CreateUser\PasswordHasherUser;
+use Auth\UseCases\Gateway\PasswordHasherGateway;
 use Shared\Entities\VO\EmailField;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 final readonly class UpdateUser
 {
     public function __construct(
         private UserRepository $userRepository,
-        private UserPasswordHasherInterface $passwordHasher,
+        private PasswordHasherGateway $passwordHasher,
     ) {
     }
 
@@ -43,11 +41,8 @@ final readonly class UpdateUser
         }
 
         if ($request->plainPassword() !== null) {
-            $hashedPassword = $this->passwordHasher->hashPassword(
-                new PasswordHasherUser(),
-                $request->plainPassword()
-            );
-            $user->changePassword(HashedPassword::fromHash($hashedPassword));
+            $hashedPassword = $this->passwordHasher->hashPassword($request->plainPassword());
+            $user->changePassword($hashedPassword);
         }
 
         if ($request->roles() !== null) {
