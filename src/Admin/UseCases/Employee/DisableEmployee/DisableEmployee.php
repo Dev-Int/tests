@@ -14,11 +14,13 @@ declare(strict_types=1);
 namespace Admin\UseCases\Employee\DisableEmployee;
 
 use Admin\Entities\Repository\EmployeeRepository;
+use Admin\UseCases\Gateway\UserDisablerGateway;
 
 final readonly class DisableEmployee
 {
     public function __construct(
         private EmployeeRepository $repository,
+        private UserDisablerGateway $userDisabler,
     ) {
     }
 
@@ -27,6 +29,8 @@ final readonly class DisableEmployee
         $employee = $this->repository->getByUuid($request->uuid());
 
         $employee->disable();
+
+        $this->userDisabler->disableUser($employee->userUuid());
 
         $this->repository->disable($employee);
 

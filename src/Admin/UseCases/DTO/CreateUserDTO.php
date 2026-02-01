@@ -13,12 +13,13 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\DTO;
 
+use Shared\Entities\Role;
 use Shared\Entities\VO\EmailField;
 
 final readonly class CreateUserDTO
 {
     /**
-     * @param array<string> $roles
+     * @param array<Role> $roles
      */
     public function __construct(
         public EmailField $email,

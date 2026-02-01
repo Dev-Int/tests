@@ -11,9 +11,11 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\UseCases\Gateway;
+namespace Shared\Entities;
 
-interface NotificationGateway
+enum Role: string
 {
-    public function sendEmail(EmailPayload $payload): void;
+    case USER = 'ROLE_USER';
+    case ADMIN = 'ROLE_ADMIN';
+    case INVENTORY_MANAGER = 'ROLE_INVENTORY_MANAGER';
 }

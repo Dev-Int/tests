@@ -14,11 +14,9 @@ declare(strict_types=1);
 namespace Admin\Adapters\Form\Type\Employee;
 
 use Admin\Adapters\Controller\Symfony\Controller\Employee\UpdateEmployee\UpdateEmployeeInput;
-use Admin\Entities\VO\EmployeeStatus;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -49,11 +47,9 @@ final class UpdateEmployeeType extends AbstractType
             ])
             ->add('email', EmailType::class, [
                 'label' => 'admin.employee.form.email.label',
-                'required' => true,
-                'constraints' => [
-                    new Assert\NotBlank(message: 'admin.employee.form.email.not_blank'),
-                    new Assert\Email(message: 'admin.employee.form.email.invalid'),
-                ],
+                'disabled' => true,
+                'required' => false,
+                'help' => 'admin.employee.update.immutableField',
             ])
             ->add('phone', TextType::class, [
                 'label' => 'admin.employee.form.phone.label',
@@ -83,10 +79,6 @@ final class UpdateEmployeeType extends AbstractType
                         maxMessage: 'admin.employee.form.department.max_length'
                     ),
                 ],
-            ])
-            ->add('status', EnumType::class, [
-                'class' => EmployeeStatus::class,
-                'label' => 'admin.employee.form.status.label',
             ])
         ;
     }

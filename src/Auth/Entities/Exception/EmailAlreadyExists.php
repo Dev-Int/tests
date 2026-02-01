@@ -19,11 +19,11 @@ final class EmailAlreadyExists extends \DomainException implements \JsonSerializ
 {
     use ExceptionSerializableTrait;
 
-    public const string MESSAGE = 'Un utilisateur avec cet email existe déjà.';
+    public const string MESSAGE = 'Email already exists.';
 
     public function __construct(private readonly string $email)
     {
-        parent::__construct(\sprintf('%s Email: %s', self::MESSAGE, $email));
+        parent::__construct(self::MESSAGE);
     }
 
     /**

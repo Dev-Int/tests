@@ -21,8 +21,6 @@
         {{ form_row(form.department) }}
     </div>
 
-    {{ form_row(form.status) }}
-
     <div class="grid">
         <twig:Form:Button:Cancel href="{{ path('admin_employees_index') }}" label="{{ 'cancel'|trans }}" turboFrame="_top" />
         <twig:Form:Button:Submit label="{{ 'save'|trans }}" icon="fa-save" />

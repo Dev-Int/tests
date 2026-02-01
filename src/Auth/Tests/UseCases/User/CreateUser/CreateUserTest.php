@@ -15,12 +15,12 @@ namespace Auth\Tests\UseCases\User\CreateUser;
 
 use Auth\Entities\Exception\EmailAlreadyExists;
 use Auth\Entities\Repository\UserRepository;
-use Auth\Entities\Role;
 use Auth\Entities\VO\HashedPassword;
 use Auth\UseCases\Gateway\PasswordHasherGateway;
 use Auth\UseCases\User\CreateUser\CreateUser;
 use Auth\UseCases\User\CreateUser\CreateUserRequest;
 use PHPUnit\Framework\TestCase;
+use Shared\Entities\Role;
 use Shared\Entities\VO\EmailField;
 
 /**

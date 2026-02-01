@@ -21,6 +21,7 @@ use Auth\Tests\Factory\UserFactory;
 use Auth\UseCases\Gateway\PasswordHasherGateway;
 use Auth\UseCases\User\CreateUser\CreateUser;
 use Shared\Entities\ResourceUuid;
+use Shared\Entities\Role;
 use Shared\Entities\VO\EmailField;
 use Shared\Tests\BaseFunctionalTestCase;
 
@@ -60,7 +61,7 @@ final class CreateUserCommandHandlerTest extends BaseFunctionalTestCase
         $command = new CreateUserCommand(
             email: EmailField::fromString('newuser@example.com'),
             plainPassword: 'SecureP@ssw0rd!',
-            roles: ['ROLE_USER'],
+            roles: [Role::USER],
         );
 
         // Act
@@ -80,7 +81,7 @@ final class CreateUserCommandHandlerTest extends BaseFunctionalTestCase
         $command = new CreateUserCommand(
             email: EmailField::fromString('hashtest@example.com'),
             plainPassword: $plainPassword,
-            roles: ['ROLE_USER'],
+            roles: [Role::USER],
         );
 
         // Act
@@ -102,7 +103,7 @@ final class CreateUserCommandHandlerTest extends BaseFunctionalTestCase
         $command = new CreateUserCommand(
             email: EmailField::fromString('existing@example.com'),
             plainPassword: 'SecureP@ssw0rd!',
-            roles: ['ROLE_USER'],
+            roles: [Role::USER],
         );
 
         // Assert
@@ -119,7 +120,7 @@ final class CreateUserCommandHandlerTest extends BaseFunctionalTestCase
         $command = new CreateUserCommand(
             email: EmailField::fromString('admin@example.com'),
             plainPassword: 'AdminP@ss!',
-            roles: ['ROLE_USER', 'ROLE_ADMIN'],
+            roles: [Role::USER, Role::ADMIN],
         );
 
         // Act

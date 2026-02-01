@@ -13,13 +13,13 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Employee\Exception;
 
-use Shared\Entities\VO\EmailField;
+use Shared\Entities\ResourceUuid;
 
-final class UserEmailAlreadyExists extends \DomainException implements \JsonSerializable
+final class UserAlreadyDisabled extends \DomainException implements \JsonSerializable
 {
-    public const string MESSAGE = 'User email already exists.';
+    public const string MESSAGE = 'User is already disabled.';
 
-    public function __construct(private readonly EmailField $email)
+    public function __construct(private readonly ResourceUuid $userUuid)
     {
         parent::__construct(self::MESSAGE);
     }
@@ -30,7 +30,7 @@ final class UserEmailAlreadyExists extends \DomainException implements \JsonSeri
     public function jsonSerialize(): iterable
     {
         return [
-            'email' => $this->email->toString(),
+            'userUuid' => $this->userUuid->toString(),
         ];
     }
 }

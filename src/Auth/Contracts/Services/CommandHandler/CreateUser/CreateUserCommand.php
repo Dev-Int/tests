@@ -13,12 +13,13 @@ declare(strict_types=1);
 
 namespace Auth\Contracts\Services\CommandHandler\CreateUser;
 
+use Shared\Entities\Role;
 use Shared\Entities\VO\EmailField;
 
 final readonly class CreateUserCommand
 {
     /**
-     * @param array<string> $roles
+     * @param array<Role> $roles
      */
     public function __construct(
         public EmailField $email,

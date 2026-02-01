@@ -14,8 +14,9 @@ declare(strict_types=1);
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Employee\DisableEmployee;
 
 use Admin\Entities\Repository\EmployeeRepository;
-use Admin\Entities\VO\EmployeeStatus;
 use Admin\Tests\Factory\EmployeeFactory;
+use Auth\Entities\Repository\UserRepository;
+use Auth\Tests\Factory\UserFactory;
 use Shared\Tests\BaseFunctionalTestCase;
 use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,13 +38,18 @@ final class DisableEmployeeControllerTest extends BaseFunctionalTestCase
 
     public function testDisableEmployeeWithSuccess(): void
     {
-        // Arrange
+        // Arrange - Créer un User d'abord (requis pour désactiver l'Employee)
+        $user = UserFactory::createOne([
+            'email' => 'john.doe@example.com',
+            'disabledAt' => null,
+        ]);
+
         $employee = EmployeeFactory::createOne([
             'email' => 'john.doe@example.com',
             'position' => 'Developer',
             'department' => 'IT',
-            'status' => EmployeeStatus::ACTIVE,
             'disabledAt' => null,
+            'userUuid' => $user->toDomain()->uuid()->toString(),
         ]);
 
         /** @var TranslatorInterface $translator */
@@ -69,6 +75,13 @@ final class DisableEmployeeControllerTest extends BaseFunctionalTestCase
 
         self::assertNotNull($disabledEmployee->disabledAt());
         self::assertFalse($disabledEmployee->isActive());
+
+        // Vérifier que le User associé a aussi été désactivé
+        /** @var UserRepository $userRepository */
+        $userRepository = self::getContainer()->get(UserRepository::class);
+        $disabledUser = $userRepository->getByUuid($user->toDomain()->uuid());
+
+        self::assertFalse($disabledUser->isActive());
     }
 
     public function testDisableEmployeeFailsWhenNotFound(): void
@@ -88,13 +101,18 @@ final class DisableEmployeeControllerTest extends BaseFunctionalTestCase
 
     public function testDisableEmployeeRedirectsWhenAlreadyDisabled(): void
     {
-        // Arrange
+        // Arrange - Créer un User déjà désactivé
+        $user = UserFactory::createOne([
+            'email' => 'jane.doe@example.com',
+            'disabledAt' => new \DateTimeImmutable(),
+        ]);
+
         $employee = EmployeeFactory::createOne([
             'email' => 'jane.doe@example.com',
             'position' => 'Developer',
             'department' => 'IT',
-            'status' => EmployeeStatus::INACTIVE,
             'disabledAt' => new \DateTimeImmutable(),
+            'userUuid' => $user->toDomain()->uuid()->toString(),
         ]);
 
         /** @var TranslatorInterface $translator */
@@ -116,7 +134,12 @@ final class DisableEmployeeControllerTest extends BaseFunctionalTestCase
 
     protected function getProtectedUri(): string
     {
-        $employee = EmployeeFactory::createOne();
+        // Créer un User pour l'Employee
+        $user = UserFactory::createOne();
+
+        $employee = EmployeeFactory::createOne([
+            'userUuid' => $user->toDomain()->uuid()->toString(),
+        ]);
 
         return \sprintf(self::DISABLE_EMPLOYEE_URI, $employee->toDomain()->uuid()->toString());
     }

@@ -15,7 +15,6 @@ namespace Admin\Tests\DataBuilder;
 
 use Admin\Entities\Employee\ContactInformation;
 use Admin\Entities\Employee\Employee;
-use Admin\Entities\VO\EmployeeStatus;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\EmailField;
 use Shared\Entities\VO\NameField;
@@ -31,7 +30,6 @@ final class EmployeeDataBuilder
     private NameField $position;
     private NameField $department;
     private \DateTimeImmutable $hiredAt;
-    private EmployeeStatus $status = EmployeeStatus::ACTIVE;
     private ?ResourceUuid $userUuid;
     private ?\DateTimeImmutable $disabledAt = null;
 
@@ -109,13 +107,6 @@ final class EmployeeDataBuilder
         return $this;
     }
 
-    public function withStatus(EmployeeStatus $status): self
-    {
-        $this->status = $status;
-
-        return $this;
-    }
-
     public function withUserUuid(?ResourceUuid $userUuid): self
     {
         $this->userUuid = $userUuid;
@@ -140,11 +131,10 @@ final class EmployeeDataBuilder
             $this->uuid,
             $this->firstName,
             $this->lastName,
-            new ContactInformation($this->email, $this->phone),
+            ContactInformation::fromFields($this->email, $this->phone),
             $this->position,
             $this->department,
             $this->hiredAt,
-            $this->status,
             $this->userUuid,
             new \DateTimeImmutable('2024-01-01'),
             new \DateTimeImmutable('2024-01-15'),

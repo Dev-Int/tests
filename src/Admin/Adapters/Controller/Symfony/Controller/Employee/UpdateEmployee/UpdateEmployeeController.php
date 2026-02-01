@@ -15,7 +15,6 @@ namespace Admin\Adapters\Controller\Symfony\Controller\Employee\UpdateEmployee;
 
 use Admin\Adapters\Form\Type\Employee\UpdateEmployeeType;
 use Admin\Adapters\Gateway\ORM\Entity\Employee;
-use Admin\Entities\VO\EmployeeStatus;
 use Admin\UseCases\Employee\UpdateEmployee\UpdateEmployee;
 use Auth\Contracts\Attribute\RequireRole;
 use Shared\Entities\ResourceUuid;
@@ -59,7 +58,6 @@ final class UpdateEmployeeController extends AbstractController
                 phone: $employee->phone(),
                 position: $employee->position(),
                 department: $employee->department(),
-                status: EmployeeStatus::from($employee->status()),
             ),
             options: [
                 'action' => $this->generateUrl(self::ROUTE_NAME, ['employee' => $employee->uuid()]),
@@ -82,7 +80,6 @@ final class UpdateEmployeeController extends AbstractController
                         PhoneField::fromString($validatedInput->phone),
                         NameField::fromString($validatedInput->position),
                         NameField::fromString($validatedInput->department),
-                        $validatedInput->status,
                     )
                 );
 

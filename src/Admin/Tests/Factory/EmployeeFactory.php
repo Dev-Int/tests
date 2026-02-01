@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace Admin\Tests\Factory;
 
 use Admin\Adapters\Gateway\ORM\Entity\Employee;
-use Admin\Entities\VO\EmployeeStatus;
 use Admin\Tests\DataBuilder\EmployeeDataBuilder;
+use Shared\Entities\ResourceUuid;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**
@@ -41,7 +41,6 @@ final class EmployeeFactory extends PersistentProxyObjectFactory
             'position' => 'Developer',
             'department' => 'IT',
             'hiredAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTimeBetween('-2 years', 'now')),
-            'status' => EmployeeStatus::ACTIVE,
         ];
     }
 
@@ -57,7 +56,7 @@ final class EmployeeFactory extends PersistentProxyObjectFactory
              *     position: string,
              *     department: string,
              *     hiredAt: \DateTimeImmutable,
-             *     status: EmployeeStatus,
+             *     userUuid?: string,
              *     disabledAt?: ?\DateTimeImmutable
              * } $attributes
              */
@@ -69,7 +68,6 @@ final class EmployeeFactory extends PersistentProxyObjectFactory
                 \assert(\is_string($attributes['position']));
                 \assert(\is_string($attributes['department']));
                 \assert($attributes['hiredAt'] instanceof \DateTimeImmutable);
-                \assert($attributes['status'] instanceof EmployeeStatus);
 
                 $builder = EmployeeDataBuilder::anEmployee()
                     ->withFirstName($attributes['firstName'])
@@ -79,8 +77,11 @@ final class EmployeeFactory extends PersistentProxyObjectFactory
                     ->withPosition($attributes['position'])
                     ->withDepartment($attributes['department'])
                     ->withHiredAt($attributes['hiredAt'])
-                    ->withStatus($attributes['status'])
                 ;
+
+                if (isset($attributes['userUuid']) && \is_string($attributes['userUuid'])) {
+                    $builder->withUserUuid(ResourceUuid::fromString($attributes['userUuid']));
+                }
 
                 if (isset($attributes['disabledAt']) && $attributes['disabledAt'] instanceof \DateTimeImmutable) {
                     $builder->disabled();

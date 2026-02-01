@@ -14,9 +14,9 @@ declare(strict_types=1);
 namespace Auth\Adapters\Contracts\Services\CommandHandler\UpdateUser;
 
 use Auth\Contracts\Services\CommandHandler\UpdateUser\UpdateUserCommand;
-use Auth\Entities\Role;
 use Auth\UseCases\User\UpdateUser\UpdateUserRequest;
 use Shared\Entities\ResourceUuid;
+use Shared\Entities\Role;
 use Shared\Entities\VO\EmailField;
 
 final readonly class InternalUpdateUserRequest implements UpdateUserRequest

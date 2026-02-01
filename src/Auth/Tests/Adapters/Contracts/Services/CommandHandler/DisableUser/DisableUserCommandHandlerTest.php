@@ -15,14 +15,15 @@ namespace App\Auth\Tests\Adapters\Contracts\Services\CommandHandler\DisableUser;
 
 use Auth\Adapters\Contracts\Services\CommandHandler\DisableUser\DisableUserCommandHandler;
 use Auth\Contracts\Exception\UserAlreadyDisabled as ContractUserAlreadyDisabled;
+use Auth\Contracts\Exception\UserNotFound as ContractUserNotFound;
 use Auth\Contracts\Services\CommandHandler\DisableUser\DisableUserCommand;
 use Auth\Entities\Repository\UserRepository;
-use Auth\Entities\Role;
 use Auth\Tests\Factory\UserFactory;
 use Auth\UseCases\User\DisableUser\DisableUser;
 use Faker\Factory;
 use Faker\Generator;
 use Shared\Entities\ResourceUuid;
+use Shared\Entities\Role;
 use Shared\Tests\BaseFunctionalTestCase;
 
 /**
@@ -119,5 +120,20 @@ final class DisableUserCommandHandlerTest extends BaseFunctionalTestCase
         self::assertSame($uuid, $result->uuid);
         self::assertSame('resulttest@example.com', $result->email);
         self::assertFalse($result->isActive);
+    }
+
+    public function testDisableUserThrowsContractExceptionWhenUserNotFound(): void
+    {
+        // Arrange
+        $uuid = $this->faker->uuid();
+
+        $command = new DisableUserCommand(uuid: $uuid);
+
+        // Assert
+        $this->expectException(ContractUserNotFound::class);
+        $this->expectExceptionMessage($uuid);
+
+        // Act
+        $this->userDisabler->disableUser($command);
     }
 }

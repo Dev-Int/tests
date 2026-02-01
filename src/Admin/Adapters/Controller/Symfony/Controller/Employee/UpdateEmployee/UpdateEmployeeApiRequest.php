@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Admin\Adapters\Controller\Symfony\Controller\Employee\UpdateEmployee;
 
 use Admin\Entities\Employee\ContactInformation;
-use Admin\Entities\VO\EmployeeStatus;
 use Admin\UseCases\Employee\UpdateEmployee\UpdateEmployeeRequest;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\EmailField;
@@ -29,7 +28,6 @@ final readonly class UpdateEmployeeApiRequest implements UpdateEmployeeRequest
         private PhoneField $phone,
         private NameField $position,
         private NameField $department,
-        private EmployeeStatus $status,
     ) {
     }
 
@@ -40,7 +38,7 @@ final readonly class UpdateEmployeeApiRequest implements UpdateEmployeeRequest
 
     public function contactInformation(): ContactInformation
     {
-        return new ContactInformation($this->email, $this->phone);
+        return ContactInformation::fromFields($this->email, $this->phone);
     }
 
     public function position(): NameField
@@ -51,10 +49,5 @@ final readonly class UpdateEmployeeApiRequest implements UpdateEmployeeRequest
     public function department(): NameField
     {
         return $this->department;
-    }
-
-    public function status(): EmployeeStatus
-    {
-        return $this->status;
     }
 }

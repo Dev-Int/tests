@@ -26,37 +26,21 @@ final readonly class UpdateEmployee
     {
         $employee = $this->repository->getByUuid($request->uuid());
 
-        // Vérifier si les informations de contact ont changé
+        // Mettre à jour les informations de contact (email est immutable)
         $contactInformation = $request->contactInformation();
-        $contactInfoChanged = $employee->contactInformation()->email->toString() !== $contactInformation->email->toString()
-            || $employee->contactInformation()->phone->toNumber() !== $contactInformation->phone->toNumber();
+        $employee->updateContactInfo(
+            $employee->contactInformation()->email(), // Email immutable, on garde l'ancien
+            $contactInformation->phone(),
+        );
 
-        if ($contactInfoChanged) {
-            $employee->updateContactInfo(
-                $contactInformation->email,
-                $contactInformation->phone,
-            );
-        }
+        // Mettre à jour la position et le département
+        $employee->updatePosition(
+            $request->position(),
+            $request->department(),
+        );
 
-        // Vérifier si la position ou le département ont changé
-        $position = $request->position();
-        $positionChanged = $employee->position()->toString() !== $position->toString()
-            || $employee->department()->toString() !== $request->department()->toString();
-
-        if ($positionChanged) {
-            $employee->updatePosition(
-                $position,
-                $request->department(),
-            );
-        }
-
-        // Vérifier si le statut a changé
-        $status = $request->status();
-        if ($employee->status() !== $status) {
-            $employee->changeStatus($status);
-        }
-
-        $this->repository->update($employee);
+        $this->repository->updateContactInfo($employee);
+        $this->repository->updatePosition($employee);
 
         return new UpdateEmployeeResponse($employee);
     }

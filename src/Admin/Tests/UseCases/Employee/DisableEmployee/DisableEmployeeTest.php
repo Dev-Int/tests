@@ -19,6 +19,9 @@ use Admin\Entities\Repository\EmployeeRepository;
 use Admin\Tests\DataBuilder\EmployeeDataBuilder;
 use Admin\UseCases\Employee\DisableEmployee\DisableEmployee;
 use Admin\UseCases\Employee\DisableEmployee\DisableEmployeeRequest;
+use Admin\UseCases\Employee\Exception\UserAlreadyDisabled;
+use Admin\UseCases\Employee\Exception\UserNotFound;
+use Admin\UseCases\Gateway\UserDisablerGateway;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shared\Entities\ResourceUuid;
@@ -32,19 +35,23 @@ final class DisableEmployeeTest extends TestCase
 {
     private DisableEmployee $useCase;
     private EmployeeRepository&MockObject $repository;
+    private MockObject&UserDisablerGateway $userDisabler;
 
     protected function setUp(): void
     {
         $this->repository = $this->createMock(EmployeeRepository::class);
-        $this->useCase = new DisableEmployee($this->repository);
+        $this->userDisabler = $this->createMock(UserDisablerGateway::class);
+        $this->useCase = new DisableEmployee($this->repository, $this->userDisabler);
     }
 
     public function testDisableEmployeeWithSuccess(): void
     {
         // Arrange
         $uuid = ResourceUuid::generate();
+        $userUuid = ResourceUuid::generate();
         $employee = EmployeeDataBuilder::anEmployee()
             ->withUuid($uuid)
+            ->withUserUuid($userUuid)
             ->build()
         ;
 
@@ -58,6 +65,11 @@ final class DisableEmployeeTest extends TestCase
             ->method('getByUuid')
             ->with($uuid)
             ->willReturn($employee)
+        ;
+
+        $this->userDisabler->expects(self::once())
+            ->method('disableUser')
+            ->with($userUuid)
         ;
 
         $this->repository->expects(self::once())
@@ -128,6 +140,86 @@ final class DisableEmployeeTest extends TestCase
 
         // Assert
         $this->expectException(EmployeeAlreadyDisabled::class);
+
+        // Act
+        $this->useCase->execute($request);
+    }
+
+    public function testDisableEmployeeThrowsExceptionWhenUserAlreadyDisabled(): void
+    {
+        // Arrange
+        $uuid = ResourceUuid::generate();
+        $userUuid = ResourceUuid::generate();
+        $employee = EmployeeDataBuilder::anEmployee()
+            ->withUuid($uuid)
+            ->withUserUuid($userUuid)
+            ->build()
+        ;
+
+        $request = $this->createMock(DisableEmployeeRequest::class);
+        $request->expects(self::once())
+            ->method('uuid')
+            ->willReturn($uuid)
+        ;
+
+        $this->repository->expects(self::once())
+            ->method('getByUuid')
+            ->with($uuid)
+            ->willReturn($employee)
+        ;
+
+        $this->userDisabler->expects(self::once())
+            ->method('disableUser')
+            ->with($userUuid)
+            ->willThrowException(new UserAlreadyDisabled($userUuid))
+        ;
+
+        $this->repository->expects(self::never())
+            ->method('disable')
+        ;
+
+        // Assert
+        $this->expectException(UserAlreadyDisabled::class);
+
+        // Act
+        $this->useCase->execute($request);
+    }
+
+    public function testDisableEmployeeThrowsExceptionWhenUserNotFound(): void
+    {
+        // Arrange
+        $uuid = ResourceUuid::generate();
+        $userUuid = ResourceUuid::generate();
+        $employee = EmployeeDataBuilder::anEmployee()
+            ->withUuid($uuid)
+            ->withUserUuid($userUuid)
+            ->build()
+        ;
+
+        $request = $this->createMock(DisableEmployeeRequest::class);
+        $request->expects(self::once())
+            ->method('uuid')
+            ->willReturn($uuid)
+        ;
+
+        $this->repository->expects(self::once())
+            ->method('getByUuid')
+            ->with($uuid)
+            ->willReturn($employee)
+        ;
+
+        $this->userDisabler->expects(self::once())
+            ->method('disableUser')
+            ->with($userUuid)
+            ->willThrowException(new UserNotFound($userUuid))
+        ;
+
+        $this->repository->expects(self::never())
+            ->method('disable')
+        ;
+
+        // Assert
+        $this->expectException(UserNotFound::class);
 
         // Act
         $this->useCase->execute($request);

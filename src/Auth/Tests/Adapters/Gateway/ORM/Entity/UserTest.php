@@ -14,13 +14,13 @@ declare(strict_types=1);
 namespace Auth\Tests\Adapters\Gateway\ORM\Entity;
 
 use Auth\Adapters\Gateway\ORM\Entity\User as UserOrm;
-use Auth\Entities\Role;
 use Auth\Entities\User as UserDomain;
 use Auth\Entities\VO\HashedPassword;
 use PHPUnit\Framework\TestCase;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\Clock\FrozenClock;
 use Shared\Entities\ResourceUuid;
+use Shared\Entities\Role;
 use Shared\Entities\VO\EmailField;
 
 /**

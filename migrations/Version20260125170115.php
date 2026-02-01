@@ -26,7 +26,6 @@ final class Version20260125170115 extends AbstractMigration
             'position VARCHAR(255) NOT NULL, ' .
             'department VARCHAR(255) NOT NULL, ' .
             'hired_at TIMESTAMP(0) WITH TIME ZONE NOT NULL, ' .
-            'status VARCHAR(20) NOT NULL, ' .
             'user_uuid UUID NOT NULL, ' .
             'created_at TIMESTAMP(0) WITH TIME ZONE NOT NULL, ' .
             'updated_at TIMESTAMP(0) WITH TIME ZONE NOT NULL, ' .

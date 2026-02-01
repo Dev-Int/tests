@@ -14,11 +14,13 @@ declare(strict_types=1);
 namespace Auth\Contracts\Services\CommandHandler\DisableUser;
 
 use Auth\Contracts\Exception\UserAlreadyDisabled;
+use Auth\Contracts\Exception\UserNotFound;
 
 interface DisableUserCommandHandler
 {
     /**
      * @throws UserAlreadyDisabled
+     * @throws UserNotFound
      */
     public function disableUser(DisableUserCommand $command): DisabledUserResult;
 }

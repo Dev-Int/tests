@@ -11,11 +11,9 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Auth\Entities;
+namespace Admin\UseCases\Gateway;
 
-enum Role: string
+enum EmailType
 {
-    case USER = 'ROLE_USER';
-    case ADMIN = 'ROLE_ADMIN';
-    case INVENTORY_MANAGER = 'ROLE_INVENTORY_MANAGER';
+    case EMPLOYEE_WELCOME;
 }

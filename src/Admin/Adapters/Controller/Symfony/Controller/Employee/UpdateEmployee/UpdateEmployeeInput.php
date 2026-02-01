@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Controller\Symfony\Controller\Employee\UpdateEmployee;
 
-use Admin\Entities\VO\EmployeeStatus;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final class UpdateEmployeeInput
@@ -22,8 +21,7 @@ final class UpdateEmployeeInput
         public string $firstName,
         public string $lastName,
         public \DateTimeImmutable $hiredAt,
-        #[Assert\NotBlank]
-        #[Assert\Email]
+        // Email est immutable (disabled dans le formulaire, pas de validation nécessaire)
         public string $email = '',
         #[Assert\NotBlank]
         public string $phone = '',
@@ -31,8 +29,6 @@ final class UpdateEmployeeInput
         public string $position = '',
         #[Assert\NotBlank]
         public string $department = '',
-        #[Assert\NotNull]
-        public EmployeeStatus $status = EmployeeStatus::ACTIVE,
     ) {
     }
 }

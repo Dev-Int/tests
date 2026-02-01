@@ -13,7 +13,18 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Gateway;
 
-interface NotificationGateway
+use Shared\Entities\VO\EmailField;
+
+final readonly class EmailPayload
 {
-    public function sendEmail(EmailPayload $payload): void;
+    /**
+     * @param array<string, mixed> $context
+     */
+    public function __construct(
+        public EmailField $to,
+        public EmailType $type,
+        public string $subject,
+        public array $context,
+    ) {
+    }
 }

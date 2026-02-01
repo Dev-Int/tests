@@ -15,7 +15,6 @@ namespace Auth\Tests\UseCases\User\UpdateUser;
 
 use Auth\Entities\Exception\EmailAlreadyExists;
 use Auth\Entities\Repository\UserRepository;
-use Auth\Entities\Role;
 use Auth\Entities\VO\HashedPassword;
 use Auth\Tests\DataBuilder\UserDataBuilder;
 use Auth\UseCases\Gateway\PasswordHasherGateway;
@@ -23,6 +22,7 @@ use Auth\UseCases\User\UpdateUser\UpdateUser;
 use Auth\UseCases\User\UpdateUser\UpdateUserRequest;
 use PHPUnit\Framework\TestCase;
 use Shared\Entities\ResourceUuid;
+use Shared\Entities\Role;
 use Shared\Entities\VO\EmailField;
 
 /**

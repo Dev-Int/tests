@@ -13,7 +13,14 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Gateway;
 
-interface NotificationGateway
+interface TransactionGateway
 {
-    public function sendEmail(EmailPayload $payload): void;
+    /**
+     * @template T
+     *
+     * @param callable(): T $operation
+     *
+     * @return T
+     */
+    public function wrapInTransaction(callable $operation): mixed;
 }

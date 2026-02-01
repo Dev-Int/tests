@@ -16,7 +16,6 @@ namespace Admin\Adapters\Gateway\ORM\Entity;
 use Admin\Adapters\Gateway\ORM\Repository\DoctrineEmployeeRepository;
 use Admin\Entities\Employee\ContactInformation;
 use Admin\Entities\Employee\Employee as EmployeeDomain;
-use Admin\Entities\VO\EmployeeStatus;
 use Doctrine\ORM\Mapping as ORM;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\EmailField;
@@ -54,9 +53,6 @@ class Employee
     #[ORM\Column(type: 'datetimetz_immutable')]
     private \DateTimeImmutable $hiredAt;
 
-    #[ORM\Column(type: 'string', length: 20)]
-    private string $status;
-
     #[ORM\Column(type: 'guid')]
     private string $userUuid;
 
@@ -75,12 +71,11 @@ class Employee
         $employeeOrm->uuid = $employee->uuid()->toString();
         $employeeOrm->firstName = $employee->firstName()->toString();
         $employeeOrm->lastName = $employee->lastName()->toString();
-        $employeeOrm->email = $employee->contactInformation()->email->toString();
-        $employeeOrm->phone = $employee->contactInformation()->phone->toNumber();
+        $employeeOrm->email = $employee->contactInformation()->email()->toString();
+        $employeeOrm->phone = $employee->contactInformation()->phone()->toNumber();
         $employeeOrm->position = $employee->position()->toString();
         $employeeOrm->department = $employee->department()->toString();
         $employeeOrm->hiredAt = $employee->hiredAt();
-        $employeeOrm->status = $employee->status()->value;
         $employeeOrm->userUuid = $employee->userUuid()->toString();
         $employeeOrm->createdAt = $employee->createdAt();
         $employeeOrm->updatedAt = $employee->updatedAt();
@@ -95,14 +90,13 @@ class Employee
             uuid: ResourceUuid::fromString($this->uuid),
             firstName: NameField::fromString($this->firstName),
             lastName: NameField::fromString($this->lastName),
-            contactInformation: new ContactInformation(
+            contactInformation: ContactInformation::fromFields(
                 email: EmailField::fromString($this->email),
                 phone: PhoneField::fromString($this->phone)
             ),
             position: NameField::fromString($this->position),
             department: NameField::fromString($this->department),
             hiredAt: $this->hiredAt,
-            status: EmployeeStatus::from($this->status),
             userUuid: ResourceUuid::fromString($this->userUuid),
             createdAt: $this->createdAt,
             updatedAt: $this->updatedAt,
@@ -114,11 +108,10 @@ class Employee
     {
         $this->firstName = $employee->firstName()->toString();
         $this->lastName = $employee->lastName()->toString();
-        $this->email = $employee->contactInformation()->email->toString();
-        $this->phone = $employee->contactInformation()->phone->toNumber();
+        $this->email = $employee->contactInformation()->email()->toString();
+        $this->phone = $employee->contactInformation()->phone()->toNumber();
         $this->position = $employee->position()->toString();
         $this->department = $employee->department()->toString();
-        $this->status = $employee->status()->value;
         $this->updatedAt = $employee->updatedAt();
         $this->disabledAt = $employee->disabledAt();
     }
@@ -166,10 +159,5 @@ class Employee
     public function hiredAt(): \DateTimeImmutable
     {
         return $this->hiredAt;
-    }
-
-    public function status(): string
-    {
-        return $this->status;
     }
 }

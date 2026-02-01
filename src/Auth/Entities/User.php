@@ -17,6 +17,7 @@ use Auth\Entities\Exception\UserAlreadyDisabled;
 use Auth\Entities\VO\HashedPassword;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\ResourceUuid;
+use Shared\Entities\Role;
 use Shared\Entities\VO\EmailField;
 
 final class User

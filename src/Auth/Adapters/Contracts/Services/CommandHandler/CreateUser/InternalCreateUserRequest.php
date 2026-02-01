@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace Auth\Adapters\Contracts\Services\CommandHandler\CreateUser;
 
 use Auth\Contracts\Services\CommandHandler\CreateUser\CreateUserCommand;
-use Auth\Entities\Role;
 use Auth\UseCases\User\CreateUser\CreateUserRequest;
+use Shared\Entities\Role;
 use Shared\Entities\VO\EmailField;
 
 final readonly class InternalCreateUserRequest implements CreateUserRequest
@@ -31,7 +31,7 @@ final readonly class InternalCreateUserRequest implements CreateUserRequest
         $this->email = $command->email;
         $this->plainPassword = $command->plainPassword;
         $this->roles = array_map(
-            static fn (string $role): Role => Role::from($role),
+            static fn (Role $role): Role => $role,
             $command->roles,
         );
     }

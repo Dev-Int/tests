@@ -85,14 +85,14 @@ final class CreateEmployeeControllerTest extends BaseFunctionalTestCase
         $employee = $employeesArray[0];
         self::assertSame('John', $employee->firstName()->toString());
         self::assertSame('Doe', $employee->lastName()->toString());
-        self::assertSame('john.doe@example.com', $employee->contactInformation()->email->toString());
-        self::assertSame('0612345678', $employee->contactInformation()->phone->toNumber());
+        self::assertSame('john.doe@example.com', $employee->contactInformation()->email()->toString());
+        self::assertSame('0612345678', $employee->contactInformation()->phone()->toNumber());
         self::assertSame('Developer', $employee->position()->toString());
         self::assertSame('IT', $employee->department()->toString());
         self::assertTrue($employee->isActive());
 
         // Vérifier que le User a été créé automatiquement
-        $user = $userRepository->getByEmail($employee->contactInformation()->email);
+        $user = $userRepository->getByEmail($employee->contactInformation()->email());
         self::assertSame($employee->userUuid()->toString(), $user->uuid()->toString());
         self::assertTrue($user->isActive());
     }

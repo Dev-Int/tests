@@ -14,10 +14,12 @@ declare(strict_types=1);
 namespace Auth\Adapters\Contracts\Services\CommandHandler\DisableUser;
 
 use Auth\Contracts\Exception\UserAlreadyDisabled;
+use Auth\Contracts\Exception\UserNotFound;
 use Auth\Contracts\Services\CommandHandler\DisableUser\DisabledUserResult;
 use Auth\Contracts\Services\CommandHandler\DisableUser\DisableUserCommand;
 use Auth\Contracts\Services\CommandHandler\DisableUser\DisableUserCommandHandler as UserDisablerContract;
 use Auth\Entities\Exception\UserAlreadyDisabled as DomainUserAlreadyDisabled;
+use Auth\Entities\Exception\UserNotFoundById;
 use Auth\UseCases\User\DisableUser\DisableUser;
 use Shared\Entities\ResourceUuid;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -44,6 +46,8 @@ final readonly class DisableUserCommandHandler implements UserDisablerContract
             );
         } catch (DomainUserAlreadyDisabled) {
             throw new UserAlreadyDisabled($command->uuid);
+        } catch (UserNotFoundById) {
+            throw new UserNotFound($command->uuid);
         }
     }
 }

@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Employee\UpdateEmployee;
 
 use Admin\Entities\Repository\EmployeeRepository;
-use Admin\Entities\VO\EmployeeStatus;
 use Admin\Tests\Factory\EmployeeFactory;
+use Auth\Tests\Factory\UserFactory;
 use Shared\Tests\BaseFunctionalTestCase;
 use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,12 +37,16 @@ final class UpdateEmployeeControllerTest extends BaseFunctionalTestCase
 
     public function testUpdateEmployeeWithSuccess(): void
     {
-        // Arrange
+        // Arrange - Créer un User pour l'Employee
+        $user = UserFactory::createOne([
+            'email' => 'john.doe@example.com',
+        ]);
+
         $employee = EmployeeFactory::createOne([
             'email' => 'john.doe@example.com',
             'position' => 'Developer',
             'department' => 'IT',
-            'status' => EmployeeStatus::ACTIVE,
+            'userUuid' => $user->toDomain()->uuid()->toString(),
         ]);
 
         /** @var TranslatorInterface $translator */
@@ -61,7 +65,6 @@ final class UpdateEmployeeControllerTest extends BaseFunctionalTestCase
             'update_employee[phone]' => '0687654321',
             'update_employee[position]' => 'Senior Developer',
             'update_employee[department]' => 'Engineering',
-            'update_employee[status]' => EmployeeStatus::INACTIVE->value,
         ]);
         $this->client->submit($form);
 
@@ -76,11 +79,11 @@ final class UpdateEmployeeControllerTest extends BaseFunctionalTestCase
         $employeeRepository = self::getContainer()->get(EmployeeRepository::class);
         $updatedEmployee = $employeeRepository->getByUuid($employee->toDomain()->uuid());
 
-        self::assertSame('john.updated@example.com', $updatedEmployee->contactInformation()->email->toString());
-        self::assertSame('0687654321', $updatedEmployee->contactInformation()->phone->toNumber());
+        // Email devrait rester inchangé (immutable)
+        self::assertSame('john.doe@example.com', $updatedEmployee->contactInformation()->email()->toString());
+        self::assertSame('0687654321', $updatedEmployee->contactInformation()->phone()->toNumber());
         self::assertSame('Senior Developer', $updatedEmployee->position()->toString());
         self::assertSame('Engineering', $updatedEmployee->department()->toString());
-        self::assertSame(EmployeeStatus::INACTIVE, $updatedEmployee->status());
     }
 
     public function testUpdateEmployeeFailsWhenNotFound(): void
@@ -100,7 +103,12 @@ final class UpdateEmployeeControllerTest extends BaseFunctionalTestCase
 
     protected function getProtectedUri(): string
     {
-        $employee = EmployeeFactory::createOne();
+        // Créer un User pour l'Employee
+        $user = UserFactory::createOne();
+
+        $employee = EmployeeFactory::createOne([
+            'userUuid' => $user->toDomain()->uuid()->toString(),
+        ]);
 
         return \sprintf(self::UPDATE_EMPLOYEE_URI, $employee->toDomain()->uuid()->toString());
     }

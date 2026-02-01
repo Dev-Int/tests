@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Admin\UseCases\Employee\UpdateEmployee;
 
 use Admin\Entities\Employee\ContactInformation;
-use Admin\Entities\VO\EmployeeStatus;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
 
@@ -27,6 +26,4 @@ interface UpdateEmployeeRequest
     public function position(): NameField;
 
     public function department(): NameField;
-
-    public function status(): EmployeeStatus;
 }

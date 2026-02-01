@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Admin\Entities\Employee;
 
 use Admin\Entities\Exception\Employee\EmployeeAlreadyDisabled;
-use Admin\Entities\VO\EmployeeStatus;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\EmailField;
@@ -31,7 +30,6 @@ final class Employee
         NameField $position,
         NameField $department,
         \DateTimeImmutable $hiredAt,
-        EmployeeStatus $status,
         ResourceUuid $userUuid,
     ): self {
         return new self(
@@ -42,7 +40,6 @@ final class Employee
             position: $position,
             department: $department,
             hiredAt: $hiredAt,
-            status: $status,
             userUuid: $userUuid,
             createdAt: ClockFactory::clock()->now(),
             updatedAt: ClockFactory::clock()->now(),
@@ -57,7 +54,6 @@ final class Employee
         NameField $position,
         NameField $department,
         \DateTimeImmutable $hiredAt,
-        EmployeeStatus $status,
         ResourceUuid $userUuid,
         \DateTimeImmutable $createdAt,
         \DateTimeImmutable $updatedAt,
@@ -71,7 +67,6 @@ final class Employee
             position: $position,
             department: $department,
             hiredAt: $hiredAt,
-            status: $status,
             userUuid: $userUuid,
             createdAt: $createdAt,
             updatedAt: $updatedAt,
@@ -87,7 +82,6 @@ final class Employee
         private NameField $position,
         private NameField $department,
         private readonly \DateTimeImmutable $hiredAt,
-        private EmployeeStatus $status,
         private readonly ResourceUuid $userUuid,
         private readonly \DateTimeImmutable $createdAt,
         private \DateTimeImmutable $updatedAt,
@@ -130,11 +124,6 @@ final class Employee
         return $this->hiredAt;
     }
 
-    public function status(): EmployeeStatus
-    {
-        return $this->status;
-    }
-
     public function userUuid(): ResourceUuid
     {
         return $this->userUuid;
@@ -157,20 +146,29 @@ final class Employee
 
     public function updateContactInfo(EmailField $email, PhoneField $phone): void
     {
-        $this->contactInformation = new ContactInformation($email, $phone);
+        // Vérifier si les informations de contact ont changé
+        $phoneChanged = $this->contactInformation->phone()->toNumber() !== $phone->toNumber();
+
+        if (!$phoneChanged) {
+            return; // Aucun changement, pas de mise à jour
+        }
+
+        $this->contactInformation = ContactInformation::fromFields($email, $phone);
         $this->updatedAt = ClockFactory::clock()->now();
     }
 
     public function updatePosition(NameField $position, NameField $department): void
     {
+        // Vérifier si la position ou le département ont changé
+        $positionChanged = $this->position->toString() !== $position->toString()
+            || $this->department->toString() !== $department->toString();
+
+        if (!$positionChanged) {
+            return; // Aucun changement, pas de mise à jour
+        }
+
         $this->position = $position;
         $this->department = $department;
-        $this->updatedAt = ClockFactory::clock()->now();
-    }
-
-    public function changeStatus(EmployeeStatus $status): void
-    {
-        $this->status = $status;
         $this->updatedAt = ClockFactory::clock()->now();
     }
 

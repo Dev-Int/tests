@@ -125,7 +125,22 @@ final class DoctrineEmployeeRepository extends ServiceEntityRepository implement
         $this->getEntityManager()->flush();
     }
 
-    public function update(EmployeeDomain $employee): void
+    public function updateContactInfo(EmployeeDomain $employee): void
+    {
+        $employeeOrm = $this->find($employee->uuid()->toString());
+
+        if (!$employeeOrm instanceof Employee) {
+            // @codeCoverageIgnoreStart
+            throw new EmployeeNotFound($employee->uuid());
+            // @codeCoverageIgnoreEnd
+        }
+
+        $employeeOrm->updateFromDomain($employee);
+
+        $this->getEntityManager()->flush();
+    }
+
+    public function updatePosition(EmployeeDomain $employee): void
     {
         $employeeOrm = $this->find($employee->uuid()->toString());
 
@@ -142,6 +157,16 @@ final class DoctrineEmployeeRepository extends ServiceEntityRepository implement
 
     public function disable(EmployeeDomain $employee): void
     {
-        $this->update($employee);
+        $employeeOrm = $this->find($employee->uuid()->toString());
+
+        if (!$employeeOrm instanceof Employee) {
+            // @codeCoverageIgnoreStart
+            throw new EmployeeNotFound($employee->uuid());
+            // @codeCoverageIgnoreEnd
+        }
+
+        $employeeOrm->updateFromDomain($employee);
+
+        $this->getEntityManager()->flush();
     }
 }

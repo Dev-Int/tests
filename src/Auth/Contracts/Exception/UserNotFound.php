@@ -11,9 +11,14 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\UseCases\Gateway;
+namespace Auth\Contracts\Exception;
 
-interface NotificationGateway
+final class UserNotFound extends \DomainException
 {
-    public function sendEmail(EmailPayload $payload): void;
+    public const string MESSAGE = 'User not found.';
+
+    public function __construct(string $uuid)
+    {
+        parent::__construct(self::MESSAGE . " (UUID: {$uuid})");
+    }
 }

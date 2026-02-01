@@ -13,7 +13,15 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Gateway;
 
-interface NotificationGateway
+use Admin\UseCases\Employee\Exception\UserAlreadyDisabled;
+use Admin\UseCases\Employee\Exception\UserNotFound;
+use Shared\Entities\ResourceUuid;
+
+interface UserDisablerGateway
 {
-    public function sendEmail(EmailPayload $payload): void;
+    /**
+     * @throws UserAlreadyDisabled
+     * @throws UserNotFound
+     */
+    public function disableUser(ResourceUuid $userUuid): void;
 }

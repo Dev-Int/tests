@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Auth\Adapters\Controller\Symfony\Controller\User\GetUsers;
 
-use Auth\Entities\Role;
 use Auth\Entities\User;
+use Shared\Entities\Role;
 
 final readonly class UserDto
 {

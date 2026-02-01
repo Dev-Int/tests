@@ -17,13 +17,13 @@ use Auth\Adapters\Contracts\Services\CommandHandler\UpdateUser\UpdateUserCommand
 use Auth\Contracts\Exception\EmailAlreadyExists as ContractEmailAlreadyExists;
 use Auth\Contracts\Services\CommandHandler\UpdateUser\UpdateUserCommand;
 use Auth\Entities\Repository\UserRepository;
-use Auth\Entities\Role;
 use Auth\Tests\Factory\UserFactory;
 use Auth\UseCases\Gateway\PasswordHasherGateway;
 use Auth\UseCases\User\UpdateUser\UpdateUser;
 use Faker\Factory;
 use Faker\Generator;
 use Shared\Entities\ResourceUuid;
+use Shared\Entities\Role;
 use Shared\Entities\VO\EmailField;
 use Shared\Tests\BaseFunctionalTestCase;
 

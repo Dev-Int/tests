@@ -18,9 +18,30 @@ use Shared\Entities\VO\PhoneField;
 
 final readonly class ContactInformation
 {
-    public function __construct(
-        public EmailField $email,
-        public PhoneField $phone
+    public static function fromFields(EmailField $email, PhoneField $phone): self
+    {
+        return new self($email, $phone);
+    }
+
+    private function __construct(
+        private EmailField $email,
+        private PhoneField $phone
     ) {
+    }
+
+    public function email(): EmailField
+    {
+        return $this->email;
+    }
+
+    public function phone(): PhoneField
+    {
+        return $this->phone;
+    }
+
+    public function equals(self $other): bool
+    {
+        return $this->email->toString() === $other->email->toString()
+            && $this->phone->toNumber() === $other->phone->toNumber();
     }
 }

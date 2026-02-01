@@ -61,17 +61,21 @@ final class PasswordResetController extends AbstractController
                         $data['password']
                     )
                 );
+                $this->addFlash('success', 'Mot de passe réinitialisé avec succès.');
+
+                return $this->redirectToRoute('auth_login');
             } catch (\DomainException $exception) {
                 $this->addFlash('error', $exception->getMessage());
+
+                return $this->redirectToRoute('auth_login');
             } catch (\Exception) {
                 $this->addFlash(
                     'error',
                     'Une erreur inattendue est survenue lors du réinitialisation du mot de passe.'
                 );
-            }
-            $this->addFlash('success', 'Mot de passe réinitialisé avec succès.');
 
-            return $this->redirectToRoute('auth_login');
+                return $this->redirectToRoute('auth_login');
+            }
         }
 
         return $this->render('@auth/password_reset.html.twig', [

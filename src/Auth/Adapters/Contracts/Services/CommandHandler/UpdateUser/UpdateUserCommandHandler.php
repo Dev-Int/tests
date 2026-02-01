@@ -18,8 +18,8 @@ use Auth\Contracts\Services\CommandHandler\UpdateUser\UpdatedUserResult;
 use Auth\Contracts\Services\CommandHandler\UpdateUser\UpdateUserCommand;
 use Auth\Contracts\Services\CommandHandler\UpdateUser\UpdateUserCommandHandler as UserUpdaterContract;
 use Auth\Entities\Exception\EmailAlreadyExists as DomainEmailAlreadyExists;
-use Auth\Entities\Role;
 use Auth\UseCases\User\UpdateUser\UpdateUser;
+use Shared\Entities\Role;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 #[AsAlias(UserUpdaterContract::class)]
