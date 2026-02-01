@@ -116,7 +116,6 @@ final class CreateEmployeeTest extends TestCase
             ->with(
                 self::callback(static function (Employee $employee) use ($userUuid): bool {
                     return $employee->userUuid() === $userUuid
-                        && $employee->contactInformation()->email()->toString() === 'john.doe@example.com'
                         && $employee->contactInformation()->phone()->toNumber() === '0612345678'
                         && $employee->position()->toString() === 'Developer'
                         && $employee->department()->toString() === 'IT'

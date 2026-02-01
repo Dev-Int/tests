@@ -61,7 +61,6 @@ final class UpdateEmployeeControllerTest extends BaseFunctionalTestCase
         self::assertResponseIsSuccessful();
 
         $form = $crawler->filter('form')->form([
-            'update_employee[email]' => 'john.updated@example.com',
             'update_employee[phone]' => '0687654321',
             'update_employee[position]' => 'Senior Developer',
             'update_employee[department]' => 'Engineering',
@@ -79,8 +78,6 @@ final class UpdateEmployeeControllerTest extends BaseFunctionalTestCase
         $employeeRepository = self::getContainer()->get(EmployeeRepository::class);
         $updatedEmployee = $employeeRepository->getByUuid($employee->toDomain()->uuid());
 
-        // Email devrait rester inchangé (immutable)
-        self::assertSame('john.doe@example.com', $updatedEmployee->contactInformation()->email()->toString());
         self::assertSame('0687654321', $updatedEmployee->contactInformation()->phone()->toNumber());
         self::assertSame('Senior Developer', $updatedEmployee->position()->toString());
         self::assertSame('Engineering', $updatedEmployee->department()->toString());

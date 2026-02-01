@@ -21,8 +21,6 @@ final class UpdateEmployeeInput
         public string $firstName,
         public string $lastName,
         public \DateTimeImmutable $hiredAt,
-        // Email est immutable (disabled dans le formulaire, pas de validation nécessaire)
-        public string $email = '',
         #[Assert\NotBlank]
         public string $phone = '',
         #[Assert\NotBlank]

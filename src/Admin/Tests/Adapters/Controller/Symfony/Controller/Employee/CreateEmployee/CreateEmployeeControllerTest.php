@@ -274,6 +274,24 @@ final class CreateEmployeeControllerTest extends BaseFunctionalTestCase
         self::assertSelectorExists('.form-error', 'Un message d\'erreur de validation devrait être affiché');
     }
 
+    public function testCreateEmployeeReturns404ForInvalidRoute(): void
+    {
+        // Arrange
+        CompanyFactory::createOne(['name' => 'Test company']);
+
+        // Act
+        $this->client->request(
+            Request::METHOD_GET,
+            '/admin/employees/create/invalid-path'
+        );
+
+        // Assert
+        self::assertResponseStatusCodeSame(
+            Response::HTTP_NOT_FOUND,
+            'Une route inexistante devrait retourner une erreur 404'
+        );
+    }
+
     protected function getProtectedUri(): string
     {
         return self::CREATE_EMPLOYEE_URI;

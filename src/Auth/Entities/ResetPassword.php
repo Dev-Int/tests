@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Auth\Entities;
 
+use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\ResourceUuid;
 
 final class ResetPassword
@@ -22,17 +23,22 @@ final class ResetPassword
         public readonly ResourceUuid $userId,
         public readonly string $token,
         public readonly bool $isExpired,
-        private bool $isUsed,
+        private ?\DateTimeImmutable $usedAt,
     ) {
+    }
+
+    public function usedAt(): ?\DateTimeImmutable
+    {
+        return $this->usedAt;
     }
 
     public function isUsed(): bool
     {
-        return $this->isUsed;
+        return $this->usedAt instanceof \DateTimeImmutable;
     }
 
     public function used(): void
     {
-        $this->isUsed = true;
+        $this->usedAt = ClockFactory::clock()->now();
     }
 }

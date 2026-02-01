@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Admin\Tests\UseCases\Employee\UpdateEmployee;
 
-use Admin\Entities\Employee\ContactInformation;
 use Admin\Entities\Exception\Employee\EmployeeNotFound;
 use Admin\Entities\Repository\EmployeeRepository;
 use Admin\Tests\DataBuilder\EmployeeDataBuilder;
@@ -22,7 +21,6 @@ use Admin\UseCases\Employee\UpdateEmployee\UpdateEmployeeRequest;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shared\Entities\ResourceUuid;
-use Shared\Entities\VO\EmailField;
 use Shared\Entities\VO\NameField;
 use Shared\Entities\VO\PhoneField;
 
@@ -47,22 +45,18 @@ final class UpdateEmployeeTest extends TestCase
         $useCase = new UpdateEmployee($this->repository);
 
         $uuid = ResourceUuid::generate();
-        $originalEmail = 'old.email@example.com';
         $employee = EmployeeDataBuilder::anEmployee()
             ->withUuid($uuid)
-            ->withEmail($originalEmail)
             ->build()
         ;
 
-        // Email est ignoré (immutable), seul le téléphone change
-        $newEmail = EmailField::fromString('ignored.email@example.com');
         $newPhone = PhoneField::fromString('0698765432');
 
         // Assert
         $request->expects(self::once())->method('uuid')->willReturn($uuid);
         $request->expects(self::once())
-            ->method('contactInformation')
-            ->willReturn(ContactInformation::fromFields($newEmail, $newPhone))
+            ->method('phone')
+            ->willReturn($newPhone)
         ;
         $request->expects(self::once())->method('position')->willReturn($employee->position());
         $request->expects(self::once())->method('department')->willReturn($employee->department());
@@ -76,23 +70,19 @@ final class UpdateEmployeeTest extends TestCase
 
         $this->repository
             ->expects(self::once())
-            ->method('updateContactInfo')
-        ;
-
-        $this->repository
-            ->expects(self::once())
-            ->method('updatePosition')
+            ->method('update')
         ;
 
         // Act
         $response = $useCase->execute($request);
 
         // Assert
-        self::assertSame($uuid->toString(), $response->employee()->uuid()->toString());
-        // Email doit rester inchangé (immutable)
-        self::assertSame($originalEmail, $response->employee()->contactInformation()->email()->toString());
-        // Téléphone doit être mis à jour
-        self::assertSame('0698765432', $response->employee()->contactInformation()->phone()->toNumber());
+        self::assertSame($uuid->toString(), $response->employee()->uuid()->toString(), 'UUID doit être inchangé');
+        self::assertSame(
+            '0698765432',
+            $response->employee()->contactInformation()->phone()->toNumber(),
+            'Téléphone doit être mis à jour'
+        );
     }
 
     public function testUpdatePositionWithSuccess(): void
@@ -122,16 +112,14 @@ final class UpdateEmployeeTest extends TestCase
 
         $this->repository
             ->expects(self::once())
-            ->method('updateContactInfo')
-        ;
-
-        $this->repository
-            ->expects(self::once())
-            ->method('updatePosition')
+            ->method('update')
         ;
 
         $request->expects(self::once())->method('uuid')->willReturn($uuid);
-        $request->expects(self::once())->method('contactInformation')->willReturn($employee->contactInformation());
+        $request->expects(self::once())
+            ->method('phone')
+            ->willReturn($employee->contactInformation()->phone())
+        ;
         $request->expects(self::once())->method('position')->willReturn($newPosition);
         $request->expects(self::once())->method('department')->willReturn($newDepartment);
 
@@ -139,8 +127,16 @@ final class UpdateEmployeeTest extends TestCase
         $response = $useCase->execute($request);
 
         // Assert
-        self::assertSame('Senior Developer', $response->employee()->position()->toString());
-        self::assertSame('Engineering', $response->employee()->department()->toString());
+        self::assertSame(
+            'Senior Developer',
+            $response->employee()->position()->toString(),
+            'Position doit être mise à jour'
+        );
+        self::assertSame(
+            'Engineering',
+            $response->employee()->department()->toString(),
+            'Département doit être mis à jour'
+        );
     }
 
     public function testUpdateEmployeeWillFailWhenNotFound(): void
@@ -161,16 +157,11 @@ final class UpdateEmployeeTest extends TestCase
 
         $this->repository
             ->expects(self::never())
-            ->method('updateContactInfo')
-        ;
-
-        $this->repository
-            ->expects(self::never())
-            ->method('updatePosition')
+            ->method('update')
         ;
 
         $request->expects(self::once())->method('uuid')->willReturn($uuid);
-        $request->expects(self::never())->method('contactInformation');
+        $request->expects(self::never())->method('phone');
         $request->expects(self::never())->method('position');
         $request->expects(self::never())->method('department');
 

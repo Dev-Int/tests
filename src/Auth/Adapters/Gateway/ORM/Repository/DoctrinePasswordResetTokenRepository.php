@@ -45,9 +45,7 @@ final class DoctrinePasswordResetTokenRepository extends ServiceEntityRepository
             throw new \RuntimeException('Token ORM entity not found');
         }
 
-        if ($token->isUsed()) {
-            $existingToken->markAsUsed();
-        }
+        $existingToken->updateFromDomain($token);
 
         $this->getEntityManager()->persist($existingToken);
         $this->getEntityManager()->flush();

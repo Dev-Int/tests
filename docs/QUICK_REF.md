@@ -136,10 +136,35 @@ interface EntityRepository {
 }
 ```
 
+**Example - When to use `update()` vs business-named methods**:
+```php
+// ❌ BAD - Pure duplication (all methods identical)
+interface EmployeeRepository {
+    public function updateContactInfo(Employee $e): void; // fetch + sync + flush
+    public function updatePosition(Employee $e): void;    // fetch + sync + flush
+    public function disable(Employee $e): void;           // fetch + sync + flush
+}
+
+// ✅ GOOD - Consolidate identical operations
+interface EmployeeRepository {
+    public function update(Employee $e): void; // Domain modified, just persist
+}
+
+// ✅ ALSO GOOD - Different implementations justify separate methods
+interface ArticleRepository {
+    public function revaluate(Article $a): void;  // Recalculates price + logs change
+    public function rename(Article $a): void;      // Updates name + slug + search index
+    public function publish(Article $a): void;     // Updates status + notifies subscribers
+}
+```
+
 **Rules**:
 - Interface in `BC/Entities/Repository/`
 - Methods: `get*()` MUST throw if not found
-- Prefer business-named methods (`rename`, `start`, `revaluate`) over generic (`update`)
+- Method naming strategy:
+  - Use business-named methods (`rename`, `start`, `revaluate`) when implementations DIFFER (e.g., different SQL, specific optimizations)
+  - Use generic `update()` when all update operations have IDENTICAL implementation (fetch + sync + flush)
+  - Reason: Domain ensures data consistency, Repository is pure persistence layer
 - Used by: Use cases that MODIFY state
 
 **Template**: `.claude/templates/repository.php.tpl`

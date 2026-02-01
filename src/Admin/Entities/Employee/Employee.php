@@ -144,6 +144,22 @@ final class Employee
         return $this->disabledAt;
     }
 
+    public function updatePhone(PhoneField $phone): void
+    {
+        $phoneChanged = $this->contactInformation->phone()->toNumber()
+            !== $phone->toNumber();
+
+        if (!$phoneChanged) {
+            return;
+        }
+
+        $this->contactInformation = ContactInformation::fromFields(
+            $this->contactInformation->email(),
+            $phone
+        );
+        $this->updatedAt = ClockFactory::clock()->now();
+    }
+
     public function updateContactInfo(EmailField $email, PhoneField $phone): void
     {
         // Vérifier si les informations de contact ont changé

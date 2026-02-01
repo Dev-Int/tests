@@ -18,7 +18,6 @@ use Admin\Adapters\Gateway\ORM\Entity\Employee;
 use Admin\UseCases\Employee\UpdateEmployee\UpdateEmployee;
 use Auth\Contracts\Attribute\RequireRole;
 use Shared\Entities\ResourceUuid;
-use Shared\Entities\VO\EmailField;
 use Shared\Entities\VO\NameField;
 use Shared\Entities\VO\PhoneField;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -54,7 +53,6 @@ final class UpdateEmployeeController extends AbstractController
                 firstName: $employee->firstName(),
                 lastName: $employee->lastName(),
                 hiredAt: $employee->hiredAt(),
-                email: $employee->email(),
                 phone: $employee->phone(),
                 position: $employee->position(),
                 department: $employee->department(),
@@ -76,7 +74,6 @@ final class UpdateEmployeeController extends AbstractController
                 $this->useCase->execute(
                     new UpdateEmployeeApiRequest(
                         ResourceUuid::fromString($employee->uuid()),
-                        EmailField::fromString($validatedInput->email),
                         PhoneField::fromString($validatedInput->phone),
                         NameField::fromString($validatedInput->position),
                         NameField::fromString($validatedInput->department),

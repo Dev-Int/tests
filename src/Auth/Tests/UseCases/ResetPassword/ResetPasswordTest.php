@@ -55,7 +55,7 @@ final class ResetPasswordTest extends TestCase
             userId: $userId,
             token: $token,
             isExpired: false,
-            isUsed: false
+            usedAt: null
         );
 
         // Assert
@@ -87,7 +87,10 @@ final class ResetPasswordTest extends TestCase
         $useCase->execute($request);
 
         // Assert
-        self::assertTrue($passwordResetToken->isUsed());
+        self::assertInstanceOf(
+            \DateTimeImmutable::class,
+            $passwordResetToken->usedAt()
+        );
         self::assertSame('$2y$13$newHashedPassword', $user->password()->toString());
     }
 }

@@ -80,6 +80,16 @@ class PasswordResetToken
         $this->usedAt = ClockFactory::clock()->now();
     }
 
+    public function updateFromDomain(ResetPassword $resetPassword): void
+    {
+        if (
+            $resetPassword->usedAt() instanceof \DateTimeImmutable
+            && !$this->usedAt instanceof \DateTimeImmutable
+        ) {
+            $this->usedAt = $resetPassword->usedAt();
+        }
+    }
+
     public function toDomain(): ResetPassword
     {
         return new ResetPassword(
@@ -87,7 +97,7 @@ class PasswordResetToken
             ResourceUuid::fromString($this->userUuid),
             $this->token,
             $this->isExpired(),
-            $this->isUsed(),
+            $this->usedAt,
         );
     }
 }

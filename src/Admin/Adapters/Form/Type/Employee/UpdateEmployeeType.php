@@ -16,7 +16,6 @@ namespace Admin\Adapters\Form\Type\Employee;
 use Admin\Adapters\Controller\Symfony\Controller\Employee\UpdateEmployee\UpdateEmployeeInput;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -41,12 +40,6 @@ final class UpdateEmployeeType extends AbstractType
             ])
             ->add('hiredAt', DateType::class, [
                 'label' => 'admin.employee.form.hiredAt.label',
-                'disabled' => true,
-                'required' => false,
-                'help' => 'admin.employee.update.immutableField',
-            ])
-            ->add('email', EmailType::class, [
-                'label' => 'admin.employee.form.email.label',
                 'disabled' => true,
                 'required' => false,
                 'help' => 'admin.employee.update.immutableField',

@@ -73,7 +73,7 @@ final class DisableEmployeeTest extends TestCase
         ;
 
         $this->repository->expects(self::once())
-            ->method('disable')
+            ->method('update')
             ->with($employee)
         ;
 
@@ -102,7 +102,7 @@ final class DisableEmployeeTest extends TestCase
         ;
 
         $this->repository->expects(self::never())
-            ->method('disable')
+            ->method('update')
         ;
 
         // Assert
@@ -135,7 +135,7 @@ final class DisableEmployeeTest extends TestCase
         ;
 
         $this->repository->expects(self::never())
-            ->method('disable')
+            ->method('update')
         ;
 
         // Assert
@@ -175,7 +175,7 @@ final class DisableEmployeeTest extends TestCase
         ;
 
         $this->repository->expects(self::never())
-            ->method('disable')
+            ->method('update')
         ;
 
         // Assert
@@ -215,7 +215,7 @@ final class DisableEmployeeTest extends TestCase
         ;
 
         $this->repository->expects(self::never())
-            ->method('disable')
+            ->method('update')
         ;
 
         // Assert

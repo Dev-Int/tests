@@ -26,21 +26,14 @@ final readonly class UpdateEmployee
     {
         $employee = $this->repository->getByUuid($request->uuid());
 
-        // Mettre à jour les informations de contact (email est immutable)
-        $contactInformation = $request->contactInformation();
-        $employee->updateContactInfo(
-            $employee->contactInformation()->email(), // Email immutable, on garde l'ancien
-            $contactInformation->phone(),
-        );
+        $employee->updatePhone($request->phone());
 
-        // Mettre à jour la position et le département
         $employee->updatePosition(
             $request->position(),
             $request->department(),
         );
 
-        $this->repository->updateContactInfo($employee);
-        $this->repository->updatePosition($employee);
+        $this->repository->update($employee);
 
         return new UpdateEmployeeResponse($employee);
     }

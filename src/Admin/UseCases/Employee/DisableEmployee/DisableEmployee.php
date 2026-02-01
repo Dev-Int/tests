@@ -32,7 +32,7 @@ final readonly class DisableEmployee
 
         $this->userDisabler->disableUser($employee->userUuid());
 
-        $this->repository->disable($employee);
+        $this->repository->update($employee);
 
         return new DisableEmployeeResponse($employee);
     }

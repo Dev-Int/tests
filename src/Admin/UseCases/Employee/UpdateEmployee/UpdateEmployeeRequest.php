@@ -13,15 +13,15 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Employee\UpdateEmployee;
 
-use Admin\Entities\Employee\ContactInformation;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
+use Shared\Entities\VO\PhoneField;
 
 interface UpdateEmployeeRequest
 {
     public function uuid(): ResourceUuid;
 
-    public function contactInformation(): ContactInformation;
+    public function phone(): PhoneField;
 
     public function position(): NameField;
 
