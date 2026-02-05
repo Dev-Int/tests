@@ -399,6 +399,127 @@ NO: BC1 → BC2\UseCases
 
 ---
 
+### Decision Tree: Créer User ou Employee?
+
+```mermaid
+graph TD
+    A[Besoin d'un compte d'accès] --> B{Employé ou compte technique?}
+    B -->|Employé| C[CreateEmployee UseCase Admin BC]
+    B -->|Compte technique/admin| D[CreateUser UseCase Auth BC]
+
+    C --> E[✅ Crée automatiquement User Auth BC]
+    C --> F[✅ Email de bienvenue envoyé]
+    C --> G[✅ Password reset token]
+
+    D --> H[✅ User simple sans Employee]
+    D --> I[⚠️ Pas d'email automatique]
+
+    style C fill:#e1f5ff
+    style D fill:#fff4e1
+```
+
+**Règle**: Si Employee → utiliser CreateEmployee (crée User automatiquement)
+**Exception**: Comptes techniques (admins système, bots) → CreateUser direct
+
+**Reference**: `docs/admin-employee-management.md`, `docs/adr/ADR-003-employee-user-coupling.md`
+
+---
+
+### Communication Inter-BC: Admin → Auth
+
+**Pattern**: Command Gateway
+
+```
+Admin BC (Consumer)               Auth BC (Provider)
+─────────────────────           ─────────────────────
+  UseCase                           UseCase
+     │                                  ▲
+     │ depends on                       │
+     ▼                                  │
+  Gateway (interface)                   │
+     ▲                                  │
+     │ implements                       │
+     │                                  │
+  Adapter ────────── calls ─────────────┘
+              (via Contract)
+```
+
+**Example**: UserCreatorAdapter
+
+```php
+// 1. Gateway (interface) dans Admin BC
+interface UserCreatorGateway {
+    public function createUser(CreateUserDTO $dto): CreatedUserDTO;
+}
+
+// 2. Adapter (implementation) dans Admin BC
+#[AsAlias(UserCreatorGateway::class)]
+final readonly class UserCreatorAdapter implements UserCreatorGateway {
+    public function __construct(
+        private CreateUserCommandHandler $userCreator, // Auth BC Contract
+    ) {}
+}
+
+// 3. Contract (interface) dans Auth BC
+interface CreateUserCommandHandler {
+    public function createUser(CreateUserCommand $command): CreatedUserResult;
+}
+```
+
+**Skill**: `add-bc-contract` pour ajouter nouveau Contract
+
+**Reference**: `docs/guides/bounded-contexts.md`, `docs/admin-employee-management.md#4-communication-inter-bc`
+
+---
+
+### Tester Communication Inter-BC
+
+**Unit Test**: Mock le Gateway
+
+```php
+public function testCreateEmployeeCallsUserCreatorGateway(): void
+{
+    $userCreatorGateway = $this->createMock(UserCreatorGateway::class);
+    $userCreatorGateway->expects($this->once())
+        ->method('createUser')
+        ->willReturn(new CreatedUserDTO(ResourceUuid::generate(), $email));
+
+    $useCase = new CreateEmployee(
+        repository: $repository,
+        userCreatorGateway: $userCreatorGateway, // ✅ Mock
+        // ...
+    );
+}
+```
+
+**Integration Test**: Tester transaction complète (rollback)
+
+```php
+public function testRollbackWhenPasswordResetTokenFailsRevertsAll(): void
+{
+    $passwordResetGateway = $this->createMock(PasswordResetGateway::class);
+    $passwordResetGateway->expects($this->once())
+        ->method('createResetToken')
+        ->willThrowException(new \RuntimeException('Token failed'));
+
+    try {
+        $useCase->execute($request);
+    } finally {
+        $this->entityManager->clear();
+
+        // ✅ Vérifie que Employee ET User ont été rollback
+        $this->assertSame(0, $this->employeeRepository->count([]));
+        $this->assertSame(0, $this->userRepository->count([]));
+    }
+}
+```
+
+**Example**: `src/Admin/Tests/Integration/Employee/CreateEmployeeTransactionTest.php`
+
+**Reference**: `docs/admin-employee-management.md#7-testing-strategy`
+
+---
+
 ## Common Questions
 
 **Q: Repository or Finder?**

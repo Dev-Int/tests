@@ -107,6 +107,44 @@ Complete documentation index for the project.
 
 ---
 
+### Admin BC - Employee Management
+
+**File**: [admin-employee-management.md](admin-employee-management.md)
+
+**Content**:
+- Vision : Gestion des employés avec création automatique de User (Auth BC)
+- Architecture : Employee Entity, ContactInformation VO, soft delete
+- UseCases implémentés : CreateEmployee, GetEmployees, UpdateEmployee, DisableEmployee
+- Communication inter-BC : Pattern Command Gateway (UserCreatorAdapter, UserDisablerAdapter)
+- Gateways transversaux : TransactionGateway, NotificationGateway, PasswordResetGateway
+- Workflow password reset : Email de bienvenue + token unique
+- Testing strategy : Unit (mocks), Integration (transaction rollback), Functional (HTTP)
+
+**When to read**: Working on Employee features, understanding User/Employee coupling, implementing inter-BC communication
+
+**Related ADRs**:
+- [ADR-003: Employee-User Coupling](adr/ADR-003-employee-user-coupling.md)
+- [ADR-004: Employee Soft Delete](adr/ADR-004-employee-soft-delete.md)
+- [ADR-005: Password Reset Workflow](adr/ADR-005-password-reset-workflow.md)
+
+---
+
+### Auth BC - Authentication & Authorization
+
+**File**: [auth-authentication-authorization.md](auth-authentication-authorization.md)
+
+**Content**:
+- Overview : User Entity, roles (ROLE_USER, ROLE_ADMIN), soft delete
+- Authentification : Login workflow, password hashing (Argon2id), session management
+- Autorisation : RBAC avec `#[RequireRole]` attribute, CurrentUserProvider
+- Password management : PasswordResetToken Entity, workflow reset complet
+- Inter-BC communication : Contracts (CreateUserCommandHandler, DisableUserCommandHandler)
+- Testing strategy : Unit, Functional (login form), Integration (password reset workflow)
+
+**When to read**: Working on authentication, authorization, password reset, understanding Auth BC Contracts
+
+---
+
 ## AI Skills & Workflows
 
 **Index**: [../.claude/README.md](../.claude/README.md)

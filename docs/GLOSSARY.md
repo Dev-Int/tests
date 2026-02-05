@@ -178,6 +178,209 @@ public function findByName(string $name): ?Entity;
 
 ---
 
+### Command Gateway
+
+**Definition**: Pattern de communication inter-BC utilisant une interface (Gateway) et un adapter pour appeler les Contracts d'un autre BC
+
+**Type**: Inter-BC communication pattern
+
+**Characteristics**:
+- Gateway = Interface dans BC consumer (Admin)
+- Adapter = Implémentation qui appelle Contract du BC provider (Auth)
+- Découplage: Use case dépend de Gateway (pas directement du Contract)
+
+**Structure**:
+```php
+// Admin BC: Gateway (interface)
+interface UserCreatorGateway {
+    public function createUser(CreateUserDTO $dto): CreatedUserDTO;
+}
+
+// Admin BC: Adapter (implementation)
+#[AsAlias(UserCreatorGateway::class)]
+final readonly class UserCreatorAdapter implements UserCreatorGateway {
+    public function __construct(
+        private CreateUserCommandHandler $userCreator, // Auth BC Contract
+    ) {}
+}
+```
+
+**Location**:
+- Gateway: `BC/UseCases/Gateway/`
+- Adapter: `BC/Adapters/Gateway/{TargetBC}/`
+
+**Examples**: UserCreatorGateway, UserDisablerGateway
+
+**Reference**: `docs/guides/bounded-contexts.md`, `docs/adr/ADR-003-employee-user-coupling.md`
+
+---
+
+### Employee (Admin BC)
+
+**Definition**: Entité représentant un employé avec profil professionnel et liaison vers User (Auth BC)
+
+**Type**: Entity (Aggregate Root)
+
+**Characteristics**:
+- Immutable: firstName, lastName, email, hiredAt, userUuid
+- Mutable: phone, position, department
+- Soft delete: disabledAt nullable
+- Liaison User: userUuid référence le User créé automatiquement
+
+**Lifecycle**:
+1. Création Employee → création automatique User (Auth BC)
+2. Modification Employee → aucune synchronisation User (champs distincts)
+3. Désactivation Employee → désactivation cascade User
+
+**Location**: `src/Admin/Entities/Employee/Employee.php`
+
+**Reference**: `docs/admin-employee-management.md`, `docs/adr/ADR-003-employee-user-coupling.md`
+
+---
+
+### Notification Gateway
+
+**Definition**: Abstraction pour envoi de notifications (email, SMS, push)
+
+**Type**: Gateway (Port hexagonal architecture)
+
+**Characteristics**:
+- Interface dans UseCases
+- Adapter implémente avec Symfony Mailer
+- Permet de mocker l'envoi en tests unitaires
+
+**Structure**:
+```php
+// Gateway (interface)
+interface NotificationGateway {
+    public function sendEmail(EmailPayload $payload): void;
+}
+
+// Adapter (implementation)
+#[AsAlias(NotificationGateway::class)]
+final readonly class NotificationProvider implements NotificationGateway {
+    public function __construct(
+        private MailerInterface $mailer,
+        private Environment $twig,
+    ) {}
+}
+```
+
+**Location**:
+- Gateway: `BC/UseCases/Gateway/NotificationGateway.php`
+- Adapter: `BC/Adapters/Gateway/NotificationProvider.php`
+
+**Usage**: CreateEmployee (envoi email de bienvenue)
+
+**Reference**: `docs/admin-employee-management.md#5-gateways-transversaux`
+
+---
+
+### Soft Delete
+
+**Definition**: Désactivation logique d'une entité via un champ `disabledAt` nullable au lieu d'une suppression physique
+
+**Type**: Design pattern
+
+**Characteristics**:
+- Conservation des données (audit, RGPD)
+- Réversible (réactivation possible)
+- Filtrage nécessaire: queries doivent filtrer `disabledAt IS NULL`
+
+**Pattern**:
+```php
+final class Entity {
+    private ?\DateTimeImmutable $disabledAt = null;
+
+    public function disable(): void {
+        if (!$this->isActive()) {
+            throw new EntityAlreadyDisabled($this->uuid);
+        }
+        $this->disabledAt = ClockFactory::clock()->now();
+    }
+
+    public function isActive(): bool {
+        return !$this->disabledAt instanceof \DateTimeImmutable;
+    }
+}
+```
+
+**Usage**: Employee, User
+
+**Reference**: `docs/adr/ADR-004-employee-soft-delete.md`
+
+---
+
+### Transaction Gateway
+
+**Definition**: Abstraction pour gestion des transactions DB (commit/rollback atomique)
+
+**Type**: Gateway (Port hexagonal architecture)
+
+**Characteristics**:
+- Interface dans UseCases
+- Adapter implémente avec Doctrine EntityManager
+- Rollback automatique si exception levée dans l'operation
+
+**Structure**:
+```php
+// Gateway (interface)
+interface TransactionGateway {
+    /**
+     * @template T
+     * @param callable(): T $operation
+     * @return T
+     */
+    public function wrapInTransaction(callable $operation): mixed;
+}
+
+// Adapter (implementation)
+#[AsAlias(TransactionGateway::class)]
+final readonly class DoctrineTransactionAdapter implements TransactionGateway {
+    public function wrapInTransaction(callable $operation): mixed {
+        return $this->entityManager->wrapInTransaction($operation);
+    }
+}
+```
+
+**Location**:
+- Gateway: `BC/UseCases/Gateway/TransactionGateway.php`
+- Adapter: `BC/Adapters/Gateway/DoctrineTransactionAdapter.php`
+
+**Usage**: CreateEmployee (rollback si échec User ou Employee)
+
+**Reference**: `docs/admin-employee-management.md#5-gateways-transversaux`
+
+---
+
+### User (Auth BC)
+
+**Definition**: Entité représentant un compte d'accès système avec authentification et autorisation
+
+**Type**: Entity (Aggregate Root)
+
+**Characteristics**:
+- Email: Identifiant de connexion (unique)
+- Password: Hashé avec Argon2id (HashedPassword VO)
+- Roles: Array de `Role` enum (ROLE_USER, ROLE_ADMIN)
+- Soft delete: disabledAt nullable
+- Normalisation: ROLE_USER toujours présent automatiquement
+
+**Behavior**:
+```php
+$user->disable();                   // Soft delete
+$user->isActive();                  // Vérifie disabledAt
+$user->hasRole(Role::ADMIN);        // Vérifie role spécifique
+$user->isAdmin();                   // Raccourci hasRole(ROLE_ADMIN)
+$user->changePassword($newPassword);// Change password hashé
+```
+
+**Location**: `src/Auth/Entities/User.php`
+
+**Reference**: `docs/auth-authentication-authorization.md`, `docs/adr/ADR-003-employee-user-coupling.md`
+
+---
+
 ## Inter-BC Communication
 
 ### Contract
