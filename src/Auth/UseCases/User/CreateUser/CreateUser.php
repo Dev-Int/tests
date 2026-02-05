@@ -16,15 +16,14 @@ namespace Auth\UseCases\User\CreateUser;
 use Auth\Entities\Exception\EmailAlreadyExists;
 use Auth\Entities\Repository\UserRepository;
 use Auth\Entities\User;
-use Auth\Entities\VO\HashedPassword;
+use Auth\UseCases\Gateway\PasswordHasherGateway;
 use Shared\Entities\ResourceUuid;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 final readonly class CreateUser
 {
     public function __construct(
         private UserRepository $userRepository,
-        private UserPasswordHasherInterface $passwordHasher,
+        private PasswordHasherGateway $passwordHasher,
     ) {
     }
 
@@ -36,16 +35,12 @@ final readonly class CreateUser
             throw new EmailAlreadyExists($request->email()->toString());
         }
 
-        // Create a temporary user to hash the password
-        $hashedPassword = $this->passwordHasher->hashPassword(
-            new PasswordHasherUser(),
-            $request->plainPassword()
-        );
+        $hashedPassword = $this->passwordHasher->hashPassword($request->plainPassword());
 
         $user = User::create(
             ResourceUuid::generate(),
             $email,
-            HashedPassword::fromHash($hashedPassword),
+            $hashedPassword,
             $request->roles(),
         );
 

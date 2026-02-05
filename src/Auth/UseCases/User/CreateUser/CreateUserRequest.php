@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Auth\UseCases\User\CreateUser;
 
-use Auth\Entities\Role;
+use Shared\Entities\Role;
 use Shared\Entities\VO\EmailField;
 
 interface CreateUserRequest

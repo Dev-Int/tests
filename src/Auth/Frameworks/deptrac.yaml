@@ -26,6 +26,7 @@ deptrac:
             - Auth\Entities
             - Auth\UseCases
             - Auth\Contracts
+            - Admin\Contracts
             - Shared\Entities
             - Shared\Adapters
         Auth\Contracts:

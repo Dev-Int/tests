@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Auth\UseCases\User\UpdateUser;
 
-use Auth\Entities\Role;
 use Shared\Entities\ResourceUuid;
+use Shared\Entities\Role;
 use Shared\Entities\VO\EmailField;
 
 interface UpdateUserRequest

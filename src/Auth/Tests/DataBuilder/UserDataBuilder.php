@@ -13,11 +13,11 @@ declare(strict_types=1);
 
 namespace Auth\Tests\DataBuilder;
 
-use Auth\Entities\Role;
 use Auth\Entities\User;
 use Auth\Entities\VO\HashedPassword;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\ResourceUuid;
+use Shared\Entities\Role;
 use Shared\Entities\VO\EmailField;
 
 final class UserDataBuilder

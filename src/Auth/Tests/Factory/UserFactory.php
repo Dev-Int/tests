@@ -14,9 +14,9 @@ declare(strict_types=1);
 namespace Auth\Tests\Factory;
 
 use Auth\Adapters\Gateway\ORM\Entity\User;
-use Auth\Entities\Role;
 use Auth\Tests\DataBuilder\UserDataBuilder;
 use Shared\Entities\ResourceUuid;
+use Shared\Entities\Role;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**

@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace Shared\Tests;
 
 use Auth\Adapters\Gateway\ORM\Entity\User;
-use Auth\Entities\Role;
 use Auth\Tests\Factory\UserFactory;
+use Shared\Entities\Role;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
 /**

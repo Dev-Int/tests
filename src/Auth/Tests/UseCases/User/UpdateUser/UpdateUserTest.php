@@ -15,14 +15,15 @@ namespace Auth\Tests\UseCases\User\UpdateUser;
 
 use Auth\Entities\Exception\EmailAlreadyExists;
 use Auth\Entities\Repository\UserRepository;
-use Auth\Entities\Role;
+use Auth\Entities\VO\HashedPassword;
 use Auth\Tests\DataBuilder\UserDataBuilder;
+use Auth\UseCases\Gateway\PasswordHasherGateway;
 use Auth\UseCases\User\UpdateUser\UpdateUser;
 use Auth\UseCases\User\UpdateUser\UpdateUserRequest;
 use PHPUnit\Framework\TestCase;
 use Shared\Entities\ResourceUuid;
+use Shared\Entities\Role;
 use Shared\Entities\VO\EmailField;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 /**
  * @group unitTest
@@ -36,7 +37,7 @@ final class UpdateUserTest extends TestCase
     {
         // Arrange
         $userRepository = $this->createMock(UserRepository::class);
-        $passwordHasher = $this->createMock(UserPasswordHasherInterface::class);
+        $passwordHasher = $this->createMock(PasswordHasherGateway::class);
         $useCase = new UpdateUser($userRepository, $passwordHasher);
         $request = $this->createMock(UpdateUserRequest::class);
 
@@ -76,7 +77,7 @@ final class UpdateUserTest extends TestCase
     {
         // Arrange
         $userRepository = $this->createMock(UserRepository::class);
-        $passwordHasher = $this->createMock(UserPasswordHasherInterface::class);
+        $passwordHasher = $this->createMock(PasswordHasherGateway::class);
         $useCase = new UpdateUser($userRepository, $passwordHasher);
         $request = $this->createMock(UpdateUserRequest::class);
 
@@ -101,7 +102,8 @@ final class UpdateUserTest extends TestCase
 
         $passwordHasher->expects(self::once())
             ->method('hashPassword')
-            ->willReturn('$2y$13$newhash')
+            ->with('NewPassword123')
+            ->willReturn(HashedPassword::fromHash('$2y$13$newhash'))
         ;
 
         // Act
@@ -116,7 +118,7 @@ final class UpdateUserTest extends TestCase
     {
         // Arrange
         $userRepository = $this->createMock(UserRepository::class);
-        $passwordHasher = $this->createMock(UserPasswordHasherInterface::class);
+        $passwordHasher = $this->createMock(PasswordHasherGateway::class);
         $useCase = new UpdateUser($userRepository, $passwordHasher);
         $request = $this->createMock(UpdateUserRequest::class);
 
@@ -152,7 +154,7 @@ final class UpdateUserTest extends TestCase
     {
         // Arrange
         $userRepository = $this->createMock(UserRepository::class);
-        $passwordHasher = $this->createMock(UserPasswordHasherInterface::class);
+        $passwordHasher = $this->createMock(PasswordHasherGateway::class);
         $useCase = new UpdateUser($userRepository, $passwordHasher);
         $request = $this->createMock(UpdateUserRequest::class);
 
@@ -187,7 +189,7 @@ final class UpdateUserTest extends TestCase
     {
         // Arrange
         $userRepository = $this->createMock(UserRepository::class);
-        $passwordHasher = $this->createMock(UserPasswordHasherInterface::class);
+        $passwordHasher = $this->createMock(PasswordHasherGateway::class);
         $useCase = new UpdateUser($userRepository, $passwordHasher);
         $request = $this->createMock(UpdateUserRequest::class);
 

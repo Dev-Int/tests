@@ -13,12 +13,24 @@ declare(strict_types=1);
 
 namespace Auth\Contracts\Exception;
 
-final class EmailAlreadyExists extends \DomainException
+use Shared\Entities\VO\EmailField;
+
+final class EmailAlreadyExists extends \DomainException implements \JsonSerializable
 {
     public const string MESSAGE = 'Un utilisateur avec cet email existe déjà.';
 
-    public function __construct(string $email)
+    public function __construct(private readonly ?EmailField $email)
     {
-        parent::__construct(\sprintf('%s Email: %s', self::MESSAGE, $email));
+        parent::__construct(self::MESSAGE);
+    }
+
+    /**
+     * @return iterable<string, string|null>
+     */
+    public function jsonSerialize(): iterable
+    {
+        return [
+            'email' => $this->email?->toString(),
+        ];
     }
 }
