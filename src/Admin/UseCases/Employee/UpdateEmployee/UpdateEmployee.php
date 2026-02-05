@@ -14,27 +14,38 @@ declare(strict_types=1);
 namespace Admin\UseCases\Employee\UpdateEmployee;
 
 use Admin\Entities\Repository\EmployeeRepository;
+use Admin\UseCases\Gateway\TransactionGateway;
 
 final readonly class UpdateEmployee
 {
     public function __construct(
         private EmployeeRepository $repository,
+        private TransactionGateway $transactionGateway,
     ) {
     }
 
     public function execute(UpdateEmployeeRequest $request): UpdateEmployeeResponse
     {
-        $employee = $this->repository->getByUuid($request->uuid());
-
-        $employee->updatePhone($request->phone());
-
-        $employee->updatePosition(
-            $request->position(),
-            $request->department(),
+        return $this->transactionGateway->wrapInTransaction(
+            operation: $this->updateEmployee($request),
         );
+    }
 
-        $this->repository->update($employee);
+    private function updateEmployee(UpdateEmployeeRequest $request): \Closure
+    {
+        return function () use ($request): UpdateEmployeeResponse {
+            $employee = $this->repository->getByUuid($request->uuid());
 
-        return new UpdateEmployeeResponse($employee);
+            $employee->updatePhone($request->phone());
+
+            $employee->updatePosition(
+                $request->position(),
+                $request->department(),
+            );
+
+            $this->repository->update($employee);
+
+            return new UpdateEmployeeResponse($employee);
+        };
     }
 }

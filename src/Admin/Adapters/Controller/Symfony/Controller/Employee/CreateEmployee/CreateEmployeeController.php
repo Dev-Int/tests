@@ -15,9 +15,10 @@ namespace Admin\Adapters\Controller\Symfony\Controller\Employee\CreateEmployee;
 
 use Admin\Adapters\Form\Type\Employee\EmployeeType;
 use Admin\Entities\Exception\Employee\EmployeeAlreadyExists;
+use Admin\Entities\Exception\Employee\EmployeeEmailAlreadyExists;
 use Admin\UseCases\Employee\CreateEmployee\CreateEmployee;
-use Admin\UseCases\Employee\Exception\UserEmailAlreadyExists;
 use Auth\Contracts\Attribute\RequireRole;
+use Psr\Log\LoggerInterface;
 use Shared\Entities\VO\EmailField;
 use Shared\Entities\VO\NameField;
 use Shared\Entities\VO\PhoneField;
@@ -37,6 +38,7 @@ final class CreateEmployeeController extends AbstractController
     public function __construct(
         private readonly CreateEmployee $useCase,
         private readonly TranslatorInterface $translator,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -60,7 +62,7 @@ final class CreateEmployeeController extends AbstractController
             }
 
             try {
-                $this->useCase->execute(
+                $response = $this->useCase->execute(
                     new CreateEmployeeApiRequest(
                         NameField::fromString($employeeInput->firstName),
                         NameField::fromString($employeeInput->lastName),
@@ -71,11 +73,24 @@ final class CreateEmployeeController extends AbstractController
                         $employeeInput->hiredAt,
                     )
                 );
+
+                $this->logger->info('Employee created successfully', [
+                    'employee_uuid' => $response->employee->uuid()->toString(),
+                    'user_uuid' => $response->employee->userUuid()->toString(),
+                    'email' => $response->employee->contactInformation()->email()->toString(),
+                    'first_name' => $response->employee->firstName()->toString(),
+                    'last_name' => $response->employee->lastName()->toString(),
+                    'position' => $response->employee->position()->toString(),
+                    'department' => $response->employee->department()->toString(),
+                    'created_by_user_id' => $this->getUser()?->getUserIdentifier(),
+                    'ip_address' => $request->getClientIp(),
+                    'user_agent' => $request->headers->get('User-Agent'),
+                ]);
             } catch (EmployeeAlreadyExists) {
                 $this->addFlash('error', $this->translator->trans('admin.employee.create.error.employeeExists'));
 
                 return $this->redirectToRoute('admin_employees_index');
-            } catch (UserEmailAlreadyExists) {
+            } catch (EmployeeEmailAlreadyExists) {
                 $this->addFlash('error', $this->translator->trans('admin.employee.create.error.userEmailExists'));
 
                 return $this->redirectToRoute('admin_employees_index');

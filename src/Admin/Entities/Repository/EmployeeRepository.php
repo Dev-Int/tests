@@ -37,6 +37,18 @@ interface EmployeeRepository
      */
     public function getAllEmployees(): EmployeeCollection;
 
+    /**
+     * @throws NoEmployeeRegistered
+     */
+    public function getActiveEmployees(): EmployeeCollection;
+
+    /**
+     * @throws NoEmployeeRegistered
+     */
+    public function getActiveEmployeesPaginated(int $page, int $itemsPerPage): EmployeeCollection;
+
+    public function getActiveEmployeesCount(): int;
+
     public function emailExists(EmailField $email): bool;
 
     public function hasEmployees(): bool;

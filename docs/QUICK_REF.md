@@ -421,7 +421,7 @@ graph TD
 **Règle**: Si Employee → utiliser CreateEmployee (crée User automatiquement)
 **Exception**: Comptes techniques (admins système, bots) → CreateUser direct
 
-**Reference**: `docs/admin-employee-management.md`, `docs/adr/ADR-003-employee-user-coupling.md`
+**Reference**: `docs/admin-employee-management.md`, `docs/adr/ADR-008-employee-user-coupling.md`
 
 ---
 

@@ -16,6 +16,7 @@ namespace Admin\Adapters\Gateway;
 use Admin\UseCases\Gateway\EmailPayload;
 use Admin\UseCases\Gateway\EmailType;
 use Admin\UseCases\Gateway\NotificationGateway;
+use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\Mailer\MailerInterface;
@@ -28,22 +29,39 @@ final readonly class NotificationProvider implements NotificationGateway
         private MailerInterface $mailer,
         private string $fromEmail,
         private string $fromName,
+        private LoggerInterface $logger,
     ) {
     }
 
     public function sendEmail(EmailPayload $payload): void
     {
         $templateName = $this->getTemplateForType($payload->type);
+        $context = [
+            'type' => $payload->type->name,
+            'to' => $payload->to->toString(),
+            'subject' => $payload->subject,
+        ];
+        $this->logger->info('Envoi email', $context);
 
-        $message = (new TemplatedEmail())
-            ->from(new Address($this->fromEmail, $this->fromName))
-            ->to(new Address($payload->to->toString()))
-            ->subject($payload->subject)
-            ->htmlTemplate($templateName)
-            ->context($payload->context)
-        ;
+        try {
+            $message = (new TemplatedEmail())
+                ->from(new Address($this->fromEmail, $this->fromName))
+                ->to(new Address($payload->to->toString()))
+                ->subject($payload->subject)
+                ->htmlTemplate($templateName)
+                ->context($payload->context)
+            ;
 
-        $this->mailer->send($message);
+            $this->mailer->send($message);
+
+            $this->logger->info('Email envoyé avec succès', $context);
+        } catch (\Throwable $exception) {
+            $this->logger->error('Échec envoi email', $context + [
+                'exception' => $exception,
+            ]);
+
+            throw $exception;
+        }
     }
 
     private function getTemplateForType(EmailType $type): string

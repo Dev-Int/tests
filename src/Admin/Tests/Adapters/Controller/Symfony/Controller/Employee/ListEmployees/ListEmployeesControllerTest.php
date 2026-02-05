@@ -85,6 +85,99 @@ final class ListEmployeesControllerTest extends BaseFunctionalTestCase
         self::assertSelectorTextContains('body', 'Aucun employé enregistré');
     }
 
+    public function testListEmployeesShowsOnlyActiveEmployees(): void
+    {
+        // Arrange
+        EmployeeFactory::createOne([
+            'firstName' => 'Active',
+            'lastName' => 'One',
+            'email' => 'active.one@example.com',
+            'position' => 'Developer',
+            'department' => 'IT',
+        ]);
+        EmployeeFactory::createOne([
+            'firstName' => 'Active',
+            'lastName' => 'Two',
+            'email' => 'active.two@example.com',
+            'position' => 'Manager',
+            'department' => 'HR',
+        ]);
+        EmployeeFactory::createOne([
+            'firstName' => 'Disabled',
+            'lastName' => 'Employee',
+            'email' => 'disabled@example.com',
+            'position' => 'Former',
+            'department' => 'IT',
+            'disabledAt' => new \DateTimeImmutable('2024-01-01'),
+        ]);
+
+        // Act
+        $this->client->request(Request::METHOD_GET, self::LIST_EMPLOYEES_URI);
+
+        // Assert
+        self::assertResponseIsSuccessful();
+
+        self::assertSelectorTextContains('body', 'Active');
+        self::assertSelectorTextContains('body', 'One');
+        self::assertSelectorTextContains('body', 'active.one@example.com');
+        self::assertSelectorTextContains('body', 'Two');
+        self::assertSelectorTextContains('body', 'active.two@example.com');
+
+        self::assertSelectorTextNotContains('body', 'Disabled');
+        self::assertSelectorTextNotContains('body', 'disabled@example.com');
+    }
+
+    public function testListEmployeesPaginationWorksCorrectly(): void
+    {
+        // Arrange - Créer 25 employés actifs
+        for ($i = 1; $i <= 25; ++$i) {
+            EmployeeFactory::createOne([
+                'firstName' => "Employee{$i}",
+                'lastName' => 'Test',
+                'email' => "employee{$i}@example.com",
+                'position' => 'Developer',
+                'department' => 'IT',
+            ]);
+        }
+
+        // Act
+        $this->client->request(Request::METHOD_GET, self::LIST_EMPLOYEES_URI);
+
+        // Assert
+        self::assertResponseIsSuccessful();
+
+        $crawler = $this->client->getCrawler();
+        $employeeFrames = $crawler->filter('ul.table turbo-frame[id^="employee_"]');
+        self::assertCount(20, $employeeFrames, 'La page 1 doit afficher exactement 20 employés');
+
+        // Vérifier que le composant de pagination est présent
+        self::assertSelectorExists('.pagination', 'Le composant de pagination doit être présent');
+    }
+
+    public function testListEmployeesPageParameterWorks(): void
+    {
+        // Arrange
+        for ($i = 1; $i <= 25; ++$i) {
+            EmployeeFactory::createOne([
+                'firstName' => "Employee{$i}",
+                'lastName' => 'Test',
+                'email' => "employee{$i}@example.com",
+                'position' => 'Developer',
+                'department' => 'IT',
+            ]);
+        }
+
+        // Act
+        $this->client->request(Request::METHOD_GET, self::LIST_EMPLOYEES_URI . '?page=2');
+
+        // Assert
+        self::assertResponseIsSuccessful();
+
+        $crawler = $this->client->getCrawler();
+        $employeeFrames = $crawler->filter('ul.table turbo-frame[id^="employee_"]');
+        self::assertCount(5, $employeeFrames, 'La page 2 doit afficher exactement 5 employés');
+    }
+
     protected function getProtectedUri(): string
     {
         return self::LIST_EMPLOYEES_URI;

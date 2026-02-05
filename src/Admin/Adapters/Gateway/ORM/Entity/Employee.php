@@ -24,7 +24,9 @@ use Shared\Entities\VO\PhoneField;
 
 #[ORM\Entity(repositoryClass: DoctrineEmployeeRepository::class)]
 #[ORM\Table(name: 'employees')]
-#[ORM\Index(name: 'idx_employee_disabled_at', columns: ['disabled_at'])]
+// Note: Parentheses required to match PostgreSQL's pg_get_expr() output
+// See: https://github.com/doctrine/dbal/issues/3780
+#[ORM\Index(name: 'idx_employee_active', columns: ['uuid'], options: ['where' => '(disabled_at IS NULL)'])]
 #[ORM\UniqueConstraint(name: 'uniq_employee_email', columns: ['email'])]
 class Employee
 {

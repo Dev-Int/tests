@@ -27,8 +27,9 @@ class PasswordResetToken
         #[ORM\Id]
         #[ORM\Column(type: 'guid')]
         private readonly string $uuid,
-        #[ORM\Column(type: 'guid')]
-        private readonly string $userUuid,
+        #[ORM\ManyToOne(targetEntity: User::class)]
+        #[ORM\JoinColumn(name: 'user_uuid', referencedColumnName: 'uuid', nullable: false)]
+        private readonly User $user,
         #[ORM\Column(type: 'string', length: 64, unique: true)]
         private readonly string $token,
         #[ORM\Column(type: 'datetimetz_immutable')]
@@ -45,9 +46,9 @@ class PasswordResetToken
         return $this->uuid;
     }
 
-    public function userUuid(): string
+    public function user(): User
     {
-        return $this->userUuid;
+        return $this->user;
     }
 
     public function token(): string
@@ -94,7 +95,7 @@ class PasswordResetToken
     {
         return new ResetPassword(
             ResourceUuid::fromString($this->uuid),
-            ResourceUuid::fromString($this->userUuid),
+            $this->user->toDomain(),
             $this->token,
             $this->isExpired(),
             $this->usedAt,

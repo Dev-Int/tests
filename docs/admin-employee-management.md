@@ -1260,7 +1260,7 @@ docker compose exec php make reload           # Reset DB + fixtures
 
 ### Documentation référencée
 
-- **ADR-003** : Employee-User Coupling (`docs/adr/ADR-003-employee-user-coupling.md`)
+- **ADR-008** : Employee-User Coupling (`docs/adr/ADR-008-employee-user-coupling.md`)
 - **ADR-004** : Employee Soft Delete (`docs/adr/ADR-004-employee-soft-delete.md`)
 - **ADR-005** : Password Reset Workflow (`docs/adr/ADR-005-password-reset-workflow.md`)
 - **Guide Inter-BC** : `docs/guides/bounded-contexts.md` (300+ lignes)

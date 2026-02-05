@@ -20,11 +20,16 @@ final class ResetPassword
 {
     public function __construct(
         public readonly ResourceUuid $id,
-        public readonly ResourceUuid $userId,
+        private readonly User $user,
         public readonly string $token,
         public readonly bool $isExpired,
         private ?\DateTimeImmutable $usedAt,
     ) {
+    }
+
+    public function user(): User
+    {
+        return $this->user;
     }
 
     public function usedAt(): ?\DateTimeImmutable
@@ -35,6 +40,13 @@ final class ResetPassword
     public function isUsed(): bool
     {
         return $this->usedAt instanceof \DateTimeImmutable;
+    }
+
+    public function canBeUsed(): bool
+    {
+        return !$this->isExpired
+            && !$this->isUsed()
+            && $this->user->isActive();
     }
 
     public function used(): void

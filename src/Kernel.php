@@ -24,9 +24,9 @@ class Kernel extends BaseKernel
         }
 
         // Dynamic services configuration
-        $container->import($this->getProjectDir() . '/src/*/Frameworks/config/services.{yaml,php}');
-        $container->import($this->getProjectDir() . '/src/*/Frameworks/config/{services}/*.yaml');
-        $container->import($this->getProjectDir() . '/src/*/Frameworks/config/packages/*.yaml');
+        $container->import($this->getProjectDir() . '/src/*/Frameworks/config/services.{php,yaml}');
+        $container->import($this->getProjectDir() . '/src/*/Frameworks/config/{services}/*.{php,yaml}');
+        $container->import($this->getProjectDir() . '/src/*/Frameworks/config/packages/*.{php,yaml}');
     }
 
     public function configureRoutes(RoutingConfigurator $routes): void

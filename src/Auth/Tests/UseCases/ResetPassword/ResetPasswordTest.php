@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Auth\Tests\UseCases\ResetPassword;
 
+use Auth\Entities\Exception\InvalidPasswordResetToken;
 use Auth\Entities\Repository\PasswordResetTokenRepository;
 use Auth\Entities\Repository\UserRepository;
 use Auth\Entities\ResetPassword as PasswordResetToken;
@@ -40,19 +41,17 @@ final class ResetPasswordTest extends TestCase
         $useCase = new ResetPassword($userRepository, $resetTokenRepository, $passwordHasher);
         $request = $this->createMock(ResetPasswordRequest::class);
 
-        $userId = ResourceUuid::fromString('550e8400-e29b-41d4-a716-446655440000');
         $tokenId = ResourceUuid::fromString('660e8400-e29b-41d4-a716-446655440001');
         $token = 'reset-token-abc123';
 
         $user = UserDataBuilder::aUser()
-            ->withUuid($userId)
             ->withEmail('user@example.com')
             ->build()
         ;
 
         $passwordResetToken = new PasswordResetToken(
             id: $tokenId,
-            userId: $userId,
+            user: $user,
             token: $token,
             isExpired: false,
             usedAt: null
@@ -62,11 +61,6 @@ final class ResetPasswordTest extends TestCase
         $request->expects(self::once())->method('token')->willReturn($passwordResetToken);
         $request->expects(self::once())->method('plainPassword')->willReturn('NewSecurePassword123!');
 
-        $userRepository->expects(self::once())
-            ->method('getByUuid')
-            ->with($userId)
-            ->willReturn($user)
-        ;
         $userRepository->expects(self::once())
             ->method('update')
             ->with($user)
@@ -92,5 +86,41 @@ final class ResetPasswordTest extends TestCase
             $passwordResetToken->usedAt()
         );
         self::assertSame('$2y$13$newHashedPassword', $user->password()->toString());
+    }
+
+    public function testCannotResetPasswordWhenUserIsDisabled(): void
+    {
+        // Arrange
+        $userRepository = $this->createMock(UserRepository::class);
+        $resetTokenRepository = $this->createMock(PasswordResetTokenRepository::class);
+        $passwordHasher = $this->createMock(PasswordHasherGateway::class);
+        $useCase = new ResetPassword($userRepository, $resetTokenRepository, $passwordHasher);
+        $request = $this->createMock(ResetPasswordRequest::class);
+
+        $user = UserDataBuilder::aUser()
+            ->withEmail('disabled@example.com')
+            ->build()
+        ;
+        $user->disable();
+
+        $passwordResetToken = new PasswordResetToken(
+            id: ResourceUuid::generate(),
+            user: $user,
+            token: 'valid-token',
+            isExpired: false,
+            usedAt: null
+        );
+
+        // Assert
+        $request->expects(self::once())->method('token')->willReturn($passwordResetToken);
+        $request->expects(self::never())->method('plainPassword');
+
+        $userRepository->expects(self::never())->method('update');
+        $passwordHasher->expects(self::never())->method('hashPassword');
+        $resetTokenRepository->expects(self::never())->method('save');
+        $this->expectException(InvalidPasswordResetToken::class);
+
+        // Act
+        $useCase->execute($request);
     }
 }

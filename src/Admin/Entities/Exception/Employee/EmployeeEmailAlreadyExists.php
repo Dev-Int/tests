@@ -11,15 +11,15 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\UseCases\Employee\Exception;
+namespace Admin\Entities\Exception\Employee;
 
-use Shared\Entities\ResourceUuid;
+use Shared\Entities\VO\EmailField;
 
-final class UserAlreadyDisabled extends \DomainException implements \JsonSerializable
+final class EmployeeEmailAlreadyExists extends \DomainException implements \JsonSerializable
 {
-    public const string MESSAGE = 'User is already disabled.';
+    public const string MESSAGE = 'User email already exists.';
 
-    public function __construct(private readonly ResourceUuid $userUuid)
+    public function __construct(private readonly EmailField $email)
     {
         parent::__construct(self::MESSAGE);
     }
@@ -30,7 +30,7 @@ final class UserAlreadyDisabled extends \DomainException implements \JsonSeriali
     public function jsonSerialize(): iterable
     {
         return [
-            'userUuid' => $this->userUuid->toString(),
+            'email' => $this->email->toString(),
         ];
     }
 }

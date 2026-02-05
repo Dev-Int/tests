@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Gateway\Auth;
 
+use Admin\Entities\Exception\Employee\EmployeeEmailAlreadyExists;
 use Admin\UseCases\DTO\CreatedUserDTO;
 use Admin\UseCases\DTO\CreateUserDTO;
-use Admin\UseCases\Employee\Exception\UserEmailAlreadyExists;
 use Admin\UseCases\Gateway\UserCreatorGateway;
 use Auth\Contracts\Exception\EmailAlreadyExists;
 use Auth\Contracts\Services\CommandHandler\CreateUser\CreateUserCommand;
@@ -32,9 +32,6 @@ final readonly class UserCreatorAdapter implements UserCreatorGateway
     ) {
     }
 
-    /**
-     * @throws UserEmailAlreadyExists
-     */
     public function createUser(CreateUserDTO $dto): CreatedUserDTO
     {
         try {
@@ -50,8 +47,8 @@ final readonly class UserCreatorAdapter implements UserCreatorGateway
                 uuid: ResourceUuid::fromString($result->uuid),
                 email: EmailField::fromString($result->email),
             );
-        } catch (EmailAlreadyExists $exception) {
-            throw new UserEmailAlreadyExists($dto->email);
+        } catch (EmailAlreadyExists) {
+            throw new EmployeeEmailAlreadyExists($dto->email);
         }
     }
 }

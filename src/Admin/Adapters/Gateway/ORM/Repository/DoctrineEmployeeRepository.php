@@ -79,6 +79,68 @@ final class DoctrineEmployeeRepository extends ServiceEntityRepository implement
         return $collection;
     }
 
+    public function getActiveEmployees(): EmployeeCollection
+    {
+        $alias = self::ALIAS;
+
+        /** @var array<Employee> $employees */
+        $employees = $this->createQueryBuilder($alias)
+            ->where("{$alias}.disabledAt IS NULL")
+            ->getQuery()
+            ->getResult()
+        ;
+
+        if ($employees === []) {
+            throw new NoEmployeeRegistered();
+        }
+
+        $collection = new EmployeeCollection(\count($employees));
+        foreach ($employees as $employee) {
+            $collection->add($employee->toDomain());
+        }
+
+        return $collection;
+    }
+
+    public function getActiveEmployeesPaginated(int $page, int $itemsPerPage): EmployeeCollection
+    {
+        $alias = self::ALIAS;
+        $offset = ($page - 1) * $itemsPerPage;
+
+        /** @var array<Employee> $employees */
+        $employees = $this->createQueryBuilder($alias)
+            ->where("{$alias}.disabledAt IS NULL")
+            ->setFirstResult($offset)
+            ->setMaxResults($itemsPerPage)
+            ->orderBy("{$alias}.createdAt", 'DESC')
+            ->getQuery()
+            ->getResult()
+        ;
+
+        if ($employees === []) {
+            throw new NoEmployeeRegistered();
+        }
+
+        $collection = new EmployeeCollection(\count($employees));
+        foreach ($employees as $employee) {
+            $collection->add($employee->toDomain());
+        }
+
+        return $collection;
+    }
+
+    public function getActiveEmployeesCount(): int
+    {
+        $alias = self::ALIAS;
+
+        return (int) $this->createQueryBuilder($alias)
+            ->select("COUNT({$alias}.uuid)")
+            ->where("{$alias}.disabledAt IS NULL")
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+    }
+
     /**
      * @throws NonUniqueResultException
      */

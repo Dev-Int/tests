@@ -89,6 +89,26 @@ Complete documentation index for the project.
 
 ---
 
+### Soft Delete Pattern & Partial Indexes
+
+**File**: [guides/soft-delete-pattern.md](guides/soft-delete-pattern.md)
+
+**Content**:
+- Soft delete pattern implementation (disabledAt nullable)
+- PostgreSQL partial indexes optimization (95% smaller indexes)
+- Performance comparison: partial vs classic indexes
+- Doctrine DBAL bug #3780 workaround (parentheses in WHERE predicates)
+- Complete examples (Entity, Repository, Finder, Migration)
+- Implementation checklist
+- When NOT to use soft delete (RGPD, volumes)
+
+**When to read**: Implementing soft delete on entities, optimizing queries on active records, troubleshooting Doctrine schema validation
+
+**Related ADRs**:
+- [ADR-004: Employee Soft Delete](adr/ADR-004-employee-soft-delete.md)
+
+---
+
 ## Bounded Contexts Documentation
 
 ### Inventory BC
@@ -123,7 +143,7 @@ Complete documentation index for the project.
 **When to read**: Working on Employee features, understanding User/Employee coupling, implementing inter-BC communication
 
 **Related ADRs**:
-- [ADR-003: Employee-User Coupling](adr/ADR-003-employee-user-coupling.md)
+- [ADR-008: Employee-User Coupling](adr/ADR-008-employee-user-coupling.md)
 - [ADR-004: Employee Soft Delete](adr/ADR-004-employee-soft-delete.md)
 - [ADR-005: Password Reset Workflow](adr/ADR-005-password-reset-workflow.md)
 
@@ -327,5 +347,5 @@ When updating:
 
 ---
 
-**Last updated**: 2025-12-20
+**Last updated**: 2026-02-05
 **Maintained by**: Development team

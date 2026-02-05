@@ -17,6 +17,7 @@ use Admin\Adapters\Form\Type\Employee\UpdateEmployeeType;
 use Admin\Adapters\Gateway\ORM\Entity\Employee;
 use Admin\UseCases\Employee\UpdateEmployee\UpdateEmployee;
 use Auth\Contracts\Attribute\RequireRole;
+use Psr\Log\LoggerInterface;
 use Shared\Entities\ResourceUuid;
 use Shared\Entities\VO\NameField;
 use Shared\Entities\VO\PhoneField;
@@ -36,6 +37,7 @@ final class UpdateEmployeeController extends AbstractController
     public function __construct(
         private readonly UpdateEmployee $useCase,
         private readonly TranslatorInterface $translator,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -71,7 +73,7 @@ final class UpdateEmployeeController extends AbstractController
             $validatedInput = $form->getData();
 
             try {
-                $this->useCase->execute(
+                $response = $this->useCase->execute(
                     new UpdateEmployeeApiRequest(
                         ResourceUuid::fromString($employee->uuid()),
                         PhoneField::fromString($validatedInput->phone),
@@ -79,6 +81,16 @@ final class UpdateEmployeeController extends AbstractController
                         NameField::fromString($validatedInput->department),
                     )
                 );
+
+                $this->logger->info('Employee updated successfully', [
+                    'employee_uuid' => $response->employee()->uuid()->toString(),
+                    'phone' => $response->employee()->contactInformation()->phone()->toNumber(),
+                    'position' => $response->employee()->position()->toString(),
+                    'department' => $response->employee()->department()->toString(),
+                    'updated_by_user_id' => $this->getUser()?->getUserIdentifier(),
+                    'ip_address' => $request->getClientIp(),
+                    'user_agent' => $request->headers->get('User-Agent'),
+                ]);
 
                 $this->addFlash('success', $this->translator->trans('admin.employee.update.success'));
 

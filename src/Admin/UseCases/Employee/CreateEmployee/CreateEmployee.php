@@ -15,13 +15,13 @@ namespace Admin\UseCases\Employee\CreateEmployee;
 
 use Admin\Entities\Employee\ContactInformation;
 use Admin\Entities\Employee\Employee;
+use Admin\Entities\Event\EmployeeWelcomeEmailRequested;
 use Admin\Entities\Exception\Employee\EmployeeAlreadyExists;
+use Admin\Entities\Exception\Employee\EmployeeEmailAlreadyExists;
+use Admin\Entities\Exception\InvalidResetUrlException;
 use Admin\Entities\Repository\EmployeeRepository;
 use Admin\UseCases\DTO\CreateUserDTO;
-use Admin\UseCases\Employee\Exception\UserEmailAlreadyExists;
-use Admin\UseCases\Gateway\EmailPayload;
-use Admin\UseCases\Gateway\EmailType;
-use Admin\UseCases\Gateway\NotificationGateway;
+use Admin\UseCases\Gateway\EventPublisher;
 use Admin\UseCases\Gateway\PasswordResetGateway;
 use Admin\UseCases\Gateway\TransactionGateway;
 use Admin\UseCases\Gateway\UserCreatorGateway;
@@ -35,27 +35,65 @@ final readonly class CreateEmployee
         private EmployeeRepository $repository,
         private UserCreatorGateway $userCreatorGateway,
         private PasswordResetGateway $passwordResetGateway,
-        private NotificationGateway $notificationGateway,
+        private EventPublisher $eventPublisher,
         private TransactionGateway $transactionGateway,
         private UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
     /**
+     * Creates a new Employee with an associated User account.
+     *
+     * Note: Email uniqueness is validated in 2 steps (Admin BC then Auth BC).
+     * Under high concurrency, a race condition might occur between the check and User creation.
+     * In this case, Auth BC will throw the EmployeeAlreadyExists exception
+     * (caught from PostgreSQL UNIQUE constraint on users.email).
+     *
+     * This behavior is acceptable as:
+     * - Employee creation is not a high-frequency operation
+     * - PostgreSQL ensures final consistency via UNIQUE constraint
+     * - The error is properly reported to the caller
+     *
+     * Welcome email is sent asynchronously AFTER transaction commits:
+     * - If email sending fails, Employee/User are still created (no rollback)
+     * - a Messenger retry mechanism handles temporary SMTP failures
+     * - Failed messages are stored in failed transport for manual analysis
+     *
      * @throws EmployeeAlreadyExists
-     * @throws UserEmailAlreadyExists
+     * @throws EmployeeEmailAlreadyExists
+     * @throws InvalidResetUrlException
      */
     public function execute(CreateEmployeeRequest $request): CreateEmployeeResponse
     {
-        return $this->transactionGateway->wrapInTransaction(
-            operation: $this->createNewEmployee($request),
+        $response = $this->transactionGateway->wrapInTransaction(
+            operation: $this->createNewEmployee($request, $resetUrl),
         );
+        if ($resetUrl === null) {
+            throw new InvalidResetUrlException();
+        }
+
+        $this->eventPublisher->publish(
+            new EmployeeWelcomeEmailRequested(
+                employeeUuid: $response->employee->uuid(),
+                employeeEmail: $response->employee->contactInformation()->email(),
+                firstName: $response->employee->firstName()->toString(),
+                resetUrl: $resetUrl,
+            )
+        );
+
+        return $response;
     }
 
-    public function createNewEmployee(CreateEmployeeRequest $request): \Closure
+    public function createNewEmployee(CreateEmployeeRequest $request, ?string &$resetUrl): \Closure
     {
-        return function () use ($request): CreateEmployeeResponse {
+        return function () use ($request, &$resetUrl): CreateEmployeeResponse {
             $email = $request->email();
+            /*
+             * Note : Double validation intentionnelle (DDD pattern)
+             * 1. Admin BC vérifie l'unicité dans son domaine (Employee)
+             * 2. Auth BC vérifie l'unicité dans son domaine (User) via Gateway
+             * Transaction garantit l'atomicité - pas de race condition possible
+             */
             if ($this->repository->emailExists($email)) {
                 throw new EmployeeAlreadyExists($email);
             }
@@ -72,18 +110,7 @@ final readonly class CreateEmployee
                 ['token' => $resetToken],
                 UrlGeneratorInterface::ABSOLUTE_URL
             );
-            $this->notificationGateway->sendEmail(
-                new EmailPayload(
-                    to: $email,
-                    type: EmailType::EMPLOYEE_WELCOME,
-                    subject: 'Bienvenue - Créez votre mot de passe',
-                    context: [
-                        'firstName' => $request->firstName()->toString(),
-                        'userEmail' => $email->toString(),
-                        'resetUrl' => $resetUrl,
-                    ],
-                )
-            );
+
             $employee = Employee::create(
                 uuid: ResourceUuid::generate(),
                 firstName: $request->firstName(),

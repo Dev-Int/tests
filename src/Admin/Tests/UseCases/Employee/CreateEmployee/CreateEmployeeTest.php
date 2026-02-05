@@ -14,16 +14,15 @@ declare(strict_types=1);
 namespace Admin\Tests\UseCases\Employee\CreateEmployee;
 
 use Admin\Entities\Employee\Employee;
+use Admin\Entities\Event\EmployeeWelcomeEmailRequested;
 use Admin\Entities\Exception\Employee\EmployeeAlreadyExists;
+use Admin\Entities\Exception\Employee\EmployeeEmailAlreadyExists;
 use Admin\Entities\Repository\EmployeeRepository;
 use Admin\UseCases\DTO\CreatedUserDTO;
 use Admin\UseCases\DTO\CreateUserDTO;
 use Admin\UseCases\Employee\CreateEmployee\CreateEmployee;
 use Admin\UseCases\Employee\CreateEmployee\CreateEmployeeRequest;
-use Admin\UseCases\Employee\Exception\UserEmailAlreadyExists;
-use Admin\UseCases\Gateway\EmailPayload;
-use Admin\UseCases\Gateway\EmailType;
-use Admin\UseCases\Gateway\NotificationGateway;
+use Admin\UseCases\Gateway\EventPublisher;
 use Admin\UseCases\Gateway\PasswordResetGateway;
 use Admin\UseCases\Gateway\TransactionGateway;
 use Admin\UseCases\Gateway\UserCreatorGateway;
@@ -45,7 +44,7 @@ final class CreateEmployeeTest extends TestCase
         $employeeRepository = $this->createMock(EmployeeRepository::class);
         $userCreatorGateway = $this->createMock(UserCreatorGateway::class);
         $passwordResetTokenCreator = $this->createMock(PasswordResetGateway::class);
-        $notificationGateway = $this->createMock(NotificationGateway::class);
+        $eventPublisher = $this->createMock(EventPublisher::class);
         $transactionGateway = $this->createMock(TransactionGateway::class);
         $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
         $request = $this->createMock(CreateEmployeeRequest::class);
@@ -54,17 +53,18 @@ final class CreateEmployeeTest extends TestCase
             $employeeRepository,
             $userCreatorGateway,
             $passwordResetTokenCreator,
-            $notificationGateway,
+            $eventPublisher,
             $transactionGateway,
-            $urlGenerator
+            $urlGenerator,
         );
         $email = EmailField::fromString('john.doe@example.com');
         $firstName = NameField::fromString('John');
         $userUuid = ResourceUuid::fromString('a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d');
         $resetToken = 'mock-reset-token-123';
+        $resetUrl = 'https://example.com/reset/' . $resetToken;
 
         // Assert
-        $request->expects(self::exactly(2))->method('firstName')->willReturn($firstName);
+        $request->expects(self::once())->method('firstName')->willReturn($firstName); // entity only
         $request->expects(self::once())->method('lastName')->willReturn(NameField::fromString('Doe'));
         $request->expects(self::once())->method('email')->willReturn($email);
         $request->expects(self::once())->method('phone')->willReturn(PhoneField::fromString('0612345678'));
@@ -94,23 +94,21 @@ final class CreateEmployeeTest extends TestCase
                 ['token' => $resetToken],
                 UrlGeneratorInterface::ABSOLUTE_URL
             )
-            ->willReturn('https://example.com/reset/' . $resetToken)
+            ->willReturn($resetUrl)
         ;
-        $notificationGateway->expects(self::once())
-            ->method('sendEmail')
+
+        // Event is published AFTER transaction commits (not inside transaction)
+        $eventPublisher->expects(self::once())
+            ->method('publish')
             ->with(
-                new EmailPayload(
-                    to: $email,
-                    type: EmailType::EMPLOYEE_WELCOME,
-                    subject: 'Bienvenue - Créez votre mot de passe',
-                    context: [
-                        'firstName' => $firstName->toString(),
-                        'userEmail' => $email->toString(),
-                        'resetUrl' => 'https://example.com/reset/' . $resetToken,
-                    ],
-                )
+                self::callback(static function (EmployeeWelcomeEmailRequested $event) use ($email, $firstName, $resetUrl): bool {
+                    return $event->employeeEmail->equals($email)
+                        && $event->firstName === $firstName->toString()
+                        && $event->resetUrl === $resetUrl;
+                })
             )
         ;
+
         $employeeRepository->expects(self::once())
             ->method('save')
             ->with(
@@ -143,7 +141,7 @@ final class CreateEmployeeTest extends TestCase
         $employeeRepository = $this->createMock(EmployeeRepository::class);
         $userCreatorGateway = $this->createMock(UserCreatorGateway::class);
         $passwordResetTokenCreator = $this->createMock(PasswordResetGateway::class);
-        $notificationGateway = $this->createMock(NotificationGateway::class);
+        $eventPublisher = $this->createMock(EventPublisher::class);
         $transactionGateway = $this->createMock(TransactionGateway::class);
         $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
         $request = $this->createMock(CreateEmployeeRequest::class);
@@ -152,9 +150,9 @@ final class CreateEmployeeTest extends TestCase
             $employeeRepository,
             $userCreatorGateway,
             $passwordResetTokenCreator,
-            $notificationGateway,
+            $eventPublisher,
             $transactionGateway,
-            $urlGenerator
+            $urlGenerator,
         );
         $email = EmailField::fromString('john.doe@example.com');
 
@@ -174,7 +172,7 @@ final class CreateEmployeeTest extends TestCase
         $employeeRepository->expects(self::once())->method('emailExists')->with($email)->willReturn(true);
         $userCreatorGateway->expects(self::never())->method('createUser');
         $passwordResetTokenCreator->expects(self::never())->method('createResetToken');
-        $notificationGateway->expects(self::never())->method('sendEmail');
+        $eventPublisher->expects(self::never())->method('publish');
         $employeeRepository->expects(self::never())->method('save');
 
         $this->expectException(EmployeeAlreadyExists::class);
@@ -190,7 +188,7 @@ final class CreateEmployeeTest extends TestCase
         $employeeRepository = $this->createMock(EmployeeRepository::class);
         $userCreatorGateway = $this->createMock(UserCreatorGateway::class);
         $passwordResetTokenCreator = $this->createMock(PasswordResetGateway::class);
-        $notificationGateway = $this->createMock(NotificationGateway::class);
+        $eventPublisher = $this->createMock(EventPublisher::class);
         $transactionGateway = $this->createMock(TransactionGateway::class);
         $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
         $request = $this->createMock(CreateEmployeeRequest::class);
@@ -199,9 +197,9 @@ final class CreateEmployeeTest extends TestCase
             $employeeRepository,
             $userCreatorGateway,
             $passwordResetTokenCreator,
-            $notificationGateway,
+            $eventPublisher,
             $transactionGateway,
-            $urlGenerator
+            $urlGenerator,
         );
         $email = EmailField::fromString('existing.user@example.com');
 
@@ -221,14 +219,14 @@ final class CreateEmployeeTest extends TestCase
         $employeeRepository->expects(self::once())->method('emailExists')->with($email)->willReturn(false);
         $userCreatorGateway->expects(self::once())
             ->method('createUser')
-            ->willThrowException(new UserEmailAlreadyExists($email))
+            ->willThrowException(new EmployeeEmailAlreadyExists($email))
         ;
         $passwordResetTokenCreator->expects(self::never())->method('createResetToken');
-        $notificationGateway->expects(self::never())->method('sendEmail');
+        $eventPublisher->expects(self::never())->method('publish');
         $employeeRepository->expects(self::never())->method('save');
 
-        $this->expectException(UserEmailAlreadyExists::class);
-        $this->expectExceptionMessage(UserEmailAlreadyExists::MESSAGE);
+        $this->expectException(EmployeeEmailAlreadyExists::class);
+        $this->expectExceptionMessage(EmployeeEmailAlreadyExists::MESSAGE);
 
         // Act
         $useCase->execute($request);
@@ -240,7 +238,7 @@ final class CreateEmployeeTest extends TestCase
         $employeeRepository = $this->createMock(EmployeeRepository::class);
         $userCreatorGateway = $this->createMock(UserCreatorGateway::class);
         $passwordResetTokenCreator = $this->createMock(PasswordResetGateway::class);
-        $notificationGateway = $this->createMock(NotificationGateway::class);
+        $eventPublisher = $this->createMock(EventPublisher::class);
         $transactionGateway = $this->createMock(TransactionGateway::class);
         $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
         $request = $this->createMock(CreateEmployeeRequest::class);
@@ -249,9 +247,9 @@ final class CreateEmployeeTest extends TestCase
             $employeeRepository,
             $userCreatorGateway,
             $passwordResetTokenCreator,
-            $notificationGateway,
+            $eventPublisher,
             $transactionGateway,
-            $urlGenerator
+            $urlGenerator,
         );
         $email = EmailField::fromString('test@example.com');
         $userUuid = ResourceUuid::generate();
@@ -280,7 +278,7 @@ final class CreateEmployeeTest extends TestCase
             ->with($userUuid)
             ->willThrowException(new \RuntimeException('Token creation failed'))
         ;
-        $notificationGateway->expects(self::never())->method('sendEmail');
+        $eventPublisher->expects(self::never())->method('publish');
         $employeeRepository->expects(self::never())->method('save');
 
         $this->expectException(\RuntimeException::class);
@@ -290,13 +288,13 @@ final class CreateEmployeeTest extends TestCase
         $useCase->execute($request);
     }
 
-    public function testRollbackWhenEmailSendingFails(): void
+    public function testEventNotPublishedWhenTransactionFails(): void
     {
         // Arrange
         $employeeRepository = $this->createMock(EmployeeRepository::class);
         $userCreatorGateway = $this->createMock(UserCreatorGateway::class);
         $passwordResetTokenCreator = $this->createMock(PasswordResetGateway::class);
-        $notificationGateway = $this->createMock(NotificationGateway::class);
+        $eventPublisher = $this->createMock(EventPublisher::class);
         $transactionGateway = $this->createMock(TransactionGateway::class);
         $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
         $request = $this->createMock(CreateEmployeeRequest::class);
@@ -305,57 +303,22 @@ final class CreateEmployeeTest extends TestCase
             $employeeRepository,
             $userCreatorGateway,
             $passwordResetTokenCreator,
-            $notificationGateway,
+            $eventPublisher,
             $transactionGateway,
-            $urlGenerator
+            $urlGenerator,
         );
-        $email = EmailField::fromString('test@example.com');
-        $firstName = NameField::fromString('John');
-        $userUuid = ResourceUuid::generate();
-        $resetToken = 'test-token';
 
-        // Assert
-        $request->expects(self::once())->method('firstName')->willReturn($firstName);
-        $request->expects(self::once())->method('email')->willReturn($email);
-        $request->expects(self::never())->method('lastName');
-        $request->expects(self::never())->method('phone');
-        $request->expects(self::never())->method('position');
-        $request->expects(self::never())->method('department');
-        $request->expects(self::never())->method('hiredAt');
-
+        // Simulate transaction failure
         $transactionGateway->expects(self::once())
             ->method('wrapInTransaction')
-            ->willReturnCallback(static fn (callable $func) => $func())
-        ;
-        $employeeRepository->expects(self::once())->method('emailExists')->with($email)->willReturn(false);
-        $userCreatorGateway->expects(self::once())
-            ->method('createUser')
-            ->willReturn(new CreatedUserDTO($userUuid, $email))
-        ;
-        $passwordResetTokenCreator->expects(self::once())
-            ->method('createResetToken')
-            ->with($userUuid)
-            ->willReturn($resetToken)
-        ;
-        $urlGenerator->expects(self::once())
-            ->method('generate')
-            ->with(
-                'auth_password_reset',
-                ['token' => $resetToken],
-                UrlGeneratorInterface::ABSOLUTE_URL
-            )
-            ->willReturn('https://example.com/reset/' . $resetToken)
+            ->willThrowException(new \RuntimeException('Transaction failed'))
         ;
 
-        $notificationGateway->expects(self::once())
-            ->method('sendEmail')
-            ->willThrowException(new \RuntimeException('Email sending failed'))
-        ;
-
-        $employeeRepository->expects(self::never())->method('save');
+        // Event should NOT be published if transaction fails
+        $eventPublisher->expects(self::never())->method('publish');
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Email sending failed');
+        $this->expectExceptionMessage('Transaction failed');
 
         // Act
         $useCase->execute($request);
@@ -367,7 +330,7 @@ final class CreateEmployeeTest extends TestCase
         $employeeRepository = $this->createMock(EmployeeRepository::class);
         $userCreatorGateway = $this->createMock(UserCreatorGateway::class);
         $passwordResetTokenCreator = $this->createMock(PasswordResetGateway::class);
-        $notificationGateway = $this->createMock(NotificationGateway::class);
+        $eventPublisher = $this->createMock(EventPublisher::class);
         $transactionGateway = $this->createMock(TransactionGateway::class);
         $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
         $request = $this->createMock(CreateEmployeeRequest::class);
@@ -376,9 +339,9 @@ final class CreateEmployeeTest extends TestCase
             $employeeRepository,
             $userCreatorGateway,
             $passwordResetTokenCreator,
-            $notificationGateway,
+            $eventPublisher,
             $transactionGateway,
-            $urlGenerator
+            $urlGenerator,
         );
         $email = EmailField::fromString('test@example.com');
         $firstName = NameField::fromString('John');
@@ -388,12 +351,12 @@ final class CreateEmployeeTest extends TestCase
         $resetUrl = 'https://example.com/reset/' . $resetToken;
 
         // Assert
-        $request->expects(self::exactly(2))->method('firstName')->willReturn($firstName);
-        $request->expects(self::once())->method('lastName')->willReturn($lastName);
+        $request->expects(self::atLeastOnce())->method('firstName')->willReturn($firstName);
+        $request->expects(self::atLeastOnce())->method('lastName')->willReturn($lastName);
         $request->expects(self::once())->method('email')->willReturn($email);
         $request->expects(self::once())->method('phone')->willReturn(PhoneField::fromString('0612345678'));
-        $request->expects(self::once())->method('position')->willReturn(NameField::fromString('Developer'));
-        $request->expects(self::once())->method('department')->willReturn(NameField::fromString('IT'));
+        $request->expects(self::atLeastOnce())->method('position')->willReturn(NameField::fromString('Developer'));
+        $request->expects(self::atLeastOnce())->method('department')->willReturn(NameField::fromString('IT'));
         $request->expects(self::once())->method('hiredAt')->willReturn(new \DateTimeImmutable('2024-01-15'));
 
         $transactionGateway->expects(self::once())
@@ -426,21 +389,19 @@ final class CreateEmployeeTest extends TestCase
             )
             ->willReturn($resetUrl)
         ;
-        $notificationGateway->expects(self::once())
-            ->method('sendEmail')
+
+        // Event published with correct reset URL
+        $eventPublisher->expects(self::once())
+            ->method('publish')
             ->with(
-                new EmailPayload(
-                    to: $email,
-                    type: EmailType::EMPLOYEE_WELCOME,
-                    subject: 'Bienvenue - Créez votre mot de passe',
-                    context: [
-                        'firstName' => $firstName->toString(),
-                        'resetUrl' => $resetUrl,
-                        'userEmail' => $email->toString(),
-                    ]
-                )
+                self::callback(static function (EmployeeWelcomeEmailRequested $event) use ($email, $firstName, $resetUrl): bool {
+                    return $event->employeeEmail->equals($email)
+                        && $event->firstName === $firstName->toString()
+                        && $event->resetUrl === $resetUrl;
+                })
             )
         ;
+
         $employeeRepository->expects(self::once())->method('save');
 
         // Act

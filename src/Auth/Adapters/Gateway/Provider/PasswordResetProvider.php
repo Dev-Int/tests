@@ -14,7 +14,10 @@ declare(strict_types=1);
 namespace Auth\Adapters\Gateway\Provider;
 
 use Auth\Adapters\Gateway\ORM\Entity\PasswordResetToken;
+use Auth\Adapters\Gateway\ORM\Entity\User;
 use Auth\Adapters\Gateway\ORM\Repository\DoctrinePasswordResetTokenRepository;
+use Auth\Adapters\Gateway\ORM\Repository\DoctrineUserRepository;
+use Auth\Entities\Exception\UserNotFoundById;
 use Shared\Entities\ResourceUuid;
 
 final readonly class PasswordResetProvider
@@ -23,6 +26,7 @@ final readonly class PasswordResetProvider
 
     public function __construct(
         private DoctrinePasswordResetTokenRepository $repository,
+        private DoctrineUserRepository $userRepository,
     ) {
     }
 
@@ -34,9 +38,14 @@ final readonly class PasswordResetProvider
         $now = new \DateTimeImmutable();
         $expiresAt = $now->modify(\sprintf('+%d hours', self::TOKEN_VALIDITY_HOURS));
 
+        $userOrm = $this->userRepository->find($userUuid->toString());
+        if (!$userOrm instanceof User) {
+            throw new UserNotFoundById($userUuid);
+        }
+
         $resetToken = new PasswordResetToken(
             uuid: ResourceUuid::generate()->toString(),
-            userUuid: $userUuid->toString(),
+            user: $userOrm,
             token: $token,
             createdAt: $now,
             expiresAt: $expiresAt,

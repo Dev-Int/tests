@@ -19,8 +19,7 @@ use Admin\Entities\Repository\EmployeeRepository;
 use Admin\Tests\DataBuilder\EmployeeDataBuilder;
 use Admin\UseCases\Employee\DisableEmployee\DisableEmployee;
 use Admin\UseCases\Employee\DisableEmployee\DisableEmployeeRequest;
-use Admin\UseCases\Employee\Exception\UserAlreadyDisabled;
-use Admin\UseCases\Employee\Exception\UserNotFound;
+use Admin\UseCases\Gateway\TransactionGateway;
 use Admin\UseCases\Gateway\UserDisablerGateway;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -36,12 +35,14 @@ final class DisableEmployeeTest extends TestCase
     private DisableEmployee $useCase;
     private EmployeeRepository&MockObject $repository;
     private MockObject&UserDisablerGateway $userDisabler;
+    private MockObject&TransactionGateway $transactionGateway;
 
     protected function setUp(): void
     {
+        $this->transactionGateway = $this->createMock(TransactionGateway::class);
         $this->repository = $this->createMock(EmployeeRepository::class);
         $this->userDisabler = $this->createMock(UserDisablerGateway::class);
-        $this->useCase = new DisableEmployee($this->repository, $this->userDisabler);
+        $this->useCase = new DisableEmployee($this->transactionGateway, $this->repository, $this->userDisabler);
     }
 
     public function testDisableEmployeeWithSuccess(): void
@@ -56,9 +57,13 @@ final class DisableEmployeeTest extends TestCase
         ;
 
         $request = $this->createMock(DisableEmployeeRequest::class);
-        $request->expects(self::once())
-            ->method('uuid')
-            ->willReturn($uuid)
+
+        // Assert
+        $request->expects(self::once())->method('uuid')->willReturn($uuid);
+
+        $this->transactionGateway->expects(self::once())
+            ->method('wrapInTransaction')
+            ->willReturnCallback(static fn (callable $func) => $func())
         ;
 
         $this->repository->expects(self::once())
@@ -90,9 +95,13 @@ final class DisableEmployeeTest extends TestCase
         $uuid = ResourceUuid::generate();
 
         $request = $this->createMock(DisableEmployeeRequest::class);
-        $request->expects(self::once())
-            ->method('uuid')
-            ->willReturn($uuid)
+
+        // Assert
+        $request->expects(self::once())->method('uuid')->willReturn($uuid);
+
+        $this->transactionGateway->expects(self::once())
+            ->method('wrapInTransaction')
+            ->willReturnCallback(static fn (callable $func) => $func())
         ;
 
         $this->repository->expects(self::once())
@@ -101,11 +110,8 @@ final class DisableEmployeeTest extends TestCase
             ->willThrowException(new EmployeeNotFound($uuid))
         ;
 
-        $this->repository->expects(self::never())
-            ->method('update')
-        ;
+        $this->repository->expects(self::never())->method('update');
 
-        // Assert
         $this->expectException(EmployeeNotFound::class);
 
         // Act
@@ -123,9 +129,13 @@ final class DisableEmployeeTest extends TestCase
         ;
 
         $request = $this->createMock(DisableEmployeeRequest::class);
-        $request->expects(self::once())
-            ->method('uuid')
-            ->willReturn($uuid)
+
+        // Assert
+        $request->expects(self::once())->method('uuid')->willReturn($uuid);
+
+        $this->transactionGateway->expects(self::once())
+            ->method('wrapInTransaction')
+            ->willReturnCallback(static fn (callable $func) => $func())
         ;
 
         $this->repository->expects(self::once())
@@ -134,11 +144,8 @@ final class DisableEmployeeTest extends TestCase
             ->willReturn($employee)
         ;
 
-        $this->repository->expects(self::never())
-            ->method('update')
-        ;
+        $this->repository->expects(self::never())->method('update');
 
-        // Assert
         $this->expectException(EmployeeAlreadyDisabled::class);
 
         // Act
@@ -157,9 +164,13 @@ final class DisableEmployeeTest extends TestCase
         ;
 
         $request = $this->createMock(DisableEmployeeRequest::class);
-        $request->expects(self::once())
-            ->method('uuid')
-            ->willReturn($uuid)
+
+        // Assert
+        $request->expects(self::once())->method('uuid')->willReturn($uuid);
+
+        $this->transactionGateway->expects(self::once())
+            ->method('wrapInTransaction')
+            ->willReturnCallback(static fn (callable $func) => $func())
         ;
 
         $this->repository->expects(self::once())
@@ -171,15 +182,12 @@ final class DisableEmployeeTest extends TestCase
         $this->userDisabler->expects(self::once())
             ->method('disableUser')
             ->with($userUuid)
-            ->willThrowException(new UserAlreadyDisabled($userUuid))
+            ->willThrowException(new EmployeeAlreadyDisabled($userUuid))
         ;
 
-        $this->repository->expects(self::never())
-            ->method('update')
-        ;
+        $this->repository->expects(self::never())->method('update');
 
-        // Assert
-        $this->expectException(UserAlreadyDisabled::class);
+        $this->expectException(EmployeeAlreadyDisabled::class);
 
         // Act
         $this->useCase->execute($request);
@@ -197,9 +205,13 @@ final class DisableEmployeeTest extends TestCase
         ;
 
         $request = $this->createMock(DisableEmployeeRequest::class);
-        $request->expects(self::once())
-            ->method('uuid')
-            ->willReturn($uuid)
+
+        // Assert
+        $request->expects(self::once())->method('uuid')->willReturn($uuid);
+
+        $this->transactionGateway->expects(self::once())
+            ->method('wrapInTransaction')
+            ->willReturnCallback(static fn (callable $func) => $func())
         ;
 
         $this->repository->expects(self::once())
@@ -211,15 +223,12 @@ final class DisableEmployeeTest extends TestCase
         $this->userDisabler->expects(self::once())
             ->method('disableUser')
             ->with($userUuid)
-            ->willThrowException(new UserNotFound($userUuid))
+            ->willThrowException(new EmployeeNotFound($userUuid))
         ;
 
-        $this->repository->expects(self::never())
-            ->method('update')
-        ;
+        $this->repository->expects(self::never())->method('update');
 
-        // Assert
-        $this->expectException(UserNotFound::class);
+        $this->expectException(EmployeeNotFound::class);
 
         // Act
         $this->useCase->execute($request);

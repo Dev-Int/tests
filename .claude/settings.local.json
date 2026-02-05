@@ -62,7 +62,8 @@
       "WebSearch",
       "WebFetch(domain:cs.symfony.com)",
       "mcp__jetbrains-phpstorm__reformat_file",
-      "Skill(create-functional-test)"
+      "Skill(create-functional-test)",
+      "Bash(test:*)"
     ],
     "deny": [
       "../.env",

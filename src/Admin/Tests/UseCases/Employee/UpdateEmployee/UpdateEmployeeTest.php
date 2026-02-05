@@ -18,6 +18,7 @@ use Admin\Entities\Repository\EmployeeRepository;
 use Admin\Tests\DataBuilder\EmployeeDataBuilder;
 use Admin\UseCases\Employee\UpdateEmployee\UpdateEmployee;
 use Admin\UseCases\Employee\UpdateEmployee\UpdateEmployeeRequest;
+use Admin\UseCases\Gateway\TransactionGateway;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shared\Entities\ResourceUuid;
@@ -32,17 +33,24 @@ use Shared\Entities\VO\PhoneField;
 final class UpdateEmployeeTest extends TestCase
 {
     private EmployeeRepository&MockObject $repository;
+    private MockObject&TransactionGateway $transactionGateway;
 
     protected function setUp(): void
     {
         $this->repository = $this->createMock(EmployeeRepository::class);
+        $this->transactionGateway = $this->createMock(TransactionGateway::class);
+
+        $this->transactionGateway
+            ->method('wrapInTransaction')
+            ->willReturnCallback(static fn (\Closure $operation) => $operation())
+        ;
     }
 
     public function testUpdatePhoneWithSuccess(): void
     {
         // Arrange
         $request = $this->createMock(UpdateEmployeeRequest::class);
-        $useCase = new UpdateEmployee($this->repository);
+        $useCase = new UpdateEmployee($this->repository, $this->transactionGateway);
 
         $uuid = ResourceUuid::generate();
         $employee = EmployeeDataBuilder::anEmployee()
@@ -89,7 +97,7 @@ final class UpdateEmployeeTest extends TestCase
     {
         // Arrange
         $request = $this->createMock(UpdateEmployeeRequest::class);
-        $useCase = new UpdateEmployee($this->repository);
+        $useCase = new UpdateEmployee($this->repository, $this->transactionGateway);
 
         $uuid = ResourceUuid::generate();
         $employee = EmployeeDataBuilder::anEmployee()
@@ -143,7 +151,7 @@ final class UpdateEmployeeTest extends TestCase
     {
         // Arrange
         $request = $this->createMock(UpdateEmployeeRequest::class);
-        $useCase = new UpdateEmployee($this->repository);
+        $useCase = new UpdateEmployee($this->repository, $this->transactionGateway);
 
         $uuid = ResourceUuid::generate();
 
@@ -170,5 +178,53 @@ final class UpdateEmployeeTest extends TestCase
 
         // Act
         $useCase->execute($request);
+    }
+
+    public function testUpdateEmployeeWithUnchangedValues(): void
+    {
+        // Arrange - Create employee with specific values
+        $uuid = ResourceUuid::generate();
+        $existingPhone = PhoneField::fromString('+33612345678');
+        $existingPosition = NameField::fromString('Developer');
+        $existingDepartment = NameField::fromString('IT');
+
+        $employee = EmployeeDataBuilder::anEmployee()
+            ->withUuid($uuid)
+            ->withPhone($existingPhone->toNumber())
+            ->withPosition($existingPosition->toString())
+            ->withDepartment($existingDepartment->toString())
+            ->build()
+        ;
+
+        // Request with SAME values
+        $request = $this->createMock(UpdateEmployeeRequest::class);
+        $request->expects(self::once())->method('uuid')->willReturn($uuid);
+        $request->expects(self::once())->method('phone')->willReturn($existingPhone);
+        $request->expects(self::once())->method('position')->willReturn($existingPosition);
+        $request->expects(self::once())->method('department')->willReturn($existingDepartment);
+
+        // Repository mocks
+        $this->repository
+            ->expects(self::once())
+            ->method('getByUuid')
+            ->with($uuid)
+            ->willReturn($employee)
+        ;
+
+        $this->repository
+            ->expects(self::once())
+            ->method('update')
+        ;
+
+        $useCase = new UpdateEmployee($this->repository, $this->transactionGateway);
+
+        // Act
+        $response = $useCase->execute($request);
+
+        // Assert - No error thrown, employee remains valid
+        self::assertSame($uuid->toString(), $response->employee()->uuid()->toString());
+        self::assertSame($existingPhone->toNumber(), $response->employee()->contactInformation()->phone()->toNumber());
+        self::assertSame($existingPosition->toString(), $response->employee()->position()->toString());
+        self::assertSame($existingDepartment->toString(), $response->employee()->department()->toString());
     }
 }

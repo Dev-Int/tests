@@ -17,8 +17,10 @@ use Admin\Adapters\Gateway\ORM\Entity\Employee;
 use Admin\Entities\Exception\Employee\EmployeeAlreadyDisabled;
 use Admin\UseCases\Employee\DisableEmployee\DisableEmployee;
 use Auth\Contracts\Attribute\RequireRole;
+use Psr\Log\LoggerInterface;
 use Shared\Entities\ResourceUuid;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -29,23 +31,39 @@ final class DisableEmployeeController extends AbstractController
     public function __construct(
         private readonly DisableEmployee $useCase,
         private readonly TranslatorInterface $translator,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
-    #[Route('/employees/{employee}/disable', name: 'admin_employees_disable', requirements: ['employee' => ResourceUuid::PATTERN], methods: ['POST'])]
-    public function __invoke(Employee $employee): Response
+    #[Route(
+        path: '/employees/{employee}/disable',
+        name: 'admin_employees_disable',
+        requirements: ['employee' => ResourceUuid::PATTERN],
+        methods: ['POST']
+    )]
+    public function __invoke(Request $request, Employee $employee): Response
     {
         try {
             $employeeUuid = ResourceUuid::fromString($employee->uuid());
-            $request = new DisableEmployeeApiRequest($employeeUuid);
+            $useCaseRequest = new DisableEmployeeApiRequest($employeeUuid);
 
-            $this->useCase->execute($request);
+            $response = $this->useCase->execute($useCaseRequest);
+
+            $this->logger->info('Employee disabled successfully', [
+                'employee_uuid' => $response->employee()->uuid()->toString(),
+                'user_uuid' => $response->employee()->userUuid()->toString(),
+                'email' => $response->employee()->contactInformation()->email()->toString(),
+                'disabled_at' => $response->employee()->disabledAt()?->format('Y-m-d H:i:s'),
+                'disabled_by_user_id' => $this->getUser()?->getUserIdentifier(),
+                'ip_address' => $request->getClientIp(),
+                'user_agent' => $request->headers->get('User-Agent'),
+            ]);
 
             $this->addFlash('success', $this->translator->trans('admin.employee.disable.success'));
         } catch (EmployeeAlreadyDisabled) {
             $this->addFlash('error', $this->translator->trans('admin.employee.error.alreadyDisabled'));
-        } catch (\DomainException $e) {
-            $this->addFlash('error', $e->getMessage());
+        } catch (\DomainException $exception) {
+            $this->addFlash('error', $exception->getMessage());
         }
 
         return $this->redirectToRoute('admin_employees_index');

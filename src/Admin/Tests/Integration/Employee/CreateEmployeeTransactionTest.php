@@ -18,7 +18,7 @@ use Admin\Adapters\Gateway\ORM\Entity\Employee as EmployeeORM;
 use Admin\Entities\Repository\EmployeeRepository;
 use Admin\Tests\Factory\CompanyFactory;
 use Admin\UseCases\Employee\CreateEmployee\CreateEmployee;
-use Admin\UseCases\Gateway\NotificationGateway;
+use Admin\UseCases\Gateway\EventPublisher;
 use Admin\UseCases\Gateway\PasswordResetGateway;
 use Admin\UseCases\Gateway\TransactionGateway;
 use Admin\UseCases\Gateway\UserCreatorGateway;
@@ -64,8 +64,8 @@ final class CreateEmployeeTransactionTest extends BaseFunctionalTestCase
         $userCreatorGateway = self::getContainer()->get(UserCreatorGateway::class);
         \assert($userCreatorGateway instanceof UserCreatorGateway);
 
-        $notificationGateway = self::getContainer()->get(NotificationGateway::class);
-        \assert($notificationGateway instanceof NotificationGateway);
+        $eventPublisher = self::getContainer()->get(EventPublisher::class);
+        \assert($eventPublisher instanceof EventPublisher);
 
         $transactionGateway = self::getContainer()->get(TransactionGateway::class);
         \assert($transactionGateway instanceof TransactionGateway);
@@ -77,7 +77,7 @@ final class CreateEmployeeTransactionTest extends BaseFunctionalTestCase
             repository: $employeeRepository,
             userCreatorGateway: $userCreatorGateway,
             passwordResetGateway: $passwordResetGateway,
-            notificationGateway: $notificationGateway,
+            eventPublisher: $eventPublisher,
             transactionGateway: $transactionGateway,
             urlGenerator: $urlGenerator,
         );

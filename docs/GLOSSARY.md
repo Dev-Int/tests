@@ -211,7 +211,7 @@ final readonly class UserCreatorAdapter implements UserCreatorGateway {
 
 **Examples**: UserCreatorGateway, UserDisablerGateway
 
-**Reference**: `docs/guides/bounded-contexts.md`, `docs/adr/ADR-003-employee-user-coupling.md`
+**Reference**: `docs/guides/bounded-contexts.md`, `docs/adr/ADR-008-employee-user-coupling.md`
 
 ---
 
@@ -234,7 +234,7 @@ final readonly class UserCreatorAdapter implements UserCreatorGateway {
 
 **Location**: `src/Admin/Entities/Employee/Employee.php`
 
-**Reference**: `docs/admin-employee-management.md`, `docs/adr/ADR-003-employee-user-coupling.md`
+**Reference**: `docs/admin-employee-management.md`, `docs/adr/ADR-008-employee-user-coupling.md`
 
 ---
 
@@ -309,6 +309,55 @@ final class Entity {
 
 **Reference**: `docs/adr/ADR-004-employee-soft-delete.md`
 
+**Future Enhancement (HR Compliance):**
+- Ajouter `disabledBy` (ResourceUuid) : tracer qui a effectué l'action
+- Ajouter `disabledReason` (string) : documenter le motif RH
+- Use case : Employee, potentiellement Supplier si modèle RH étendu
+- Référence : PR #255 review, point 3
+
+---
+
+### Double Email Validation (Inter-BC Pattern)
+
+**Definition:** Pattern architectural où deux Bounded Contexts valident indépendamment l'unicité d'un email, garantissant la cohérence de chaque domaine tout en évitant les race conditions via une transaction globale.
+
+**Characteristics:**
+- Chaque BC maintient sa propre règle d'unicité
+- Validation séquentielle : BC consommateur vérifie d'abord, BC fournisseur ensuite
+- Transaction atomique cross-BC pour garantir l'atomicité
+- Protection contre race conditions sans lock distribué
+
+**Why this pattern?**
+- **Autonomie BC** : Admin BC ne doit pas dépendre de Auth BC pour valider sa cohérence
+- **DDD correctness** : Chaque domaine reste responsable de ses invariants
+- **Transaction atomicity** : Si Auth.User échoue, Admin.Employee rollback automatiquement
+- **No distributed lock needed** : Transaction Doctrine gère la cohérence
+
+**Structure:**
+```php
+// Admin BC - Vérification locale
+if ($this->repository->emailExists($email)) {
+    throw new EmployeeAlreadyExists($email);  // Cohérence Admin
+}
+
+// Auth BC - Vérification via Gateway (peut lever EmailAlreadyExists)
+$this->userCreatorGateway->createUser(...);  // Cohérence Auth
+
+// Si exception : rollback automatique via TransactionGateway
+```
+
+**Location:**
+- `src/Admin/UseCases/Employee/CreateEmployee/CreateEmployee.php:59-70`
+- `src/Auth/UseCases/User/CreateUser/CreateUser.php` (validation côté Auth)
+
+**Examples:**
+- CreateEmployee → vérifie Admin.Employee + Auth.User
+- Future : CreateSupplier → vérifie Admin.Supplier + Auth.User (même pattern)
+
+**Related Concepts:**
+- [Transaction Gateway](#transaction-gateway)
+- [Command Gateway](#command-gateway)
+
 ---
 
 ### Transaction Gateway
@@ -377,7 +426,7 @@ $user->changePassword($newPassword);// Change password hashé
 
 **Location**: `src/Auth/Entities/User.php`
 
-**Reference**: `docs/auth-authentication-authorization.md`, `docs/adr/ADR-003-employee-user-coupling.md`
+**Reference**: `docs/auth-authentication-authorization.md`, `docs/adr/ADR-008-employee-user-coupling.md`
 
 ---
 

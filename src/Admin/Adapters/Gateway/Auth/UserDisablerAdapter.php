@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Gateway\Auth;
 
-use Admin\UseCases\Employee\Exception\UserAlreadyDisabled;
-use Admin\UseCases\Employee\Exception\UserNotFound;
+use Admin\Entities\Exception\Employee\EmployeeAlreadyDisabled;
+use Admin\Entities\Exception\Employee\EmployeeNotFound;
 use Admin\UseCases\Gateway\UserDisablerGateway;
 use Auth\Contracts\Exception\UserAlreadyDisabled as AuthUserAlreadyDisabled;
 use Auth\Contracts\Exception\UserNotFound as AuthUserNotFound;
@@ -31,10 +31,6 @@ final readonly class UserDisablerAdapter implements UserDisablerGateway
     ) {
     }
 
-    /**
-     * @throws UserAlreadyDisabled
-     * @throws UserNotFound
-     */
     public function disableUser(ResourceUuid $userUuid): void
     {
         try {
@@ -44,9 +40,9 @@ final readonly class UserDisablerAdapter implements UserDisablerGateway
                 )
             );
         } catch (AuthUserAlreadyDisabled) {
-            throw new UserAlreadyDisabled($userUuid);
+            throw new EmployeeAlreadyDisabled($userUuid);
         } catch (AuthUserNotFound) {
-            throw new UserNotFound($userUuid);
+            throw new EmployeeNotFound($userUuid);
         }
     }
 }

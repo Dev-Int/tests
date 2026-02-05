@@ -16,7 +16,6 @@ namespace Admin\Entities\Employee;
 use Admin\Entities\Exception\Employee\EmployeeAlreadyDisabled;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\ResourceUuid;
-use Shared\Entities\VO\EmailField;
 use Shared\Entities\VO\NameField;
 use Shared\Entities\VO\PhoneField;
 
@@ -160,19 +159,6 @@ final class Employee
         $this->updatedAt = ClockFactory::clock()->now();
     }
 
-    public function updateContactInfo(EmailField $email, PhoneField $phone): void
-    {
-        // Vérifier si les informations de contact ont changé
-        $phoneChanged = $this->contactInformation->phone()->toNumber() !== $phone->toNumber();
-
-        if (!$phoneChanged) {
-            return; // Aucun changement, pas de mise à jour
-        }
-
-        $this->contactInformation = ContactInformation::fromFields($email, $phone);
-        $this->updatedAt = ClockFactory::clock()->now();
-    }
-
     public function updatePosition(NameField $position, NameField $department): void
     {
         // Vérifier si la position ou le département ont changé
@@ -188,6 +174,19 @@ final class Employee
         $this->updatedAt = ClockFactory::clock()->now();
     }
 
+    /**
+     * Disable this employee (soft delete).
+     *
+     * @todo Future RH Feature: Ajouter audit trail complet
+     *       - disabledBy (ResourceUuid): Qui a désactivé l'employé ?
+     *       - disabledReason (string): Motif RH (démission, licenciement, etc.)
+     *       - Conformité légale: Traçabilité actions RH
+     *       - Migration DB nécessaire: disabled_by UUID, disabled_reason TEXT
+     *       - Adapter tous les tests utilisant disable()
+     *       - Voir PR #255 review point 3 pour détails complets
+     *
+     * @throws EmployeeAlreadyDisabled
+     */
     public function disable(): void
     {
         if (!$this->isActive()) {

@@ -32,7 +32,7 @@ final class Version20260125170115 extends AbstractMigration
             'disabled_at TIMESTAMP(0) WITH TIME ZONE DEFAULT NULL, ' .
             'PRIMARY KEY (uuid))'
         );
-        $this->addSql('CREATE INDEX idx_employee_disabled_at ON employees (disabled_at)');
+        $this->addSql('CREATE INDEX idx_employee_active ON employees (uuid) WHERE disabled_at IS NULL');
         $this->addSql('CREATE UNIQUE INDEX uniq_employee_email ON employees (email)');
     }
 

@@ -28,6 +28,10 @@ final class Version20260127000001 extends AbstractMigration
         );
         $this->addSql('CREATE UNIQUE INDEX UNIQ_3967A2165F37A13B ON password_reset_tokens (token)');
         $this->addSql('CREATE INDEX idx_reset_expires_at ON password_reset_tokens (expires_at)');
+        $this->addSql(
+            'ALTER TABLE password_reset_tokens ADD CONSTRAINT FK_3967A216ABFE1C6F FOREIGN KEY (user_uuid) ' .
+            'REFERENCES users (uuid) NOT DEFERRABLE'
+        );
     }
 
     public function down(Schema $schema): void

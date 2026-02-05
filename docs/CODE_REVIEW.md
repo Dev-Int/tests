@@ -75,7 +75,7 @@ Ce fichier documente les décisions architecturales validées pour éviter les f
 
 **See Also**:
 - `docs/admin-employee-management.md` (guide complet)
-- `docs/adr/ADR-003-employee-user-coupling.md` (décision Employee-User)
+- `docs/adr/ADR-008-employee-user-coupling.md` (décision Employee-User)
 - `docs/adr/ADR-004-employee-soft-delete.md` (décision soft delete)
 - `docs/adr/ADR-005-password-reset-workflow.md` (décision password reset)
 - `docs/auth-authentication-authorization.md` (guide Auth BC)

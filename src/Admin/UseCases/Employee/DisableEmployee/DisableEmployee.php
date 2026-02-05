@@ -14,11 +14,13 @@ declare(strict_types=1);
 namespace Admin\UseCases\Employee\DisableEmployee;
 
 use Admin\Entities\Repository\EmployeeRepository;
+use Admin\UseCases\Gateway\TransactionGateway;
 use Admin\UseCases\Gateway\UserDisablerGateway;
 
 final readonly class DisableEmployee
 {
     public function __construct(
+        private TransactionGateway $transactionGateway,
         private EmployeeRepository $repository,
         private UserDisablerGateway $userDisabler,
     ) {
@@ -26,14 +28,23 @@ final readonly class DisableEmployee
 
     public function execute(DisableEmployeeRequest $request): DisableEmployeeResponse
     {
-        $employee = $this->repository->getByUuid($request->uuid());
+        return $this->transactionGateway->wrapInTransaction(
+            operation: $this->disableEmployee($request),
+        );
+    }
 
-        $employee->disable();
+    private function disableEmployee(DisableEmployeeRequest $request): \Closure
+    {
+        return function () use ($request): DisableEmployeeResponse {
+            $employee = $this->repository->getByUuid($request->uuid());
 
-        $this->userDisabler->disableUser($employee->userUuid());
+            $this->userDisabler->disableUser($employee->userUuid());
 
-        $this->repository->update($employee);
+            $employee->disable();
 
-        return new DisableEmployeeResponse($employee);
+            $this->repository->update($employee);
+
+            return new DisableEmployeeResponse($employee);
+        };
     }
 }

@@ -11,10 +11,11 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
+namespace Symfony\Component\DependencyInjection\Loader\Configurator;
+
 use Admin\Adapters\Gateway\CachedConfigurationService;
 use Admin\Adapters\Gateway\NotificationProvider;
 use Shared\Contracts\ApplicationReadinessProvider;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
 return static function (ContainerConfigurator $configurator): void {
     $services = $configurator->services();

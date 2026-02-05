@@ -1,4 +1,4 @@
-# ADR-003: Employee-User Coupling
+# ADR-008: Employee-User Coupling
 
 **Status:** Accepted
 
@@ -131,6 +131,127 @@ interface CreateUserCommandHandler {
 - Couplage fort (tous les BC dépendent de User)
 - Perte de l'encapsulation Auth BC
 
+## Database Constraints Decision
+
+### Foreign Key Constraint: Intentionally NOT Implemented
+
+**Decision:** The `employees.user_uuid` column does NOT have a foreign key constraint to `users.uuid`.
+
+**Rationale (DDD Bounded Context Independence):**
+
+1. **Bounded Context Separation** ✅
+   - Admin BC and Auth BC are **separate bounded contexts** with independent schemas
+   - FK constraint would create **database-level coupling** between BCs
+   - DDD principle: BCs should be independent at all layers (domain, application, infrastructure)
+
+2. **Schema Independence** ✅
+   - Each BC manages its own database schema evolution
+   - No migration coordination needed between Admin and Auth schemas
+   - Future possibility to split into separate databases (microservices)
+
+3. **Application-Level Consistency** ✅
+   - Consistency is enforced at **application level** via:
+     - `TransactionGateway` for atomicity (Create/Update/Disable)
+     - `UserCreatorGateway` / `UserDisablerGateway` for cross-BC operations
+     - Domain events (future) for eventual consistency
+   - Transaction rollback handles both Employee and User operations
+
+**Consequences:**
+
+**Positive** ✅
+- Complete BC independence (database, domain, application)
+- No database coupling between Admin and Auth
+- Easier to evolve schemas independently
+- Facilitates future microservices split if needed
+- **Orphans eliminated by design**: Soft delete pattern (see ADR-004) prevents physical User deletion
+
+**Negative** ⚠️
+- **Theoretical risk**: Orphaned employees possible if User deleted outside transaction
+- **Mitigation ALREADY IMPLEMENTED**:
+  - Users are NEVER physically deleted (soft delete via `disabledAt`, see ADR-004)
+  - All disable operations go through `DisableEmployee` → `UserDisablerGateway` → `DisableUser`
+  - Both Employee and User are soft deleted in same transaction
+  - **Result**: Orphans cannot occur in practice
+
+**How Consistency is Guaranteed Without FK:**
+
+1. **Creation** (CreateEmployee):
+   ```php
+   // Wrapped in TransactionGateway
+   $userResult = $this->userCreatorGateway->createUser($dto);  // Auth BC
+   $employee = Employee::create(..., userUuid: $userResult->uuid);  // Admin BC
+   $this->repository->save($employee);
+   // Rollback if ANY step fails
+   ```
+
+2. **Disablement** (DisableEmployee):
+   ```php
+   // Wrapped in TransactionGateway
+   $this->userDisabler->disableUser($employee->userUuid());  // Auth BC
+   $employee->disable();  // Admin BC
+   $this->repository->update($employee);
+   // Rollback if ANY step fails
+   ```
+
+3. **Update** (UpdateEmployee):
+   ```php
+   // Wrapped in TransactionGateway
+   $employee->updatePhone($newPhone);
+   $employee->updatePosition($position, $department);
+   $this->repository->update($employee);
+   // Only Admin BC data updated (User email is immutable)
+   ```
+
+**Why Orphans Cannot Occur:**
+
+1. **Soft Delete Pattern (ADR-004)**: Users are NEVER physically deleted
+   - `User.disabledAt` field for soft delete
+   - `DisableUser` UseCase sets `disabledAt`, never executes DELETE
+   - Foreign key `employees.user_uuid → users.uuid` ALWAYS valid
+
+2. **Synchronized Disablement**: DisableEmployee wraps both operations
+   ```php
+   // Admin\UseCases\Employee\DisableEmployee\DisableEmployee
+   $this->transactionGateway->wrapInTransaction(function () {
+       $this->userDisabler->disableUser($employee->userUuid());  // Auth BC soft delete
+       $employee->disable();  // Admin BC soft delete
+       $this->repository->update($employee);
+       // Rollback if EITHER fails
+   });
+   ```
+
+3. **No Direct Database Access**: All operations go through UseCases
+   - Controllers → UseCases → Gateways → Auth BC
+   - No SQL DELETE statements anywhere in codebase for Users
+   - Architectural enforcement via Deptrac rules
+
+**Future Enhancements (Not Needed Currently):**
+
+If business requirements change and physical User deletion becomes necessary, implement:
+- **Domain Event**: `UserWasDeleted` → `WhenUserWasDeletedThenDisableEmployee` listener
+- **Integrity Check**: Scheduled job to detect and report orphaned employees
+- **Validation Gateway**: Check User existence before critical operations
+
+**Current status**: These enhancements are NOT needed because soft delete eliminates the risk.
+
+**Alternative Considered and Rejected:**
+
+**FK Constraint with CASCADE:**
+```sql
+ALTER TABLE employees
+ADD CONSTRAINT fk_employee_user
+FOREIGN KEY (user_uuid) REFERENCES users(uuid) ON DELETE CASCADE;
+```
+
+**Rejected because:**
+- ❌ Creates database coupling between Admin BC and Auth BC
+- ❌ Violates DDD Bounded Context independence principle
+- ❌ Makes future database split impossible
+- ❌ Admin BC schema depends on Auth BC schema
+- ❌ BC evolution becomes coordinated (reduces autonomy)
+
+**Decision stands:** Application-level consistency via TransactionGateway is sufficient and architecturally correct for DDD.
+
 ## Implementation
 
 ### Code Locations
@@ -170,3 +291,4 @@ Admin\UseCases → Auth\UseCases (pas de bypass des Contracts)
 
 - ADR-004: Employee Soft Delete (gestion désactivation)
 - ADR-005: Password Reset Workflow (première connexion)
+- ADR-006: Logging in Adapters Layer (audit trail Employee operations)

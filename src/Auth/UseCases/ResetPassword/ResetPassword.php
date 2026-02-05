@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Auth\UseCases\ResetPassword;
 
+use Auth\Entities\Exception\InvalidPasswordResetToken;
 use Auth\Entities\Repository\PasswordResetTokenRepository;
 use Auth\Entities\Repository\UserRepository;
 use Auth\UseCases\Gateway\PasswordHasherGateway;
@@ -29,7 +30,12 @@ final readonly class ResetPassword
     public function execute(ResetPasswordRequest $request): void
     {
         $passwordResetToken = $request->token();
-        $user = $this->userRepository->getByUuid($passwordResetToken->userId);
+
+        if (!$passwordResetToken->canBeUsed()) {
+            throw new InvalidPasswordResetToken();
+        }
+
+        $user = $passwordResetToken->user();
 
         $hashedPassword = $this->passwordHasher->hashPassword($request->plainPassword());
         $user->changePassword($hashedPassword);

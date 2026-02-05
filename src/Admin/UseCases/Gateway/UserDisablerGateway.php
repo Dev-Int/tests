@@ -13,15 +13,15 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Gateway;
 
-use Admin\UseCases\Employee\Exception\UserAlreadyDisabled;
-use Admin\UseCases\Employee\Exception\UserNotFound;
+use Admin\Entities\Exception\Employee\EmployeeAlreadyDisabled;
+use Admin\Entities\Exception\Employee\EmployeeNotFound;
 use Shared\Entities\ResourceUuid;
 
 interface UserDisablerGateway
 {
     /**
-     * @throws UserAlreadyDisabled
-     * @throws UserNotFound
+     * @throws EmployeeAlreadyDisabled
+     * @throws EmployeeNotFound
      */
     public function disableUser(ResourceUuid $userUuid): void;
 }

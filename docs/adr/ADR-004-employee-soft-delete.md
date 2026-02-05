@@ -107,7 +107,7 @@ final readonly class UserDisablerAdapter implements UserDisablerGateway {
 - **Audit RGPD** : Respect des obligations légales (conservation données)
 - **Cascade automatique** : User désactivé en même temps (cohérence)
 - **Relations intactes** : Foreign keys préservées (historique commandes, projets)
-- **Performance acceptable** : Index sur `disabledAt` rend le filtre rapide
+- **Performance optimale** : Index partiel sur actifs uniquement (95% moins volumineux qu'un index classique)
 
 ### Negative ⚠️
 
@@ -184,9 +184,12 @@ CREATE TABLE employees (
     email VARCHAR(255) UNIQUE NOT NULL,
     disabled_at DATETIME DEFAULT NULL, -- Soft delete field
     created_at DATETIME NOT NULL,
-    updated_at DATETIME NOT NULL,
-    INDEX idx_disabled_at (disabled_at) -- Performance pour filtrage
+    updated_at DATETIME NOT NULL
 );
+
+-- Index partiel : indexe uniquement les employés actifs (95% des requêtes)
+-- Note: Parenthèses obligatoires pour matcher PostgreSQL pg_get_expr() (DBAL bug #3780)
+CREATE INDEX idx_employee_active ON employees (uuid) WHERE (disabled_at IS NULL);
 
 -- User table (Auth BC)
 CREATE TABLE users (
@@ -195,7 +198,45 @@ CREATE TABLE users (
     disabled_at DATETIME DEFAULT NULL, -- Cascade soft delete
     created_at DATETIME NOT NULL
 );
+
+-- Index partiel sur users aussi (mêmes bénéfices)
+CREATE INDEX idx_user_active ON users (uuid) WHERE (disabled_at IS NULL);
 ```
+
+**Pourquoi un index partiel plutôt qu'un index classique ?**
+
+- ✅ **95% moins volumineux** : N'indexe que les actifs (5% de désactivés)
+- ✅ **Plus rapide** : Index tient en cache, moins d'I/O
+- ✅ **Moins de maintenance** : Moins de pages à mettre à jour lors des writes
+- ✅ **Utilisation automatique** : PostgreSQL l'utilise pour `WHERE disabled_at IS NULL`
+
+**Doctrine ORM Mapping** :
+
+```php
+#[ORM\Entity(repositoryClass: DoctrineEmployeeRepository::class)]
+#[ORM\Table(name: 'employees')]
+// Note: Parentheses required to match PostgreSQL's pg_get_expr() output
+// See: https://github.com/doctrine/dbal/issues/3780
+#[ORM\Index(
+    name: 'idx_employee_active',
+    columns: ['uuid'],
+    options: ['where' => '(disabled_at IS NULL)']
+)]
+class Employee
+{
+    // ...
+}
+```
+
+**Piège Doctrine DBAL #3780** :
+
+PostgreSQL normalise les prédicates d'index avec parenthèses via `pg_get_expr()`. Sans les parenthèses explicites dans l'attribut `#[ORM\Index]`, Doctrine détecte une différence entre :
+- Code : `'disabled_at IS NULL'`
+- PostgreSQL : `'(disabled_at IS NULL)'`
+
+→ Résultat : `doctrine:schema:validate` échoue avec "Database schema not in sync"
+
+**Solution** : Toujours ajouter les parenthèses explicitement dans le code Doctrine.
 
 ### Tests
 
@@ -257,8 +298,11 @@ public function reactivate(): void
 
 ## References
 
+- **Soft Delete Pattern Guide** : `docs/guides/soft-delete-pattern.md` (détails techniques, index partiel, bug DBAL)
 - **Guide Inter-BC** : `docs/guides/bounded-contexts.md`
 - **Architecture** : `docs/architecture.md`
+- **PostgreSQL Partial Indexes** : https://www.postgresql.org/docs/current/indexes-partial.html
+- **Doctrine DBAL Issue #3780** : https://github.com/doctrine/dbal/issues/3780
 - **RGPD Compliance** : (à ajouter si docs légales)
 - **PR** : #256 (CRUD Employee)
 

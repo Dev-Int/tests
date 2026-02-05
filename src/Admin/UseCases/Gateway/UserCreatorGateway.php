@@ -13,14 +13,14 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Gateway;
 
+use Admin\Entities\Exception\Employee\EmployeeEmailAlreadyExists;
 use Admin\UseCases\DTO\CreatedUserDTO;
 use Admin\UseCases\DTO\CreateUserDTO;
-use Admin\UseCases\Employee\Exception\UserEmailAlreadyExists;
 
 interface UserCreatorGateway
 {
     /**
-     * @throws UserEmailAlreadyExists
+     * @throws EmployeeEmailAlreadyExists
      */
     public function createUser(CreateUserDTO $dto): CreatedUserDTO;
 }
