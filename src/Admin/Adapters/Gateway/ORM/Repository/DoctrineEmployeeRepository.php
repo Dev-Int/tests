@@ -19,6 +19,7 @@ use Admin\Entities\Employee\EmployeeCollection;
 use Admin\Entities\Exception\Employee\EmployeeNotFound;
 use Admin\Entities\Exception\Employee\NoEmployeeRegistered;
 use Admin\Entities\Repository\EmployeeRepository;
+use Admin\UseCases\Gateway\Finder\EmployeeFinder;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -32,9 +33,9 @@ use Symfony\Component\DependencyInjection\Attribute\AsAlias;
  * @template-extends ServiceEntityRepository<Employee>
  */
 #[AsAlias(EmployeeRepository::class)]
-final class DoctrineEmployeeRepository extends ServiceEntityRepository implements EmployeeRepository
+final class DoctrineEmployeeRepository extends ServiceEntityRepository implements EmployeeRepository, EmployeeFinder
 {
-    public const ALIAS = 'employee';
+    public const string ALIAS = 'employee';
 
     public function __construct(ManagerRegistry $registry)
     {
@@ -66,12 +67,11 @@ final class DoctrineEmployeeRepository extends ServiceEntityRepository implement
     public function getAllEmployees(): EmployeeCollection
     {
         $employees = $this->findAll();
-        $collection = new EmployeeCollection(\count($employees));
-
         if ($employees === []) {
             throw new NoEmployeeRegistered();
         }
 
+        $collection = new EmployeeCollection(\count($employees));
         foreach ($employees as $employee) {
             $collection->add($employee->toDomain());
         }
@@ -148,6 +148,7 @@ final class DoctrineEmployeeRepository extends ServiceEntityRepository implement
     {
         $alias = self::ALIAS;
         $employee = $this->createQueryBuilder($alias)
+            ->select("{$alias}.uuid")
             ->where("{$alias}.email = :email")
             ->setParameter('email', $email->toString())
             ->getQuery()
@@ -170,13 +171,13 @@ final class DoctrineEmployeeRepository extends ServiceEntityRepository implement
             ->getSingleScalarResult()
         ;
 
-        if (!\is_int($count)) {
+        if (!is_numeric($count)) {
             // @codeCoverageIgnoreStart
             throw new UnexpectedResultException('Integer expected!');
             // @codeCoverageIgnoreEnd
         }
 
-        return $count > 0;
+        return (int) $count > 0;
     }
 
     public function save(EmployeeDomain $employee): void

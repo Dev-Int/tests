@@ -52,7 +52,6 @@ final class DisableEmployeeController extends AbstractController
             $this->logger->info('Employee disabled successfully', [
                 'employee_uuid' => $response->employee()->uuid()->toString(),
                 'user_uuid' => $response->employee()->userUuid()->toString(),
-                'email' => $response->employee()->contactInformation()->email()->toString(),
                 'disabled_at' => $response->employee()->disabledAt()?->format('Y-m-d H:i:s'),
                 'disabled_by_user_id' => $this->getUser()?->getUserIdentifier(),
                 'ip_address' => $request->getClientIp(),

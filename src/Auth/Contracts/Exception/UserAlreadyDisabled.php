@@ -15,7 +15,7 @@ namespace Auth\Contracts\Exception;
 
 final class UserAlreadyDisabled extends \DomainException
 {
-    public const string MESSAGE = 'L\'utilisateur est déjà désactivé.';
+    public const string MESSAGE = 'User is already disabled.';
 
     public function __construct(string $uuid)
     {

@@ -39,6 +39,13 @@ return [
                 ],
                 'submit' => 'Réinitialiser le mot de passe',
             ],
+            'token' => [
+                'invalid' => 'Le token de réinitialisation de mot de passe est invalide ou a expiré.',
+            ],
+            'success' => 'Mot de passe réinitialisé avec succès.',
+            'error' => [
+                'unexpected' => 'Une erreur inattendue est survenue lors de la réinitialisation du mot de passe.',
+            ],
         ],
     ],
 ];

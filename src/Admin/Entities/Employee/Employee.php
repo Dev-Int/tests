@@ -161,12 +161,11 @@ final class Employee
 
     public function updatePosition(NameField $position, NameField $department): void
     {
-        // Vérifier si la position ou le département ont changé
         $positionChanged = $this->position->toString() !== $position->toString()
             || $this->department->toString() !== $department->toString();
 
         if (!$positionChanged) {
-            return; // Aucun changement, pas de mise à jour
+            return;
         }
 
         $this->position = $position;

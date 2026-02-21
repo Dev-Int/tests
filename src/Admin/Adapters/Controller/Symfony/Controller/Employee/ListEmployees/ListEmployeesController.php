@@ -14,9 +14,7 @@ declare(strict_types=1);
 namespace Admin\Adapters\Controller\Symfony\Controller\Employee\ListEmployees;
 
 use Admin\Entities\Exception\Employee\NoEmployeeRegistered;
-use Admin\Entities\Repository\EmployeeRepository;
 use Admin\UseCases\Employee\GetActiveEmployees\GetActiveEmployees;
-use Admin\UseCases\Employee\GetActiveEmployees\GetActiveEmployeesApiRequest;
 use Auth\Contracts\Attribute\RequireRole;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,7 +30,6 @@ final class ListEmployeesController extends AbstractController
 
     public function __construct(
         private readonly GetActiveEmployees $useCase,
-        private readonly EmployeeRepository $repository,
     ) {
     }
 
@@ -47,8 +44,7 @@ final class ListEmployeesController extends AbstractController
                 new GetActiveEmployeesApiRequest($page, $itemsPerPage)
             );
 
-            $totalCount = $this->repository->getActiveEmployeesCount();
-            $totalPages = (int) ceil($totalCount / $itemsPerPage);
+            $totalPages = (int) ceil($response->totalCount() / $itemsPerPage);
 
             return $this->render('@admin/employees/index.html.twig', [
                 'employees' => $response->employees(),

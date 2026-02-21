@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Adapters\Gateway\Auth;
 
-use Admin\Entities\Exception\Employee\EmployeeEmailAlreadyExists;
+use Admin\Entities\Exception\Employee\EmployeeAlreadyExists;
 use Admin\UseCases\DTO\CreatedUserDTO;
 use Admin\UseCases\DTO\CreateUserDTO;
 use Admin\UseCases\Gateway\UserCreatorGateway;
@@ -48,7 +48,7 @@ final readonly class UserCreatorAdapter implements UserCreatorGateway
                 email: EmailField::fromString($result->email),
             );
         } catch (EmailAlreadyExists) {
-            throw new EmployeeEmailAlreadyExists($dto->email);
+            throw new EmployeeAlreadyExists($dto->email);
         }
     }
 }

@@ -108,9 +108,6 @@ class Employee
 
     public function updateFromDomain(EmployeeDomain $employee): void
     {
-        $this->firstName = $employee->firstName()->toString();
-        $this->lastName = $employee->lastName()->toString();
-        $this->email = $employee->contactInformation()->email()->toString();
         $this->phone = $employee->contactInformation()->phone()->toNumber();
         $this->position = $employee->position()->toString();
         $this->department = $employee->department()->toString();

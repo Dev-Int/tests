@@ -19,8 +19,14 @@ use Admin\Entities\Employee\EmployeeCollection;
 final readonly class GetActiveEmployeesResponse
 {
     public function __construct(
+        private int $totalCount,
         private EmployeeCollection $employees,
     ) {
+    }
+
+    public function totalCount(): int
+    {
+        return $this->totalCount;
     }
 
     /**

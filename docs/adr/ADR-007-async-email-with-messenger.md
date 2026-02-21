@@ -182,6 +182,27 @@ Implémenter une queue custom avec une table `email_queue`.
 - Si `$this->eventPublisher->publish()` échoue (rare : Doctrine connection down après commit), email jamais envoyé
 - **Mitigation** : Monitoring APM (Sentry/NewRelic) pour détecter ces erreurs rares
 
+### ⚠️ Limitation connue — Idempotence non garantie (Deferred)
+
+**Problème** :
+`EmployeeWelcomeEmailRequestedHandler` appelle `passwordResetGateway->createResetToken()` à chaque exécution.
+Si Messenger relance le handler après un timeout ACK transport (ex : email envoyé mais ACK non reçu),
+un nouveau token est créé — les tokens précédents peuvent être invalidés selon la politique de rotation.
+
+**Impact** :
+- L'employé peut recevoir plusieurs emails de bienvenue avec des URLs différentes
+- Seule l'URL du dernier email serait valide si les tokens se remplacent
+
+**Solutions à investiguer** :
+- **Option A** : Persister le `resetToken` dans l'event lui-même (créé dans la transaction, passé en payload)
+  → Token créé une seule fois, handler devient idempotent
+- **Option B** : Vérifier l'existence d'un token valide avant d'en créer un nouveau
+  (`passwordResetGateway->findValidToken($userUuid) ?? createResetToken(...)`)
+- **Option C** : Rendre `createResetToken()` idempotent côté Auth BC (même token si non expiré)
+
+**Statut** : Décision différée — à traiter avant passage en production si volume > MVP.
+Voir PR #255 commentaire [issuecomment-3939704628](https://github.com/Dev-Int/tests/pull/255#issuecomment-3939704628).
+
 ---
 
 ## Validation

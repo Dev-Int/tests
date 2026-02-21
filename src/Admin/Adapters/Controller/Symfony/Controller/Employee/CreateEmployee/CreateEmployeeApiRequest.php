@@ -18,7 +18,7 @@ use Shared\Entities\VO\EmailField;
 use Shared\Entities\VO\NameField;
 use Shared\Entities\VO\PhoneField;
 
-final class CreateEmployeeApiRequest implements CreateEmployeeRequest
+final readonly class CreateEmployeeApiRequest implements CreateEmployeeRequest
 {
     public function __construct(
         public NameField $firstName,

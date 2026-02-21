@@ -11,7 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace App\Auth\Tests\Adapters\Contracts\Services\CommandHandler\CreateUser;
+namespace Auth\Tests\Adapters\Contracts\Services\CommandHandler\CreateUser;
 
 use Auth\Adapters\Contracts\Services\CommandHandler\CreateUser\CreateUserCommandHandler;
 use Auth\Contracts\Exception\EmailAlreadyExists as ContractEmailAlreadyExists;

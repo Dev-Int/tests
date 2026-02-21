@@ -30,10 +30,7 @@ final readonly class InternalCreateUserRequest implements CreateUserRequest
     {
         $this->email = $command->email;
         $this->plainPassword = $command->plainPassword;
-        $this->roles = array_map(
-            static fn (Role $role): Role => $role,
-            $command->roles,
-        );
+        $this->roles = $command->roles;
     }
 
     public function email(): EmailField

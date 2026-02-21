@@ -15,7 +15,6 @@ namespace Admin\Adapters\Controller\Symfony\Controller\Employee\CreateEmployee;
 
 use Admin\Adapters\Form\Type\Employee\EmployeeType;
 use Admin\Entities\Exception\Employee\EmployeeAlreadyExists;
-use Admin\Entities\Exception\Employee\EmployeeEmailAlreadyExists;
 use Admin\UseCases\Employee\CreateEmployee\CreateEmployee;
 use Auth\Contracts\Attribute\RequireRole;
 use Psr\Log\LoggerInterface;
@@ -88,10 +87,6 @@ final class CreateEmployeeController extends AbstractController
                 ]);
             } catch (EmployeeAlreadyExists) {
                 $this->addFlash('error', $this->translator->trans('admin.employee.create.error.employeeExists'));
-
-                return $this->redirectToRoute('admin_employees_index');
-            } catch (EmployeeEmailAlreadyExists) {
-                $this->addFlash('error', $this->translator->trans('admin.employee.create.error.userEmailExists'));
 
                 return $this->redirectToRoute('admin_employees_index');
             } catch (\DomainException $exception) {

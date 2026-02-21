@@ -11,7 +11,8 @@ final class Version20260215172154 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Add messenger_messages table for message queue.';
+        return 'Add messenger_messages table for message queue.' .
+            'Schema standard Symfony Messenger (TIMESTAMP WITHOUT TIME ZONE intentionnel).';
     }
 
     public function up(Schema $schema): void
@@ -27,9 +28,7 @@ final class Version20260215172154 extends AbstractMigration
             'delivered_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, ' .
             'PRIMARY KEY (id))'
         );
-        $this->addSql('CREATE INDEX idx_75ea56e016ba31db ON messenger_messages (delivered_at)');
-        $this->addSql('CREATE INDEX idx_75ea56e0fb7336f0 ON messenger_messages (queue_name)');
-        $this->addSql('CREATE INDEX idx_75ea56e0e3bd61ce ON messenger_messages (available_at)');
+        $this->addSql('CREATE INDEX idx_75EA56E0FB7336F0E3BD61CE16BA31DBBF396750 ON messenger_messages (queue_name, available_at, delivered_at, id)');
     }
 
     public function down(Schema $schema): void

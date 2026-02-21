@@ -29,7 +29,7 @@ final readonly class EmployeeWelcomeEmailRequested implements DomainEvent
         public ResourceUuid $employeeUuid,
         public EmailField $employeeEmail,
         public string $firstName,
-        public string $resetUrl,
+        public ResourceUuid $userUuid,
     ) {
     }
 }

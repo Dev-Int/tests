@@ -13,7 +13,7 @@ Le système nécessite un workflow de réinitialisation de mot de passe pour deu
 ### Contraintes de sécurité
 
 - **Token unique** : Un token ne peut être utilisé qu'une seule fois
-- **Expiration** : Token valide pendant une durée limitée (ex: 1 heure)
+- **Expiration** : Token valide pendant une durée limitée (24h pour l'onboarding Employee, 1h recommandé pour le flux "mot de passe oublié")
 - **Invalidation** : Tokens précédents invalidés lors d'une nouvelle demande
 - **Pas de JWT** : Pas de révocation possible avec JWT sans stateful store
 
@@ -79,7 +79,7 @@ final class PasswordResetToken
 2. CreateEmployee (Admin BC)
    └─> PasswordResetGateway → CreateResetToken (Auth BC)
        └─> Génère token unique (bin2hex(random_bytes(32)))
-       └─> Stocke PasswordResetToken (expires_at = now + 1h)
+       └─> Stocke PasswordResetToken (expires_at = now + 24h, onboarding Employee)
 
 3. CreateEmployee (Admin BC)
    └─> NotificationGateway → Send Email
@@ -259,7 +259,8 @@ CREATE TABLE password_reset_tokens (
 ```yaml
 # config/packages/password_reset.yaml
 parameters:
-    password_reset.token_lifetime: 3600 # 1 heure (en secondes)
+    password_reset.token_lifetime: 86400 # 24 heures (en secondes) — onboarding Employee
+    # password_reset.token_lifetime: 3600 # 1 heure — recommandé pour le flux "mot de passe oublié"
 ```
 
 **Cleanup Job (recommandé) :**
@@ -282,7 +283,7 @@ public function cleanupExpiredTokens(): void
 <h1>Bienvenue {{ firstName }} !</h1>
 <p>Votre compte a été créé. Cliquez sur le lien ci-dessous pour définir votre mot de passe :</p>
 <a href="{{ resetUrl }}">Créer mon mot de passe</a>
-<p>Ce lien expire dans 1 heure.</p>
+<p>Ce lien expire dans 24 heures.</p>
 ```
 
 ### Tests

@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Employee\CreateEmployee;
 
-use Admin\Entities\Repository\EmployeeRepository;
 use Admin\Tests\Factory\CompanyFactory;
 use Admin\Tests\Factory\EmployeeFactory;
+use Admin\UseCases\Gateway\Finder\EmployeeFinder;
 use Auth\Entities\Repository\UserRepository;
 use Auth\Tests\Factory\UserFactory;
 use Shared\Tests\BaseFunctionalTestCase;
@@ -40,8 +40,8 @@ final class CreateEmployeeControllerTest extends BaseFunctionalTestCase
     public function testCreateEmployeeWillSucceed(): void
     {
         // Arrange
-        /** @var EmployeeRepository $employeeRepository */
-        $employeeRepository = self::getContainer()->get(EmployeeRepository::class);
+        /** @var EmployeeFinder $employeeFinder */
+        $employeeFinder = self::getContainer()->get(EmployeeFinder::class);
 
         /** @var UserRepository $userRepository */
         $userRepository = self::getContainer()->get(UserRepository::class);
@@ -78,7 +78,7 @@ final class CreateEmployeeControllerTest extends BaseFunctionalTestCase
         self::assertSame($translator->trans('admin.employee.create.success'), $flash);
 
         // Vérifier que l'Employee a été créé
-        $employees = $employeeRepository->getAllEmployees();
+        $employees = $employeeFinder->getAllEmployees();
         self::assertCount(1, $employees);
 
         $employeesArray = $employees->toArray();
@@ -176,7 +176,7 @@ final class CreateEmployeeControllerTest extends BaseFunctionalTestCase
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertEquals(
-            $translator->trans('admin.employee.create.error.userEmailExists'),
+            $translator->trans('admin.employee.create.error.employeeExists'),
             $flash
         );
     }

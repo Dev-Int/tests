@@ -11,7 +11,9 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Admin\UseCases\Employee\GetActiveEmployees;
+namespace Admin\Adapters\Controller\Symfony\Controller\Employee\ListEmployees;
+
+use Admin\UseCases\Employee\GetActiveEmployees\GetActiveEmployeesRequest;
 
 final readonly class GetActiveEmployeesApiRequest implements GetActiveEmployeesRequest
 {

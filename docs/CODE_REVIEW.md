@@ -40,7 +40,7 @@ Ce fichier documente les décisions architecturales validées pour éviter les f
 | **UserDisablerAdapter** | Désactivation cascade Employee → User | `src/Admin/Adapters/Gateway/Auth/UserDisablerAdapter.php` |
 | **TransactionGateway** | Rollback atomique si échec User ou Employee | `src/Admin/UseCases/Gateway/TransactionGateway.php` |
 | **NotificationGateway** | Email de bienvenue avec lien password reset | `src/Admin/UseCases/Gateway/NotificationGateway.php` |
-| **PasswordResetGateway** | Token cryptographique avec expiration (1h) | `src/Admin/UseCases/Gateway/PasswordResetGateway.php` |
+| **PasswordResetGateway** | Token cryptographique avec expiration (24h, onboarding Employee) | `src/Admin/UseCases/Gateway/PasswordResetGateway.php` |
 
 **Champs Employee**:
 

@@ -22,6 +22,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsController]
 final class PasswordResetController extends AbstractController
@@ -30,7 +31,8 @@ final class PasswordResetController extends AbstractController
 
     public function __construct(
         private readonly DoctrinePasswordResetTokenRepository $repository,
-        private readonly ResetPassword $useCase
+        private readonly ResetPassword $useCase,
+        private readonly TranslatorInterface $translator
     ) {
     }
 
@@ -40,7 +42,7 @@ final class PasswordResetController extends AbstractController
         $tokenEntity = $this->repository->findByToken($token);
 
         if (!$tokenEntity instanceof PasswordResetToken || $tokenEntity->isExpired() || $tokenEntity->isUsed()) {
-            $this->addFlash('error', 'Le token de réinitialisation de mot de passe est invalide ou a expiré.');
+            $this->addFlash('error', $this->translator->trans('auth.reset_password.token.invalid'));
 
             return $this->redirectToRoute('auth_login');
         }
@@ -61,7 +63,7 @@ final class PasswordResetController extends AbstractController
                         $data['password']
                     )
                 );
-                $this->addFlash('success', 'Mot de passe réinitialisé avec succès.');
+                $this->addFlash('success', $this->translator->trans('auth.reset_password.success'));
 
                 return $this->redirectToRoute('auth_login');
             } catch (\DomainException $exception) {
@@ -69,10 +71,7 @@ final class PasswordResetController extends AbstractController
 
                 return $this->redirectToRoute('auth_login');
             } catch (\Exception) {
-                $this->addFlash(
-                    'error',
-                    'Une erreur inattendue est survenue lors du réinitialisation du mot de passe.'
-                );
+                $this->addFlash('error', $this->translator->trans('auth.reset_password.error.unexpected'));
 
                 return $this->redirectToRoute('auth_login');
             }

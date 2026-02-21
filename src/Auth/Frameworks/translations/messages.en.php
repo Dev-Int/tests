@@ -39,6 +39,13 @@ return [
                 ],
                 'submit' => 'Reset password',
             ],
+            'token' => [
+                'invalid' => 'The password reset token is invalid or has expired.',
+            ],
+            'success' => 'Password reset successfully.',
+            'error' => [
+                'unexpected' => 'An unexpected error occurred while resetting the password.',
+            ],
         ],
     ],
 ];

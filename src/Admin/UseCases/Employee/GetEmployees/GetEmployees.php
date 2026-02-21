@@ -13,18 +13,24 @@ declare(strict_types=1);
 
 namespace Admin\UseCases\Employee\GetEmployees;
 
-use Admin\Entities\Repository\EmployeeRepository;
+use Admin\UseCases\Gateway\Finder\EmployeeFinder;
 
+/**
+ * Returns all employees regardless of status (active and inactive), without pagination.
+ *
+ * Intended for administrative exports or internal integrations requiring complete data.
+ * For the Admin UI listing (active only, paginated), use GetActiveEmployees.
+ */
 final readonly class GetEmployees
 {
     public function __construct(
-        private EmployeeRepository $repository,
+        private EmployeeFinder $employeeFinder,
     ) {
     }
 
     public function execute(): GetEmployeesResponse
     {
-        $employees = $this->repository->getAllEmployees();
+        $employees = $this->employeeFinder->getAllEmployees();
 
         return new GetEmployeesResponse($employees);
     }

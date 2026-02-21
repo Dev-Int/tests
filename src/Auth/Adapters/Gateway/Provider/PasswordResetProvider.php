@@ -43,6 +43,8 @@ final readonly class PasswordResetProvider
             throw new UserNotFoundById($userUuid);
         }
 
+        $this->repository->deleteByUserUuid($userUuid);
+
         $resetToken = new PasswordResetToken(
             uuid: ResourceUuid::generate()->toString(),
             user: $userOrm,

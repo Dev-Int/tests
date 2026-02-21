@@ -296,6 +296,36 @@ public function reactivate(): void
 
 **Décision reportée** : Pas de réactivation dans le scope actuel (PR #256). À implémenter si besoin métier réel.
 
+### Contrainte liée à la réintégration : index email non partiel
+
+L'index unique sur l'email des employés couvre **tous** les employés (actifs ET désactivés) :
+
+```sql
+CREATE UNIQUE INDEX uniq_employee_email ON employees (email); -- tous les statuts
+```
+
+**Implication** : Un email lié à un employé désactivé **ne peut jamais être réutilisé**.
+
+Cette contrainte est cohérente avec la politique actuelle (email = identifiant permanent non recyclable,
+aligné avec le soft-delete User dans Auth BC — `user.email` est aussi UNIQUE sans filtre).
+
+**Si la réintégration est implémentée** (réactivation même UUID), cette contrainte n'est pas un problème :
+l'email reste le même, l'entité existante est réactivée.
+
+**Si un recyclage d'email est nécessaire** (ex : réembauche avec un email différent du compte d'origine),
+l'index devra être rendu partiel :
+
+```sql
+-- Index partiel : permet de réutiliser un email d'un employé désactivé
+CREATE UNIQUE INDEX uniq_employee_email ON employees (email) WHERE (disabled_at IS NULL);
+```
+
+**Décision à confirmer avant implémentation de la réintégration** :
+- Politique "email = identifiant permanent non recyclable" → garder l'index tel quel
+- Politique "email recyclable après désactivation" → migrer vers index partiel + même décision côté Auth BC
+
+Voir PR #255 commentaire [issuecomment-3939704628](https://github.com/Dev-Int/tests/pull/255#issuecomment-3939704628).
+
 ## References
 
 - **Soft Delete Pattern Guide** : `docs/guides/soft-delete-pattern.md` (détails techniques, index partiel, bug DBAL)

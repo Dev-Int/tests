@@ -9,5 +9,7 @@ parameters:
     excludePaths:
         - tests/bootstrap.php
         - src/Shared/Adapters/Symfony/Maker/Templates/*.php
+    scanDirectories:
+        - var/cache/dev/Symfony/Config
     bootstrapFiles:
         - vendor/autoload.php

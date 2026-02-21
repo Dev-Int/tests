@@ -76,6 +76,17 @@ final class DoctrinePasswordResetTokenRepository extends ServiceEntityRepository
         return $this->findOneBy(['token' => $token]);
     }
 
+    public function deleteByUserUuid(ResourceUuid $userUuid): void
+    {
+        $this->createQueryBuilder('prt')
+            ->delete()
+            ->where('prt.user = :userUuid')
+            ->setParameter('userUuid', $userUuid->toString())
+            ->getQuery()
+            ->execute()
+        ;
+    }
+
     public function deleteExpiredTokens(): int
     {
         $result = $this->createQueryBuilder('prt')

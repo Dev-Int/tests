@@ -38,9 +38,9 @@ final readonly class DisableEmployee
         return function () use ($request): DisableEmployeeResponse {
             $employee = $this->repository->getByUuid($request->uuid());
 
-            $this->userDisabler->disableUser($employee->userUuid());
-
             $employee->disable();
+
+            $this->userDisabler->disableUser($employee->userUuid());
 
             $this->repository->update($employee);
 

@@ -11,7 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace App\Auth\Tests\Adapters\Contracts\Services\CommandHandler\DisableUser;
+namespace Auth\Tests\Adapters\Contracts\Services\CommandHandler\DisableUser;
 
 use Auth\Adapters\Contracts\Services\CommandHandler\DisableUser\DisableUserCommandHandler;
 use Auth\Contracts\Exception\UserAlreadyDisabled as ContractUserAlreadyDisabled;

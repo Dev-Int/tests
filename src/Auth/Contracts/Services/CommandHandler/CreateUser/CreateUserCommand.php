@@ -24,7 +24,7 @@ final readonly class CreateUserCommand
     public function __construct(
         public EmailField $email,
         public string $plainPassword,
-        public array $roles = [],
+        public array $roles,
     ) {
     }
 }

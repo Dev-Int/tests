@@ -17,21 +17,38 @@ use Admin\Entities\Event\EmployeeWelcomeEmailRequested;
 use Admin\UseCases\Gateway\EmailPayload;
 use Admin\UseCases\Gateway\EmailType;
 use Admin\UseCases\Gateway\NotificationGateway;
+use Admin\UseCases\Gateway\PasswordResetGateway;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[AsMessageHandler]
 final readonly class EmployeeWelcomeEmailRequestedHandler
 {
     public function __construct(
         private NotificationGateway $notificationGateway,
+        private PasswordResetGateway $passwordResetGateway,
         private LoggerInterface $logger,
+        private UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
     public function __invoke(EmployeeWelcomeEmailRequested $event): void
     {
+        $context = [
+            'employeeEmail' => $event->employeeEmail->toString(),
+            'employeeUuid' => $event->employeeUuid->toString(),
+        ];
+
         try {
+            $resetToken = $this->passwordResetGateway->createResetToken($event->userUuid);
+
+            $resetUrl = $this->urlGenerator->generate(
+                'auth_password_reset',
+                ['token' => $resetToken],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            );
+
             $this->notificationGateway->sendEmail(
                 new EmailPayload(
                     to: $event->employeeEmail,
@@ -40,19 +57,13 @@ final readonly class EmployeeWelcomeEmailRequestedHandler
                     context: [
                         'firstName' => $event->firstName,
                         'userEmail' => $event->employeeEmail->toString(),
-                        'resetUrl' => $event->resetUrl,
+                        'resetUrl' => $resetUrl,
                     ],
                 )
             );
-
-            $this->logger->info('Email de bienvenue envoyé avec succès', [
-                'employeeEmail' => $event->employeeEmail->toString(),
-                'employeeUuid' => $event->employeeUuid->toString(),
-            ]);
+            $this->logger->info('Email de bienvenue envoyé avec succès', $context);
         } catch (\Throwable $exception) {
-            $this->logger->error('Échec envoi email de bienvenue - retry programmé', [
-                'employeeEmail' => $event->employeeEmail->toString(),
-                'employeeUuid' => $event->employeeUuid->toString(),
+            $this->logger->error('Échec envoi email de bienvenue - retry programmé', $context + [
                 'exception' => $exception,
             ]);
 

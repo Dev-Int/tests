@@ -17,7 +17,7 @@ use Shared\Entities\VO\EmailField;
 
 final class EmailAlreadyExists extends \DomainException implements \JsonSerializable
 {
-    public const string MESSAGE = 'Un utilisateur avec cet email existe déjà.';
+    public const string MESSAGE = 'A user with this email already exists.';
 
     public function __construct(private readonly ?EmailField $email)
     {

@@ -67,7 +67,7 @@ final readonly class NotificationProvider implements NotificationGateway
     private function getTemplateForType(EmailType $type): string
     {
         return match ($type) {
-            EmailType::EMPLOYEE_WELCOME => '@auth/email/employee_welcome.html.twig',
+            EmailType::EMPLOYEE_WELCOME => '@admin/employees/email/employee_welcome.html.twig',
         };
     }
 }

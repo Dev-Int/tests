@@ -16,7 +16,9 @@ namespace Admin\Adapters\Gateway\Auth;
 use Admin\Contracts\Services\PasswordResetTokenCreator;
 use Admin\UseCases\Gateway\PasswordResetGateway;
 use Shared\Entities\ResourceUuid;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
+#[AsAlias(PasswordResetGateway::class)]
 final readonly class ResetPasswordTokenGateway implements PasswordResetGateway
 {
     public function __construct(private PasswordResetTokenCreator $resetTokenHandler)

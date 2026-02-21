@@ -15,9 +15,9 @@ namespace Admin\Tests\UseCases\Employee\GetEmployees;
 
 use Admin\Entities\Employee\EmployeeCollection;
 use Admin\Entities\Exception\Employee\NoEmployeeRegistered;
-use Admin\Entities\Repository\EmployeeRepository;
 use Admin\Tests\DataBuilder\EmployeeDataBuilder;
 use Admin\UseCases\Employee\GetEmployees\GetEmployees;
+use Admin\UseCases\Gateway\Finder\EmployeeFinder;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -28,11 +28,11 @@ use PHPUnit\Framework\TestCase;
  */
 final class GetEmployeesTest extends TestCase
 {
-    private EmployeeRepository&MockObject $repository;
+    private EmployeeFinder&MockObject $employeeFinder;
 
     protected function setUp(): void
     {
-        $this->repository = $this->createMock(EmployeeRepository::class);
+        $this->employeeFinder = $this->createMock(EmployeeFinder::class);
     }
 
     public function testGetEmployeesWithSuccess(): void
@@ -51,13 +51,13 @@ final class GetEmployeesTest extends TestCase
         $collection->add($employee1);
         $collection->add($employee2);
 
-        $this->repository
+        $this->employeeFinder
             ->expects(self::once())
             ->method('getAllEmployees')
             ->willReturn($collection)
         ;
 
-        $useCase = new GetEmployees($this->repository);
+        $useCase = new GetEmployees($this->employeeFinder);
 
         // Act
         $response = $useCase->execute();
@@ -71,13 +71,13 @@ final class GetEmployeesTest extends TestCase
     public function testGetEmployeesWillFailWhenNoEmployeeRegistered(): void
     {
         // Arrange
-        $this->repository
+        $this->employeeFinder
             ->expects(self::once())
             ->method('getAllEmployees')
             ->willThrowException(new NoEmployeeRegistered())
         ;
 
-        $useCase = new GetEmployees($this->repository);
+        $useCase = new GetEmployees($this->employeeFinder);
 
         // Assert
         $this->expectException(NoEmployeeRegistered::class);
