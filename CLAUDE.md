@@ -1,6 +1,6 @@
 # Project Context
 
-Symfony 7.4 | PHP 8.2+ | DDD + Clean Architecture | Modular Monolith
+Symfony 7.4 | PHP 8.3+ | DDD + Clean Architecture | Modular Monolith
 
 ---
 

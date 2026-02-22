@@ -13,10 +13,10 @@ declare(strict_types=1);
 
 namespace Auth\Adapters\DataFixtures;
 
-use Auth\Entities\Role;
 use Auth\Tests\Factory\UserFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Shared\Entities\Role;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 /**

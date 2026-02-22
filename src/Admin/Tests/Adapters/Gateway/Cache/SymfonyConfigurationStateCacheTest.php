@@ -20,6 +20,8 @@ use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 
 /**
+ * @group unitTest
+ *
  * @covers \Admin\Adapters\Gateway\Cache\SymfonyConfigurationStateCache
  */
 final class SymfonyConfigurationStateCacheTest extends TestCase

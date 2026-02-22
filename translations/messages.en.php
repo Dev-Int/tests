@@ -6,6 +6,7 @@ return [
     'actions' => 'Actions',
     'cancel' => 'Cancel',
     'add' => 'Add',
+    'save' => 'Save',
     'name' => 'Name',
     'streetAddress' => 'Address',
     'postalCode' => 'Postal code',

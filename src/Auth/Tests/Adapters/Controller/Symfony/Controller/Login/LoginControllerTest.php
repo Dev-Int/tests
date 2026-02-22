@@ -23,6 +23,11 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
+/**
+ * @group functionalTest
+ *
+ * @covers \Auth\Adapters\Controller\Symfony\Controller\Login\LoginController
+ */
 final class LoginControllerTest extends WebTestCase
 {
     use Factories;

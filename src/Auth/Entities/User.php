@@ -17,6 +17,7 @@ use Auth\Entities\Exception\UserAlreadyDisabled;
 use Auth\Entities\VO\HashedPassword;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\ResourceUuid;
+use Shared\Entities\Role;
 use Shared\Entities\VO\EmailField;
 
 final class User
@@ -33,14 +34,15 @@ final class User
         array $roles = [],
     ): self {
         $roles = self::normalizeRoles($roles);
+        $now = ClockFactory::clock()->now();
 
         return new self(
             uuid: $uuid,
             email: $email,
             password: $password,
             roles: $roles,
-            createdAt: ClockFactory::clock()->now(),
-            updatedAt: ClockFactory::clock()->now(),
+            createdAt: $now,
+            updatedAt: $now,
         );
     }
 
@@ -72,7 +74,7 @@ final class User
      */
     private function __construct(
         private readonly ResourceUuid $uuid,
-        private EmailField $email,
+        private readonly EmailField $email,
         private HashedPassword $password,
         private array $roles,
         private readonly \DateTimeImmutable $createdAt,
@@ -129,8 +131,10 @@ final class User
         if (!$this->isActive()) {
             throw new UserAlreadyDisabled($this->uuid);
         }
-        $this->disabledAt = ClockFactory::clock()->now();
-        $this->updatedAt = ClockFactory::clock()->now();
+
+        $now = ClockFactory::clock()->now();
+        $this->disabledAt = $now;
+        $this->updatedAt = $now;
     }
 
     public function hasRole(Role $role): bool
@@ -141,12 +145,6 @@ final class User
     public function isAdmin(): bool
     {
         return $this->hasRole(Role::ADMIN);
-    }
-
-    public function changeEmail(EmailField $newEmail): void
-    {
-        $this->email = $newEmail;
-        $this->updatedAt = ClockFactory::clock()->now();
     }
 
     public function changePassword(HashedPassword $newPassword): void

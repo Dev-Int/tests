@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Auth\Tests\Entities;
 
 use Auth\Entities\Exception\UserAlreadyDisabled;
-use Auth\Entities\Role;
 use Auth\Entities\User;
 use Auth\Entities\VO\HashedPassword;
 use Auth\Tests\DataBuilder\UserDataBuilder;
@@ -22,6 +21,7 @@ use PHPUnit\Framework\TestCase;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\Clock\FrozenClock;
 use Shared\Entities\ResourceUuid;
+use Shared\Entities\Role;
 use Shared\Entities\VO\EmailField;
 
 /**
@@ -158,30 +158,6 @@ final class UserTest extends TestCase
 
         // Act & Assert
         self::assertFalse($user->isAdmin());
-    }
-
-    public function testChangeEmailUpdatesEmailAndUpdatedAt(): void
-    {
-        // Arrange
-        $initialTime = new \DateTimeImmutable('2025-01-01 10:00:00');
-        $updateTime = new \DateTimeImmutable('2025-01-15 14:30:00');
-
-        ClockFactory::initialize(new FrozenClock($initialTime));
-        $user = UserDataBuilder::aUser()
-            ->withEmail('old@example.com')
-            ->withUpdatedAt($initialTime)
-            ->build()
-        ;
-
-        ClockFactory::initialize(new FrozenClock($updateTime));
-        $newEmail = EmailField::fromString('new@example.com');
-
-        // Act
-        $user->changeEmail($newEmail);
-
-        // Assert
-        self::assertSame('new@example.com', $user->email()->toString());
-        self::assertEquals($updateTime, $user->updatedAt());
     }
 
     public function testChangePasswordUpdatesPasswordAndUpdatedAt(): void

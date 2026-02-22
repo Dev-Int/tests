@@ -22,6 +22,24 @@ use Shared\Entities\VO\EmailField;
  */
 final class EmailFieldTest extends TestCase
 {
+    /**
+     * @return iterable<string, array<mixed>>
+     */
+    public static function provideIsEmailEqualsCases(): iterable
+    {
+        yield 'email_equals' => [
+            'email1' => 'test@test.fr',
+            'email2' => 'test@test.fr',
+            'isEquals' => true,
+        ];
+
+        yield 'email_not_equals' => [
+            'email1' => 'test@test.fr',
+            'email2' => 'test2@test.fr',
+            'isEquals' => false,
+        ];
+    }
+
     public function testInstantiateEmailSuccessfully(): void
     {
         // Arrange && Act
@@ -38,5 +56,21 @@ final class EmailFieldTest extends TestCase
 
         // Act & Assert
         EmailField::fromString('invalid.email.fr');
+    }
+
+    /**
+     * @dataProvider provideIsEmailEqualsCases
+     */
+    public function testIsEmailEquals(string $email1, string $email2, bool $isEquals): void
+    {
+        // Arrange
+        $email1 = EmailField::fromString($email1);
+        $email2 = EmailField::fromString($email2);
+
+        // Act
+        $result = $email1->equals($email2);
+
+        // Assert
+        self::assertSame($isEquals, $result);
     }
 }

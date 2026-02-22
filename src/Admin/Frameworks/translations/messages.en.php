@@ -298,6 +298,82 @@ return [
                 'packagingInvalid' => 'parcel should have unit and quantity',
             ],
         ],
+        'employee' => [
+            'titlePage' => 'Employees',
+            'form' => [
+                'firstName' => [
+                    'label' => 'First Name',
+                    'placeholder' => 'Employee first name',
+                ],
+                'lastName' => [
+                    'label' => 'Last Name',
+                    'placeholder' => 'Employee last name',
+                ],
+                'email' => [
+                    'label' => 'Email',
+                    'placeholder' => 'Employee email',
+                ],
+                'phone' => [
+                    'label' => 'Phone',
+                    'placeholder' => 'Employee phone',
+                ],
+                'position' => [
+                    'label' => 'Position',
+                    'placeholder' => 'Employee position',
+                ],
+                'department' => [
+                    'label' => 'Department',
+                    'placeholder' => 'Employee department',
+                ],
+                'hiredAt' => [
+                    'label' => 'Hired At',
+                ],
+                'status' => [
+                    'label' => 'Status',
+                ],
+            ],
+            'create' => [
+                'titlePage' => 'Create an employee',
+                'titleShort' => 'New employee',
+                'success' => 'Employee created successfully.',
+                'error' => [
+                    'employeeExists' => 'An employee with this email already exists.',
+                    'unknown' => 'An unexpected error occurred while creating the employee.',
+                ],
+            ],
+            'update' => [
+                'titlePage' => 'Update %employeeName%',
+                'titleShort' => 'Update',
+                'success' => 'Employee updated successfully.',
+                'immutableField' => 'This field cannot be modified',
+            ],
+            'disable' => [
+                'button' => 'Disable',
+                'success' => 'Employee disabled successfully.',
+            ],
+            'error' => [
+                'notFound' => 'Employee not found.',
+                'alreadyDisabled' => 'The employee is already disabled.',
+            ],
+            'index' => [
+                'titlePage' => 'List of employees',
+                'noEmployee' => 'No employees registered.',
+                'table' => [
+                    'firstName' => 'First Name',
+                    'lastName' => 'Last Name',
+                    'email' => 'Email',
+                    'phone' => 'Phone',
+                    'position' => 'Position',
+                    'department' => 'Department',
+                    'status' => 'Status',
+                    'hiredAt' => 'Hired At',
+                ],
+            ],
+            'status' => [
+                'active' => 'Active',
+                'inactive' => 'Inactive',
+            ],
+        ],
         'homePage' => [
             'titlePage' => 'Home',
             'resume' => '<p>Here is how you administrate your application.</p>

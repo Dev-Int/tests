@@ -18,6 +18,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Webmozart\Assert\Assert;
 
+/**
+ * @group functionalTest
+ *
+ * @covers \Shared\Adapters\Controller\Symfony\Controller\HomeController
+ */
 final class HomeControllerTest extends WebTestCase
 {
     private const HOME_URI = '/';

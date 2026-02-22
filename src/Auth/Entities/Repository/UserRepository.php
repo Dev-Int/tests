@@ -31,11 +31,13 @@ interface UserRepository
      */
     public function getByEmail(EmailField $email): User;
 
+    /**
+     * Returns true if an email is registered, regardless of the user's active/disabled status.
+     * An email from a disabled user remains permanently blocked — email is non-recyclable (ADR-008).
+     */
     public function emailExists(EmailField $email): bool;
 
     public function create(User $user): void;
 
     public function update(User $user): void;
-
-    public function disable(User $user): void;
 }

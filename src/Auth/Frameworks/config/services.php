@@ -11,7 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 return static function (ContainerConfigurator $configurator): void {
     $services = $configurator->services();
@@ -24,6 +24,7 @@ return static function (ContainerConfigurator $configurator): void {
 
     $services->load(namespace: 'Auth\\', resource: __DIR__ . '/../../../Auth')
         ->exclude(__DIR__ . '/../../../Auth/{Frameworks,Entities,Tests}')
+        ->exclude(__DIR__ . '/../../../Auth/Adapters/Gateway/ORM/Entity')
     ;
 
     $services->load(

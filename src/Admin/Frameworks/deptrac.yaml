@@ -26,11 +26,11 @@ deptrac:
             - Admin\Entities
             - Admin\UseCases
             - Admin\Contracts
+            - Auth\Contracts
             - Shared\Contracts
             - Shared\Adapters
             - Shared\Entities
         Admin\Contracts:
-            - Admin\Adapters
             - Shared\Contracts
             - Shared\Entities
     skip_violations: []

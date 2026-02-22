@@ -28,6 +28,11 @@ final readonly class HashedPassword
      * - bcrypt: $2y$, $2a$, $2b$
      * - argon2i/argon2id: $argon2i$, $argon2id$
      * - scrypt: $scrypt$.
+     *
+     *  ⚠ Upgrade notice: if Symfony introduces a new default algorithm
+     *  (e.g. $balloon-sha256$ in Symfony 8+), this pattern must be updated.
+     *  Otherwise, fromHash() will throw InvalidHashedPassword when
+     *  re-hydrating users from the database.
      */
     private const string HASH_PATTERN = '/^\$(2[ayb]|argon2i(d)?|scrypt)\$/';
 

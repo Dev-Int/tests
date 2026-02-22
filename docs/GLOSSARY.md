@@ -129,12 +129,14 @@ public function create(Entity $entity): void;          // Création
 public function rename(Entity $entity): void;          // Action métier spécifique
 public function start(Entity $entity): void;           // Action métier spécifique
 public function delete(Entity $entity): void;
+public function emailExists(EmailField $email): bool;  // Read nécessaire au write (unicité)
 ```
 
 **Pattern**: Prefer business-named methods (`rename`, `start`, `revaluate`) over generic (`update`).
-This documents allowed transitions and enables optimized persistence per operation.
+This document allows transitions and enables optimized persistence per operation.
 
-**NOT**: Query operations (use Finder instead)
+**Exception** : Les reads *au service* de writes (ex: `emailExists()` pour valider l'unicité avant création) restent dans le Repository. Ce sont des invariants de domaine liés à l'opération d'écriture.
+**NOT**: Reads pour affichage/liste → utiliser Finder
 
 ---
 
@@ -171,10 +173,263 @@ public function findByName(string $name): ?Entity;
 | **Purpose** | Commands (CUD) | Queries (R) |
 | **Not found** | Throws exception | Returns null/[] |
 | **Methods** | `get*()`, `create()`, `rename()`, `start()`, `delete()` | `find*()`, `findAll()`, `findBy*()` |
+| **Reads pour writes** | `emailExists()`, `codeExists()` | — |
 | **Location** | `BC/Entities/Repository/` | `BC/UseCases/Gateway/Finder/` |
 | **Used by** | Use cases modifying state | Use cases reading state |
 
 **Rule**: Repository for writes, Finder for reads
+
+---
+
+### Command Gateway
+
+**Definition**: Pattern de communication inter-BC utilisant une interface (Gateway) et un adapter pour appeler les Contracts d'un autre BC
+
+**Type**: Inter-BC communication pattern
+
+**Characteristics**:
+- Gateway = Interface dans BC consumer (Admin)
+- Adapter = Implémentation qui appelle Contract du BC provider (Auth)
+- Découplage: Use case dépend de Gateway (pas directement du Contract)
+
+**Structure**:
+```php
+// Admin BC: Gateway (interface)
+interface UserCreatorGateway {
+    public function createUser(CreateUserDTO $dto): CreatedUserDTO;
+}
+
+// Admin BC: Adapter (implementation)
+#[AsAlias(UserCreatorGateway::class)]
+final readonly class UserCreatorAdapter implements UserCreatorGateway {
+    public function __construct(
+        private CreateUserCommandHandler $userCreator, // Auth BC Contract
+    ) {}
+}
+```
+
+**Location**:
+- Gateway: `BC/UseCases/Gateway/`
+- Adapter: `BC/Adapters/Gateway/{TargetBC}/`
+
+**Examples**: UserCreatorGateway, UserDisablerGateway
+
+**Reference**: `docs/guides/bounded-contexts.md`, `docs/adr/ADR-008-employee-user-coupling.md`
+
+---
+
+### Employee (Admin BC)
+
+**Definition**: Entité représentant un employé avec profil professionnel et liaison vers User (Auth BC)
+
+**Type**: Entity (Aggregate Root)
+
+**Characteristics**:
+- Immutable: firstName, lastName, email, hiredAt, userUuid
+- Mutable: phone, position, department
+- Soft delete: disabledAt nullable
+- Liaison User: userUuid référence le User créé automatiquement
+
+**Lifecycle**:
+1. Création Employee → création automatique User (Auth BC)
+2. Modification Employee → aucune synchronisation User (champs distincts)
+3. Désactivation Employee → désactivation cascade User
+
+**Location**: `src/Admin/Entities/Employee/Employee.php`
+
+**Reference**: `docs/admin-employee-management.md`, `docs/adr/ADR-008-employee-user-coupling.md`
+
+---
+
+### Notification Gateway
+
+**Definition**: Abstraction pour envoi de notifications (email, SMS, push)
+
+**Type**: Gateway (Port hexagonal architecture)
+
+**Characteristics**:
+- Interface dans UseCases
+- Adapter implémente avec Symfony Mailer
+- Permet de mocker l'envoi en tests unitaires
+
+**Structure**:
+```php
+// Gateway (interface)
+interface NotificationGateway {
+    public function sendEmail(EmailPayload $payload): void;
+}
+
+// Adapter (implementation)
+#[AsAlias(NotificationGateway::class)]
+final readonly class NotificationProvider implements NotificationGateway {
+    public function __construct(
+        private MailerInterface $mailer,
+        private Environment $twig,
+    ) {}
+}
+```
+
+**Location**:
+- Gateway: `BC/UseCases/Gateway/NotificationGateway.php`
+- Adapter: `BC/Adapters/Gateway/NotificationProvider.php`
+
+**Usage**: CreateEmployee (envoi email de bienvenue)
+
+**Reference**: `docs/admin-employee-management.md#5-gateways-transversaux`
+
+---
+
+### Soft Delete
+
+**Definition**: Désactivation logique d'une entité via un champ `disabledAt` nullable au lieu d'une suppression physique
+
+**Type**: Design pattern
+
+**Characteristics**:
+- Conservation des données (audit, RGPD)
+- Réversible (réactivation possible)
+- Filtrage nécessaire: queries doivent filtrer `disabledAt IS NULL`
+
+**Pattern**:
+```php
+final class Entity {
+    private ?\DateTimeImmutable $disabledAt = null;
+
+    public function disable(): void {
+        if (!$this->isActive()) {
+            throw new EntityAlreadyDisabled($this->uuid);
+        }
+        $this->disabledAt = ClockFactory::clock()->now();
+    }
+
+    public function isActive(): bool {
+        return !$this->disabledAt instanceof \DateTimeImmutable;
+    }
+}
+```
+
+**Usage**: Employee, User
+
+**Reference**: `docs/adr/ADR-004-employee-soft-delete.md`
+
+**Future Enhancement (HR Compliance):**
+- Ajouter `disabledBy` (ResourceUuid) : tracer qui a effectué l'action
+- Ajouter `disabledReason` (string) : documenter le motif RH
+- Use case : Employee, potentiellement Supplier si modèle RH étendu
+- Référence : PR #255 review, point 3
+
+---
+
+### Double Email Validation (Inter-BC Pattern)
+
+**Definition:** Pattern architectural où deux Bounded Contexts valident indépendamment l'unicité d'un email, garantissant la cohérence de chaque domaine tout en évitant les race conditions via une transaction globale.
+
+**Characteristics:**
+- Chaque BC maintient sa propre règle d'unicité
+- Validation séquentielle : BC consommateur vérifie d'abord, BC fournisseur ensuite
+- Transaction atomique cross-BC pour garantir l'atomicité
+- Protection contre race conditions sans lock distribué
+
+**Why this pattern?**
+- **Autonomie BC** : Admin BC ne doit pas dépendre de Auth BC pour valider sa cohérence
+- **DDD correctness** : Chaque domaine reste responsable de ses invariants
+- **Transaction atomicity** : Si Auth.User échoue, Admin.Employee rollback automatiquement
+- **No distributed lock needed** : Transaction Doctrine gère la cohérence
+
+**Structure:**
+```php
+// Admin BC - Vérification locale
+if ($this->repository->emailExists($email)) {
+    throw new EmployeeAlreadyExists($email);  // Cohérence Admin
+}
+
+// Auth BC - Vérification via Gateway (peut lever EmailAlreadyExists)
+$this->userCreatorGateway->createUser(...);  // Cohérence Auth
+
+// Si exception : rollback automatique via TransactionGateway
+```
+
+**Location:**
+- `src/Admin/UseCases/Employee/CreateEmployee/CreateEmployee.php:59-70`
+- `src/Auth/UseCases/User/CreateUser/CreateUser.php` (validation côté Auth)
+
+**Examples:**
+- CreateEmployee → vérifie Admin.Employee + Auth.User
+- Future : CreateSupplier → vérifie Admin.Supplier + Auth.User (même pattern)
+
+**Related Concepts:**
+- [Transaction Gateway](#transaction-gateway)
+- [Command Gateway](#command-gateway)
+
+---
+
+### Transaction Gateway
+
+**Definition**: Abstraction pour gestion des transactions DB (commit/rollback atomique)
+
+**Type**: Gateway (Port hexagonal architecture)
+
+**Characteristics**:
+- Interface dans UseCases
+- Adapter implémente avec Doctrine EntityManager
+- Rollback automatique si exception levée dans l'operation
+
+**Structure**:
+```php
+// Gateway (interface)
+interface TransactionGateway {
+    /**
+     * @template T
+     * @param callable(): T $operation
+     * @return T
+     */
+    public function wrapInTransaction(callable $operation): mixed;
+}
+
+// Adapter (implementation)
+#[AsAlias(TransactionGateway::class)]
+final readonly class DoctrineTransactionAdapter implements TransactionGateway {
+    public function wrapInTransaction(callable $operation): mixed {
+        return $this->entityManager->wrapInTransaction($operation);
+    }
+}
+```
+
+**Location**:
+- Gateway: `BC/UseCases/Gateway/TransactionGateway.php`
+- Adapter: `BC/Adapters/Gateway/DoctrineTransactionAdapter.php`
+
+**Usage**: CreateEmployee (rollback si échec User ou Employee)
+
+**Reference**: `docs/admin-employee-management.md#5-gateways-transversaux`
+
+---
+
+### User (Auth BC)
+
+**Definition**: Entité représentant un compte d'accès système avec authentification et autorisation
+
+**Type**: Entity (Aggregate Root)
+
+**Characteristics**:
+- Email: Identifiant de connexion (unique)
+- Password: Hashé avec Argon2id (HashedPassword VO)
+- Roles: Array de `Role` enum (ROLE_USER, ROLE_ADMIN)
+- Soft delete: disabledAt nullable
+- Normalisation: ROLE_USER toujours présent automatiquement
+
+**Behavior**:
+```php
+$user->disable();                   // Soft delete
+$user->isActive();                  // Vérifie disabledAt
+$user->hasRole(Role::ADMIN);        // Vérifie role spécifique
+$user->isAdmin();                   // Raccourci hasRole(ROLE_ADMIN)
+$user->changePassword($newPassword);// Change password hashé
+```
+
+**Location**: `src/Auth/Entities/User.php`
+
+**Reference**: `docs/auth-authentication-authorization.md`, `docs/adr/ADR-008-employee-user-coupling.md`
 
 ---
 
@@ -433,7 +688,9 @@ NO: BC1 → BC2\UseCases
 
 **A**: Repository for use cases that MODIFY state (Create, Update, Delete). Finder for use cases that READ state only.
 
-**Mnemonic**: Repository = Write + Read, Finder = Read only
+**Mnemonic**: Repository = Write + Reads nécessaires aux writes, Finder = Read pour affichage/liste
+
+**Exception** : Un Repository PEUT contenir des reads si ce sont des invariants liés à l'opération d'écriture (ex: `emailExists()` pour valider l'unicité avant `create()`). Ce n'est PAS du Finder — c'est un prérequis du write.
 
 ---
 
@@ -456,6 +713,14 @@ NO: BC1 → BC2\UseCases
 ### Q: Can Finder throw exceptions?
 
 **A**: NO. Finder methods return null or empty array. Only Repository methods throw (because `get*` prefix implies exception if not found).
+
+---
+
+### Q: Peut-on mettre un `find*()` dans un Repository ?
+
+**A**: Oui, si ce read est un prérequis d'un write (validation d'unicité, vérification d'état).
+Exemple : `emailExists()` avant `create()` = invariant du domaine de création.
+NON si c'est pour afficher/lister des données → utiliser Finder.
 
 ---
 

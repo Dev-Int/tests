@@ -11,9 +11,10 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
+namespace Symfony\Component\DependencyInjection\Loader\Configurator;
+
 use Inventory\Adapters\Gateway\ArticleStockUpdater;
 use Inventory\UseCases\Gateway\ArticleStockUpdaterInterface;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
 return static function (ContainerConfigurator $configurator): void {
     $services = $configurator->services();

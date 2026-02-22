@@ -28,6 +28,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Zenstruck\Foundry\Test\Factories;
 
+/**
+ * @group functionalTest
+ *
+ * @covers \Admin\Adapters\Controller\Symfony\Controller\Article\ChangeArticleFinancialInformation\ChangeArticleFinancialInformationController
+ */
 final class ChangeArticleFinancialInformationControllerTest extends BaseFunctionalTestCase
 {
     use Factories;

@@ -16,12 +16,15 @@ namespace Auth\Tests\Adapters\Gateway\ORM\Repository;
 use Auth\Adapters\Gateway\ORM\Repository\DoctrineUserRepository;
 use Auth\Entities\Exception\UserNotFoundByEmail;
 use Auth\Entities\Exception\UserNotFoundById;
-use Auth\Entities\Role;
+use Auth\Entities\VO\HashedPassword;
 use Auth\Tests\DataBuilder\UserDataBuilder;
 use Auth\Tests\Factory\UserFactory;
+use Faker\Factory;
+use Faker\Generator;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\Clock\FrozenClock;
 use Shared\Entities\ResourceUuid;
+use Shared\Entities\Role;
 use Shared\Entities\VO\EmailField;
 use Shared\Tests\BaseFunctionalTestCase;
 use Zenstruck\Foundry\Test\Factories;
@@ -36,6 +39,7 @@ final class DoctrineUserRepositoryTest extends BaseFunctionalTestCase
     use Factories;
 
     private DoctrineUserRepository $repository;
+    private Generator $faker;
 
     protected function setUp(): void
     {
@@ -44,12 +48,14 @@ final class DoctrineUserRepositoryTest extends BaseFunctionalTestCase
         /** @var DoctrineUserRepository $repository */
         $repository = self::getContainer()->get(DoctrineUserRepository::class);
         $this->repository = $repository;
+
+        $this->faker = Factory::create();
     }
 
     public function testGetByUuidReturnsUser(): void
     {
         // Arrange
-        $uuid = '550e8400-e29b-41d4-a716-446655440000';
+        $uuid = $this->faker->uuid();
         UserFactory::createOne([
             'uuid' => $uuid,
             'email' => 'test@example.com',
@@ -121,11 +127,26 @@ final class DoctrineUserRepositoryTest extends BaseFunctionalTestCase
         self::assertFalse($this->repository->emailExists(EmailField::fromString('notexists@example.com')));
     }
 
+    public function testEmailExistsReturnsTrueForDisabledUser(): void
+    {
+        // Arrange — un user désactivé avec cet email
+        $uuid = $this->faker->uuid();
+        UserFactory::createOne([
+            'uuid' => $uuid,
+            'email' => 'disabled@example.com',
+            'disabledAt' => new \DateTimeImmutable('2026-01-01 10:00:00'),
+        ]);
+
+        // Act & Assert — l'email est toujours bloqué même si le user est désactivé
+        self::assertTrue($this->repository->emailExists(EmailField::fromString('disabled@example.com')));
+    }
+
     public function testCreatePersistsUser(): void
     {
         // Arrange
+        $uuid = $this->faker->uuid();
         $userDomain = UserDataBuilder::aUser()
-            ->withUuid(ResourceUuid::fromString('11111111-1111-1111-1111-111111111111'))
+            ->withUuid(ResourceUuid::fromString($uuid))
             ->withEmail('new@example.com')
             ->withPassword('$2y$13$hashedpassword')
             ->withRoles([Role::USER])
@@ -136,31 +157,32 @@ final class DoctrineUserRepositoryTest extends BaseFunctionalTestCase
         $this->repository->create($userDomain);
 
         // Assert
-        $found = $this->repository->getByUuid(ResourceUuid::fromString('11111111-1111-1111-1111-111111111111'));
+        $found = $this->repository->getByUuid(ResourceUuid::fromString($uuid));
         self::assertSame('new@example.com', $found->email()->toString());
     }
 
     public function testUpdateModifiesUser(): void
     {
         // Arrange
-        $uuid = '22222222-2222-2222-2222-222222222222';
+        $uuid = $this->faker->uuid();
+        $oldHash = '$2y$13$oldhashpassword12345678901234567890';
+        $newHash = '$2y$13$newhashpassword12345678901234567890';
         UserFactory::createOne([
             'uuid' => $uuid,
             'email' => 'original@example.com',
-            'password' => '$2y$13$hashedpassword',
+            'password' => $oldHash,
             'roles' => [Role::USER],
         ]);
 
-        // Get, modify, and update
         $userDomain = $this->repository->getByUuid(ResourceUuid::fromString($uuid));
-        $userDomain->changeEmail(EmailField::fromString('updated@example.com'));
 
         // Act
+        $userDomain->changePassword(HashedPassword::fromHash($newHash));
         $this->repository->update($userDomain);
 
         // Assert
         $found = $this->repository->getByUuid(ResourceUuid::fromString($uuid));
-        self::assertSame('updated@example.com', $found->email()->toString());
+        self::assertSame($newHash, $found->password()->toString());
     }
 
     public function testDisablePersistsDisabledAt(): void
@@ -169,7 +191,7 @@ final class DoctrineUserRepositoryTest extends BaseFunctionalTestCase
         $disableTime = new \DateTimeImmutable('2026-01-17 14:00:00');
         ClockFactory::initialize(new FrozenClock($disableTime));
 
-        $uuid = '33333333-3333-3333-3333-333333333333';
+        $uuid = $this->faker->uuid();
         UserFactory::createOne([
             'uuid' => $uuid,
             'email' => 'todisable@example.com',
@@ -178,13 +200,11 @@ final class DoctrineUserRepositoryTest extends BaseFunctionalTestCase
         $userDomain = $this->repository->getByUuid(ResourceUuid::fromString($uuid));
         self::assertTrue($userDomain->isActive());
 
-        // Disable the user in domain
+        // Act
         $userDomain->disable();
+        $this->repository->update($userDomain);
 
-        // Act - persist the change
-        $this->repository->disable($userDomain);
-
-        // Assert - user still exists but is disabled
+        // Assert
         $found = $this->repository->getByUuid(ResourceUuid::fromString($uuid));
         self::assertFalse($found->isActive());
         self::assertEquals($disableTime, $found->disabledAt());

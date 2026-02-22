@@ -301,6 +301,82 @@ return [
                 'packagingInvalid' => 'Le colis doit avoir une unité et une quantité',
             ],
         ],
+        'employee' => [
+            'titlePage' => 'Employés',
+            'form' => [
+                'firstName' => [
+                    'label' => 'Prénom',
+                    'placeholder' => 'Prénom de l\'employé',
+                ],
+                'lastName' => [
+                    'label' => 'Nom',
+                    'placeholder' => 'Nom de l\'employé',
+                ],
+                'email' => [
+                    'label' => 'Email',
+                    'placeholder' => 'Email de l\'employé',
+                ],
+                'phone' => [
+                    'label' => 'Téléphone',
+                    'placeholder' => 'Téléphone de l\'employé',
+                ],
+                'position' => [
+                    'label' => 'Poste',
+                    'placeholder' => 'Poste de l\'employé',
+                ],
+                'department' => [
+                    'label' => 'Département',
+                    'placeholder' => 'Département de l\'employé',
+                ],
+                'hiredAt' => [
+                    'label' => 'Date d\'embauche',
+                ],
+                'status' => [
+                    'label' => 'Statut',
+                ],
+            ],
+            'create' => [
+                'titlePage' => 'Créer un employé',
+                'titleShort' => 'Nouvel employé',
+                'success' => 'Employé créé avec succès.',
+                'error' => [
+                    'employeeExists' => 'Un employé avec cet email existe déjà.',
+                    'unknown' => 'Une erreur inattendue est survenue lors de la création de l\'employé.',
+                ],
+            ],
+            'update' => [
+                'titlePage' => 'Modifier %employeeName%',
+                'titleShort' => 'Modifier',
+                'success' => 'Employé modifié avec succès.',
+                'immutableField' => 'Ce champ ne peut pas être modifié',
+            ],
+            'disable' => [
+                'button' => 'Désactiver',
+                'success' => 'Employé désactivé avec succès.',
+            ],
+            'error' => [
+                'notFound' => 'Employé non trouvé.',
+                'alreadyDisabled' => 'L\'employé est déjà désactivé.',
+            ],
+            'index' => [
+                'titlePage' => 'Liste des employés',
+                'noEmployee' => 'Aucun employé enregistré.',
+                'table' => [
+                    'firstName' => 'Prénom',
+                    'lastName' => 'Nom',
+                    'email' => 'Email',
+                    'phone' => 'Téléphone',
+                    'position' => 'Poste',
+                    'department' => 'Département',
+                    'status' => 'Statut',
+                    'hiredAt' => 'Date d\'embauche',
+                ],
+            ],
+            'status' => [
+                'active' => 'Actif',
+                'inactive' => 'Inactif',
+            ],
+        ],
         'homePage' => [
             'titlePage' => 'Home',
             'resume' => '<p>C\'est ici que vous administrez votre application.</p>

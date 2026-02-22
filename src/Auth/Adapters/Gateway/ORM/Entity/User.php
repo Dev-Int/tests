@@ -14,11 +14,11 @@ declare(strict_types=1);
 namespace Auth\Adapters\Gateway\ORM\Entity;
 
 use Auth\Adapters\Gateway\ORM\Repository\DoctrineUserRepository;
-use Auth\Entities\Role;
 use Auth\Entities\User as UserDomain;
 use Auth\Entities\VO\HashedPassword;
 use Doctrine\ORM\Mapping as ORM;
 use Shared\Entities\ResourceUuid;
+use Shared\Entities\Role;
 use Shared\Entities\VO\EmailField;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;

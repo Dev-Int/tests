@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Auth\Tests\Adapters\Contracts;
 
-use Auth\Adapters\Contracts\AuthCurrentUserProvider;
+use Auth\Adapters\ContractsHandler\AuthCurrentUserProvider;
 use Auth\Adapters\Gateway\ORM\Entity\User;
 use Auth\Contracts\Exception\UnauthenticatedUser;
 use PHPUnit\Framework\TestCase;
@@ -25,7 +25,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * @group unitTest
  *
- * @covers \Auth\Adapters\Contracts\AuthCurrentUserProvider
+ * @covers \Auth\Adapters\ContractsHandler\AuthCurrentUserProvider
  */
 final class AuthCurrentUserProviderTest extends TestCase
 {

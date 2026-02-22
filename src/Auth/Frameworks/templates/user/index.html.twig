@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ 'auth.user.titlePage'|trans }} | {{ parent() }}
+{% endblock %}
+
+{% block importmap %}
+    {{ importmap(['app','pagination']) }}
+{% endblock %}
+
+{% block body %}
+
+    <h1>{{ 'auth.user.titlePage'|trans }}</h1>
+
+    <main>
+        <article>
+            <turbo-frame id="users_paginated">
+                <ul class="table">
+                    <li class="li-unstyled flex-between head">
+                        <span>{{ 'auth.user.email'|trans }}</span>
+                        <span>{{ 'auth.user.roles'|trans }}</span>
+                        <span>{{ 'auth.user.status'|trans }}</span>
+                        <span>{{ 'auth.user.createdAt'|trans }}</span>
+                    </li>
+                    {% for user in users %}
+                        <li class="li-unstyled flex-between {{ not user.isActive ? 'disabled' : '' }}">
+                            <span>{{ user.email }}</span>
+                            <span>
+                                {% for role in user.roles %}
+                                    <span class="badge">{{ role }}</span>
+                                {% endfor %}
+                            </span>
+                            <span>
+                                {% if user.isActive %}
+                                    <span class="badge badge-success">{{ 'auth.user.active'|trans }}</span>
+                                {% else %}
+                                    <span class="badge badge-danger">{{ 'auth.user.disabled'|trans }}</span>
+                                {% endif %}
+                            </span>
+                            <span>{{ user.createdAt|date('d/m/Y H:i') }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                <twig:Pagination page="{{ pagination.page }}" itemsPerPage="{{ pagination.itemsPerPage }}" totalPages="{{ pagination.totalPages }}" route="auth_users_index" />
+            </turbo-frame>
+            <twig:Button:BackTo href="{{ path('admin_index') }}" label="{{ 'admin.adminButton'|trans }}" />
+        </article>
+    </main>
+
+{% endblock %}

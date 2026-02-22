@@ -11,9 +11,11 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
+namespace Symfony\Component\DependencyInjection\Loader\Configurator;
+
 use Admin\Adapters\Gateway\CachedConfigurationService;
+use Admin\Adapters\Gateway\NotificationProvider;
 use Shared\Contracts\ApplicationReadinessProvider;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
 return static function (ContainerConfigurator $configurator): void {
     $services = $configurator->services();
@@ -38,6 +40,13 @@ return static function (ContainerConfigurator $configurator): void {
         namespace: 'Admin\UseCases\Gateway\Finder\\',
         resource: __DIR__ . '/../../../Admin/UseCases/Gateway/Finder'
     );
+
+    $services->set(id: NotificationProvider::class)
+        ->args([
+            '$fromEmail' => '%env(EMAIL_FROM_ADDRESS)%',
+            '$fromName' => '%env(EMAIL_FROM_NAME)%',
+        ])
+    ;
 
     // Utilise le service avec cache pour la vérification de configuration
     $services->alias(

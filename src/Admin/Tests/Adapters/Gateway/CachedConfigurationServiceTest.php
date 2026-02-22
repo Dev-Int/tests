@@ -26,6 +26,8 @@ use Admin\Entities\Repository\ZoneStorageRepository;
 use PHPUnit\Framework\TestCase;
 
 /**
+ * @group unitTest
+ *
  * @covers \Admin\Adapters\Gateway\CachedConfigurationService
  */
 final class CachedConfigurationServiceTest extends TestCase

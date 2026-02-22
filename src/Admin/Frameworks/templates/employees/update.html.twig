@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ 'admin.employee.update.titlePage'|trans({'%employeeName%': employee.fullName}) }} | {{ parent() }}
+{% endblock %}
+
+{% block body %}
+
+    <h1><i class="fa fa-user-edit"></i> {{ 'admin.employee.update.titlePage'|trans({'%employeeName%': employee.fullName}) }}</h1>
+
+    <turbo-frame id="employee_{{ employee.uuid }}">
+        <twig:Form:Employee:UpdateForm form="{{ form }}" employee="{{ employee }}" initialFormData="{{ form.vars.value }}" />
+    </turbo-frame>
+
+{% endblock %}
