@@ -46,7 +46,7 @@ final class RecordRealStockForZoneController extends AbstractController
     }
 
     #[Route(
-        path: 'inventories/{inventoryUuid}/zones/{zoneStorageUuid}/record',
+        path: '{inventoryUuid}/zones/{zoneStorageUuid}/record',
         name: self::ROUTE_NAME,
         requirements: [
             'inventoryUuid' => self::UUID_PATTERN,

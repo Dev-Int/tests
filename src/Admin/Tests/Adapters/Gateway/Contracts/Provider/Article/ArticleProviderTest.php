@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Gateway\Contracts\Provider\Article;
 
-use Admin\Adapters\Gateway\Contracts\Provider\Article\ArticleProvider;
+use Admin\Adapters\ContractsHandler\Provider\Article\ArticleProvider;
 use Admin\Contracts\Services\Provider\Exception\ArticleNotFound;
 use Admin\Tests\DataBuilder\ArticleDataBuilder;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
@@ -30,7 +30,7 @@ use Shared\Entities\ResourceUuid;
 /**
  * @group unitTest
  *
- * @covers \Admin\Adapters\Gateway\Contracts\Provider\Article\ArticleProvider
+ * @covers \Admin\Adapters\ContractsHandler\Provider\Article\ArticleProvider
  */
 final class ArticleProviderTest extends TestCase
 {

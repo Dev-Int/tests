@@ -136,11 +136,45 @@ interface EntityRepository {
 }
 ```
 
+**Example - When to use `update()` vs business-named methods**:
+```php
+// ❌ BAD - Pure duplication (all methods identical)
+interface EmployeeRepository {
+    public function updateContactInfo(Employee $e): void; // fetch + sync + flush
+    public function updatePosition(Employee $e): void;    // fetch + sync + flush
+    public function disable(Employee $e): void;           // fetch + sync + flush
+}
+
+// ✅ GOOD - Consolidate identical operations
+interface EmployeeRepository {
+    public function update(Employee $e): void; // Domain modified, just persist
+}
+
+// ✅ ALSO GOOD - Different implementations justify separate methods
+interface ArticleRepository {
+    public function revaluate(Article $a): void;  // Recalculates price + logs change
+    public function rename(Article $a): void;      // Updates name + slug + search index
+    public function publish(Article $a): void;     // Updates status + notifies subscribers
+}
+```
+
 **Rules**:
 - Interface in `BC/Entities/Repository/`
 - Methods: `get*()` MUST throw if not found
-- Prefer business-named methods (`rename`, `start`, `revaluate`) over generic (`update`)
+- Method naming strategy:
+  - Use business-named methods (`rename`, `start`, `revaluate`) when implementations DIFFER (e.g., different SQL, specific optimizations)
+  - Use generic `update()` when all update operations have IDENTICAL implementation (fetch + sync + flush)
+  - Reason: Domain ensures data consistency, Repository is pure persistence layer
 - Used by: Use cases that MODIFY state
+
+**Exception - Reads au service de writes**:
+```php
+// ✅ OK - Read nécessaire à l'invariant du write (unicité)
+interface UserRepository {
+    public function emailExists(EmailField $email): bool; // Vérifie unicité avant create()
+}
+// ❌ Pas dans Repository - Read pour affichage → Finder
+```
 
 **Template**: `.claude/templates/repository.php.tpl`
 
@@ -371,6 +405,127 @@ NO: BC1 → BC2\UseCases
 | **create-entity** | Domain entity | `.claude/skills/create-entity/` |
 | **create-repository** | Persistence layer | `.claude/skills/create-repository/` |
 | **create-value-object** | Domain value type | `.claude/skills/create-value-object/` |
+
+---
+
+### Decision Tree: Créer User ou Employee?
+
+```mermaid
+graph TD
+    A[Besoin d'un compte d'accès] --> B{Employé ou compte technique?}
+    B -->|Employé| C[CreateEmployee UseCase Admin BC]
+    B -->|Compte technique/admin| D[CreateUser UseCase Auth BC]
+
+    C --> E[✅ Crée automatiquement User Auth BC]
+    C --> F[✅ Email de bienvenue envoyé]
+    C --> G[✅ Password reset token]
+
+    D --> H[✅ User simple sans Employee]
+    D --> I[⚠️ Pas d'email automatique]
+
+    style C fill:#e1f5ff
+    style D fill:#fff4e1
+```
+
+**Règle**: Si Employee → utiliser CreateEmployee (crée User automatiquement)
+**Exception**: Comptes techniques (admins système, bots) → CreateUser direct
+
+**Reference**: `docs/admin-employee-management.md`, `docs/adr/ADR-008-employee-user-coupling.md`
+
+---
+
+### Communication Inter-BC: Admin → Auth
+
+**Pattern**: Command Gateway
+
+```
+Admin BC (Consumer)               Auth BC (Provider)
+─────────────────────           ─────────────────────
+  UseCase                           UseCase
+     │                                  ▲
+     │ depends on                       │
+     ▼                                  │
+  Gateway (interface)                   │
+     ▲                                  │
+     │ implements                       │
+     │                                  │
+  Adapter ────────── calls ─────────────┘
+              (via Contract)
+```
+
+**Example**: UserCreatorAdapter
+
+```php
+// 1. Gateway (interface) dans Admin BC
+interface UserCreatorGateway {
+    public function createUser(CreateUserDTO $dto): CreatedUserDTO;
+}
+
+// 2. Adapter (implementation) dans Admin BC
+#[AsAlias(UserCreatorGateway::class)]
+final readonly class UserCreatorAdapter implements UserCreatorGateway {
+    public function __construct(
+        private CreateUserCommandHandler $userCreator, // Auth BC Contract
+    ) {}
+}
+
+// 3. Contract (interface) dans Auth BC
+interface CreateUserCommandHandler {
+    public function createUser(CreateUserCommand $command): CreatedUserResult;
+}
+```
+
+**Skill**: `add-bc-contract` pour ajouter nouveau Contract
+
+**Reference**: `docs/guides/bounded-contexts.md`, `docs/admin-employee-management.md#4-communication-inter-bc`
+
+---
+
+### Tester Communication Inter-BC
+
+**Unit Test**: Mock le Gateway
+
+```php
+public function testCreateEmployeeCallsUserCreatorGateway(): void
+{
+    $userCreatorGateway = $this->createMock(UserCreatorGateway::class);
+    $userCreatorGateway->expects($this->once())
+        ->method('createUser')
+        ->willReturn(new CreatedUserDTO(ResourceUuid::generate(), $email));
+
+    $useCase = new CreateEmployee(
+        repository: $repository,
+        userCreatorGateway: $userCreatorGateway, // ✅ Mock
+        // ...
+    );
+}
+```
+
+**Integration Test**: Tester transaction complète (rollback)
+
+```php
+public function testRollbackWhenPasswordResetTokenFailsRevertsAll(): void
+{
+    $passwordResetGateway = $this->createMock(PasswordResetGateway::class);
+    $passwordResetGateway->expects($this->once())
+        ->method('createResetToken')
+        ->willThrowException(new \RuntimeException('Token failed'));
+
+    try {
+        $useCase->execute($request);
+    } finally {
+        $this->entityManager->clear();
+
+        // ✅ Vérifie que Employee ET User ont été rollback
+        $this->assertSame(0, $this->employeeRepository->count([]));
+        $this->assertSame(0, $this->userRepository->count([]));
+    }
+}
+```
+
+**Example**: `src/Admin/Tests/Integration/Employee/CreateEmployeeTransactionTest.php`
+
+**Reference**: `docs/admin-employee-management.md#7-testing-strategy`
 
 ---
 

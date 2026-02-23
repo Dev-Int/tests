@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Inventory\Adapters\Controller\Symfony\Controller\ReviewInventory;
 
 use Admin\Contracts\Services\Provider\ZoneStorage\ZoneStorageProvider;
+use Auth\Contracts\Attribute\RequireRole;
 use Inventory\Adapters\Controller\Symfony\Controller\GetInventories\GetInventoriesController;
 use Inventory\Adapters\Controller\Symfony\Controller\ReviewInventory\Input\ItemChoice;
 use Inventory\Adapters\Form\Type\ReviewInventoryType;
@@ -34,6 +35,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsController]
+#[RequireRole(role: 'ROLE_INVENTORY_MANAGER')]
 final class ReviewInventoryController extends AbstractController
 {
     public const string ROUTE_NAME = 'inventory_review';
@@ -49,7 +51,7 @@ final class ReviewInventoryController extends AbstractController
     }
 
     #[Route(
-        path: 'inventories/{inventoryUuid}/review',
+        path: '{inventoryUuid}/review',
         name: self::ROUTE_NAME,
         requirements: ['inventoryUuid' => self::UUID_PATTERN],
         methods: ['GET', 'POST']

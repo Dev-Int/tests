@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Admin\Tests\EndToEnd\Company;
 
 use Admin\Adapters\Controller\Symfony\Controller\Company\CreateCompany\CreateCompanyController;
+use Shared\Tests\AuthenticatedPantherTestTrait;
 use Shared\Tests\BasePantherTestCase;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -23,6 +24,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 final class CreateACompanyTest extends BasePantherTestCase
 {
+    use AuthenticatedPantherTestTrait;
+
     public function testCreateACompanySuccessfully(): void
     {
         // Arrange
@@ -30,6 +33,8 @@ final class CreateACompanyTest extends BasePantherTestCase
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
+
+        $this->loginViaForm($client, $translator);
 
         // Act && Assert
         $client->request('GET', '/');
@@ -80,6 +85,8 @@ final class CreateACompanyTest extends BasePantherTestCase
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
+
+        $this->loginViaForm($client, $translator);
 
         // Act && Assert
         $client->request('GET', '/');

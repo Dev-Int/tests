@@ -20,6 +20,7 @@ use Admin\Entities\Tax\Tax;
 use Admin\Tests\Factory\TaxFactory;
 use Faker\Factory;
 use Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -31,8 +32,9 @@ use Zenstruck\Foundry\Test\Factories;
 final class RevaluateTaxControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
+    use RedirectsToLoginTestTrait;
 
-    private const REEVALUATE_TAX_URI = '/admin/taxes/%s/revaluate';
+    private const string REEVALUATE_TAX_URI = '/admin/taxes/%s/revaluate';
 
     public function testRevaluateTaxWillSucceed(): void
     {
@@ -240,5 +242,10 @@ final class RevaluateTaxControllerTest extends BaseFunctionalTestCase
 
         $taxes = $taxRepository->getAllTaxes();
         self::assertCount(1, $taxes);
+    }
+
+    protected function getProtectedUri(): string
+    {
+        return \sprintf(self::REEVALUATE_TAX_URI, '00000000-0000-0000-0000-000000000000');
     }
 }

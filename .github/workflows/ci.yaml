@@ -4,9 +4,9 @@ on:
     push:
         branches: [ main, develop ]
     pull_request:
-        branches: [ main, develop ]
+        branches: [ main, develop, 'feature/*' ]
 env:
-    DATABASE_URL: 'postgres://postgres:postgres@localhost:5432/app?serverVersion=16&charset=UTF-8'
+    DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/app?serverVersion=16&charset=utf8'
 
 jobs:
     lint:
@@ -28,6 +28,9 @@ jobs:
                 options: '--health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5'
         steps:
             - uses: actions/checkout@v4
+
+            - name: Setup CI environment
+              run: cp .env.ci .env.local
 
             - name: Setup PHP with PECL extension
               uses: shivammathur/setup-php@v2
@@ -77,6 +80,9 @@ jobs:
                 options: '--health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5'
         steps:
             - uses: actions/checkout@v4
+
+            - name: Setup CI environment
+              run: cp .env.ci .env.local
 
             - name: Setup PHP with PECL extension
               uses: shivammathur/setup-php@v2

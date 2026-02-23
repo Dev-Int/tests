@@ -1,0 +1,149 @@
+<?php
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the Tests package.
+ *
+ * (c) Dev-Int Création <info@developpement-interessant.com>.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Auth\Tests\UseCases\ResetPassword;
+
+use Auth\Entities\Exception\InvalidPasswordResetToken;
+use Auth\Entities\Repository\PasswordResetTokenRepository;
+use Auth\Entities\Repository\UserRepository;
+use Auth\Entities\ResetPassword as PasswordResetToken;
+use Auth\Entities\VO\HashedPassword;
+use Auth\Tests\DataBuilder\UserDataBuilder;
+use Auth\UseCases\Gateway\PasswordHasherGateway;
+use Auth\UseCases\Gateway\TransactionGateway;
+use Auth\UseCases\ResetPassword\ResetPassword;
+use Auth\UseCases\ResetPassword\ResetPasswordRequest;
+use PHPUnit\Framework\TestCase;
+use Shared\Entities\ResourceUuid;
+
+/**
+ * @group unitTest
+ *
+ * @covers \Auth\UseCases\ResetPassword\ResetPassword
+ */
+final class ResetPasswordTest extends TestCase
+{
+    public function testResetPasswordSucceeds(): void
+    {
+        // Arrange
+        $userRepository = $this->createMock(UserRepository::class);
+        $resetTokenRepository = $this->createMock(PasswordResetTokenRepository::class);
+        $passwordHasher = $this->createMock(PasswordHasherGateway::class);
+        $transactionGateway = $this->createMock(TransactionGateway::class);
+        $useCase = new ResetPassword(
+            $userRepository,
+            $resetTokenRepository,
+            $passwordHasher,
+            $transactionGateway
+        );
+        $request = $this->createMock(ResetPasswordRequest::class);
+
+        $tokenId = ResourceUuid::fromString('660e8400-e29b-41d4-a716-446655440001');
+        $token = 'reset-token-abc123';
+
+        $user = UserDataBuilder::aUser()
+            ->withEmail('user@example.com')
+            ->build()
+        ;
+
+        $passwordResetToken = new PasswordResetToken(
+            id: $tokenId,
+            user: $user,
+            token: $token,
+            expiresAt: new \DateTimeImmutable('+24 hours'),
+            usedAt: null
+        );
+
+        // Assert
+        $request->expects(self::once())->method('token')->willReturn($passwordResetToken);
+        $request->expects(self::once())->method('plainPassword')->willReturn('NewSecurePassword123!');
+
+        $transactionGateway->expects(self::once())
+            ->method('wrapInTransaction')
+            ->willReturnCallback(static fn (callable $func) => $func())
+        ;
+
+        $userRepository->expects(self::once())
+            ->method('update')
+            ->with($user)
+        ;
+
+        $passwordHasher->expects(self::once())
+            ->method('hashPassword')
+            ->with('NewSecurePassword123!')
+            ->willReturn(HashedPassword::fromHash('$2y$13$newHashedPassword'))
+        ;
+
+        $resetTokenRepository->expects(self::once())
+            ->method('save')
+            ->with($passwordResetToken)
+        ;
+
+        // Act
+        $useCase->execute($request);
+
+        // Assert
+        self::assertInstanceOf(
+            \DateTimeImmutable::class,
+            $passwordResetToken->usedAt()
+        );
+        self::assertSame('$2y$13$newHashedPassword', $user->password()->toString());
+    }
+
+    public function testCannotResetPasswordWhenUserIsDisabled(): void
+    {
+        // Arrange
+        $userRepository = $this->createMock(UserRepository::class);
+        $resetTokenRepository = $this->createMock(PasswordResetTokenRepository::class);
+        $passwordHasher = $this->createMock(PasswordHasherGateway::class);
+        $transactionGateway = $this->createMock(TransactionGateway::class);
+        $useCase = new ResetPassword(
+            $userRepository,
+            $resetTokenRepository,
+            $passwordHasher,
+            $transactionGateway
+        );
+        $request = $this->createMock(ResetPasswordRequest::class);
+
+        $user = UserDataBuilder::aUser()
+            ->withEmail('disabled@example.com')
+            ->build()
+        ;
+        $user->disable();
+
+        $passwordResetToken = new PasswordResetToken(
+            id: ResourceUuid::generate(),
+            user: $user,
+            token: 'valid-token',
+            expiresAt: new \DateTimeImmutable('+24 hours'),
+            usedAt: null
+        );
+
+        // Assert
+        $request->expects(self::once())->method('token')->willReturn($passwordResetToken);
+        $request->expects(self::never())->method('plainPassword');
+
+        $transactionGateway->expects(self::once())
+            ->method('wrapInTransaction')
+            ->willReturnCallback(static fn (callable $func) => $func())
+        ;
+
+        $userRepository->expects(self::never())->method('update');
+        $passwordHasher->expects(self::never())->method('hashPassword');
+        $resetTokenRepository->expects(self::never())->method('save');
+        $this->expectException(InvalidPasswordResetToken::class);
+
+        // Act
+        $useCase->execute($request);
+    }
+}

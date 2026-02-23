@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Admin\Tests\EndToEnd\Company;
 
 use Admin\Contracts\Services\Provider\ConfigurationServiceProvider;
+use Shared\Tests\AuthenticatedPantherTestTrait;
 use Shared\Tests\BasePantherTestCase;
 use Symfony\Component\Panther\PantherTestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -23,6 +24,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 final class UpdateACompanyTest extends BasePantherTestCase
 {
+    use AuthenticatedPantherTestTrait;
+
     public function testUpdateACompanySuccessfully(): void
     {
         // Arrange
@@ -31,6 +34,8 @@ final class UpdateACompanyTest extends BasePantherTestCase
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
+
+        $this->loginViaForm($client, $translator);
 
         /** @var ConfigurationServiceProvider $configureService */
         $configureService = self::getContainer()->get(ConfigurationServiceProvider::class);

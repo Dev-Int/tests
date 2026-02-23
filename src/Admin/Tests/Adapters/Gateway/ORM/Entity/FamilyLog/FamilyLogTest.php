@@ -19,6 +19,11 @@ use Admin\Entities\FamilyLog\FamilyLog as FamilyLogDomain;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
 use Shared\Tests\BaseFunctionalTestCase;
 
+/**
+ * @group functionalTest
+ *
+ * @covers \Admin\Adapters\Gateway\ORM\Entity\FamilyLog\FamilyLog
+ */
 class FamilyLogTest extends BaseFunctionalTestCase
 {
     public function testFamilyLogORMToDomain(): void

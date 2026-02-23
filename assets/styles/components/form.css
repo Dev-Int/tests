@@ -2,6 +2,11 @@
  * Forms
  */
 
+.login-form {
+    max-width: 50%;
+    margin-inline: auto;
+}
+
 label.required:before {
     content: "*";
     padding-right: calc(var(--block-spacing-horizontal) * .25);
@@ -26,9 +31,19 @@ ul:has(.form-error) {
     padding-inline-start: 0;
 }
 
+input:disabled + .help-text {
+    margin-top: calc(-1 * var(--form-element-spacing-vertical));
+    margin-bottom: var(--form-element-spacing-vertical);
+}
+
 .help-text {
-    margin-top: var(--form-element-spacing-vertical);
+    color: var(--muted-color);
+    font-size: calc(var(--font-size) * 0.8);
+    font-style: italic;
+
+
     & > p {
+        margin-top: var(--form-element-spacing-vertical);
         color: var(--muted-color);
         font-size: calc(var(--font-size) * 0.8);
         font-style: italic;

@@ -22,6 +22,7 @@ use Inventory\Tests\Factory\InventoryFactory;
 use Inventory\Tests\Story\InventoryStory;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -35,6 +36,7 @@ use Zenstruck\Foundry\Test\Factories;
 final class LoadArticlesAndStartInventoryControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
+    use RedirectsToLoginTestTrait;
 
     public const string START_INVENTORY_URI = '/inventories/%s/start';
 
@@ -67,7 +69,7 @@ final class LoadArticlesAndStartInventoryControllerTest extends BaseFunctionalTe
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        self::assertResponseRedirects('/inventories');
+        self::assertResponseRedirects('/inventories/');
 
         $crawler = $this->client->followRedirect();
         $flash = $crawler->filter('.flash-success')->text();
@@ -101,7 +103,7 @@ final class LoadArticlesAndStartInventoryControllerTest extends BaseFunctionalTe
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        self::assertResponseRedirects('/inventories');
+        self::assertResponseRedirects('/inventories/');
 
         $crawler = $this->client->followRedirect();
         $flash = $crawler->filter('.flash-error')->text();
@@ -133,7 +135,7 @@ final class LoadArticlesAndStartInventoryControllerTest extends BaseFunctionalTe
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        self::assertResponseRedirects('/inventories');
+        self::assertResponseRedirects('/inventories/');
 
         $crawler = $this->client->followRedirect();
         $flash = $crawler->filter('.flash-error')->text();
@@ -144,5 +146,16 @@ final class LoadArticlesAndStartInventoryControllerTest extends BaseFunctionalTe
     {
         self::assertTrue(\defined(LoadArticlesAndStartInventoryController::class . '::ROUTE_NAME'));
         self::assertSame('inventory_start', LoadArticlesAndStartInventoryController::ROUTE_NAME);
+    }
+
+    protected function getProtectedUri(): string
+    {
+        // UUID factice, access_control vérifie l'auth avant le routage complet
+        return \sprintf(self::START_INVENTORY_URI, '00000000-0000-0000-0000-000000000000');
+    }
+
+    protected function getProtectedHttpMethod(): string
+    {
+        return Request::METHOD_POST;
     }
 }

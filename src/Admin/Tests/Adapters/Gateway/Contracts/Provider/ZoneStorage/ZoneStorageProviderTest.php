@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Admin\Tests\Adapters\Gateway\Contracts\Provider\ZoneStorage;
 
-use Admin\Adapters\Gateway\Contracts\Provider\ZoneStorage\ZoneStorageProvider;
+use Admin\Adapters\ContractsHandler\Provider\ZoneStorage\ZoneStorageProvider;
 use Admin\Contracts\Services\Provider\Exception\ZoneStorageNotFound;
 use Admin\Entities\ZoneStorage\ZoneStorage;
 use Admin\Tests\DataBuilder\FamilyLogDataBuilder;
@@ -26,7 +26,7 @@ use Shared\Entities\ResourceUuid;
 /**
  * @group unitTest
  *
- * @covers \Admin\Adapters\Gateway\Contracts\Provider\ZoneStorage\ZoneStorageProvider
+ * @covers \Admin\Adapters\ContractsHandler\Provider\ZoneStorage\ZoneStorageProvider
  */
 final class ZoneStorageProviderTest extends TestCase
 {

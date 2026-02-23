@@ -26,6 +26,8 @@ use Admin\Adapters\Gateway\ORM\Entity\ZoneStorage;
 use PHPUnit\Framework\TestCase;
 
 /**
+ * @group unitTest
+ *
  * @covers \Admin\Adapters\Gateway\Doctrine\ConfigurationStateInvalidator
  */
 final class ConfigurationStateInvalidatorTest extends TestCase

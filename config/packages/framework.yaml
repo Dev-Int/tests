@@ -9,6 +9,8 @@ framework:
     #fragments: true
 
     error_controller: Shared\Adapters\Controller\Symfony\Controller\ErrorController
+    router:
+        default_uri: '%env(APP_URL)%'
 
 when@test:
     framework:

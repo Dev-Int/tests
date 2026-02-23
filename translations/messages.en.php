@@ -1,10 +1,12 @@
 <?php
 
 return [
-    'connection' => 'Connection',
+    'login' => 'Login',
+    'logout' => 'Logout',
     'actions' => 'Actions',
     'cancel' => 'Cancel',
     'add' => 'Add',
+    'save' => 'Save',
     'name' => 'Name',
     'streetAddress' => 'Address',
     'postalCode' => 'Postal code',

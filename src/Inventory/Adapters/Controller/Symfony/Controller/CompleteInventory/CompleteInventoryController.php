@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Inventory\Adapters\Controller\Symfony\Controller\CompleteInventory;
 
+use Auth\Contracts\Attribute\RequireRole;
 use Inventory\Adapters\Controller\Symfony\Controller\GetInventories\GetInventoriesController;
 use Inventory\Entities\Exception\InvalidStatusTransition;
 use Inventory\Entities\Exception\InventoryNotFound;
@@ -27,6 +28,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsController]
+#[RequireRole(role: 'ROLE_INVENTORY_MANAGER')]
 final class CompleteInventoryController extends AbstractController
 {
     public const string ROUTE_NAME = 'inventory_complete';
@@ -40,7 +42,7 @@ final class CompleteInventoryController extends AbstractController
     }
 
     #[Route(
-        path: 'inventories/{inventoryUuid}/complete',
+        path: '{inventoryUuid}/complete',
         name: self::ROUTE_NAME,
         requirements: ['inventoryUuid' => self::UUID_PATTERN],
         methods: ['POST']

@@ -71,6 +71,17 @@ parameters:
 			path: src/Admin/Tests/Factory/ZoneStorageFactory.php
 
 		-
+			message: "#^Parameter \\#1 \\$instantiator of method Zenstruck\\\\Foundry\\\\ObjectFactory\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Employee&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Employee\\>\\>\\:\\:instantiateWith\\(\\) expects callable\\(array\\<string, mixed\\>, class\\-string\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Employee&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Employee\\>\\>\\)\\: \\(Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Employee&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Employee\\>\\), Closure\\(array\\)\\: Admin\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Employee given\\.$#"
+			count: 1
+			path: src/Admin/Tests/Factory/EmployeeFactory.php
+
+		-
 			message: "#^Parameter \\#1 \\$instantiator of method Zenstruck\\\\Foundry\\\\ObjectFactory\\<Inventory\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Inventory&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Inventory\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Inventory\\>\\>\\:\\:instantiateWith\\(\\) expects callable\\(array\\<string, mixed\\>, class\\-string\\<Inventory\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Inventory&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Inventory\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Inventory\\>\\>\\)\\: \\(Inventory\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Inventory&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Inventory\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Inventory\\>\\), Closure\\(array\\)\\: Inventory\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\Inventory given\\.$#"
 			count: 1
 			path: src/Inventory/Tests/Factory/InventoryFactory.php
+
+		-
+			message: "#^Parameter \\#1 \\$instantiator of method Zenstruck\\\\Foundry\\\\ObjectFactory\\<Auth\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\User&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Auth\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\User\\>\\>\\:\\:instantiateWith\\(\\) expects callable\\(array\\<string, mixed\\>, class\\-string\\<Auth\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\User&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Auth\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\User\\>\\>\\)\\: \\(Auth\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\User&Zenstruck\\\\Foundry\\\\Persistence\\\\Proxy\\<Auth\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\User\\>\\), Closure\\(array\\)\\: Auth\\\\Adapters\\\\Gateway\\\\ORM\\\\Entity\\\\User given\\.$#"
+			count: 1
+			path: src/Auth/Tests/Factory/UserFactory.php
+

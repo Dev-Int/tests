@@ -21,8 +21,10 @@ use Inventory\Tests\Factory\InventoryFactory;
 use Inventory\Tests\Story\InventoryStory;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Zenstruck\Foundry\Test\Factories;
 
@@ -34,6 +36,7 @@ use Zenstruck\Foundry\Test\Factories;
 final class ReviewInventoryControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
+    use RedirectsToLoginTestTrait;
 
     public const string REVIEW_URI = '/inventories/%s/review';
     public const string START_INVENTORY_URI = '/inventories/%s/start';
@@ -187,7 +190,7 @@ final class ReviewInventoryControllerTest extends BaseFunctionalTestCase
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        self::assertResponseRedirects('/inventories');
+        self::assertResponseRedirects('/inventories/');
 
         $crawler = $this->client->followRedirect();
         $flash = $crawler->filter('.flash-error');
@@ -274,7 +277,7 @@ final class ReviewInventoryControllerTest extends BaseFunctionalTestCase
         ]);
         $this->client->submit($form);
 
-        // PRG pattern: should always redirect after successful POST
+        // PRG pattern: should always redirect after a successful POST
         self::assertResponseRedirects();
         $crawler = $this->client->followRedirect();
 
@@ -356,7 +359,7 @@ final class ReviewInventoryControllerTest extends BaseFunctionalTestCase
         $this->client->submit($form);
 
         // Assert - should redirect to inventory list when all items reviewed
-        self::assertResponseRedirects('/inventories');
+        self::assertResponseRedirects('/inventories/');
     }
 
     public function testNoItemSelectedShowsWarning(): void
@@ -561,5 +564,21 @@ final class ReviewInventoryControllerTest extends BaseFunctionalTestCase
         $crawler = $this->client->request(Request::METHOD_GET, $reviewUri);
         $reviewedBadges = $crawler->filter('.badge.badge-success');
         self::assertCount(0, $reviewedBadges, 'Aucun item ne devrait être marqué comme révisé avec un CSRF invalide');
+    }
+
+    public function testAccessDeniedForRoleUser(): void
+    {
+        $this->logoutUser();
+        $this->authenticateAsRoleUser();
+        $this->client->catchExceptions(false);
+        $this->expectException(AccessDeniedException::class);
+        $this->expectExceptionMessage('Access denied. Required role: ROLE_INVENTORY_MANAGER');
+        $this->client->request(Request::METHOD_GET, $this->getProtectedUri());
+    }
+
+    protected function getProtectedUri(): string
+    {
+        // UUID factice, access_control vérifie l'auth avant le routage complet
+        return \sprintf(self::REVIEW_URI, '00000000-0000-0000-0000-000000000000');
     }
 }

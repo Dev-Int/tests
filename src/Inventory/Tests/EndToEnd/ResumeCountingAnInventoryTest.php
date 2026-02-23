@@ -18,6 +18,7 @@ use Inventory\Adapters\Gateway\ORM\Entity\InventoryStatus;
 use Inventory\Tests\Factory\InventoryFactory;
 use Inventory\Tests\Story\InventoryStory;
 use Shared\Entities\Clock\ClockFactory;
+use Shared\Tests\AuthenticatedPantherTestTrait;
 use Shared\Tests\BasePantherTestCase;
 use Symfony\Component\Panther\PantherTestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -28,6 +29,7 @@ use Zenstruck\Foundry\Test\Factories;
  */
 final class ResumeCountingAnInventoryTest extends BasePantherTestCase
 {
+    use AuthenticatedPantherTestTrait;
     use Factories;
     use InventoryE2ETestTrait;
 
@@ -44,6 +46,8 @@ final class ResumeCountingAnInventoryTest extends BasePantherTestCase
 
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get('translator');
+
+        $this->loginViaForm($client, $translator);
 
         $now = ClockFactory::clock()->now();
         $futureDate = $now->modify('+1 day');

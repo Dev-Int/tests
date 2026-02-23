@@ -24,8 +24,10 @@ use Inventory\Tests\Story\InventoryStory;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Entities\ResourceUuid;
 use Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Zenstruck\Foundry\Test\Factories;
 
@@ -37,6 +39,7 @@ use Zenstruck\Foundry\Test\Factories;
 final class CompleteInventoryControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
+    use RedirectsToLoginTestTrait;
 
     public const string COMPLETE_URI = '/inventories/%s/complete';
     public const string START_URI = '/inventories/%s/start';
@@ -121,7 +124,7 @@ final class CompleteInventoryControllerTest extends BaseFunctionalTestCase
 
         // Assert - Should redirect to an inventory list
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        self::assertResponseRedirects('/inventories');
+        self::assertResponseRedirects('/inventories/');
 
         $crawler = $this->client->followRedirect();
         $flash = $crawler->filter('.flash-success')->text();
@@ -160,7 +163,7 @@ final class CompleteInventoryControllerTest extends BaseFunctionalTestCase
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        self::assertResponseRedirects('/inventories');
+        self::assertResponseRedirects('/inventories/');
 
         $crawler = $this->client->followRedirect();
         $flash = $crawler->filter('.flash-error')->text();
@@ -225,7 +228,7 @@ final class CompleteInventoryControllerTest extends BaseFunctionalTestCase
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        self::assertResponseRedirects('/inventories');
+        self::assertResponseRedirects('/inventories/');
 
         $crawler = $this->client->followRedirect();
         $flash = $crawler->filter('.flash-error')->text();
@@ -244,7 +247,7 @@ final class CompleteInventoryControllerTest extends BaseFunctionalTestCase
 
         // Assert
         self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        self::assertResponseRedirects('/inventories');
+        self::assertResponseRedirects('/inventories/');
 
         $crawler = $this->client->followRedirect();
         $flash = $crawler->filter('.flash-error');
@@ -255,5 +258,26 @@ final class CompleteInventoryControllerTest extends BaseFunctionalTestCase
     {
         self::assertTrue(\defined(CompleteInventoryController::class . '::ROUTE_NAME'));
         self::assertSame('inventory_complete', CompleteInventoryController::ROUTE_NAME);
+    }
+
+    public function testAccessDeniedForRoleUser(): void
+    {
+        $this->logoutUser();
+        $this->authenticateAsRoleUser();
+        $this->client->catchExceptions(false);
+        $this->expectException(AccessDeniedException::class);
+        $this->expectExceptionMessage('Access denied. Required role: ROLE_INVENTORY_MANAGER');
+        $this->client->request(Request::METHOD_POST, $this->getProtectedUri());
+    }
+
+    protected function getProtectedUri(): string
+    {
+        // UUID factice, access_control vérifie l'auth avant le routage complet
+        return \sprintf(self::COMPLETE_URI, '00000000-0000-0000-0000-000000000000');
+    }
+
+    protected function getProtectedHttpMethod(): string
+    {
+        return Request::METHOD_POST;
     }
 }

@@ -13,6 +13,10 @@
                 :disabled="not this.isApplicationReady()"
             />
         </li>
-        <li><a href="#" role="button">{{ 'connection'|trans }}</a></li>
+        {% if app.user %}
+            <li><a href="{{ path('auth_logout') }}" role="button"><i class="fa-solid fa-right-from-bracket"></i> {{ 'logout'|trans }}</a></li>
+        {% else %}
+            <li><a href="{{ path('auth_login') }}" role="button"><i class="fa-solid fa-right-to-bracket"></i> {{ 'login'|trans }}</a></li>
+        {% endif %}
     </ul>
 </nav>

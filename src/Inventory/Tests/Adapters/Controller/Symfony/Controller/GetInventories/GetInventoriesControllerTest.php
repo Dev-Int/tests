@@ -22,6 +22,7 @@ use Shared\Adapters\Exception\ApplicationNotReady;
 use Shared\Adapters\Gateway\Pagination\Pagination;
 use Shared\Entities\Clock\ClockFactory;
 use Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -35,8 +36,9 @@ use Zenstruck\Foundry\Test\Factories;
 final class GetInventoriesControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
+    use RedirectsToLoginTestTrait;
 
-    private const string GET_INVENTORIES_URI = '/inventories';
+    private const string GET_INVENTORIES_URI = '/inventories/';
 
     public function testGetInventoriesDisplaysListWhenConfigured(): void
     {
@@ -751,5 +753,10 @@ final class GetInventoriesControllerTest extends BaseFunctionalTestCase
             'turbo-frame[id^="inventory_"]:not(#inventory_create):not(#inventory_paginated)'
         );
         self::assertCount(5, $inventoryRows, '5 inventaires attendus sur la page 2 avec filtre de statut');
+    }
+
+    protected function getProtectedUri(): string
+    {
+        return self::GET_INVENTORIES_URI;
     }
 }

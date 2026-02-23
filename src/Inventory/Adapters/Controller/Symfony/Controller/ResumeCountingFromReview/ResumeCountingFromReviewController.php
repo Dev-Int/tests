@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Inventory\Adapters\Controller\Symfony\Controller\ResumeCountingFromReview;
 
+use Auth\Contracts\Attribute\RequireRole;
 use Inventory\Adapters\Controller\Symfony\Controller\GetInventories\GetInventoriesController;
 use Inventory\Adapters\Controller\Symfony\Controller\RecordRealStockForZone\RecordRealStockForZoneController;
 use Inventory\Adapters\Controller\Symfony\Controller\ReviewInventory\ReviewInventoryController;
@@ -28,6 +29,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsController]
+#[RequireRole(role: 'ROLE_INVENTORY_MANAGER')]
 final class ResumeCountingFromReviewController extends AbstractController
 {
     public const string ROUTE_NAME = 'inventory_resume_counting';
@@ -41,7 +43,7 @@ final class ResumeCountingFromReviewController extends AbstractController
     }
 
     #[Route(
-        path: 'inventories/{inventoryUuid}/zones/{zoneStorageUuid}/resume-counting',
+        path: '{inventoryUuid}/zones/{zoneStorageUuid}/resume-counting',
         name: self::ROUTE_NAME,
         requirements: [
             'inventoryUuid' => self::UUID_PATTERN,

@@ -16,6 +16,7 @@ namespace Admin\Tests\Adapters\Controller\Symfony\Controller\Company\GetCompany;
 use Admin\Entities\Exception\Company\NoCompanyRegistered;
 use Admin\Tests\Factory\CompanyFactory;
 use Shared\Tests\BaseFunctionalTestCase;
+use Shared\Tests\RedirectsToLoginTestTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -27,8 +28,9 @@ use Zenstruck\Foundry\Test\Factories;
 final class GetCompanyControllerTest extends BaseFunctionalTestCase
 {
     use Factories;
+    use RedirectsToLoginTestTrait;
 
-    private const GET_COMPANY_URI = '/admin/company';
+    private const string GET_COMPANY_URI = '/admin/company';
 
     public function testGetCompanyWillSucceed(): void
     {
@@ -66,5 +68,10 @@ final class GetCompanyControllerTest extends BaseFunctionalTestCase
         $flash = $admin->filter('body > div.container > div')->children('div.flash.flash-error')->text();
 
         self::assertSame(NoCompanyRegistered::MESSAGE, $flash);
+    }
+
+    protected function getProtectedUri(): string
+    {
+        return self::GET_COMPANY_URI;
     }
 }

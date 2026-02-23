@@ -17,6 +17,8 @@ use Admin\Adapters\Gateway\Cache\ConfigurationState;
 use PHPUnit\Framework\TestCase;
 
 /**
+ * @group unitTest
+ *
  * @covers \Admin\Adapters\Gateway\Cache\ConfigurationState
  */
 final class ConfigurationStateTest extends TestCase

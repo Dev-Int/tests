@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Inventory\Adapters\Controller\Symfony\Controller\CancelInventory;
 
+use Auth\Contracts\Attribute\RequireRole;
 use Inventory\Adapters\Controller\Symfony\Controller\GetInventories\GetInventoriesController;
 use Inventory\Entities\Exception\CannotCancelCompletedInventory;
 use Inventory\Entities\Exception\InventoryNotFound;
@@ -26,6 +27,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsController]
+#[RequireRole(role: 'ROLE_INVENTORY_MANAGER')]
 final class CancelInventoryController extends AbstractController
 {
     public const string ROUTE_NAME = 'inventory_cancel';
@@ -39,7 +41,7 @@ final class CancelInventoryController extends AbstractController
     }
 
     #[Route(
-        path: 'inventories/{inventoryUuid}/cancel',
+        path: '{inventoryUuid}/cancel',
         name: self::ROUTE_NAME,
         requirements: ['inventoryUuid' => self::UUID_PATTERN],
         methods: ['POST']
